@@ -9,7 +9,7 @@ library(cowplot)
 # first, seurat method
 seurat_p <- calibration_result |> dplyr::filter(method == "seurat_de") |>
   ggplot(mapping = aes(y = p_value)) +
-  stat_qq_points(size = 0.7) +
+  stat_qq_points(size = 0.7, ymin = 1e-10) +
   stat_qq_band() +
   geom_abline() +
   scale_x_continuous(trans = revlog_trans(base = 10)) +
@@ -22,7 +22,7 @@ seurat_p <- calibration_result |> dplyr::filter(method == "seurat_de") |>
 # next, schraivogel method
 schraivogel_p <- calibration_result |> dplyr::filter(method == "schraivogel_method") |>
   ggplot(mapping = aes(y = p_value)) +
-  stat_qq_points(size = 0.7) +
+  stat_qq_points(size = 0.7, ymin = 1e-10) +
   stat_qq_band() +
   geom_abline() +
   scale_x_continuous(trans = revlog_trans(base = 10)) +
