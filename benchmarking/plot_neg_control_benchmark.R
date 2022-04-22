@@ -6,6 +6,9 @@ library(katlabutils)
 library(ggplot2)
 library(cowplot)
 
+# check number of pairs analyzed by each method on each dataset
+
+
 # first, seurat method
 seurat_p <- calibration_result |> dplyr::filter(method == "seurat_de") |>
   ggplot(mapping = aes(y = p_value)) +
@@ -47,6 +50,6 @@ to_plot <- calibration_result |>
   dplyr::mutate(metric = factor(x = metric, levels = c("m_clock_time", "m_max_ram"), labels = c("Time (s)", "RAM (GB)")),
                 dataset = factor(x = dataset, levels = c("schraivogel_tap", "papalexi_gene", "schraivogel_perturb"), labels = c("Schraivogel TAP", "Papalexi gene", "Schraivogel Perturb")))
 
-out_p2 <- ggplot(to_plot, mapping = aes(x = dataset, y = value, fill = method)) + geom_bar(stat = "identity", position = "dodge") + 
+out_p2 <- ggplot(to_plot, mapping = aes(x = dataset, y = value, fill = method)) + geom_bar(stat = "identity", position = "dodge") +
   facet_wrap(.~metric, scales = "free_y") + ylab("") + xlab("Dataset") + scale_x_discrete(guide = guide_axis(n.dodge = 2)) + theme_bw()
 ggsave(filename = paste0(code_dir, "figures/undercover_gRNA_compute.png"), plot = out_p2, device = "png", scale = 1.2, width = 6, height = 3, dpi = 320)
