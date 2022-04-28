@@ -1,0 +1,245 @@
+Apr-27 20:11:00.920 [main] DEBUG nextflow.cli.Launcher - $> nextflow run undercover-gRNA-pipeline -r main --data_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/data_file.R --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/data_method_pair_file.groovy --machine_name local --result_dir /Users/timbarry/research_offsite/projects/sceptre2/results --time 04272010
+Apr-27 20:11:01.052 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 21.04.3
+Apr-27 20:11:01.828 [main] DEBUG nextflow.scm.AssetManager - Listing projects in folder: /Users/timbarry/.nextflow/assets
+Apr-27 20:11:01.855 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/undercover-gRNA-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/undercover-gRNA-pipeline.git
+Apr-27 20:11:01.868 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/undercover-gRNA-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/undercover-gRNA-pipeline.git
+Apr-27 20:11:02.065 [main] INFO  nextflow.cli.CmdRun - Launching `Katsevich-Lab/undercover-gRNA-pipeline` [pedantic_agnesi] - revision: 4f3a5cb6c2 [main]
+Apr-27 20:11:02.423 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Apr-27 20:11:02.424 [main] DEBUG nextflow.config.ConfigBuilder - Found config base: /Users/timbarry/.nextflow/assets/Katsevich-Lab/undercover-gRNA-pipeline/nextflow.config
+Apr-27 20:11:02.425 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Apr-27 20:11:02.425 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/assets/Katsevich-Lab/undercover-gRNA-pipeline/nextflow.config
+Apr-27 20:11:02.434 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-27 20:11:02.498 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-27 20:11:02.545 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins
+Apr-27 20:11:02.547 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-27 20:11:02.549 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins local root: .nextflow/plr/empty
+Apr-27 20:11:02.558 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-27 20:11:02.559 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-27 20:11:02.563 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-27 20:11:02.572 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-27 20:11:02.623 [main] DEBUG nextflow.Session - Session uuid: 34431772-8b3c-4a72-83ab-679d7e9ead1d
+Apr-27 20:11:02.623 [main] DEBUG nextflow.Session - Run name: pedantic_agnesi
+Apr-27 20:11:02.624 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-27 20:11:02.667 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 21.04.3 build 5560
+  Created: 21-07-2021 15:09 UTC (11:09 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.7 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 26620@vpn-users-016-086.wharton.private.upenn.edu [10.150.16.86]
+  CPUs: 8 - Mem: 16 GB (2.7 GB) - Swap: 1 GB (923.8 MB)
+Apr-27 20:11:02.688 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Apr-27 20:11:02.709 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-27 20:11:02.721 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-27 20:11:02.866 [main] DEBUG nextflow.Session - Session start invoked
+Apr-27 20:11:03.749 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-27 20:11:03.877 [main] DEBUG nextflow.Session - Workflow process names [dsl1]: combine_results, get_ram_cpu_info, run_method, append_ram_clock_info, obtain_dataset_ntc_tuples
+Apr-27 20:11:04.051 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-27 20:11:04.051 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-27 20:11:04.057 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Apr-27 20:11:04.063 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Apr-27 20:11:04.243 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-27 20:11:04.243 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-27 20:11:04.266 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-27 20:11:04.267 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-27 20:11:04.269 [Actor Thread 3] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/undercover-gRNA-pipeline/bin/get_dataset_ntc_tuples.R
+Apr-27 20:11:04.274 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-27 20:11:04.274 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-27 20:11:04.283 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-27 20:11:04.283 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-27 20:11:04.288 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Apr-27 20:11:04.288 [main] DEBUG nextflow.Session - Session await
+Apr-27 20:11:04.340 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:04.345 [Task submitter] INFO  nextflow.Session - [b8/9a762f] Submitted process > obtain_dataset_ntc_tuples
+Apr-27 20:11:08.073 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: obtain_dataset_ntc_tuples; status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/b8/9a762f9d69652e3140de48691f49f1]
+Apr-27 20:11:08.112 [Actor Thread 11] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/undercover-gRNA-pipeline/bin/run_method.R
+Apr-27 20:11:08.122 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:08.122 [Task submitter] INFO  nextflow.Session - [5f/908f60] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00001)
+Apr-27 20:11:08.144 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:08.144 [Task submitter] INFO  nextflow.Session - [43/413340] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00000)
+Apr-27 20:11:08.154 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:08.157 [Task submitter] INFO  nextflow.Session - [2e/8d2670] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00000)
+Apr-27 20:11:08.164 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:08.165 [Task submitter] INFO  nextflow.Session - [29/6565b9] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00002)
+Apr-27 20:11:08.171 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:08.172 [Task submitter] INFO  nextflow.Session - [b4/d006b8] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00001)
+Apr-27 20:11:08.202 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:08.202 [Task submitter] INFO  nextflow.Session - [36/41f430] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00003)
+Apr-27 20:11:08.208 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:08.208 [Task submitter] INFO  nextflow.Session - [1c/4da86a] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00002)
+Apr-27 20:11:08.233 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:08.233 [Task submitter] INFO  nextflow.Session - [a6/0743dc] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00003)
+Apr-27 20:11:21.338 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 2; name: run_method (schraivogel_tap+seurat_de+non-targeting_00000); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/2e/8d2670d48ea3d7b6335f41dbc42e8d]
+Apr-27 20:11:21.342 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:21.343 [Task submitter] INFO  nextflow.Session - [2e/5385e6] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00004)
+Apr-27 20:11:21.647 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 6; name: run_method (schraivogel_tap+seurat_de+non-targeting_00002); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/29/6565b94c3e6710deb9900684830da5]
+Apr-27 20:11:21.659 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:21.660 [Task submitter] INFO  nextflow.Session - [23/bb9bb0] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00004)
+Apr-27 20:11:21.671 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 8; name: run_method (schraivogel_tap+seurat_de+non-targeting_00003); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/a6/0743dc976215615ffe7d6e878e7f56]
+Apr-27 20:11:21.675 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:21.676 [Task submitter] INFO  nextflow.Session - [5a/577f85] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00005)
+Apr-27 20:11:21.750 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: run_method (schraivogel_tap+seurat_de+non-targeting_00001); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/b4/d006b8ccc9eb896e9ea1f4e07f9bf3]
+Apr-27 20:11:21.753 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:21.753 [Task submitter] INFO  nextflow.Session - [75/4145ba] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00005)
+Apr-27 20:11:31.971 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 10; name: run_method (schraivogel_tap+seurat_de+non-targeting_00004); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/2e/5385e6363d97f19750dadd8c503357]
+Apr-27 20:11:31.974 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:31.975 [Task submitter] INFO  nextflow.Session - [d6/c8c90f] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00006)
+Apr-27 20:11:32.385 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 12; name: run_method (schraivogel_tap+seurat_de+non-targeting_00005); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/5a/577f85d2998599526501a648a65bb8]
+Apr-27 20:11:32.388 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:32.389 [Task submitter] INFO  nextflow.Session - [41/8bfbe4] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00006)
+Apr-27 20:11:41.997 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 14; name: run_method (schraivogel_tap+seurat_de+non-targeting_00006); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/d6/c8c90f6f492cbfc2e3188afcc0dfae]
+Apr-27 20:11:42.002 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:42.002 [Task submitter] INFO  nextflow.Session - [e0/3813bb] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00007)
+Apr-27 20:11:55.522 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 7; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00002); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/1c/4da86a208b4dec7f6d88ccb40cef3b]
+Apr-27 20:11:55.526 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:55.527 [Task submitter] INFO  nextflow.Session - [56/88622f] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00010)
+Apr-27 20:11:55.734 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00003); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/36/41f430bd13e06740b777d18297dc13]
+Apr-27 20:11:55.738 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:55.739 [Task submitter] INFO  nextflow.Session - [59/23aa7b] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00010)
+Apr-27 20:11:56.020 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00001); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/5f/908f6001aa58c228f7997fcd488a04]
+Apr-27 20:11:56.025 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:56.025 [Task submitter] INFO  nextflow.Session - [67/3ca824] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00007)
+Apr-27 20:11:56.505 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 3; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00000); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/43/413340048074ff94a8cacb7dad3893]
+Apr-27 20:11:56.509 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:11:56.510 [Task submitter] INFO  nextflow.Session - [43/64371f] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00009)
+Apr-27 20:12:04.608 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 11; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00004); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/23/bb9bb0ee646b6c2686c045ec5ff2e2]
+Apr-27 20:12:04.611 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:04.612 [Task submitter] INFO  nextflow.Session - [07/ac6917] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00009)
+Apr-27 20:12:05.153 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 22; name: run_method (schraivogel_tap+seurat_de+non-targeting_00010); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/56/88622f1aa105b038789be0b31cb0d4]
+Apr-27 20:12:05.158 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:05.159 [Task submitter] INFO  nextflow.Session - [50/470cfc] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00008)
+Apr-27 20:12:05.320 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 13; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00005); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/75/4145ba77ed74fcfeee8342adfbcfd7]
+Apr-27 20:12:05.323 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:05.323 [Task submitter] INFO  nextflow.Session - [4a/00e7b6] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00008)
+Apr-27 20:12:05.614 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 16; name: run_method (schraivogel_tap+seurat_de+non-targeting_00007); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/67/3ca824aacb962ee35021012c9efb5e]
+Apr-27 20:12:05.617 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:05.618 [Task submitter] INFO  nextflow.Session - [ce/50b168] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00011)
+Apr-27 20:12:13.205 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 15; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00006); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/41/8bfbe49d08fffc0083e888695da168]
+Apr-27 20:12:13.209 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:13.209 [Task submitter] INFO  nextflow.Session - [68/8eb79b] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00011)
+Apr-27 20:12:14.182 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 20; name: run_method (schraivogel_tap+seurat_de+non-targeting_00009); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/07/ac69173efd62670aa388eb6f9136de]
+Apr-27 20:12:14.186 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:14.186 [Task submitter] INFO  nextflow.Session - [bd/38ee5f] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00012)
+Apr-27 20:12:14.714 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 18; name: run_method (schraivogel_tap+seurat_de+non-targeting_00008); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/50/470cfc9e3071e267c2cf36a7da7214]
+Apr-27 20:12:14.716 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:14.717 [Task submitter] INFO  nextflow.Session - [2b/596f44] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00015)
+Apr-27 20:12:14.718 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 24; name: run_method (schraivogel_tap+seurat_de+non-targeting_00011); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/ce/50b168026e9810678cc42ade85a77f]
+Apr-27 20:12:14.721 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:14.721 [Task submitter] INFO  nextflow.Session - [47/ba2cd8] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00013)
+Apr-27 20:12:22.211 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 17; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00007); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/e0/3813bb1418e89eb29a75d460903a81]
+Apr-27 20:12:22.214 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:22.214 [Task submitter] INFO  nextflow.Session - [f5/ee390c] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00012)
+Apr-27 20:12:23.235 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 26; name: run_method (schraivogel_tap+seurat_de+non-targeting_00012); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/bd/38ee5f68907ec84d033b214603aa89]
+Apr-27 20:12:23.239 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:23.239 [Task submitter] INFO  nextflow.Session - [6f/ae67d1] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00013)
+Apr-27 20:12:24.345 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 28; name: run_method (schraivogel_tap+seurat_de+non-targeting_00013); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/47/ba2cd865fd3acdf5d85214f3130328]
+Apr-27 20:12:24.348 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:24.348 [Task submitter] INFO  nextflow.Session - [4f/99140f] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00014)
+Apr-27 20:12:33.699 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 30; name: run_method (schraivogel_tap+seurat_de+non-targeting_00014); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/4f/99140ff9712884e5080a21341064a2]
+Apr-27 20:12:33.701 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:33.702 [Task submitter] INFO  nextflow.Session - [ca/7a921f] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00014)
+Apr-27 20:12:34.816 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 23; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00010); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/59/23aa7bb9c16066a3f1a74d201afdcc]
+Apr-27 20:12:34.819 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:34.819 [Task submitter] INFO  nextflow.Session - [67/cfa4d7] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00015)
+Apr-27 20:12:35.753 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 21; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00009); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/43/64371f6933f5197779b70c9916c3a7]
+Apr-27 20:12:35.756 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:35.756 [Task submitter] INFO  nextflow.Session - [e4/c95770] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00016)
+Apr-27 20:12:43.760 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 19; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00008); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/4a/00e7b6192ad1011fc0282712822058]
+Apr-27 20:12:43.763 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:43.763 [Task submitter] INFO  nextflow.Session - [dc/eef95b] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00016)
+Apr-27 20:12:44.180 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 32; name: run_method (schraivogel_tap+seurat_de+non-targeting_00015); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/67/cfa4d7cfc377f16449a063618e03b6]
+Apr-27 20:12:44.184 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:44.184 [Task submitter] INFO  nextflow.Session - [d4/a874d6] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00017)
+Apr-27 20:12:45.057 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 34; name: run_method (schraivogel_tap+seurat_de+non-targeting_00016); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/e4/c957703437d1bebb11f8e5c15f36b3]
+Apr-27 20:12:45.060 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:45.060 [Task submitter] INFO  nextflow.Session - [79/b9e352] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00020)
+Apr-27 20:12:51.662 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 25; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00011); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/68/8eb79b0bb99613e52a4856344c641b]
+Apr-27 20:12:51.664 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:51.665 [Task submitter] INFO  nextflow.Session - [6d/c4dd47] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00017)
+Apr-27 20:12:53.320 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 33; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00015); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/2b/596f4485055af2947e1dff78727237]
+Apr-27 20:12:53.326 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:53.326 [Task submitter] INFO  nextflow.Session - [b6/a6dd6b] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00018)
+Apr-27 20:12:53.348 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 36; name: run_method (schraivogel_tap+seurat_de+non-targeting_00017); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/d4/a874d66003f007c7d65146f77c30a9]
+Apr-27 20:12:53.351 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:53.351 [Task submitter] INFO  nextflow.Session - [78/48f2e6] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00018)
+Apr-27 20:12:54.057 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 42; name: run_method (schraivogel_tap+seurat_de+non-targeting_00020); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/79/b9e352a93d5d50fff6f8096ee50e7f]
+Apr-27 20:12:54.060 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:12:54.060 [Task submitter] INFO  nextflow.Session - [85/d12ac1] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00019)
+Apr-27 20:13:01.108 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 27; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00012); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/f5/ee390ca06f731751c41c35074a9365]
+Apr-27 20:13:01.111 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:01.111 [Task submitter] INFO  nextflow.Session - [27/b577b4] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00019)
+Apr-27 20:13:01.204 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 29; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00013); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/6f/ae67d1a8ff167e55092d7c67da78c1]
+Apr-27 20:13:01.207 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:01.207 [Task submitter] INFO  nextflow.Session - [c0/15cc38] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00020)
+Apr-27 20:13:02.003 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 38; name: run_method (schraivogel_tap+seurat_de+non-targeting_00018); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/b6/a6dd6b8416c4b8566656da9f6c80b1]
+Apr-27 20:13:02.005 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:02.006 [Task submitter] INFO  nextflow.Session - [cf/54d8da] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00021)
+Apr-27 20:13:02.997 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 40; name: run_method (schraivogel_tap+seurat_de+non-targeting_00019); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/85/d12ac1c163ce08ecf424b9aa4f1a64]
+Apr-27 20:13:03.001 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:03.001 [Task submitter] INFO  nextflow.Session - [e4/ba2ef2] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00021)
+Apr-27 20:13:10.584 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 44; name: run_method (schraivogel_tap+seurat_de+non-targeting_00021); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/cf/54d8daec7a48290b7af6d0c1cfdbbe]
+Apr-27 20:13:10.586 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:10.587 [Task submitter] INFO  nextflow.Session - [05/651717] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00022)
+Apr-27 20:13:12.035 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 31; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00014); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/ca/7a921f35f8907451a86bd1927d5b31]
+Apr-27 20:13:12.038 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:12.039 [Task submitter] INFO  nextflow.Session - [50/5f618d] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00022)
+Apr-27 20:13:19.633 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 46; name: run_method (schraivogel_tap+seurat_de+non-targeting_00022); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/05/65171717957feefc203cdebe34fe5a]
+Apr-27 20:13:19.636 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:19.636 [Task submitter] INFO  nextflow.Session - [53/21d3f7] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00023)
+Apr-27 20:13:22.411 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 35; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00016); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/dc/eef95b72519edfa8988e53e193ac3f]
+Apr-27 20:13:22.414 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:22.414 [Task submitter] INFO  nextflow.Session - [b6/439da5] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00023)
+Apr-27 20:13:28.809 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 37; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00017); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/6d/c4dd470d7ad892be4986bc976c9532]
+Apr-27 20:13:28.812 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:28.812 [Task submitter] INFO  nextflow.Session - [15/c18d6b] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00024)
+Apr-27 20:13:28.830 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 48; name: run_method (schraivogel_tap+seurat_de+non-targeting_00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/53/21d3f710f8a602f245f9b4186b2360]
+Apr-27 20:13:28.833 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:28.833 [Task submitter] INFO  nextflow.Session - [6b/ff6ffe] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00024)
+Apr-27 20:13:30.484 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 39; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00018); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/78/48f2e6a478384b352e101178e9249d]
+Apr-27 20:13:30.486 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:30.487 [Task submitter] INFO  nextflow.Session - [e3/3588b4] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00027)
+Apr-27 20:13:38.282 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 50; name: run_method (schraivogel_tap+seurat_de+non-targeting_00024); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/15/c18d6b794bf9821bc16025a5519478]
+Apr-27 20:13:38.284 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:38.284 [Task submitter] INFO  nextflow.Session - [e2/2b56f7] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00025)
+Apr-27 20:13:40.150 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 43; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00020); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/c0/15cc3847307093aec11bc318631933]
+Apr-27 20:13:40.153 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:40.153 [Task submitter] INFO  nextflow.Session - [b1/02e1e1] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00025)
+Apr-27 20:13:40.327 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 41; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00019); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/27/b577b4043b03484bd1dd82450d3b56]
+Apr-27 20:13:40.330 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:40.330 [Task submitter] INFO  nextflow.Session - [2e/60ea2f] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00026)
+Apr-27 20:13:42.976 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 45; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00021); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/e4/ba2ef24adb4f306f39ffa171c3390d]
+Apr-27 20:13:42.979 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:42.979 [Task submitter] INFO  nextflow.Session - [82/64e906] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00029)
+Apr-27 20:13:50.988 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 52; name: run_method (schraivogel_tap+seurat_de+non-targeting_00025); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/e2/2b56f7444eac33baf55cfba2804f3b]
+Apr-27 20:13:50.991 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:50.991 [Task submitter] INFO  nextflow.Session - [52/c447ef] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00028)
+Apr-27 20:13:54.420 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 54; name: run_method (schraivogel_tap+seurat_de+non-targeting_00026); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/2e/60ea2fb050b7decc9b0f8d72cfc707]
+Apr-27 20:13:54.423 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:54.423 [Task submitter] INFO  nextflow.Session - [27/f4d5f3] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00028)
+Apr-27 20:13:54.722 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 47; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00022); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/50/5f618d1dbb04a4c26f8b16cf658e40]
+Apr-27 20:13:54.725 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:54.725 [Task submitter] INFO  nextflow.Session - [b1/73ccf2] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00029)
+Apr-27 20:13:57.144 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 59; name: run_method (schraivogel_tap+seurat_de+non-targeting_00029); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/82/64e906192c250f60c2c902dc2fd8ba]
+Apr-27 20:13:57.146 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:13:57.147 [Task submitter] INFO  nextflow.Session - [e4/43eace] Submitted process > run_method (schraivogel_tap+schraivogel_method+non-targeting_00026)
+Apr-27 20:14:03.314 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 57; name: run_method (schraivogel_tap+seurat_de+non-targeting_00028); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/52/c447ef6d2f23c02410780e43c8d645]
+Apr-27 20:14:03.317 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:14:03.317 [Task submitter] INFO  nextflow.Session - [05/01066a] Submitted process > run_method (schraivogel_tap+seurat_de+non-targeting_00027)
+Apr-27 20:14:09.814 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 49; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/b6/439da5c701be112c17bf387882722e]
+Apr-27 20:14:12.936 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 61; name: run_method (schraivogel_tap+seurat_de+non-targeting_00027); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/05/01066a57e10635fa61cb66b142ee8f]
+Apr-27 20:14:16.080 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 51; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00024); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/6b/ff6ffeb45bbabf3ce8ec6c13ac5def]
+Apr-27 20:14:18.569 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 56; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00027); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/e3/3588b4fad85e4210d3157cf41f1755]
+Apr-27 20:14:24.563 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 53; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00025); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/b1/02e1e17a366044592ac96ccd27cf08]
+Apr-27 20:14:29.981 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 58; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00028); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/27/f4d5f3c0e66d1605abef7069473a38]
+Apr-27 20:14:30.774 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 60; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00029); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/b1/73ccf287a364c9941cbe64ee90e25f]
+Apr-27 20:14:31.118 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 55; name: run_method (schraivogel_tap+schraivogel_method+non-targeting_00026); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/e4/43eacedcfd97a9dfea094ecdfda329]
+Apr-27 20:14:31.145 [Actor Thread 4] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/undercover-gRNA-pipeline/bin/collect_results.R
+Apr-27 20:14:31.151 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-27 20:14:31.152 [Task submitter] INFO  nextflow.Session - [5a/89d45d] Submitted process > combine_results
+Apr-27 20:14:32.574 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 62; name: combine_results; status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/5a/89d45dee4141cdadc6a0675fb6d574]
+Apr-27 20:14:32.590 [Task monitor] DEBUG n.util.BlockingThreadExecutorFactory - Thread pool name=FileTransfer; maxThreads=24; maxQueueSize=72; keepAlive=1m
+Apr-27 20:14:32.598 [main] DEBUG nextflow.Session - Session await > all process finished
+Apr-27 20:14:32.599 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Apr-27 20:14:32.606 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=62; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=25m 48s; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=8; peakCpus=8; peakMemory=0; ]
+Apr-27 20:14:32.716 [main] DEBUG nextflow.CacheDB - Closing CacheDB done
+Apr-27 20:14:32.726 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
