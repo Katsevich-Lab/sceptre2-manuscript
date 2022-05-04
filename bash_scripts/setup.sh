@@ -18,7 +18,10 @@ mkdir -p $sceptre2_dir"data/simulated" \
  $sceptre2_dir"data/schraivogel/tap" \
  $sceptre2_dir"data/schraivogel/perturb" \
  $sceptre2_dir"data/papalexi/gene" \
- $sceptre2_dir"data/papalexi/protein" \
  $sceptre2_dir"data/simulated/gene" \
  $sceptre2_dir"data/simulated/gRNA" \
+ $sceptre2_dir"data/liscovitch/experiment_1/chip_count" \
+ $sceptre2_dir"data/liscovitch/experiment_1/gRNA" \
+ $sceptre2_dir"data/liscovitch/experiment_2/chip_count" \
+ $sceptre2_dir"data/liscovitch/experiment_2/gRNA" \
  $sceptre2_dir"results"

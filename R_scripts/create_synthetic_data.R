@@ -1,5 +1,5 @@
-set.seed(4)
 library(ondisc)
+set.seed(4)
 
 # Randomly generate data: First, randomly sample gene-specific mean and size parameters from gamma distribution.
 # Then, for each gene, randomly sample from an NB distribution.
