@@ -1,5 +1,5 @@
 calibration_result <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
-                             "undercover_gRNA_check_results.rds") |> readRDS() |>
+                             "results/undercover_gRNA_check_results.rds") |> readRDS() |>
   dplyr::mutate(dataset = factor(x = dataset, levels = c("schraivogel_tap", "papalexi_gene", "schraivogel_perturb"), labels = c("Schraivogel TAP", "Papalexi Gene", "Schraivogel Perturb")),
                 method = factor(x = method, levels = c("schraivogel_method", "seurat_de"),  labels = c("Schraivogel Method", "Seurat DE")))
 code_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/")
