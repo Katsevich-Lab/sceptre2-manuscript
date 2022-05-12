@@ -1,58 +1,45 @@
 # This script performs a lightweight feature QC on all datasets under consideration.
 
 # set directories
-sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
-schraivogel_dir <- .get_config_path("LOCAL_SCHRAIVOGEL_2020_DATA_DIR")
-papalexi_dir <- .get_config_path("LOCAL_PAPALEXI_2021_DATA_DIR")
-liscovitch_dir <- .get_config_path("LOCAL_LISCOVITCH_2021_DATA_DIR")
+sceptre2_data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
+papers <- list.files(sceptre2_data_dir)
 
 # load packages
 library(ondisc)
 
-# set gene expression threshold
-EXPRESSION_THRESH <- 0.005
-
-# Load the datasets
-# i. Papalexi gene
-papalexi_gene <- read_odm(odm_fp = paste0(papalexi_dir, "processed/gene/expression_matrix.odm"),
-                          metadata_fp = paste0(papalexi_dir, "processed/gene/metadata.rds"))
-
-# ii. Schraivogel TAP
-schraivogel_tap <- read_odm(odm_fp = paste0(schraivogel_dir, "processed/ground_truth_tapseq/gene/expression_matrix.odm"),
-                            metadata_fp = paste0(schraivogel_dir, "processed/ground_truth_tapseq/gene/metadata.rds"))
-
-# iii. Schraivogel Perturb
-schraivogel_perturb <- read_odm(odm_fp = paste0(schraivogel_dir, "/processed/ground_truth_perturbseq/gene/expression_matrix.odm"),
-                                metadata_fp = paste0(schraivogel_dir, "/processed/ground_truth_perturbseq/gene/metadata.rds"))
-
-# do feature selection Papalexi gene, schraivogel tap, and schraivogel perturb; keep those genes with expression >= 0.005.
-filter_features <- function(odm) {
-  odm[get_highly_expressed_features(odm, frac_expressed = 0.005),]
+# loop over papers
+for (paper in papers) {
+  # loop over datasets
+  paper_dir <- paste0(sceptre2_data_dir, paper, "/")
+  datasets <- list.files(paper_dir)
+  for (dataset in datasets) {
+    # loop over modalities
+    dataset_dir <- paste0(paper_dir, dataset, "/")
+    modalities <- list.files(dataset_dir)
+    for (modality in modalities) {
+      print(paste0("paper: ", paper, ", dataset: ", dataset, ", modality: ", modality))
+      modality_dir <- paste0(dataset_dir, modality, "/")
+      metadata_fp <- paste0(modality_dir, "metadata_cell_qc.rds")
+      if (!file.exists(metadata_fp)) metadata_fp <- paste0(modality_dir, "metadata_orig.rds")
+      to_save_metadata_fp <- paste0(modality_dir, "metadata_qc.rds")
+      # if the modality is NOT gRNA... (if it is, then skip; no feature QC on the gRNA matrix for now)
+      if (modality != "grna") {
+        odm_fp <- paste0(modality_dir, "matrix.odm")
+        # read the odm
+        odm <- read_odm(odm_fp = odm_fp, metadata_fp = metadata_fp)
+        highly_exp_feats <- get_highly_expressed_features(odm, frac_expressed = 0.005)
+        if (nrow(odm) == length(highly_exp_feats)) {
+          # symbolic link to the current metadata_fp if no subset necessary
+          system(paste("ln -s", metadata_fp, to_save_metadata_fp))
+        } else {
+          # create a new metadata_fp if subset necessary
+          odm_sub <- odm[highly_exp_feats,]
+          save_odm(odm = odm_sub, metadata_fp = to_save_metadata_fp)
+        }
+      } else {
+        # the modality IS gRNA; simply create a symbolic link (no qc)
+        system(paste("ln -s", metadata_fp, to_save_metadata_fp))
+      }
+    }
+  }
 }
-papalexi_gene_filtered <- filter_features(papalexi_gene)
-schraivogel_tap_filtered <- filter_features(schraivogel_tap)
-schraivogel_perturb_filtered <- filter_features(schraivogel_perturb)
-
-# save subsetted ODMs
-# papalexi gene
-save_odm(odm = papalexi_gene_filtered,
-         metadata_fp = paste0(sceptre2_dir, "data/papalexi/gene/filtered_metadata.rds"))
-# schraivogel tap
-save_odm(odm = schraivogel_tap_filtered,
-         metadata_fp = paste0(sceptre2_dir, "data/schraivogel/tap/filtered_metadata.rds"))
-# schraivogel perturb
-save_odm(odm = schraivogel_perturb_filtered,
-         metadata_fp = paste0(sceptre2_dir, "data/schraivogel/perturb/filtered_metadata.rds"))
-# liscovitch exp 1, atac modality
-save_odm(odm = get_modality(exp_1_multimodal_qc, "atac"),
-         metadata_fp = paste0(sceptre2_dir, "data/liscovitch/experiment_1/chip_count/filtered_metadata.rds"))
-# liscovitch exp 1, gRNA modality
-save_odm(odm = get_modality(exp_1_multimodal_qc, "gRNA"),
-         metadata_fp = paste0(sceptre2_dir, "data/liscovitch/experiment_1/gRNA/filtered_metadata.rds"))
-# liscovitch exp 2, atac modality
-save_odm(odm = get_modality(exp_2_multimodal_qc, "atac"),
-         metadata_fp = paste0(sceptre2_dir, "data/liscovitch/experiment_2/chip_count/filtered_metadata.rds"))
-# liscovitch exp 2, gRNA modality
-save_odm(odm = get_modality(exp_2_multimodal_qc, "gRNA"),
-         metadata_fp = paste0(sceptre2_dir, "data/liscovitch/experiment_2/gRNA/filtered_metadata.rds"))
-

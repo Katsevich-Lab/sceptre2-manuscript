@@ -54,6 +54,7 @@ source ~/.research_config
 sceptre2_dir=$LOCAL_SCEPTRE2_DATA_DIR
 sceptre2_data_dir=$sceptre2_dir"data/"
 
+rm -rf $sceptre2_data_dir
 mkdir -p $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene" \
  $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna" \
  $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gene" \
@@ -77,7 +78,5 @@ mkdir -p $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene" \
  $sceptre2_data_dir"frangieh/control/grna" \
  $sceptre2_data_dir"frangieh/ifn_gamma/gene" \
  $sceptre2_data_dir"frangieh/ifn_gamma/protein" \
- $sceptre2_data_dir"frangieh/ifn_gamma/grna"
-
-# mkdir -p $sceptre2_dir"data/simulated" \
-# $sceptre2_dir"results"
+ $sceptre2_data_dir"frangieh/ifn_gamma/grna" \
+ $sceptre2_dir"results"
