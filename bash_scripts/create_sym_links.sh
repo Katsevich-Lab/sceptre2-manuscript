@@ -5,6 +5,7 @@ sceptre2_data_dir=$LOCAL_SCEPTRE2_DATA_DIR"data/"
 papalexi_proc_dir=$LOCAL_PAPALEXI_2021_DATA_DIR"processed/"
 liscovitch_proc_dir=$LOCAL_LISCOVITCH_2021_DATA_DIR"processed/"
 schraivogel_proc_dir=$LOCAL_SCHRAIVOGEL_2020_DATA_DIR"processed/"
+frangieh_proc_dir=$LOCAL_FRANGIEH_2021_DATA_DIR"processed/perturb-cite-seq/"
 
 # Papalexi data
 # gene
@@ -58,3 +59,27 @@ ln -s $schraivogel_proc_dir"ground_truth_tapseq/gRNA/raw_ungrouped.odm" $sceptre
 ln -s $schraivogel_proc_dir"ground_truth_tapseq/gRNA/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gRNA/metadata_orig.rds"
 
 # Franghei
+# copy the gene odms
+ln -s $frangieh_proc_dir"gene/gene_expression_matrix.odm" $sceptre2_data_dir"frangieh/co_culture/gene/matrix.odm"
+ln -s $frangieh_proc_dir"gene/gene_expression_matrix.odm" $sceptre2_data_dir"frangieh/control/gene/matrix.odm"
+ln -s $frangieh_proc_dir"gene/gene_expression_matrix.odm" $sceptre2_data_dir"frangieh/ifn_gamma/gene/matrix.odm"
+# copy the grna odms
+ln -s $frangieh_proc_dir"gRNA/gRNA_assignments_ungrouped.odm" $sceptre2_data_dir"frangieh/co_culture/grna/matrix.odm"
+ln -s $frangieh_proc_dir"gRNA/gRNA_assignments_ungrouped.odm" $sceptre2_data_dir"frangieh/control/grna/matrix.odm"
+ln -s $frangieh_proc_dir"gRNA/gRNA_assignments_ungrouped.odm" $sceptre2_data_dir"frangieh/ifn_gamma/grna/matrix.odm"
+# copy the protein odms
+ln -s $frangieh_proc_dir"protein/protein_expression_matrix.odm" $sceptre2_data_dir"frangieh/co_culture/protein/matrix.odm"
+ln -s $frangieh_proc_dir"protein/protein_expression_matrix.odm" $sceptre2_data_dir"frangieh/control/protein/matrix.odm"
+ln -s $frangieh_proc_dir"protein/protein_expression_matrix.odm" $sceptre2_data_dir"frangieh/ifn_gamma/protein/matrix.odm"
+# copy the gene metadata
+ln -s $frangieh_proc_dir"gene/gene_expression_metadata_co-culture.rds" $sceptre2_data_dir"frangieh/co_culture/gene/metadata_orig.rds"
+ln -s $frangieh_proc_dir"gene/gene_expression_metadata_control.rds" $sceptre2_data_dir"frangieh/control/gene/metadata_orig.rds"
+ln -s $frangieh_proc_dir"gene/gene_expression_metadata_ifn-gamma.rds" $sceptre2_data_dir"frangieh/ifn_gamma/gene/metadata_orig.rds"
+# copy the grna metadata
+ln -s $frangieh_proc_dir"gRNA/gRNA_assignments_ungrouped_metadata_co-culture.rds" $sceptre2_data_dir"frangieh/co_culture/grna/metadata_orig.rds"
+ln -s $frangieh_proc_dir"gRNA/gRNA_assignments_ungrouped_metadata_control.rds" $sceptre2_data_dir"frangieh/control/grna/metadata_orig.rds"
+ln -s $frangieh_proc_dir"gRNA/gRNA_assignments_ungrouped_metadata_ifn-gamma.rds" $sceptre2_data_dir"frangieh/ifn_gamma/grna/metadata_orig.rds"
+# copy the protein metadata
+ln -s $frangieh_proc_dir"protein/protein_expression_metadata_co-culture.rds" $sceptre2_data_dir"frangieh/co_culture/protein/metadata_orig.rds"
+ln -s $frangieh_proc_dir"protein/protein_expression_metadata_control.rds" $sceptre2_data_dir"frangieh/control/protein/metadata_orig.rds"
+ln -s $frangieh_proc_dir"protein/protein_expression_metadata_ifn-gamma.rds" $sceptre2_data_dir"frangieh/ifn_gamma/protein/metadata_orig.rds"
