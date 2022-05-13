@@ -1,7 +1,7 @@
-// FIRST, define the dataset-method pairs to analyze in a map
-// data_method_pairs = [schraivogel_tap: ["schraivogel_method", "seurat_de"],
-//                     schraivogel_perturb: ["schraivogel_method", "seurat_de"],
-//                     papalexi_gene: ["schraivogel_method", "seurat_de"]]
+// DOCS: We identify a given dataset-modality using the following nomenclature
+// paper-dataset-modality. For example, 
+
+
 data_method_pairs = [schraivogel_tap: ["seurat_de", "schraivogel_method"]]
 
 
