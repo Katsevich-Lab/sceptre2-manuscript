@@ -40,13 +40,14 @@ frac_cells_expressed <- rowMeans(gene_expression_mat >= 1)
 gene_expression_mat <- gene_expression_mat[frac_cells_expressed > 0.005,]
 
 # initialize ODM objects
-to_save_fp_gene <- paste0(sceptre2_dir, "data/simulated/gene/expressions.odm")
+to_save_fp_gene <- paste0(sceptre2_dir, "data/simulated/experiment_1/gene/matrix.odm")
 create_ondisc_matrix_from_R_matrix(r_matrix = gene_expression_mat,
                                    barcodes = colnames(gene_expression_mat),
                                    features_df = data.frame(row.names(gene_expression_mat)),
-                                   odm_fp = to_save_fp_gene)
+                                   odm_fp = to_save_fp_gene,
+                                   metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/gene/metadata_qc.rds"))
 
-to_save_fp_gRNA <- paste0(sceptre2_dir, "data/simulated/gRNA/expressions.odm")
+to_save_fp_gRNA <- paste0(sceptre2_dir, "data/simulated/experiment_1/grna/matrix.odm")
 gRNA_odm <- create_ondisc_matrix_from_R_matrix(r_matrix = gRNA_expression_mat,
                                                barcodes = colnames(gRNA_expression_mat),
                                                features_df = data.frame(rownames(gRNA_expression_mat)),
@@ -55,4 +56,4 @@ gRNA_odm <- create_ondisc_matrix_from_R_matrix(r_matrix = gRNA_expression_mat,
 # append target and target type to the gRNA odm
 gRNA_odm <- gRNA_odm |>
   mutate_feature_covariates(target_type = "non-targeting", target = "non-targeting")
-save_odm(odm = gRNA_odm, metadata_fp = paste0(sceptre2_dir, "data/simulated/gRNA/metadata.rds"))
+save_odm(odm = gRNA_odm, metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna/metadata_qc.rds"))

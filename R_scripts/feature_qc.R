@@ -3,6 +3,8 @@
 # set directories
 sceptre2_data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
 papers <- list.files(sceptre2_data_dir)
+# remove simulated paper
+papers <- papers[papers != "simulated"]
 
 # load packages
 library(ondisc)
