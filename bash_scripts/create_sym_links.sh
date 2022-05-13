@@ -23,39 +23,39 @@ ln -s $papalexi_proc_dir"protein/metadata.rds" $sceptre2_data_dir"papalexi/eccit
 ln -s $liscovitch_proc_dir"experiment_small/chromatin/chip_counts.odm" $sceptre2_data_dir"liscovitch/experiment_small/chromatin/matrix.odm"
 ln -s $liscovitch_proc_dir"experiment_small/chromatin/metadata.rds" $sceptre2_data_dir"liscovitch/experiment_small/chromatin/metadata_orig.rds"
 # experiment_small gRNA
-ln -s $liscovitch_proc_dir"experiment_small/gRNA/gRNA_counts.odm" $sceptre2_data_dir"liscovitch/experiment_small/gRNA/matrix.odm"
-ln -s $liscovitch_proc_dir"experiment_small/gRNA/metadata.rds" $sceptre2_data_dir"liscovitch/experiment_small/gRNA/metadata_orig.rds"
+ln -s $liscovitch_proc_dir"experiment_small/gRNA/gRNA_counts.odm" $sceptre2_data_dir"liscovitch/experiment_small/grna/matrix.odm"
+ln -s $liscovitch_proc_dir"experiment_small/gRNA/metadata.rds" $sceptre2_data_dir"liscovitch/experiment_small/grna/metadata_orig.rds"
 # experiment_big chromatin
 ln -s $liscovitch_proc_dir"experiment_big/chromatin/chip_counts.odm" $sceptre2_data_dir"liscovitch/experiment_big/chromatin/matrix.odm"
 ln -s $liscovitch_proc_dir"experiment_big/chromatin/metadata.rds" $sceptre2_data_dir"liscovitch/experiment_big/chromatin/metadata_orig.rds"
 # experiment_big gRNA
-ln -s $liscovitch_proc_dir"experiment_big/gRNA/gRNA_counts.odm" $sceptre2_data_dir"liscovitch/experiment_big/gRNA/matrix.odm"
-ln -s $liscovitch_proc_dir"experiment_big/gRNA/metadata.rds" $sceptre2_data_dir"liscovitch/experiment_big/gRNA/metadata_orig.rds"
+ln -s $liscovitch_proc_dir"experiment_big/gRNA/gRNA_counts.odm" $sceptre2_data_dir"liscovitch/experiment_big/grna/matrix.odm"
+ln -s $liscovitch_proc_dir"experiment_big/gRNA/metadata.rds" $sceptre2_data_dir"liscovitch/experiment_big/grna/metadata_orig.rds"
 
 # Schraivogel data
 # enhancer_screen_chr11 gene
 ln -s $schraivogel_proc_dir"enhancer_screen_chr11/gene/expression_matrix.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/gene/matrix.odm"
 ln -s $schraivogel_proc_dir"enhancer_screen_chr11/gene/metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/gene/metadata_orig.rds"
 # enhancer_screen_chr11 gRNA
-ln -s $schraivogel_proc_dir"enhancer_screen_chr11/gRNA/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/gRNA/matrix.odm"
+ln -s $schraivogel_proc_dir"enhancer_screen_chr11/gRNA/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/grna/matrix.odm"
 ln -s $schraivogel_proc_dir"enhancer_screen_chr11/gRNA/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/gRNA/metadata_orig.rds"
 # enhancer_screen_chr8 gene
 ln -s $schraivogel_proc_dir"enhancer_screen_chr8/gene/expression_matrix.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/gene/matrix.odm"
 ln -s $schraivogel_proc_dir"enhancer_screen_chr8/gene/metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/gene/metadata_orig.rds"
 # enhancer_screen_chr8 gRNA
-ln -s $schraivogel_proc_dir"enhancer_screen_chr8/gRNA/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/gRNA/matrix.odm"
+ln -s $schraivogel_proc_dir"enhancer_screen_chr8/gRNA/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/grna/matrix.odm"
 ln -s $schraivogel_proc_dir"enhancer_screen_chr8/gRNA/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/gRNA/metadata_orig.rds"
 # ground_truth_perturbseq gene
 ln -s $schraivogel_proc_dir"ground_truth_perturbseq/gene/expression_matrix.odm" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gene/matrix.odm"
 ln -s $schraivogel_proc_dir"ground_truth_perturbseq/gene/metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gene/metadata_orig.rds"
 # ground_truth_perturbseq gRNA
-ln -s $schraivogel_proc_dir"ground_truth_perturbseq/gRNA/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gRNA/matrix.odm"
+ln -s $schraivogel_proc_dir"ground_truth_perturbseq/gRNA/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/grna/matrix.odm"
 ln -s $schraivogel_proc_dir"ground_truth_perturbseq/gRNA/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gRNA/metadata_orig.rds"
 # ground_truth_tapseq gene
 ln -s $schraivogel_proc_dir"ground_truth_tapseq/gene/expression_matrix.odm" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene/matrix.odm"
 ln -s $schraivogel_proc_dir"ground_truth_tapseq/gene/metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene/metadata_orig.rds"
 # ground_truth_tapseq gRNA
-ln -s $schraivogel_proc_dir"ground_truth_tapseq/gRNA/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gRNA/matrix.odm"
+ln -s $schraivogel_proc_dir"ground_truth_tapseq/gRNA/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna/matrix.odm"
 ln -s $schraivogel_proc_dir"ground_truth_tapseq/gRNA/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gRNA/metadata_orig.rds"
 
 # Franghei

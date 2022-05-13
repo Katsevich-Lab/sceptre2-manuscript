@@ -1,5 +1,5 @@
 // DOCS: We identify a given dataset-modality using the following nomenclature
-// paper-dataset-modality. For example, 
+// paper-dataset-modality. For example,
 
 
 data_method_pairs = [schraivogel_tap: ["seurat_de", "schraivogel_method"]]
