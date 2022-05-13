@@ -1,6 +1,6 @@
 SCEPTRE 2 manuscript reproduction code
 ================
-Tim Barry
+Tim Barry, Gene Katsevich
 
 Code to reproduce all analyses reported in the SCEPTRE 2 manuscript.
 
