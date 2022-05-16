@@ -2,7 +2,9 @@
 // paper-dataset-modality. For example,
 
 
-data_method_pairs = [schraivogel_tap: ["seurat_de", "schraivogel_method"]]
+// data_method_pairs = [schraivogel_tap: ["seurat_de", "schraivogel_method"]]
+
+data_method_pairs = [schraivogel-enhancer_screen_chr11-gene: ["seurat_de", "schraivogel_method"]]
 
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
