@@ -1,4 +1,4 @@
-export NXF_OPTS="-Xms500M -Xmx3G" # limit NF to 3 GB of memory
+export NXF_OPTS="-Xms500M -Xmx3G" # limit NF driver to 3 GB of memory
 source ~/.research_config
 
 curr_time=$(date '+%m%d%H%M')
