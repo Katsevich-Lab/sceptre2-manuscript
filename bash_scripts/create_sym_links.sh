@@ -38,25 +38,25 @@ ln -s $schraivogel_proc_dir"enhancer_screen_chr11/gene/expression_matrix.odm" $s
 ln -s $schraivogel_proc_dir"enhancer_screen_chr11/gene/metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/gene/metadata_orig.rds"
 # enhancer_screen_chr11 gRNA
 ln -s $schraivogel_proc_dir"enhancer_screen_chr11/grna/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/grna/matrix.odm"
-ln -s $schraivogel_proc_dir"enhancer_screen_chr11/grna/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/gRNA/metadata_orig.rds"
+ln -s $schraivogel_proc_dir"enhancer_screen_chr11/grna/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/grna/metadata_orig.rds"
 # enhancer_screen_chr8 gene
 ln -s $schraivogel_proc_dir"enhancer_screen_chr8/gene/expression_matrix.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/gene/matrix.odm"
 ln -s $schraivogel_proc_dir"enhancer_screen_chr8/gene/metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/gene/metadata_orig.rds"
 # enhancer_screen_chr8 gRNA
 ln -s $schraivogel_proc_dir"enhancer_screen_chr8/grna/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/grna/matrix.odm"
-ln -s $schraivogel_proc_dir"enhancer_screen_chr8/grna/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/gRNA/metadata_orig.rds"
+ln -s $schraivogel_proc_dir"enhancer_screen_chr8/grna/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/grna/metadata_orig.rds"
 # ground_truth_perturbseq gene
 ln -s $schraivogel_proc_dir"ground_truth_perturbseq/gene/expression_matrix.odm" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gene/matrix.odm"
 ln -s $schraivogel_proc_dir"ground_truth_perturbseq/gene/metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gene/metadata_orig.rds"
 # ground_truth_perturbseq gRNA
 ln -s $schraivogel_proc_dir"ground_truth_perturbseq/grna/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/grna/matrix.odm"
-ln -s $schraivogel_proc_dir"ground_truth_perturbseq/grna/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gRNA/metadata_orig.rds"
+ln -s $schraivogel_proc_dir"ground_truth_perturbseq/grna/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/grna/metadata_orig.rds"
 # ground_truth_tapseq gene
 ln -s $schraivogel_proc_dir"ground_truth_tapseq/gene/expression_matrix.odm" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene/matrix.odm"
 ln -s $schraivogel_proc_dir"ground_truth_tapseq/gene/metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene/metadata_orig.rds"
 # ground_truth_tapseq gRNA
 ln -s $schraivogel_proc_dir"ground_truth_tapseq/grna/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna/matrix.odm"
-ln -s $schraivogel_proc_dir"ground_truth_tapseq/grna/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gRNA/metadata_orig.rds"
+ln -s $schraivogel_proc_dir"ground_truth_tapseq/grna/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna/metadata_orig.rds"
 
 # Franghei
 # copy the gene odms
