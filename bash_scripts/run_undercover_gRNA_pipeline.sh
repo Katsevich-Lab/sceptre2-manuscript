@@ -7,4 +7,6 @@ nextflow run undercover-gRNA-pipeline -r main \
  --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/data_method_pair_file.groovy" \
  --machine_name $MACHINE_NAME \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
- --time $curr_time
+ --time $curr_time \
+ --one_neg_control "TRUE" \
+ --max_retries 4
