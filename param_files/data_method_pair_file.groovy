@@ -13,21 +13,6 @@ data_method_pairs = ["schraivogel/ground_truth_tapseq/gene": ["schraivogel_metho
                      "liscovitch/experiment_big/chromatin": ["schraivogel_method", "seurat_de"],
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de"]]
 
-/*
-data_method_pairs = ["schraivogel/ground_truth_tapseq/gene": ["dummy_method_1", "dummy_method_2"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["dummy_method_1", "dummy_method_2"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["dummy_method_1", "dummy_method_2"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["dummy_method_1", "dummy_method_2"],
-                     "papalexi/eccite_screen/gene": ["dummy_method_1", "dummy_method_2"],
-                     "papalexi/eccite_screen/protein": ["dummy_method_1", "dummy_method_2"],
-                     "frangieh/co_culture/gene": ["dummy_method_1", "dummy_method_2"],
-                     "frangieh/control/gene": ["dummy_method_1", "dummy_method_2"],
-                     "frangieh/ifn_gamma/gene": ["dummy_method_1", "dummy_method_2"],
-                     "liscovitch/experiment_small/chromatin": ["dummy_method_1", "dummy_method_2"],
-                     "liscovitch/experiment_big/chromatin": ["dummy_method_1", "dummy_method_2"],
-                     "simulated/experiment_1/gene": ["dummy_method_1", "dummy_method_2"]]
-*/
-
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [[ 8,  8, 1, 1],
                           [45, 20, 1, 1],
