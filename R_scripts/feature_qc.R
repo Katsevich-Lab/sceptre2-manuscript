@@ -29,15 +29,17 @@ for (paper in papers) {
         odm_fp <- paste0(modality_dir, "matrix.odm")
         # read the odm
         odm <- read_odm(odm_fp = odm_fp, metadata_fp = metadata_fp)
-        highly_exp_feats <- get_highly_expressed_features(odm, frac_expressed = 0.005)
-        if (nrow(odm) == length(highly_exp_feats)) {
-          # symbolic link to the current metadata_fp if no subset necessary
-          system(paste("ln -s", metadata_fp, to_save_metadata_fp))
-        } else {
-          # create a new metadata_fp if subset necessary
-          odm_sub <- odm[highly_exp_feats,]
-          save_odm(odm = odm_sub, metadata_fp = to_save_metadata_fp)
+        # check that the features have no underscores; if so, replace with dashes (both feature IDs and row names of feature covariate matrix)
+        if (any(grepl(pattern = "_", x = get_feature_ids(odm), fixed = TRUE))) {
+          odm@ondisc_matrix@feature_ids <- gsub(pattern = "_", replacement = "-",
+                                                x = odm@ondisc_matrix@feature_ids, fixed = TRUE)
+          row.names(odm@feature_covariates) <- gsub(pattern = "_", replacement = "-",
+                                                    x = row.names(odm@feature_covariates), fixed = TRUE)
         }
+        highly_exp_feats <- get_highly_expressed_features(odm, frac_expressed = 0.005)
+        # create a new metadata_fp if subset necessary
+        odm_sub <- odm[highly_exp_feats,]
+        save_odm(odm = odm_sub, metadata_fp = to_save_metadata_fp)
       } else {
         # the modality IS gRNA; simply create a symbolic link (no qc)
         system(paste("ln -s", metadata_fp, to_save_metadata_fp))

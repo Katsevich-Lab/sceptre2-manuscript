@@ -12,9 +12,9 @@ N_NTC_GRNAS <- 30
 N_CELLS <- 20000
 
 # generate cell names, gene names, and gRNA names
-cell_barcodes <- paste0("cell_", seq(1, N_CELLS))
-gene_ids <- paste0("gene_", seq(1, N_GENES))
-gRNA_ids <- c(paste0("NTC_", seq(1, N_NTC_GRNAS)), paste0("GENE_TARGET_", seq(1, N_GRNAS -  N_NTC_GRNAS)))
+cell_barcodes <- paste0("cell-", seq(1, N_CELLS))
+gene_ids <- paste0("gene-", seq(1, N_GENES))
+gRNA_ids <- c(paste0("NTC-", seq(1, N_NTC_GRNAS)), paste0("GENE-TARGET-", seq(1, N_GRNAS -  N_NTC_GRNAS)))
 
 # create gene expression matrix
 mus <- rgamma(n = N_GENES, shape = 1, rate = 2)
@@ -57,6 +57,6 @@ gRNA_odm <- create_ondisc_matrix_from_R_matrix(r_matrix = gRNA_expression_mat,
 # append target and target type to the gRNA odm
 gRNA_odm <- gRNA_odm |>
   mutate_feature_covariates(target_type = c(rep("non-targeting", N_NTC_GRNAS), rep("gene", N_GRNAS - N_NTC_GRNAS)),
-                            target = c(rep("non-targeting", N_NTC_GRNAS), rep("gene_1", N_GRNAS - N_NTC_GRNAS)))
+                            target = c(rep("non-targeting", N_NTC_GRNAS), rep("gene-1", N_GRNAS - N_NTC_GRNAS)))
 
 save_odm(odm = gRNA_odm, metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna/metadata_qc.rds"))
