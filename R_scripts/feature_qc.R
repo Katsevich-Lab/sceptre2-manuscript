@@ -7,6 +7,7 @@ papers <- list.files(sceptre2_data_dir)
 papers <- papers[papers != "simulated"]
 # set params
 N_CELLS_PER_GRNA_THRESH <- 10
+FRAC_EXPRESSED_TRHESH <- 0.005
 
 # load packages
 library(ondisc)
@@ -28,6 +29,7 @@ for (paper in papers) {
       to_save_metadata_fp <- paste0(modality_dir, "metadata_qc.rds")
       odm_fp <- paste0(modality_dir, "matrix.odm")
       odm <- read_odm(odm_fp = odm_fp, metadata_fp = metadata_fp)
+      odm_m <- lowmoi::load_whole_odm(odm)
       # if the modality is NOT gRNA...
       if (modality != "grna") {
         # check that the features have no underscores; if so, replace with dashes (both feature IDs and row names of feature covariate matrix)
@@ -37,7 +39,8 @@ for (paper in papers) {
           row.names(odm@feature_covariates) <- gsub(pattern = "_", replacement = "-",
                                                     x = row.names(odm@feature_covariates), fixed = TRUE)
         }
-        highly_exp_feats <- get_highly_expressed_features(odm, frac_expressed = 0.005)
+        p_expressed <- Matrix::rowSums(odm_m >= 1)/ncol(odm_m)
+        highly_exp_feats <- p_expressed >= FRAC_EXPRESSED_TRHESH
         # create a new metadata_fp if subset necessary
         odm_sub <- odm[highly_exp_feats,]
         save_odm(odm = odm_sub, metadata_fp = to_save_metadata_fp)
