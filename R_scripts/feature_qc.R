@@ -5,6 +5,8 @@ sceptre2_data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/"
 papers <- list.files(sceptre2_data_dir)
 # remove simulated paper
 papers <- papers[papers != "simulated"]
+# set params
+N_CELLS_PER_GRNA_THRESH <- 10
 
 # load packages
 library(ondisc)
@@ -24,11 +26,10 @@ for (paper in papers) {
       metadata_fp <- paste0(modality_dir, "metadata_cell_qc.rds")
       if (!file.exists(metadata_fp)) metadata_fp <- paste0(modality_dir, "metadata_orig.rds")
       to_save_metadata_fp <- paste0(modality_dir, "metadata_qc.rds")
-      # if the modality is NOT gRNA... (if it is, then skip; no feature QC on the gRNA matrix for now)
+      odm_fp <- paste0(modality_dir, "matrix.odm")
+      odm <- read_odm(odm_fp = odm_fp, metadata_fp = metadata_fp)
+      # if the modality is NOT gRNA...
       if (modality != "grna") {
-        odm_fp <- paste0(modality_dir, "matrix.odm")
-        # read the odm
-        odm <- read_odm(odm_fp = odm_fp, metadata_fp = metadata_fp)
         # check that the features have no underscores; if so, replace with dashes (both feature IDs and row names of feature covariate matrix)
         if (any(grepl(pattern = "_", x = get_feature_ids(odm), fixed = TRUE))) {
           odm@ondisc_matrix@feature_ids <- gsub(pattern = "_", replacement = "-",
@@ -41,8 +42,13 @@ for (paper in papers) {
         odm_sub <- odm[highly_exp_feats,]
         save_odm(odm = odm_sub, metadata_fp = to_save_metadata_fp)
       } else {
-        # the modality IS gRNA; simply create a symbolic link (no qc)
-        system(paste("ln -s", metadata_fp, to_save_metadata_fp))
+        # the modality IS gRNA; filter out gRNAs expressed in fewer than 10 cells
+        grna_mat <- lowmoi::load_whole_odm(odm)
+        grna_assignments <- apply(X = grna_mat, MARGIN = 2, FUN = function(col) names(which.max(col)))
+        grna_assignment_counts <- table(grna_assignments)
+        good_grnas <- names(grna_assignment_counts[grna_assignment_counts >= N_CELLS_PER_GRNA_THRESH])
+        odm_sub <- odm[good_grnas,]
+        save_odm(odm = odm_sub, metadata_fp = to_save_metadata_fp)
       }
     }
   }
