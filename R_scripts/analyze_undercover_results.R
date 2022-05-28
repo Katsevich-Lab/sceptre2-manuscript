@@ -4,6 +4,11 @@ undercover_res_fp <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
 undercover_res <- readRDS(undercover_res_fp)
 fig_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/figures/")
 
+# combine Schraivogel enh8 and enh11
+undercover_res$dataset <- undercover_res$dataset |>
+  forcats::fct_recode(schraivogel_enhancer_screen = "schraivogel_enhancer_screen_chr11_gene",
+                      schraivogel_enhancer_screen = "schraivogel_enhancer_screen_chr8_gene")
+
 # load packages
 library(ggplot2)
 library(katlabutils)
