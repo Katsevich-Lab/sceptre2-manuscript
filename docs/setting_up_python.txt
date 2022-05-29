@@ -1,0 +1,2 @@
+# This document describes how to set up Python and reticulate, which are used
+# in the lowmoi package.
