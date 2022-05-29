@@ -69,7 +69,7 @@ Finally, check that reticulate works, both locally and on HPCC. (According to Hu
 ```
 R # launch R
 > library(reticulate)
-> py_conig() # verify correctness of configuration
+> py_config() # verify correctness of configuration
 > np <- import("numpy") # import numpy
 > np$zeros(10L) # call a numpy function
 ```
