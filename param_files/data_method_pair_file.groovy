@@ -14,8 +14,7 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de"]]
 */
 
-data_method_pairs = ["frangieh/control/gene": ["schraivogel_method", "seurat_de"],
-                     "liscovitch/experiment_big/chromatin": ["liscovitch_method"],
+data_method_pairs = ["liscovitch/experiment_big/chromatin": ["liscovitch_method"],
                      "liscovitch/experiment_small/chromatin": ["liscovitch_method"]]
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
