@@ -27,7 +27,8 @@ data_method_pairs = ["frangieh/co_culture/gene": ["mimosca"],
 
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
-data_method_ram_matrix = [[34, 13, 1, 40],
+data_method_ram_matrix = [
+[34, 13, 1, 40],
 [23, 9, 1, 40],
 [36, 13, 1, 40],
 [2, 1, 1, 40],
@@ -38,8 +39,28 @@ data_method_ram_matrix = [[34, 13, 1, 40],
 [8, 14, 1, 40],
 [44, 11, 1, 40],
 [2, 1, 1, 40],
-[28, 7, 1, 40]]
+[28, 7, 1, 40]
+]
 
+
+// THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
+data_method_queue_matrix = [
+["-q short.q", "-q short.q", "-q short.q", "-q all.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q all.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q all.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q short.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q short.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q all.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q short.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q short.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q short.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q all.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q short.q"],
+["-q short.q", "-q short.q", "-q short.q", "-q all.q"]
+]
+
+
+// FOURTH, define the row and column names of the above matrices
 row_names = ["frangieh/co_culture/gene",
              "frangieh/control/gene",
              "frangieh/ifn_gamma/gene",
