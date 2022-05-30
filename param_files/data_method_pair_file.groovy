@@ -1,5 +1,6 @@
 // FIRST, define the dataset-method pairs to analyze in a map
 
+/*
 data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "mimosca"],
                      "frangieh/control/gene": ["schraivogel_method", "seurat_de", "mimosca"],
                      "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de"],
@@ -12,6 +13,12 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de"],
                      "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de"],
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de"]]
+*/
+
+data_method_pairs = ["frangieh/co_culture/gene": ["mimosca"],
+                     "papalexi/eccite_screen/protein": ["mimosca"],
+                     "schraivogel/ground_truth_tapseq/gene": ["mimosca"],
+                     "simulated/experiment_1/gene": ["mimosca"]]
 
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
