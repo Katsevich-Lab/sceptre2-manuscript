@@ -16,18 +16,18 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[34, 13, 1, 40],
-[23, 9, 1, 40],
-[36, 13, 1, 40],
-[2, 1, 1, 40],
-[2, 1, 1, 40],
-[18, 6, 1, 40],
-[2, 1, 1, 40],
-[6, 12, 1, 40],
-[8, 14, 1, 40],
-[44, 11, 1, 40],
-[2, 1, 1, 40],
-[28, 7, 1, 40]
+[34, 13, 1, 31],
+[23, 9, 1, 22],
+[36, 13, 1, 29],
+[2, 1, 1, 1],
+[2, 1, 1, 1],
+[18, 6, 1, 14],
+[2, 1, 1, 1],
+[6, 12, 1, 13],
+[8, 14, 1, 16],
+[44, 11, 1, 26],
+[2, 1, 1, 1],
+[28, 7, 1, 12]
 ]
 
 
