@@ -6,9 +6,11 @@ source ~/.research_config
 curr_time=$(date '+%m%d%H%M')
 nextflow pull https://github.com/Katsevich-Lab/undercover-gRNA-pipeline
 nextflow run undercover-gRNA-pipeline -r main \
- --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/data_method_pair_file.groovy" \
+nextflow run $LOCAL_CODE_DIR"/undercover-gRNA-pipeline/main.nf" \
+ --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/test_file_2.groovy" \
  --machine_name $MACHINE_NAME \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
  --time $curr_time \
  --one_neg_control "TRUE" \
- --max_retries 4
+ --max_retries 4 \
+ --result_file_name "trial.rds"
