@@ -46,7 +46,7 @@ create_ondisc_matrix_from_R_matrix(r_matrix = gene_expression_mat,
                                    barcodes = colnames(gene_expression_mat),
                                    features_df = data.frame(row.names(gene_expression_mat)),
                                    odm_fp = to_save_fp_gene,
-                                   metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/gene/metadata.rds"))
+                                   metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/gene/metadata_orig.rds"))
 
 to_save_fp_gRNA <- paste0(sceptre2_dir, "data/simulated/experiment_1/grna_expression/matrix.odm")
 gRNA_odm <- create_ondisc_matrix_from_R_matrix(r_matrix = gRNA_expression_mat,
@@ -61,12 +61,12 @@ gRNA_tbl <- data.frame(target_type = c(rep("non-targeting", N_NTC_GRNAS), rep("g
 # update the gRNA odm
 gRNA_odm <- gRNA_odm |>
   mutate_feature_covariates(gRNA_tbl)
-save_odm(odm = gRNA_odm, metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_expression/metadata.rds"))
+save_odm(odm = gRNA_odm, metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_expression/metadata_orig.rds"))
 
 # finally, create the matrix of gRNA assignments
 convert_assign_list_to_sparse_odm(cell_barcodes = cell_barcodes,
                                   gRNA_ids = gRNA_ids,
                                   gRNA_assignment_list = as.list(gRNA_ids[gRNA_assignments]),
                                   odm_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_assignment/matrix.odm"),
-                                  metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_assignment/metadata.rds"),
+                                  metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_assignment/metadata_orig.rds"),
                                   features_metadata_df = gRNA_tbl)
