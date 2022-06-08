@@ -1,11 +1,11 @@
 # CRAN
-install.packages("readr")
-install.packages("dplyr")
-install.packages("readxl")
-install.packages("Seurat")
-install.packages("R.utils")
-install.packages("purrr")
-install.packages("RCurl")
+install.packages("readr", repos='http://cran.us.r-project.org')
+install.packages("dplyr", repos='http://cran.us.r-project.org')
+install.packages("readxl", repos='http://cran.us.r-project.org')
+install.packages("Seurat", repos='http://cran.us.r-project.org')
+install.packages("R.utils", repos='http://cran.us.r-project.org')
+install.packages("purrr", repos='http://cran.us.r-project.org')
+install.packages("RCurl", repos='http://cran.us.r-project.org')
 
 # GitHub
 devtools::install_github("Timothy-Barry/ondisc")
