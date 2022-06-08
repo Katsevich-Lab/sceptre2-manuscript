@@ -1,9 +1,10 @@
 # pacman package for easy package handling
-if (!require("pacman")) install.packages("pacman")
+if (!require("pacman")) {
+  install.packages("pacman", repos = "http://cran.us.r-project.org")  
+}
 library(pacman)
 
 # CRAN
-install.packages("pacman") 
 p_install(readr, force = FALSE)
 p_install(dplyr, force = FALSE)
 p_install(readxl, force = FALSE)
