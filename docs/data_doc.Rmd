@@ -1,7 +1,5 @@
 ---
 title: "Dataset documentation"
-author: "Tim Barry"
-date: '2022-05-13'
 output: pdf_document
 ---
 
@@ -194,8 +192,15 @@ gene_odm
 Let $d = 35$ denote the number of gRNAs (all negative control). For $i \in \{1, \dots, n\}$, let $g_i \in \{1, \dots, d \}$ be a draw from the uniform distribution over $\{1, \dots, d\}$. Next, let $W_1, \dots, W_n \sim \textrm{Pois}(100)$, and let $W_i^{\geq 1} = \max\{1, W_i\}$ for all $i \in \{1, \dots, n\}.$ Finally, let $X_i$ be a vector with the value $W^{\geq 1}_i$ in position $g_i$ and $0$ elsewhere. We form the gRNA matrix $X$ by concatenating the $X_i$s. We load and print the gRNA count matrix below.
 
 ```{r}
-gRNA_odm_fp <- paste0(sim_data_dir, "gRNA/matrix.odm")
-gRNA_metadata_fp <- paste0(sim_data_dir, "gRNA/metadata_qc.rds")
-gRNA_odm <- read_odm(odm_fp = gRNA_odm_fp, metadata_fp = gRNA_metadata_fp)
-gRNA_odm
+# First, the expression ODM
+gRNA_expression_odm_fp <- paste0(sim_data_dir, "grna_expression/matrix.odm")
+gRNA_expression_metadata_fp <- paste0(sim_data_dir, "grna_expression/metadata.rds")
+gRNA_expression_odm <- read_odm(odm_fp = gRNA_expression_odm_fp, metadata_fp = gRNA_expression_metadata_fp)
+gRNA_expression_odm
+
+# Next, the assignment ODM
+gRNA_assignment_odm_fp <- paste0(sim_data_dir, "grna_assignment/matrix.odm")
+gRNA_assignment_metadata_fp <- paste0(sim_data_dir, "grna_assignment/metadata.rds")
+gRNA_assignment_odm <- read_odm(odm_fp = gRNA_assignment_odm_fp, metadata_fp = gRNA_assignment_metadata_fp)
+gRNA_assignment_odm
 ```
