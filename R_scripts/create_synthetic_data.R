@@ -37,8 +37,8 @@ rownames(gRNA_expression_mat) <- gRNA_ids
 colnames(gRNA_expression_mat) <- cell_barcodes
 
 # perform quality control on the gene expression matrix
-frac_cells_expressed <- rowMeans(gene_expression_mat >= 1)
-gene_expression_mat <- gene_expression_mat[frac_cells_expressed > 0.005,]
+# frac_cells_expressed <- rowMeans(gene_expression_mat >= 1)
+# gene_expression_mat <- gene_expression_mat[frac_cells_expressed > 0.005,]
 
 # initialize ODM objects
 to_save_fp_gene <- paste0(sceptre2_dir, "data/simulated/experiment_1/gene/matrix.odm")
