@@ -1,17 +1,19 @@
+# pacman package for easy package handling
+if (!require("pacman")) install.packages("pacman")
+library(pacman)
+
 # CRAN
-install.packages("readr", repos='http://cran.us.r-project.org')
-install.packages("dplyr", repos='http://cran.us.r-project.org')
-install.packages("readxl", repos='http://cran.us.r-project.org')
-install.packages("Seurat", repos='http://cran.us.r-project.org')
-install.packages("R.utils", repos='http://cran.us.r-project.org')
-install.packages("purrr", repos='http://cran.us.r-project.org')
-install.packages("RCurl", repos='http://cran.us.r-project.org')
+install.packages("pacman") 
+p_install(readr, force = FALSE)
+p_install(dplyr, force = FALSE)
+p_install(readxl, force = FALSE)
+p_install(Seurat, force = FALSE)
+p_install(R.utils, force = FALSE)
+p_install(purrr, force = FALSE)
+p_install(RCurl, force = FALSE)
+p_install(GenomicRanges, force = FALSE)
 
 # GitHub
 devtools::install_github("Timothy-Barry/ondisc")
 devtools::install_github('satijalab/seurat-data')
 devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git")
-
-# Bioconductor
-BiocManager::install("GenomicRanges")
-
