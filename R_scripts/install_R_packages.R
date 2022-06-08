@@ -17,4 +17,5 @@ p_install(GenomicRanges, force = FALSE)
 # GitHub
 devtools::install_github("Timothy-Barry/ondisc")
 devtools::install_github('satijalab/seurat-data')
-devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git")
+devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git",
+                      upgrade = "never")
