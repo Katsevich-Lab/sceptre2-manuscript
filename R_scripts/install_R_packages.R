@@ -10,7 +10,7 @@ install.packages("RCurl", repos='http://cran.us.r-project.org')
 # GitHub
 devtools::install_github("Timothy-Barry/ondisc")
 devtools::install_github('satijalab/seurat-data')
-devtools::install_github("Katsevich-Lab/lowmoi")
+devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git")
 
 # Bioconductor
 BiocManager::install("GenomicRanges")
