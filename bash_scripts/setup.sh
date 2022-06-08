@@ -1,10 +1,10 @@
 source ~/.research_config
 
 # Each leaf directory of the data directory has the following form:
-# data/paper_name/dataset_name/modality/metadata_qc.rds
-# paper_name: one of liscovitch, schraivogel, papalexi, frangieh
+# paper_name/dataset_name/modality
+# paper_name: one of liscovitch, schraivogel, papalexi, frangieh, simulated
 # dataset_name: a descriptive name of the dataset
-# modality: the modality within the dataset; one of gene, grna, protein, and chromatin
+# modality: the modality within the dataset; one of gene, grna_expression, grna_assignment, protein, and chromatin
 
 # Initialize several offsite directories within sceptre2
 # |- data
@@ -80,5 +80,6 @@ mkdir -p $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene" \
  $sceptre2_data_dir"frangieh/ifn_gamma/protein" \
  $sceptre2_data_dir"frangieh/ifn_gamma/grna" \
  $sceptre2_data_dir"simulated/experiment_1/gene" \
- $sceptre2_data_dir"simulated/experiment_1/grna" \
+ $sceptre2_data_dir"simulated/experiment_1/grna_expression" \
+ $sceptre2_data_dir"simulated/experiment_1/grna_assignment" \
  $sceptre2_dir"results/undercover_grna_analysis"
