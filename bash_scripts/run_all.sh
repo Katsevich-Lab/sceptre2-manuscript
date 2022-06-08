@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# required R packages: readr, dplyr, ondisc, readxl, Seurat, SeuratData, lowmoi, R.utils, GenomicRanges, purrr, RCurl
+
+# 0. install required R packages
+Rscript install_R_packages.R
 # 1. set up the offsite directory structure
 bash setup.sh
 # 2. create the symbolic links within the offsite directory structure
