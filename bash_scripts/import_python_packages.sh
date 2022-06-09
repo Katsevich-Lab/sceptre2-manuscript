@@ -20,14 +20,14 @@ python -m pip install statsmodels
 python -m pip install scikit-learn
 python -m pip install pandas
 python -m pip install six
-python -m pip install gc
+# python -m pip install gc
 python -m pip install tqdm
 python -m pip install joblib
 python -m pip install matplotlib
-python -m pip install os
+# python -m pip install os
 python -m pip install seaborn
-python -m pip install time
-python -m pip install collections
-python -m pip install warnings
+# python -m pip install time
+# python -m pip install collections
+# python -m pip install warnings
 
 
