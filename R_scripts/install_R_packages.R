@@ -20,7 +20,7 @@ p_install(GenomicRanges, force = FALSE)
 # GitHub
 devtools::install_github("timothy-barry/ondisc")
 devtools::install_github('satijalab/seurat-data')
-if (!require("lowmoi")) {
+if (system.file(package = "lowmoi") == "") {
   devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git",
                         upgrade = "never")
 }
