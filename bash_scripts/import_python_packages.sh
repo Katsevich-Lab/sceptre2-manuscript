@@ -1,3 +1,5 @@
+source ~/.research_config
+
 # location of Python directory inside Katsevich group software directory
 py_dir=$KATS_SOFT_DIR/py
 
