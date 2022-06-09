@@ -1,3 +1,6 @@
+# print message
+print("Installing all required R packages...")
+
 # pacman package for easy package handling
 if (!require("pacman")) {
   install.packages("pacman", repos = "http://cran.us.r-project.org")
@@ -17,5 +20,7 @@ p_install(GenomicRanges, force = FALSE)
 # GitHub
 devtools::install_github("timothy-barry/ondisc")
 devtools::install_github('satijalab/seurat-data')
-devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git",
-                      upgrade = "never")
+if (!require("lowmoi")) {
+  devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git",
+                        upgrade = "never")
+}
