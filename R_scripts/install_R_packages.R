@@ -1,6 +1,6 @@
 # pacman package for easy package handling
 if (!require("pacman")) {
-  install.packages("pacman", repos = "http://cran.us.r-project.org")  
+  install.packages("pacman", repos = "http://cran.us.r-project.org")
 }
 library(pacman)
 
@@ -15,7 +15,7 @@ p_install(RCurl, force = FALSE)
 p_install(GenomicRanges, force = FALSE)
 
 # GitHub
-devtools::install_github("Timothy-Barry/ondisc")
+devtools::install_github("timothy-barry/ondisc")
 devtools::install_github('satijalab/seurat-data')
 devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git",
                       upgrade = "never")

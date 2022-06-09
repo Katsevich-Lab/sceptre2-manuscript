@@ -37,8 +37,14 @@ read_multimodal_odm <- function(paper, dataset, sceptre2_data_dir = paste0(.get_
   return(ret)
 }
 
+# 1) Set the MIMOSCA formula objects
+mimosca_formula_objs <- list(frangieh = formula(~ n_umis + phase),
+                             schraivogel = formula(~ n_umis + batch),
+                             papalexi = formula(~ n_umis + batch + phase + p_mito),
+                             liscovitch = formula(~ n_fragments),
+                             simulated = formula(~ n_umis))
 
-# 1) loop over datasets, loading all modalities
+# 2) loop over datasets, loading all modalities
 for (paper in papers) {
   paper_dir <- paste0(sceptre2_data_dir, paper, "/")
   datasets <- list.files(paper_dir)
@@ -90,7 +96,13 @@ for (paper in papers) {
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
     
-    # iv. create the mimosca formula object for each response modality
-    
+    # iv. add the mimosca formula object to each response modality
+    for (modality in remaining_modalities) {
+      modality_odm <- get_modality(mm_odm_sub, modality)
+      modality_odm@misc[["mimosca_formula"]] <- mimosca_formula_objs[[paper]]
+      mm_odm_sub@modalities[[modality]] <- modality_odm
     }
+    # Finally, write the modified multimodal odm
+    save_multimodal_odm(multimodal_odm = mm_odm_sub, paper = paper, dataset = dataset, metadata_file_name = "metadata_qc.rds")
+  }
 }

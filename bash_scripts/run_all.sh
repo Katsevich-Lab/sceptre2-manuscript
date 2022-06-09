@@ -10,7 +10,5 @@ bash setup.sh
 bash create_sym_links.sh
 # 3. create the synthetic data
 Rscript ../R_scripts/create_synthetic_data.R
-# 4. cell-specific QC on Frangieh and Liscovitch data
-Rscript ../R_scripts/cell_qc.R
-# 5. feature-specific QC on all data
-Rscript ../R_scripts/feature_qc.R
+# 4. run the uniform processing step (which includes cell and feature qc)
+Rscript ../R_scripts/uniform_processing.R
