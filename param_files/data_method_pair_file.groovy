@@ -14,18 +14,18 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"]
                      ]
 */
-data_method_pairs = ["frangieh/co_culture/gene": ["seurat_de", "mimosca"],
-                     "frangieh/control/gene": ["seurat_de", "mimosca"],
-                     "frangieh/ifn_gamma/gene": ["seurat_de", "mimosca"],
-                     "liscovitch/experiment_big/chromatin": ["liscovitch_method"],
-                     "liscovitch/experiment_small/chromatin": ["liscovitch_method"],
-                     "papalexi/eccite_screen/gene": ["seurat_de", "mimosca"],
-                     "papalexi/eccite_screen/protein": ["seurat_de", "mimosca"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "mimosca"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "mimosca"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["seurat_de", "mimosca"],
-                     "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "mimosca"],
-                     "simulated/experiment_1/gene": ["seurat_de", "mimosca"]
+
+
+data_method_pairs = ["frangieh/co_culture/gene": ["mimosca"],
+                     "frangieh/control/gene": ["mimosca"],
+                     "frangieh/ifn_gamma/gene": ["mimosca"],
+                     "papalexi/eccite_screen/gene": ["mimosca"],
+                     "papalexi/eccite_screen/protein": ["mimosca"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["mimosca"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["mimosca"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["mimosca"],
+                     "schraivogel/ground_truth_tapseq/gene": ["mimosca"],
+                     "simulated/experiment_1/gene": ["mimosca"]
                      ]
 
 
@@ -90,6 +90,6 @@ optional_args = [
 "", // schraivogel_method
 "", // seurat_de
 "", // liscovitch_method
-"n_rep=100", // mimosca
+"n_rep=10", // mimosca
 "" // weissman_method
 ]

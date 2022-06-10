@@ -9,7 +9,7 @@ nextflow run undercover-gRNA-pipeline -r main \
  --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/data_method_pair_file.groovy" \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
  --result_file_name "trial.rds" \
- --one_neg_control "TRUE" \
+ --one_neg_control "FALSE" \
  --max_retries 2 \
  --grna_modality "assignment" \
  --machine_name $MACHINE_NAME \
