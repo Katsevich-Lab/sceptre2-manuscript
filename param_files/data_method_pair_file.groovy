@@ -1,50 +1,65 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "mimosca"],
-                     "frangieh/control/gene": ["schraivogel_method", "seurat_de", "mimosca"],
-                     "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de"],
+/*
+data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "frangieh/control/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
                      "liscovitch/experiment_big/chromatin": ["liscovitch_method"],
                      "liscovitch/experiment_small/chromatin": ["liscovitch_method"],
-                     "papalexi/eccite_screen/gene": ["schraivogel_method", "seurat_de"],
-                     "papalexi/eccite_screen/protein": ["schraivogel_method", "seurat_de"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "seurat_de"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "seurat_de"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de"],
-                     "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de"],
-                     "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de"]
+                     "papalexi/eccite_screen/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "papalexi/eccite_screen/protein": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"]
+                     ]
+*/
+data_method_pairs = ["frangieh/co_culture/gene": ["seurat_de", "mimosca"],
+                     "frangieh/control/gene": ["seurat_de", "mimosca"],
+                     "frangieh/ifn_gamma/gene": ["seurat_de", "mimosca"],
+                     "liscovitch/experiment_big/chromatin": ["liscovitch_method"],
+                     "liscovitch/experiment_small/chromatin": ["liscovitch_method"],
+                     "papalexi/eccite_screen/gene": ["seurat_de", "mimosca"],
+                     "papalexi/eccite_screen/protein": ["seurat_de", "mimosca"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "mimosca"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "mimosca"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["seurat_de", "mimosca"],
+                     "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "mimosca"],
+                     "simulated/experiment_1/gene": ["seurat_de", "mimosca"]
                      ]
 
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[34, 13, 1, 31],
-[23, 9, 1, 22],
-[36, 13, 1, 29],
-[2, 1, 1, 1],
-[2, 1, 1, 1],
-[18, 6, 1, 14],
-[2, 1, 1, 1],
-[6, 12, 1, 13],
-[8, 14, 1, 16],
-[44, 11, 1, 26],
-[2, 1, 1, 1],
-[28, 7, 1, 12]
+[34, 13, 1, 31, 45],
+[23, 9, 1, 22, 45],
+[36, 13, 1, 29, 45],
+[2, 1, 1, 1, 45],
+[2, 1, 1, 1, 45],
+[18, 6, 1, 14, 45],
+[2, 1, 1, 1, 45],
+[6, 12, 1, 13, 45],
+[8, 14, 1, 16, 45],
+[44, 11, 1, 26, 45],
+[2, 1, 1, 1, 45],
+[28, 7, 1, 12, 45]
 ]
 
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
-["short.q", "short.q", "short.q", "all.q"],
-["short.q", "short.q", "short.q", "all.q"],
-["short.q", "short.q", "short.q", "all.q"],
-["short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "all.q"],
-["short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "all.q"],
-["short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "all.q"]
+["short.q", "short.q", "short.q", "all.q", "short.q"],
+["short.q", "short.q", "short.q", "all.q", "short.q"],
+["short.q", "short.q", "short.q", "all.q", "short.q"],
+["short.q", "short.q", "short.q", "short.q", "short.q"],
+["short.q", "short.q", "short.q", "short.q", "short.q"],
+["short.q", "short.q", "short.q", "all.q", "short.q"],
+["short.q", "short.q", "short.q", "short.q", "short.q"],
+["short.q", "short.q", "short.q", "short.q", "short.q"],
+["short.q", "short.q", "short.q", "short.q", "short.q"],
+["short.q", "short.q", "short.q", "all.q", "short.q"],
+["short.q", "short.q", "short.q", "short.q", "short.q"],
+["short.q", "short.q", "short.q", "all.q", "short.q"]
 ]
 
 
@@ -64,15 +79,17 @@ row_names = ["frangieh/co_culture/gene",
 col_names = ["schraivogel_method",
              "seurat_de",
              "liscovitch_method",
-             "mimosca"]
+             "mimosca",
+             "weissman_method"]
 
 
 // FIFTH, define an ordered list of optional arguments to each of the methods
 // Should be strings of the form "arg1=value1;arg2=value2;arg3=value3".
 // If no optional argument, then set NA
 optional_args = [
-"",
-"",
-"",
-""
+"", // schraivogel_method
+"", // seurat_de
+"", // liscovitch_method
+"n_rep=100", // mimosca
+"" // weissman_method
 ]

@@ -38,11 +38,11 @@ read_multimodal_odm <- function(paper, dataset, sceptre2_data_dir = paste0(.get_
 }
 
 # 1) Set the MIMOSCA formula objects
-mimosca_formula_objs <- list(frangieh = formula(~ n_umis + phase),
-                             schraivogel = formula(~ n_umis + batch),
-                             papalexi = formula(~ n_umis + batch + phase + p_mito),
-                             liscovitch = formula(~ n_fragments),
-                             simulated = formula(~ n_umis))
+mimosca_formula_objs <- list(frangieh = formula(~ n_umis + phase + 0),
+                             schraivogel = formula(~ n_umis + batch + 0),
+                             papalexi = formula(~ n_umis + batch + phase + p_mito + 0),
+                             liscovitch = formula(~ n_fragments + 0),
+                             simulated = formula(~ n_umis + 0))
 
 # 2) loop over datasets, loading all modalities
 for (paper in papers) {
@@ -52,7 +52,7 @@ for (paper in papers) {
     # load the dataset into a multimodal ODM
     print(paste0("paper: ", paper, " dataset: ", dataset))
     mm_odm <- read_multimodal_odm(paper, dataset)
-    
+
     # i. perform cell QC; restrict attention to 1 gRNA/cell and "passed_qc" cells (if applicable)
     global_cell_covariates <- mm_odm |> get_cell_covariates()
     cell_logical_v <- global_cell_covariates$grna_assignment_n_nonzero == 1
@@ -62,7 +62,7 @@ for (paper in papers) {
       cell_logical_v <- cell_logical_v & passed_qc
     }
     mm_odm_sub <- mm_odm[,cell_logical_v]
-    
+
     # ii. perform feature QC
     modalities <- names(mm_odm_sub@modalities)
     # grna assignment modality: keep features expressed in N_CELLS_PER_GRNA_THRESH cells
@@ -71,7 +71,7 @@ for (paper in papers) {
     n_cells_per_gRNA <- Matrix::rowSums(grna_assign_mat)
     grnas_to_keep <- n_cells_per_gRNA >= N_CELLS_PER_GRNA_THRESH
     mm_odm_sub@modalities[["grna_assignment"]] <- grna_assign_modality[grnas_to_keep,]
-    
+
     # grna expression modality (if applicable): keep the same features as above
     if ("grna_expression" %in% modalities) {
       grna_expression_modality <- get_modality(mm_odm_sub, "grna_expression")
@@ -87,7 +87,7 @@ for (paper in papers) {
       feats_to_keep <- frac_expressed > FRAC_EXPRESSED_TRHESH
       mm_odm_sub@modalities[[modality]] <- modality_odm[feats_to_keep,]
     }
-    
+
     # iii. perform feature ID cleanup; remove underscores and replace with dashes for all features
     for (modality in modalities) {
       modality_odm <- get_modality(mm_odm_sub, modality)
@@ -95,7 +95,7 @@ for (paper in papers) {
       row.names(modality_odm@feature_covariates) <- gsub(pattern = "_", replacement = "-", x = row.names(modality_odm@feature_covariates), fixed = TRUE)
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
-    
+
     # iv. add the mimosca formula object to each response modality
     for (modality in remaining_modalities) {
       modality_odm <- get_modality(mm_odm_sub, modality)

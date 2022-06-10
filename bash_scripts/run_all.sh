@@ -15,6 +15,7 @@ Rscript ../R_scripts/install_R_packages.R
 
 # 3. import all datasets
 bash import_all_data.sh
+wait
 
 # 4. set up the offsite directory structure
 bash setup.sh
