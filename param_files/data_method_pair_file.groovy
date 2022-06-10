@@ -1,5 +1,4 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-/*
 data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
                      "frangieh/control/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
                      "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
@@ -13,51 +12,39 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"]
                      ]
-*/
-data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "weissman_method"],
-                     "frangieh/control/gene": ["schraivogel_method", "weissman_method"],
-                     "frangieh/ifn_gamma/gene": ["schraivogel_method", "weissman_method"],
-                     "papalexi/eccite_screen/gene": ["schraivogel_method", "weissman_method"],
-                     "papalexi/eccite_screen/protein": ["schraivogel_method", "weissman_method"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "weissman_method"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "weissman_method"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "weissman_method"],
-                     "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "weissman_method"],
-                     "simulated/experiment_1/gene": ["schraivogel_method", "weissman_method"]
-                     ]
 
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[34, 13, 1, 31, 45],
-[23, 9, 1, 22, 45],
-[36, 13, 1, 29, 45],
-[2, 1, 1, 1, 45],
-[2, 1, 1, 1, 45],
-[18, 6, 1, 14, 45],
-[2, 1, 1, 1, 45],
-[6, 12, 1, 13, 45],
-[8, 14, 1, 16, 45],
-[44, 11, 1, 26, 45],
-[2, 1, 1, 1, 45],
-[28, 7, 1, 12, 45]
+[34, 13, 1, 31, 48], // frangieh/co_culture/gene
+[23, 9, 1, 22, 33], // frangieh/control/gene
+[36, 13, 1, 29, 51], // frangieh/ifn_gamma/gene
+[2, 1, 1, 1, 1], // liscovitch/experiment_big/chromatin
+[2, 1, 1, 1, 1], // liscovitch/experiment_small/chromatin
+[18, 6, 1, 14, 21], // papalexi/eccite_screen/gene
+[2, 1, 1, 1, 1], // papalexi/eccite_screen/protein
+[6, 12, 1, 13, 5], // schraivogel/enhancer_screen_chr11/gene
+[8, 14, 1, 16, 5], // schraivogel/enhancer_screen_chr8/gene
+[44, 11, 1, 26, 33], // schraivogel/ground_truth_perturbseq/gene
+[2, 1, 1, 1, 1], // schraivogel/ground_truth_tapseq/gene
+[28, 7, 1, 12, 18] // simulated/experiment_1/gene
 ]
 
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
-["short.q", "short.q", "short.q", "all.q", "short.q"],
-["short.q", "short.q", "short.q", "all.q", "short.q"],
-["short.q", "short.q", "short.q", "all.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "all.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "all.q", "short.q"],
-["short.q", "short.q", "short.q", "short.q", "short.q"],
-["short.q", "short.q", "short.q", "all.q", "short.q"]
+["short.q", "short.q", "short.q", "all.q", "short.q"],  // frangieh/co_culture/gene
+["short.q", "short.q", "short.q", "all.q", "short.q"], // frangieh/control/gene
+["short.q", "short.q", "short.q", "all.q", "short.q"],  // frangieh/ifn_gamma/gene
+["short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_big/chromatin
+["short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_small/chromatin
+["short.q", "short.q", "short.q", "all.q", "short.q"],  // papalexi/eccite_screen/gene
+["short.q", "short.q", "short.q", "short.q", "short.q"], // papalexi/eccite_screen/protein
+["short.q", "short.q", "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
+["short.q", "short.q", "short.q", "short.q", "short.q"],  // schraivogel/enhancer_screen_chr8/gene
+["short.q", "short.q", "short.q", "all.q", "short.q"], // schraivogel/ground_truth_perturbseq/gene
+["short.q", "short.q", "short.q", "short.q", "short.q"], // schraivogel/ground_truth_tapseq/gene
+["short.q", "short.q", "short.q", "all.q", "short.q"] // simulated/experiment_1/gene
 ]
 
 
@@ -88,6 +75,6 @@ optional_args = [
 "", // schraivogel_method
 "", // seurat_de
 "", // liscovitch_method
-"n_rep=10", // mimosca
+"n_rep=100", // mimosca
 "" // weissman_method
 ]
