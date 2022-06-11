@@ -31,4 +31,5 @@ python -m pip install tqdm
 python -m pip install joblib
 python -m pip install matplotlib
 python -m pip install seaborn
+python -m pip install numexpr
 
