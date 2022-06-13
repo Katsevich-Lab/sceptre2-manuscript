@@ -1,4 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
+/*
 data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
                      "frangieh/control/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
                      "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
@@ -12,7 +13,14 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"]
                      ]
+*/
 
+
+data_method_pairs = ["schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+                     "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"]
+                     ]
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
