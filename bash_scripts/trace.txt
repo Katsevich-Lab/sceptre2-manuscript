@@ -1,2 +1,148 @@
 task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
 1	a3/2a19aa	2152519	obtain_dataset_ntc_tuples	COMPLETED	0	2022-06-12 23:35:08.664	38s	7.8s	75.7%	365.5 MB	1 GB	50.2 MB	9 KB
+5	94/8a3e8e	2152523	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00000)	COMPLETED	0	2022-06-12 23:35:52.936	38.7s	16.5s	89.1%	3.6 GB	4.2 GB	113 MB	7.1 KB
+17	10/9cf81c	2152534	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00003)	COMPLETED	0	2022-06-12 23:36:03.556	38.1s	23.4s	89.3%	3.5 GB	4.1 GB	113 MB	7.2 KB
+21	23/e4198b	2152539	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00004)	COMPLETED	0	2022-06-12 23:36:08.281	33.4s	24.9s	87.2%	3.5 GB	4.1 GB	113 MB	7.1 KB
+26	8d/022afb	2152545	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00005)	COMPLETED	0	2022-06-12 23:36:14.031	32.6s	22.8s	90.0%	3.5 GB	4.1 GB	113 MB	7.1 KB
+29	cf/28b664	2152547	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00006)	COMPLETED	0	2022-06-12 23:36:16.024	30.6s	23s	89.6%	3.5 GB	4.1 GB	113 MB	7.2 KB
+3	fe/ff46c2	2152521	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00000)	COMPLETED	0	2022-06-12 23:35:51.013	1m 1s	44.3s	94.8%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+9	5b/0fbfee	2152527	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00001)	COMPLETED	0	2022-06-12 23:35:56.360	55.3s	24s	87.7%	3.5 GB	4.1 GB	113 MB	7.1 KB
+13	b7/652e63	2152531	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00002)	COMPLETED	0	2022-06-12 23:36:00.032	51.6s	23.3s	88.9%	3.5 GB	4.1 GB	113 MB	7.2 KB
+37	1f/f7ee86	2152554	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00008)	COMPLETED	0	2022-06-12 23:36:23.255	38.4s	24.8s	84.0%	3.5 GB	4.1 GB	113 MB	7.2 KB
+41	db/28fd35	2152558	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00009)	COMPLETED	0	2022-06-12 23:36:27.326	39.3s	23.3s	89.4%	3.5 GB	4.1 GB	113 MB	7.1 KB
+45	c8/ab00c2	2152563	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00010)	COMPLETED	0	2022-06-12 23:36:32.363	34.3s	24.2s	88.4%	3.5 GB	4.1 GB	113 MB	7.2 KB
+53	e7/6855b9	2152571	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00012)	COMPLETED	0	2022-06-12 23:36:39.980	31.7s	23s	90.0%	3.5 GB	4.1 GB	113 MB	7.2 KB
+57	1e/8ff550	2152576	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00013)	COMPLETED	0	2022-06-12 23:36:45.102	31.6s	25.7s	81.9%	3.5 GB	4.1 GB	113 MB	7.1 KB
+34	3c/24345d	2152551	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00007)	COMPLETED	0	2022-06-12 23:36:20.127	1m 7s	25.9s	89.1%	3.5 GB	4.1 GB	113 MB	7.2 KB
+61	26/2f9828	2152579	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00014)	COMPLETED	0	2022-06-12 23:36:48.049	38.6s	24.2s	88.5%	3.5 GB	4.1 GB	113 MB	7.2 KB
+65	42/d8d508	2152583	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00015)	COMPLETED	0	2022-06-12 23:36:51.951	34.7s	23.5s	89.3%	3.5 GB	4.1 GB	113 MB	7.2 KB
+7	51/a5b7e8	2152524	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00001)	COMPLETED	0	2022-06-12 23:35:53.755	1m 43s	1m 33s	97.6%	3.6 GB	4.3 GB	135.1 MB	4.1 KB
+10	93/12b9eb	2152528	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00002)	COMPLETED	0	2022-06-12 23:35:57.463	1m 39s	1m 7s	93.1%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+11	db/3db89c	2152529	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00002)	COMPLETED	0	2022-06-12 23:35:58.419	1m 38s	1m 34s	93.0%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+49	22/3dddf1	2152567	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00011)	COMPLETED	0	2022-06-12 23:36:35.946	1m 1s	31.2s	85.4%	3.5 GB	4.1 GB	113 MB	7.1 KB
+15	0d/1e5383	2152533	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00003)	COMPLETED	0	2022-06-12 23:36:02.751	1m 39s	1m 20s	94.8%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+2	6d/9333ec	2152520	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00000)	COMPLETED	0	2022-06-12 23:35:50.226	2m 1s	1m 33s	97.6%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+6	08/1b5ebf	2152525	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00001)	COMPLETED	0	2022-06-12 23:35:54.747	1m 57s	1m 9s	91.3%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+69	0f/d3e145	2152587	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00016)	COMPLETED	0	2022-06-12 23:36:55.900	55.8s	29.1s	88.9%	3.5 GB	4.2 GB	113 MB	7.1 KB
+73	9d/f9cf08	2152592	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00017)	COMPLETED	0	2022-06-12 23:37:00.864	50.8s	25.9s	85.2%	3.6 GB	4.3 GB	113 MB	7.2 KB
+77	c0/578415	2152594	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00018)	COMPLETED	0	2022-06-12 23:37:02.881	48.8s	24s	90.7%	3.5 GB	4.1 GB	113 MB	7.2 KB
+14	88/40f643	2152532	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00003)	COMPLETED	0	2022-06-12 23:36:00.889	1m 56s	1m 8s	93.5%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+18	65/5caea5	2152535	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00004)	COMPLETED	0	2022-06-12 23:36:04.585	1m 52s	1m 11s	93.6%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+22	59/e42e01	2152540	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00005)	COMPLETED	0	2022-06-12 23:36:09.072	1m 48s	1m 34s	97.5%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+23	d5/bcbd58	2152541	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00005)	COMPLETED	0	2022-06-12 23:36:10.008	1m 47s	1m 23s	89.5%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+25	46/4bace0	2152543	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00006)	COMPLETED	0	2022-06-12 23:36:12.243	1m 44s	1m 6s	93.5%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+27	98/903445	2152544	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00006)	COMPLETED	0	2022-06-12 23:36:13.064	1m 44s	1m 33s	93.5%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+30	e6/c57c72	2152548	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00007)	COMPLETED	0	2022-06-12 23:36:17.146	1m 40s	1m 18s	94.5%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+31	2a/497540	2152549	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00007)	COMPLETED	0	2022-06-12 23:36:17.895	1m 39s	1m 7s	94.6%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+35	b2/7a9da7	2152553	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00008)	COMPLETED	0	2022-06-12 23:36:22.478	1m 39s	1m 22s	95.6%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+46	f8/3dce46	2152564	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00011)	COMPLETED	0	2022-06-12 23:36:33.076	1m 39s	1m 12s	94.5%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+81	cf/55cec9	2152599	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00019)	COMPLETED	0	2022-06-12 23:37:08.142	1m 4s	24.7s	83.8%	3.5 GB	4.1 GB	113 MB	7.2 KB
+86	ad/4626b1	2152603	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00021)	COMPLETED	0	2022-06-12 23:37:11.975	1m 5s	44.5s	95.3%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+85	9b/879b12	2152604	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00020)	COMPLETED	0	2022-06-12 23:37:13.097	1m 4s	24.3s	89.2%	3.5 GB	4.1 GB	113 MB	7.2 KB
+89	73/55d395	2152607	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00021)	COMPLETED	0	2022-06-12 23:37:15.973	1m 1s	23.9s	89.9%	3.5 GB	4.1 GB	113 MB	7.2 KB
+50	08/d8850f	2152568	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00012)	COMPLETED	0	2022-06-12 23:36:36.984	1m 45s	1m 9s	93.6%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+58	4f/2279d4	2152575	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00014)	COMPLETED	0	2022-06-12 23:36:43.992	1m 38s	1m 8s	92.0%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+93	5a/810496	2152611	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00022)	COMPLETED	0	2022-06-12 23:37:19.869	1m 7s	23.2s	88.6%	3.5 GB	4.1 GB	113 MB	7.2 KB
+33	35/b07043	2152552	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00008)	COMPLETED	0	2022-06-12 23:36:20.998	2m 11s	1m 7s	93.4%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+38	2b/559f0d	2152556	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00009)	COMPLETED	0	2022-06-12 23:36:25.012	2m 7s	1m 10s	94.4%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+39	b7/0c94dd	2152557	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00009)	COMPLETED	0	2022-06-12 23:36:25.979	2m 6s	1m 57s	91.8%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+62	27/566551	2152580	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00015)	COMPLETED	0	2022-06-12 23:36:48.877	1m 43s	1m 13s	91.5%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+67	26/6a1ab9	2152584	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00016)	COMPLETED	0	2022-06-12 23:36:52.941	1m 39s	1m 33s	93.3%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+66	de/028d96	2152585	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00016)	COMPLETED	0	2022-06-12 23:36:53.885	1m 38s	1m 15s	90.7%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+97	c3/06929d	2152615	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00023)	COMPLETED	0	2022-06-12 23:37:23.874	1m 8s	23.5s	89.0%	3.5 GB	4.1 GB	113 MB	7.2 KB
+101	25/1c8004	2152619	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00024)	COMPLETED	0	2022-06-12 23:37:28.333	1m 3s	24.6s	83.9%	3.5 GB	4.1 GB	113 MB	7.1 KB
+105	f7/4f359a	2152623	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00025)	COMPLETED	0	2022-06-12 23:37:32.066	59.7s	25.6s	89.3%	3.5 GB	4.1 GB	113 MB	7.1 KB
+43	db/4cb4de	2152560	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00010)	COMPLETED	0	2022-06-12 23:36:29.036	2m 13s	1m 28s	95.3%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+42	73/0a943d	2152561	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00010)	COMPLETED	0	2022-06-12 23:36:29.986	2m 12s	1m 6s	94.5%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+51	d8/4fbe20	2152570	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00012)	COMPLETED	0	2022-06-12 23:36:39.017	2m 3s	1m 32s	97.4%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+106	33/c13e85	2152625	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00026)	COMPLETED	0	2022-06-12 23:37:33.949	1m 8s	44.9s	95.7%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+109	3c/a28612	2152626	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00026)	COMPLETED	0	2022-06-12 23:37:34.963	1m 7s	24.4s	86.3%	3.5 GB	4.1 GB	113 MB	7.1 KB
+113	10/6f2c6d	2152631	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00027)	COMPLETED	0	2022-06-12 23:37:39.975	1m 2s	23.8s	90.4%	3.5 GB	4.1 GB	113 MB	7.1 KB
+20	ad/d484fb	2152538	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00004)	COMPLETED	0	2022-06-12 23:36:07.514	2m 39s	1m 34s	93.4%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+55	71/a07cb0	2152572	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00013)	COMPLETED	0	2022-06-12 23:36:40.982	2m 6s	1m 6s	92.9%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+117	16/f2cc64	2152635	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00028)	COMPLETED	0	2022-06-12 23:37:44.026	1m 8s	26.1s	86.5%	3.6 GB	4.3 GB	113 MB	7.2 KB
+59	15/255219	2152577	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00014)	COMPLETED	0	2022-06-12 23:36:46.204	2m 10s	1m 23s	91.2%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+63	92/53db2e	2152582	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00015)	COMPLETED	0	2022-06-12 23:36:50.891	2m 6s	1m 34s	93.2%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+70	a8/750bdb	2152588	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00017)	COMPLETED	0	2022-06-12 23:36:57.260	1m 59s	1m 5s	93.7%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+71	78/f99508	2152589	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00017)	COMPLETED	0	2022-06-12 23:36:57.959	1m 59s	1m 26s	92.7%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+74	8e/5db906	2152591	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00018)	COMPLETED	0	2022-06-12 23:36:59.857	1m 57s	1m 7s	94.3%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+75	b1/15d787	2152593	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00018)	COMPLETED	0	2022-06-12 23:37:02.198	1m 55s	1m 19s	91.1%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+121	a0/04f45c	2152639	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method+non-targeting-00029)	COMPLETED	0	2022-06-12 23:37:47.888	1m 9s	27.6s	84.1%	3.5 GB	4.2 GB	113 MB	7.1 KB
+125	e7/ca803f	2152643	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00000)	COMPLETED	0	2022-06-12 23:37:52.787	1m 4s	25s	86.2%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+129	08/c8f5cd	2152646	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00001)	COMPLETED	0	2022-06-12 23:37:55.112	1m 2s	25.8s	88.9%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+138	91/373d05	2152656	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00003)	COMPLETED	0	2022-06-12 23:38:04.966	1m 7s	25.9s	86.4%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+47	8e/2f70eb	2152565	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00011)	COMPLETED	0	2022-06-12 23:36:33.955	2m 43s	1m 38s	92.8%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+78	4e/eb6e8a	2152596	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00019)	COMPLETED	0	2022-06-12 23:37:04.939	2m 12s	1m 9s	90.1%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+79	4e/2fbc72	2152597	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00019)	COMPLETED	0	2022-06-12 23:37:05.971	2m 11s	1m 43s	94.2%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+82	e4/cd4e85	2152600	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00020)	COMPLETED	0	2022-06-12 23:37:08.976	2m 8s	1m 6s	93.8%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+83	99/c0d7f9	2152601	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00020)	COMPLETED	0	2022-06-12 23:37:10.109	2m 7s	1m 17s	94.5%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+87	3c/96c9c4	2152605	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00021)	COMPLETED	0	2022-06-12 23:37:14.067	2m 3s	1m 26s	95.4%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+90	96/b9a38b	2152608	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00022)	COMPLETED	0	2022-06-12 23:37:17.479	1m 59s	1m 7s	91.5%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+141	0d/0277a6	2152659	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00004)	COMPLETED	0	2022-06-12 23:38:08.191	1m 9s	25.3s	85.2%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+145	fa/fff237	2152663	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00005)	COMPLETED	0	2022-06-12 23:38:12.186	1m 5s	24.2s	89.2%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+149	ba/c00f43	2152667	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00006)	COMPLETED	0	2022-06-12 23:38:15.947	1m 1s	25.2s	85.7%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+54	b1/3243fc	2152573	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00013)	COMPLETED	0	2022-06-12 23:36:42.248	2m 39s	1m 46s	93.9%	3.6 GB	4.3 GB	135.1 MB	4.1 KB
+91	87/02a719	2152610	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00022)	COMPLETED	0	2022-06-12 23:37:18.869	2m 13s	1m 29s	94.8%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+95	63/976289	2152612	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00023)	COMPLETED	0	2022-06-12 23:37:20.874	2m 11s	1m 37s	98.2%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+94	4d/528071	2152613	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00023)	COMPLETED	0	2022-06-12 23:37:21.887	2m 10s	1m 9s	94.9%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+98	c3/0550bc	2152616	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00024)	COMPLETED	0	2022-06-12 23:37:25.097	2m 12s	1m 9s	91.3%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+103	8d/95235f	2152620	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00025)	COMPLETED	0	2022-06-12 23:37:29.152	2m 7s	1m 43s	91.1%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+102	61/b48d38	2152621	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00025)	COMPLETED	0	2022-06-12 23:37:30.032	2m 7s	1m 13s	94.5%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+133	28/1d0e26	2152650	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00002)	COMPLETED	0	2022-06-12 23:37:59.144	1m 38s	23.7s	91.6%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+107	c7/7acc37	2152624	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00026)	COMPLETED	0	2022-06-12 23:37:32.955	2m 14s	1m 16s	94.7%	3.6 GB	4.3 GB	135.1 MB	4.1 KB
+110	5a/bb67be	2152628	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00027)	COMPLETED	0	2022-06-12 23:37:37.040	2m 10s	1m 11s	92.2%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+111	ca/c21868	2152629	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00027)	COMPLETED	0	2022-06-12 23:37:38.189	2m 8s	1m 40s	93.7%	3.6 GB	4.3 GB	135.1 MB	4.1 KB
+114	c4/dc4edc	2152632	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00028)	COMPLETED	0	2022-06-12 23:37:40.978	2m 6s	1m 5s	94.2%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+115	15/3da4e7	2152633	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00028)	COMPLETED	0	2022-06-12 23:37:42.013	2m 5s	1m 28s	95.2%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+118	c8/fef17f	2152636	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method+non-targeting-00029)	COMPLETED	0	2022-06-12 23:37:45.000	2m 12s	1m 4s	94.0%	3.5 GB	4.3 GB	150.2 MB	3.7 KB
+134	43/40f0ed	2152652	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00003)	COMPLETED	0	2022-06-12 23:38:00.968	1m 56s	1m 3s	93.9%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+153	ee/ca525b	2152671	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00007)	COMPLETED	0	2022-06-12 23:38:19.952	1m 37s	26s	85.9%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+157	b3/8d014d	2152675	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00008)	COMPLETED	0	2022-06-12 23:38:23.947	1m 33s	24.7s	85.6%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+161	3e/932e97	2152679	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00009)	COMPLETED	0	2022-06-12 23:38:28.575	1m 28s	24.2s	89.8%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+119	77/f9521a	2152637	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00029)	COMPLETED	0	2022-06-12 23:37:45.967	2m 16s	1m 42s	98.2%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+122	71/70d82f	2152640	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00000)	COMPLETED	0	2022-06-12 23:37:48.894	2m 13s	1m 5s	88.0%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+126	13/d950be	2152645	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00001)	COMPLETED	0	2022-06-12 23:37:54.375	2m 7s	1m 2s	94.2%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+137	16/c97b05	2152655	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00004)	COMPLETED	0	2022-06-12 23:38:03.964	2m 8s	1m 5s	90.2%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+165	46/d4365a	2152683	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00010)	COMPLETED	0	2022-06-12 23:38:34.102	1m 38s	25s	86.6%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+169	5c/2f4788	2152687	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00011)	COMPLETED	0	2022-06-12 23:38:37.539	1m 39s	25.8s	84.0%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+173	dc/0ff641	2152691	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00012)	COMPLETED	0	2022-06-12 23:38:41.527	1m 35s	24.6s	86.9%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+142	51/6a6cca	2152660	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00005)	COMPLETED	0	2022-06-12 23:38:09.115	2m 13s	1m 7s	91.8%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+146	a6/4c643d	2152664	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00006)	COMPLETED	0	2022-06-12 23:38:12.945	2m 9s	1m 12s	89.6%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+177	5a/fff9bc	2152695	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00013)	COMPLETED	0	2022-06-12 23:38:45.471	1m 36s	24.3s	90.0%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+181	19/266a0e	2152698	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00014)	COMPLETED	0	2022-06-12 23:38:48.474	1m 33s	26.4s	86.5%	3.7 GB	4.4 GB	105.1 MB	7.2 KB
+188	de/74d89f	2152706	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00016)	COMPLETED	0	2022-06-12 23:38:56.497	1m 25s	19.1s	92.2%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+185	51/be8e4f	2152703	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00015)	COMPLETED	0	2022-06-12 23:38:53.858	1m 38s	27.8s	84.6%	3.7 GB	4.4 GB	105.1 MB	7.2 KB
+99	56/3ba613	2152617	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de+non-targeting-00024)	COMPLETED	0	2022-06-12 23:37:25.884	3m 11s	2m 3s	91.5%	3.5 GB	4.3 GB	135.1 MB	4.1 KB
+130	6c/6ad112	2152648	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00002)	COMPLETED	0	2022-06-12 23:37:57.603	2m 39s	1m 2s	91.3%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+135	00/ee9c39	2152653	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00003)	COMPLETED	0	2022-06-12 23:38:01.981	2m 35s	1m 41s	92.3%	3.7 GB	4.5 GB	127.1 MB	4 KB
+147	21/7a1d39	2152665	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00006)	COMPLETED	0	2022-06-12 23:38:13.946	2m 38s	1m 55s	92.7%	3.7 GB	4.5 GB	127.1 MB	4 KB
+150	e2/841a65	2152668	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00007)	COMPLETED	0	2022-06-12 23:38:17.024	2m 35s	1m 2s	92.1%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+174	56/40a7b6	2152692	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00013)	COMPLETED	0	2022-06-12 23:38:42.679	2m 14s	1m 1s	93.2%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+178	36/4dd2a0	2152696	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00014)	COMPLETED	0	2022-06-12 23:38:46.453	2m 10s	1m 6s	92.8%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+182	fc/a9ce6f	2152701	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00015)	COMPLETED	0	2022-06-12 23:38:51.545	2m 5s	1m 3s	92.0%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+193	97/3f3682	2152711	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00017)	COMPLETED	0	2022-06-12 23:39:01.506	1m 55s	23.5s	88.7%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+197	8e/8cc3c1	2152716	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00018)	COMPLETED	0	2022-06-12 23:39:06.505	1m 50s	26.1s	86.5%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+123	2e/00b528	2152641	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00000)	COMPLETED	0	2022-06-12 23:37:49.883	3m 12s	1m 51s	97.7%	3.7 GB	4.5 GB	127.1 MB	4 KB
+127	78/17e2fd	2152644	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00001)	COMPLETED	0	2022-06-12 23:37:53.444	3m 8s	1m 44s	92.2%	3.7 GB	4.5 GB	127.1 MB	4 KB
+131	87/e41697	2152649	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00002)	COMPLETED	0	2022-06-12 23:37:58.357	3m 3s	1m 28s	91.2%	3.7 GB	4.5 GB	127.1 MB	4 KB
+143	cc/44032f	2152661	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00005)	COMPLETED	0	2022-06-12 23:38:09.875	2m 52s	1m 21s	93.6%	3.7 GB	4.5 GB	127.1 MB	4 KB
+151	9d/676fc4	2152669	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00007)	COMPLETED	0	2022-06-12 23:38:18.230	2m 44s	1m 35s	95.3%	3.7 GB	4.5 GB	127.1 MB	4 KB
+154	70/7cb868	2152672	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00008)	COMPLETED	0	2022-06-12 23:38:20.941	2m 41s	1m 2s	95.3%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+155	95/0ad2f6	2152673	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00008)	COMPLETED	0	2022-06-12 23:38:22.383	2m 39s	1m 20s	94.6%	3.7 GB	4.5 GB	127.1 MB	4 KB
+158	d3/45bc82	2152676	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00009)	COMPLETED	0	2022-06-12 23:38:24.936	2m 37s	1m 6s	90.2%	3.7 GB	4.5 GB	142.2 MB	11.6 KB
+162	b1/0b6a7d	2152680	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00010)	COMPLETED	0	2022-06-12 23:38:31.329	2m 30s	1m 7s	93.6%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+163	7f/8b6569	2152681	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00010)	COMPLETED	0	2022-06-12 23:38:32.796	2m 29s	1m 20s	95.0%	3.7 GB	4.5 GB	127.1 MB	4 KB
+139	13/9b44a6	2152657	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00004)	COMPLETED	0	2022-06-12 23:38:05.973	3m 6s	1m 49s	92.8%	3.7 GB	4.5 GB	127.1 MB	4 KB
+166	6c/b363f0	2152684	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00011)	COMPLETED	0	2022-06-12 23:38:34.819	2m 37s	1m 2s	92.5%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+167	2d/452d4c	2152686	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00011)	COMPLETED	0	2022-06-12 23:38:36.539	2m 35s	1m 24s	95.0%	3.7 GB	4.5 GB	127.1 MB	4 KB
+201	2e/821bba	2152719	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00019)	COMPLETED	0	2022-06-12 23:39:09.937	2m 2s	18.7s	92.1%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+170	8b/687e1a	2152688	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00012)	COMPLETED	0	2022-06-12 23:38:38.538	2m 38s	58.9s	92.8%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+171	e9/31810a	2152689	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00012)	COMPLETED	0	2022-06-12 23:38:39.536	2m 37s	1m 44s	90.5%	3.7 GB	4.5 GB	127.1 MB	4 KB
+205	d1/bd5c9d	2152722	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00020)	COMPLETED	0	2022-06-12 23:39:12.643	2m 4s	25.1s	87.8%	3.6 GB	4.3 GB	105.1 MB	7.2 KB
+179	16/a87082	2152697	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de+non-targeting-00014)	COMPLETED	0	2022-06-12 23:38:47.536	2m 39s	1m 32s	91.9%	3.7 GB	4.5 GB	127.1 MB	4 KB
+209	00/d19b3b	2152727	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00021)	COMPLETED	0	2022-06-12 23:39:17.642	2m 9s	24.1s	85.8%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+213	07/a87ac9	2152732	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00022)	COMPLETED	0	2022-06-12 23:39:22.641	2m 14s	24s	89.8%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+217	7c/722547	2152735	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00023)	COMPLETED	0	2022-06-12 23:39:25.556	2m 11s	24.8s	88.4%	3.6 GB	4.3 GB	105.1 MB	7.3 KB
+202	a8/91f928	2152720	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00020)	COMPLETED	0	2022-06-12 23:39:10.646	2m 41s	1m 2s	93.1%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+206	b4/789e3c	2152724	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method+non-targeting-00021)	COMPLETED	0	2022-06-12 23:39:14.527	2m 37s	1m 9s	90.0%	3.7 GB	4.5 GB	142.2 MB	3.6 KB
+222	a3/282892	2152740	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method+non-targeting-00024)	COMPLETED	0	2022-06-12 23:39:30.569	2m 21s	24.5s	87.9%	3.6 GB	4.3 GB	105.1 MB	7.2 KB
