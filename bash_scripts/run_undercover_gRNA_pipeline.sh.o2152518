@@ -1,0 +1,462 @@
+Agent pid 4394
+Identity added: /home/stat/timbar/.ssh/id_ed25519 (tbarry2@andrew.cmu.edu)
+Checking https://github.com/Katsevich-Lab/undercover-gRNA-pipeline ...
+ Already-up-to-date - revision: 70e2f8fe3e [main]
+N E X T F L O W  ~  version 21.10.6
+Launching `Katsevich-Lab/undercover-gRNA-pipeline` [insane_galileo] - revision: 70e2f8fe3e [main]
+[-        ] process > obtain_dataset_ntc_tuples -
+
+[-        ] process > obtain_dataset_ntc_tuples [  0%] 0 of 1
+[-        ] process > run_method                -
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [  0%] 0 of 1
+[-        ] process > run_method                -
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [  0%] 0 of 1
+[-        ] process > run_method                -
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 1
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 36
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 60
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 92
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 130
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 168
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 230
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 281
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 336
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 386
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 445
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (1)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples [100%] 1 of 1 ✔
+[-        ] process > run_method                [  0%] 0 of 480
+[-        ] process > combine_results           -
+[-        ] process > get_ram_cpu_info          -
+[-        ] process > append_ram_clock_info     -
+
+executor >  sge (2)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[6d/9333ec] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (3)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[fe/ff46c2] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (4)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[5b/68b807] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (5)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[94/8a3e8e] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (6)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[51/a5b7e8] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (7)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[08/1b5ebf] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (8)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[bc/6c25ee] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (9)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[5b/0fbfee] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (9)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[5b/0fbfee] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (10)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[5b/0fbfee] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (10)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[93/12b9eb] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (11)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[db/3db89c] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (12)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[dd/6053d0] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (13)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[b7/652e63] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (14)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[88/40f643] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (14)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[88/40f643] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (15)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[88/40f643] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (15)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[0d/1e5383] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (16)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[10/9cf81c] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (17)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[65/5caea5] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (18)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[cf/2d0658] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (19)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[3c/d48875] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (19)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[3c/d48875] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (20)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[ad/d484fb] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (21)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[23/e4198b] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (22)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[59/e42e01] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (23)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[d5/bcbd58] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (24)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[73/bde089] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (24)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[73/bde089] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (25)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[46/4bace0] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (26)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[98/903445] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (27)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[8d/022afb] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (28)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[c6/a23206] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (29)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[cf/28b664] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (29)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[cf/28b664] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (29)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[cf/28b664] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (30)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[e6/c57c72] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (31)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[2a/497540] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (32)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[2c/5cb277] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (33)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[3c/24345d] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (34)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[35/b07043] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (34)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[35/b07043] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (35)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[b2/7a9da7] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (36)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[1f/f7ee86] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (37)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[33/343627] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (38)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[2b/559f0d] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (39)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[b7/0c94dd] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (39)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[b7/0c94dd] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (40)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[db/28fd35] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+
+executor >  sge (41)
+[a3/2a19aa] process > obtain_dataset_ntc_tuples      [100%] 1 of 1 ✔
+[ac/01c8c2] process > run_method (schraivogel/enh... [  0%] 0 of 480
+[-        ] process > combine_results                -
+[-        ] process > get_ram_cpu_info               -
+[-        ] process > append_ram_clock_info          -
+

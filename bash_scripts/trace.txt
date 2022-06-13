@@ -1,0 +1,2 @@
+task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
+1	a3/2a19aa	2152519	obtain_dataset_ntc_tuples	COMPLETED	0	2022-06-12 23:35:08.664	38s	7.8s	75.7%	365.5 MB	1 GB	50.2 MB	9 KB
