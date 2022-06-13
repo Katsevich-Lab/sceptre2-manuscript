@@ -45,10 +45,10 @@ data_method_queue_matrix = [
 ["short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_small/chromatin
 ["short.q", "short.q", "short.q", "all.q", "short.q"],  // papalexi/eccite_screen/gene
 ["short.q", "short.q", "short.q", "short.q", "short.q"], // papalexi/eccite_screen/protein
-["short.q", "short.q", "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
-["short.q", "short.q", "short.q", "short.q", "short.q"],  // schraivogel/enhancer_screen_chr8/gene
+["short.q", "short.q", "short.q", "all.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
+["short.q", "short.q", "short.q", "all.q", "short.q"],  // schraivogel/enhancer_screen_chr8/gene
 ["short.q", "short.q", "short.q", "all.q", "short.q"], // schraivogel/ground_truth_perturbseq/gene
-["short.q", "short.q", "short.q", "short.q", "short.q"], // schraivogel/ground_truth_tapseq/gene
+["short.q", "short.q", "short.q", "all.q", "short.q"], // schraivogel/ground_truth_tapseq/gene
 ["short.q", "short.q", "short.q", "all.q", "short.q"] // simulated/experiment_1/gene
 ]
 
