@@ -1,0 +1,104 @@
+---
+title: "gRNA counts across datasets"
+author: "Tim"
+date: '2022-06-13'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+## gRNA count analysis
+
+In this script we assess the number of cells per gRNA across datasets. 
+
+```{r}
+data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
+papers <- list.files(data_dir)
+```
+
+
+```{r, echo=FALSE}
+get_summary_stats <- function(gRNA_assignment_vect, plot_col = "blue", plot_name, max_val) {
+  tab <- table(gRNA_assignment_vect) |> sort(decreasing = TRUE)
+  n_gRNAs <- length(tab)
+  min_count <- min(tab)
+  max_count <- max(tab) 
+  median_count <- median(tab)
+  mean_count <- mean(tab)
+  summary_stats <- c(n_gRNAs = n_gRNAs,
+                     min_count = min_count,
+                     max_count = max_count,
+                     median_count = median_count,
+                     mean_count = mean_count)
+  to_plot_df <- data.frame(count = as.integer(tab),
+                           gRNA_id = names(tab)) |>
+    dplyr::mutate(gRNA_id = factor(gRNA_id, gRNA_id, gRNA_id))
+  p <- ggplot(data = to_plot_df, mapping = aes(x = gRNA_id, y = count)) +
+    geom_bar(stat = "identity", fill = plot_col) + theme_bw() + xlab("") + ylab("Cells/gRNA") + 
+    theme(axis.text.x=element_blank(), axis.ticks.x=element_blank(), panel.grid.major.x = element_blank()) +
+    ggtitle(plot_name) + ylim(0, max_val)
+  
+  return(list(plot = p, summary_stats = summary_stats))
+}
+
+perform_count_analysis <- function(gRNA_assignments, gRNA_metadata) {
+  max_val <- max(table(gRNA_assignments)) + 10
+  # get vectors of targeting and non-targeting gRNAs, as well as combined vector
+  nontargeting_gRNAs <- gRNA_metadata |>
+    dplyr::filter(target_type == "non-targeting") |>
+    row.names()
+  targeting_gRNAs <- gRNA_metadata |>
+    dplyr::filter(target_type != "non-targeting") |>
+    row.names()
+  gRNA_assignments_targeting <- gRNA_assignments[gRNA_assignments %in% targeting_gRNAs]
+  gRNA_assignments_nontargeting <- gRNA_assignments[gRNA_assignments %in% nontargeting_gRNAs]
+  assignment_list <- list(targeting = gRNA_assignments_targeting,
+                          nontargeting = gRNA_assignments_nontargeting,
+                          combined = gRNA_assignments)
+  col_choices <- c(targeting = "firebrick4", nontargeting = "dodgerblue4", combined = "darkorchid4")
+
+  # apply the analysis function to each element of the assignment list
+  res_list <- lapply(X = names(col_choices), FUN = function(gRNA_type) {
+    get_summary_stats(assignment_list[[gRNA_type]],
+                      col_choices[gRNA_type],
+                      stringr::str_to_title(gRNA_type),
+                      max_val)
+  }) |> purrr::set_names(names(col_choices))
+  
+  # create the plot
+  p_all <- cowplot::plot_grid(plotlist = lapply(res_list, function(item) item$plot),
+                              labels = c("a", "b", "c"))
+  
+  # create the table
+  sum_tab <- do.call(what = cbind, lapply(res_list, function(item) item$summary_stats)) |> t()
+  
+  # return the table and plot
+  list(p_all, sum_tab)
+}
+```
+
+Loop over the data; (consider grouped and ungrouped versions.)
+
+```{r}
+for (paper in papers) {
+  paper_dir <- paste0(data_dir, paper, "/")
+  datasets <- list.files(paper_dir)
+  for (dataset in datasets) {
+    gRNA_odm <- lowmoi::load_dataset_modality(data_fp = paste0(paper, "/", dataset, "/grna_assignment"))
+    gRNA_mat <- gRNA_odm |> lowmoi::load_whole_odm()
+    gRNA_assignments <- apply(X = gRNA_mat, MARGIN = 2, FUN = function(col) names(which.max(col))) |>
+      unname()
+    gRNA_metadata <- gRNA_odm |>
+      ondisc::get_feature_covariates() |>
+      dplyr::select(target, target_type)
+    analysis_result <- perform_count_analysis(gRNA_assignments, gRNA_metadata)
+   
+    analysis_result[[1]]
+    analysis_result[[2]]
+    
+  }
+}
+```
