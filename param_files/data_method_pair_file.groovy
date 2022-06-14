@@ -14,19 +14,22 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"]
                      ]
 */
-data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "weissman_method"],
-                     "frangieh/control/gene": ["schraivogel_method", "seurat_de", "weissman_method"],
-                     "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "weissman_method"],
+
+
+data_method_pairs = ["frangieh/co_culture/gene": ["mimosca"],
+                     "frangieh/control/gene": ["mimosca"],
+                     "frangieh/ifn_gamma/gene": ["mimosca"],
                      "liscovitch/experiment_big/chromatin": ["liscovitch_method"],
                      "liscovitch/experiment_small/chromatin": ["liscovitch_method"],
-                     "papalexi/eccite_screen/gene": ["schraivogel_method", "seurat_de", "weissman_method"],
-                     "papalexi/eccite_screen/protein": ["schraivogel_method", "seurat_de", "weissman_method"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "seurat_de", "weissman_method"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "seurat_de", "weissman_method"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de", "weissman_method"],
-                     "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "weissman_method"],
-                     "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "weissman_method"]
+                     "papalexi/eccite_screen/gene": ["mimosca"],
+                     "papalexi/eccite_screen/protein": ["mimosca"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["mimosca"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["mimosca"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["mimosca"],
+                     "schraivogel/ground_truth_tapseq/gene": ["mimosca"],
+                     "simulated/experiment_1/gene": ["mimosca"]
                      ]
+
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
