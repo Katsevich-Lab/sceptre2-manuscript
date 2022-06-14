@@ -95,10 +95,11 @@ for (paper in papers) {
       ondisc::get_feature_covariates() |>
       dplyr::select(target, target_type)
     analysis_result <- perform_count_analysis(gRNA_assignments, gRNA_metadata)
-   
-    analysis_result[[1]]
-    analysis_result[[2]]
-    
+    print(paste0("Paper: ", paper, ", Dataset: ", dataset))
+    plot(analysis_result[[1]])
+    print(analysis_result[[2]])
+    plot.new()
   }
 }
 ```
+
