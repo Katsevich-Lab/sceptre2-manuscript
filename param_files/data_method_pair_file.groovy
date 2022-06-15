@@ -91,6 +91,6 @@ optional_args = [
 "", // schraivogel_method
 "", // seurat_de
 "", // liscovitch_method
-"n_rep=10", // mimosca
+"n_rep=50", // mimosca
 "" // weissman_method
 ]
