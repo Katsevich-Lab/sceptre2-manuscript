@@ -39,13 +39,13 @@ get_summary_stats <- function(gRNA_assignment_vect, plot_col = "blue", plot_name
   p <- ggplot(data = to_plot_df, mapping = aes(x = gRNA_id, y = count)) +
     geom_bar(stat = "identity", fill = plot_col) + theme_bw() + xlab("") + ylab("Cells/gRNA") + 
     theme(axis.text.x=element_blank(), axis.ticks.x=element_blank(), panel.grid.major.x = element_blank()) +
-    ggtitle(plot_name) + ylim(0, max_val)
+    ggtitle(plot_name) + scale_y_continuous(trans = 'log2', limits = c(1, max_val))
   
   return(list(plot = p, summary_stats = summary_stats))
 }
 
 perform_count_analysis <- function(gRNA_assignments, gRNA_metadata) {
-  max_val <- max(table(gRNA_assignments)) + 10
+  max_val <- max(table(gRNA_assignments))
   # get vectors of targeting and non-targeting gRNAs, as well as combined vector
   nontargeting_gRNAs <- gRNA_metadata |>
     dplyr::filter(target_type == "non-targeting") |>
@@ -95,10 +95,11 @@ for (paper in papers) {
       ondisc::get_feature_covariates() |>
       dplyr::select(target, target_type)
     analysis_result <- perform_count_analysis(gRNA_assignments, gRNA_metadata)
-   
-    analysis_result[[1]]
-    analysis_result[[2]]
-    
+    cat(paste0("Paper: ", paper, ", Dataset: ", dataset))
+    plot(analysis_result[[1]])
+    print(analysis_result[[2]])
+    plot.new()
   }
 }
 ```
+
