@@ -32,7 +32,8 @@ get_summary_stats <- function(gRNA_assignment_vect, plot_col = "blue", plot_name
                      min_count = min_count,
                      max_count = max_count,
                      median_count = median_count,
-                     mean_count = mean_count)
+                     mean_count = mean_count,
+                     range = max_count - min_count)
   to_plot_df <- data.frame(count = as.integer(tab),
                            gRNA_id = names(tab)) |>
     dplyr::mutate(gRNA_id = factor(gRNA_id, gRNA_id, gRNA_id))
@@ -59,7 +60,7 @@ perform_count_analysis <- function(gRNA_assignments, gRNA_metadata) {
                           nontargeting = gRNA_assignments_nontargeting,
                           combined = gRNA_assignments)
   col_choices <- c(targeting = "firebrick4", nontargeting = "dodgerblue4", combined = "darkorchid4")
-
+  
   # apply the analysis function to each element of the assignment list
   res_list <- lapply(X = names(col_choices), FUN = function(gRNA_type) {
     get_summary_stats(assignment_list[[gRNA_type]],
@@ -98,8 +99,14 @@ for (paper in papers) {
     cat(paste0("Paper: ", paper, ", Dataset: ", dataset))
     plot(analysis_result[[1]])
     print(analysis_result[[2]])
+    ratio <- analysis_result[[2]]["targeting", "mean_count"] / analysis_result[[2]]["nontargeting", "mean_count"]
+    print(paste0("Ratio of cells/gRNA of targeting gRNAs to non-targeting gRNAs: ", round(ratio, 2)))
     plot.new()
   }
 }
 ```
+
+We see that the number of cells per gRNA is much lower for targeting gRNAs than it is for non-targeting gRNAs. The ratio of #cells/targeting gRNA to #cells/non-targeting gRNAs ranges from 0.33 to 0.79 on the real datasets. This suggests that (i) transduction rates differ across targeting and non-targeting gRNAs or (ii) targeting guides have fitness effects (or both).
+
+Focusing exclusively on the non-targeting gRNAs, we compare the real data to the synthetic data. We see that the mean number of cells/non-targeting gRNA is somewhat lower on the real data (60 - 440 cells/non-targeting gRNA) than on the simulated data (573 cells/non-targeting gRNA). This difference fails to explain lack of calibration on the real data, as we would expect calibration to degrade as the sample size increases. Meanwhile, the difference in cell count between the maximally expressed non-targeting gRNA and minimally expressed non-targeting gRNA (i.e., range) is similar between real (min range = 64; max range = 606) and simulated data (range = 105). Overall, in regards to non-targeting gRNA counts, the real data and simulated data do not appear to be too dissimilar.
 
