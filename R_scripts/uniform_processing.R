@@ -77,7 +77,6 @@ for (paper in papers) {
     grnas_to_keep <- n_cells_per_gRNA >= N_CELLS_PER_GRNA_THRESH
     mm_odm_sub@modalities[["grna_assignment"]] <- grna_assign_modality[grnas_to_keep,]
     
-    
     # grna expression modality (if applicable): keep the same features as above
     if ("grna_expression" %in% modalities) {
       grna_expression_modality <- get_modality(mm_odm_sub, "grna_expression")
@@ -99,6 +98,9 @@ for (paper in papers) {
       modality_odm <- get_modality(mm_odm_sub, modality)
       modality_odm@ondisc_matrix@feature_ids <- gsub(pattern = "_", replacement = "-", x = modality_odm@ondisc_matrix@feature_ids, fixed = TRUE)
       row.names(modality_odm@feature_covariates) <- gsub(pattern = "_", replacement = "-", x = row.names(modality_odm@feature_covariates), fixed = TRUE)
+      if (modality == "grna_assignment") {
+        modality_odm <- mutate_cell_covariates(modality_odm, assigned_gRNA = gsub(pattern = "_", replacement = "-", x = assigned_gRNA, fixed = TRUE))
+      }
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
 
