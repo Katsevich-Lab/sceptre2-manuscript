@@ -25,7 +25,7 @@ results
 ```
 
 Next, for each dataset, we plot the $p$-values for each covariate across NTCs:
-```{r}
+```{r, echo = FALSE}
 datasets <- results |>
   arrange(paper) |>
   pull(dataset) |>
@@ -35,16 +35,18 @@ for (dataset in datasets) {
   paper <- results_dataset |>
     pull(paper) |>
     unique()
-  p_hist <- results_dataset |>
+  p_hist_joint <- results_dataset |>
+    filter(test_type == "joint") |>
     ggplot(aes(x = pvalue)) +
     geom_histogram(colour = "black", binwidth = 0.1, boundary = 0) +
     facet_wrap(~covariate, scales = "free") +
     scale_x_continuous(limits = c(0, 1)) +
-    labs(title = sprintf("%s %s", paper, dataset)) +
+    labs(title = sprintf("%s %s (joint analysis)", paper, dataset)) +
     theme_bw()
-  plot(p_hist)
+  plot(p_hist_joint)
 
-  p_qq <- results_dataset |>
+  p_qq_joint <- results_dataset |>
+    filter(test_type == "joint") |>
     ggplot(aes(y = pvalue)) +
     stat_qq_points() +
     stat_qq_band() +
@@ -52,9 +54,32 @@ for (dataset in datasets) {
     facet_wrap(~covariate, scales = "free") +
     scale_x_continuous(trans = revlog_trans(base = 10)) +
     scale_y_continuous(trans = revlog_trans(base = 10)) +
-    labs(title = sprintf("%s %s", paper, dataset)) +
+    labs(title = sprintf("%s %s (joint analysis)", paper, dataset)) +
     theme_bw()
-  plot(p_qq)
+  plot(p_qq_joint)
+
+  p_hist_marginal <- results_dataset |>
+    filter(test_type == "marginal") |>
+    ggplot(aes(x = pvalue)) +
+    geom_histogram(colour = "black", binwidth = 0.1, boundary = 0) +
+    facet_wrap(~covariate, scales = "free") +
+    scale_x_continuous(limits = c(0, 1)) +
+    labs(title = sprintf("%s %s (marginal analysis)", paper, dataset)) +
+    theme_bw()
+  plot(p_hist_marginal)
+
+  p_qq_marginal <- results_dataset |>
+    filter(test_type == "marginal") |>
+    ggplot(aes(y = pvalue)) +
+    stat_qq_points() +
+    stat_qq_band() +
+    geom_abline() +
+    facet_wrap(~covariate, scales = "free") +
+    scale_x_continuous(trans = revlog_trans(base = 10)) +
+    scale_y_continuous(trans = revlog_trans(base = 10)) +
+    labs(title = sprintf("%s %s (marginal analysis)", paper, dataset)) +
+    theme_bw()
+  plot(p_qq_marginal)
 }
 ```
 

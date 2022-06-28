@@ -7,6 +7,7 @@ results <- tibble(
   dataset = character(),
   ntc = character(),
   covariate = character(),
+  test_type = character(),
   estimate = numeric(),
   std_error = numeric(),
   zvalue = numeric(),
@@ -75,26 +76,73 @@ for (paper in papers) {
         df_ntc <- df_ntc |> select(-guide_ID)
       }
 
-      # fit GLM
+      ### joint analysis ###
+
+      # fit joint GLM
       glm_fit <- glm(perturbation_indicator ~ ., family = "binomial", data = df_ntc)
 
-      # extract fit information
+      # fit null GLM
+      glm_fit_null <- glm(perturbation_indicator ~ 1, family = "binomial", data = df_ntc)
+
+      # extract joint fit information
       fit_info <- coef(summary(glm_fit)) |>
         as.data.frame() |>
         rownames_to_column(var = "covariate") |>
         filter(covariate != "(Intercept)") |>
-        rename(estimate = Estimate, std_error = `Std. Error`, zvalue = `z value`, pvalue = `Pr(>|z|)`) |>
-        mutate(paper = paper, dataset = dataset, ntc = ntc) |>
-        select(paper, dataset, ntc, covariate, estimate, std_error, zvalue, pvalue)
+        rename(estimate = Estimate,
+               std_error = `Std. Error`,
+               zvalue = `z value`,
+               pvalue = `Pr(>|z|)`) |>
+        mutate(paper = paper,
+               dataset = dataset,
+               ntc = ntc,
+               test_type = "joint") |>
+        select(paper, dataset, ntc, covariate, test_type,
+               estimate, std_error, zvalue, pvalue)
 
       # add to results data frame
       results <- results |> bind_rows(fit_info)
+
+      # extract p-value for chi-squared test
+      chisq_pval <- anova(glm_fit, glm_fit_null, test = "Chisq")[2, "Pr(>Chi)"]
+      results <- results |> add_row(paper = paper, dataset = dataset, ntc = ntc,
+                                    covariate = "all", test_type = "joint", estimate = NA,
+                                    std_error = NA, zvalue = NA, pvalue = chisq_pval)
+
+      ### marginal analysis ###
+      covariates <- df_ntc |> colnames() |> setdiff("perturbation_indicator")
+      for(covariate in covariates){
+        # fit marginal GLM
+        glm_fit <- glm(sprintf("perturbation_indicator ~ %s", covariate),
+                       family = "binomial", data = df_ntc)
+
+        # extract marginal fit information
+        fit_info <- coef(summary(glm_fit)) |>
+          as.data.frame() |>
+          rownames_to_column(var = "covariate") |>
+          filter(covariate != "(Intercept)") |>
+          rename(estimate = Estimate,
+                 std_error = `Std. Error`,
+                 zvalue = `z value`,
+                 pvalue = `Pr(>|z|)`) |>
+          mutate(paper = paper,
+                 dataset = dataset,
+                 ntc = ntc,
+                 test_type = "marginal") |>
+          select(paper, dataset, ntc, covariate, test_type,
+                 estimate, std_error, zvalue, pvalue)
+
+        # add to results data frame
+        results <- results |> bind_rows(fit_info)
+      }
     }
   }
 }
 
 # save results to disk
-results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
-                      "results/perturbation_propensity_analysis")
+results_dir <- paste0(
+  .get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
+  "results/perturbation_propensity_analysis"
+)
 dir.create(results_dir)
 saveRDS(results, paste0(results_dir, "/results.rds"))
