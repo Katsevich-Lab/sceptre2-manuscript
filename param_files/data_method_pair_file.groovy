@@ -1,16 +1,20 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
-                     "frangieh/control/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
-                     "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
+/*
+data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
+                     "frangieh/control/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
+                     "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
                      "liscovitch/experiment_big/chromatin": ["liscovitch_method"],
                      "liscovitch/experiment_small/chromatin": ["liscovitch_method"],
-                     "papalexi/eccite_screen/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
-                     "papalexi/eccite_screen/protein": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
-                     "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"],
-                     "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "mimosca", "weissman_method"]
+                     "papalexi/eccite_screen/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
+                     "papalexi/eccite_screen/protein": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
+                     "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
+                     "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"]
+                     ]
+*/
+data_method_pairs = ["schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "permutation_test", "nb_regression"]
                      ]
 
 
@@ -37,18 +41,18 @@ col_names = ["schraivogel_method",
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[34, 13, 1, 35, 48, 45, 45], // frangieh/co_culture/gene
-[23, 9,  1, 26, 33, 45, 45], // frangieh/control/gene
-[36, 13, 1, 34, 51, 45, 45], // frangieh/ifn_gamma/gene
-[2,  1,  1, 1,  1,  45, 45], // liscovitch/experiment_big/chromatin
-[2,  1,  1, 1,  1,  45, 45], // liscovitch/experiment_small/chromatin
-[18, 6,  1, 19, 21, 45, 45], // papalexi/eccite_screen/gene
-[2,  1,  1, 5,  1,  45, 45], // papalexi/eccite_screen/protein
-[6,  12, 1, 18, 5,  45, 45], // schraivogel/enhancer_screen_chr11/gene
-[8,  14, 1, 21, 5,  45, 45], // schraivogel/enhancer_screen_chr8/gene
-[44, 11, 1, 31, 33, 45, 45], // schraivogel/ground_truth_perturbseq/gene
-[2,  1,  1, 5,  1,  45, 45], // schraivogel/ground_truth_tapseq/gene
-[28, 7,  1, 17, 18, 45, 45] // simulated/experiment_1/gene
+[34, 13, 45, 35, 48, 45, 45], // frangieh/co_culture/gene
+[23, 9,  45, 26, 33, 45, 45], // frangieh/control/gene
+[36, 13, 45, 34, 51, 45, 45], // frangieh/ifn_gamma/gene
+[2,  1,  45, 1,  1,  45, 45], // liscovitch/experiment_big/chromatin
+[2,  1,  45, 1,  1,  45, 45], // liscovitch/experiment_small/chromatin
+[18, 6,  45, 19, 21, 45, 45], // papalexi/eccite_screen/gene
+[2,  1,  45, 5,  1,  45, 45], // papalexi/eccite_screen/protein
+[6,  12, 45, 18, 5,  45, 45], // schraivogel/enhancer_screen_chr11/gene
+[8,  14, 45, 21, 5,  45, 45], // schraivogel/enhancer_screen_chr8/gene
+[44, 11, 45, 31, 33, 45, 45], // schraivogel/ground_truth_perturbseq/gene
+[2,  1,  45, 5,  1,  45, 45], // schraivogel/ground_truth_tapseq/gene
+[28, 7,  45, 17, 18, 45, 45] // simulated/experiment_1/gene
 ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, permutation_test, nb_regression
 
@@ -76,6 +80,6 @@ optional_args = [
 "", // liscovitch_method
 "n_rep=50", // mimosca
 "", // weissman_method
-"", // permutation_test
-"n_rep=10000" // nb_regression
+"n_rep=10000", // permutation_test
+"" // nb_regression
 ]

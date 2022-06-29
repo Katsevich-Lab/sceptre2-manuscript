@@ -5,14 +5,15 @@ source ~/.research_config
 
 curr_time=$(date '+%m%d%H%M')
 nextflow pull https://github.com/Katsevich-Lab/undercover-gRNA-pipeline
-# nextflow run undercover-gRNA-pipeline -r main \
-nextflow run "/Users/timbarry/research_code/undercover-gRNA-pipeline/main.nf" \
+nextflow run undercover-gRNA-pipeline -r main \
  --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/data_method_pair_file.groovy" \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
- --result_file_name "result_mimosca.rds" \
- --one_neg_control "FALSE" \
- --max_retries 2 \
+ --result_file_name "result_test.rds" \
  --grna_modality "assignment" \
+ --group_size 2 \
+ --is_group_size_frac "false" \
+ --partition_count 1 \
+ --is_partition_count_frac "false" \
  --machine_name $MACHINE_NAME \
  --time $curr_time \
- -with-trace
+ --max_retries 2
