@@ -38,11 +38,17 @@ read_multimodal_odm <- function(paper, dataset, sceptre2_data_dir = paste0(.get_
 }
 
 # 1) Set the MIMOSCA formula objects
-mimosca_formula_objs <- list(frangieh = formula(~ n_umis + phase + 0),
-                             schraivogel = formula(~ n_umis + batch + 0),
-                             papalexi = formula(~ n_umis + batch + phase + p_mito + 0),
-                             liscovitch = formula(~ n_fragments + 0),
-                             simulated = formula(~ n_umis + 0))
+mimosca_formula_objs <- list(frangieh = formula(~ n_nonzero + n_umis + phase + batch + 0),
+                             schraivogel = formula(~ n_nonzero + n_umis + batch + 0),
+                             papalexi = formula(~ n_nonzero + n_umis + batch + phase + p_mito + 0),
+                             liscovitch = formula(~ n_nonzero + n_fragments + 0),
+                             simulated = formula(~ n_nonzero + n_umis + 0))
+
+nb_regression_formula_objs <- list(frangieh = "~ offset(log(n_umis)) + log(n_nonzero) + phase + batch",
+                                   schraivogel = "~ offset(log(n_umis)) + log(n_nonzero) + batch",
+                                   papalexi = "~ offset(log(n_umis)) + log(n_nonzero) + batch + phase + p_mito",
+                                   liscovitch = "~ offset(log(n_fragments))",
+                                   simulated = "~ offset(log(n_umis)) + log(n_nonzero)")
 
 # 2) loop over datasets, loading all modalities
 for (paper in papers) {
@@ -76,7 +82,7 @@ for (paper in papers) {
     n_cells_per_gRNA <- Matrix::rowSums(grna_assign_mat)
     grnas_to_keep <- n_cells_per_gRNA >= N_CELLS_PER_GRNA_THRESH
     mm_odm_sub@modalities[["grna_assignment"]] <- grna_assign_modality[grnas_to_keep,]
-    
+
     # grna expression modality (if applicable): keep the same features as above
     if ("grna_expression" %in% modalities) {
       grna_expression_modality <- get_modality(mm_odm_sub, "grna_expression")
@@ -104,10 +110,11 @@ for (paper in papers) {
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
 
-    # iv. add the mimosca formula object to each response modality
+    # iv. add the mimosca/nb formula objects to each response modality
     for (modality in remaining_modalities) {
       modality_odm <- get_modality(mm_odm_sub, modality)
       modality_odm@misc[["mimosca_formula"]] <- mimosca_formula_objs[[paper]]
+      modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs[[paper]]
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
     # Finally, write the modified multimodal odm
