@@ -10,7 +10,7 @@ nextflow run undercover-gRNA-pipeline -r main \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
  --result_file_name "result_test.rds" \
  --grna_modality "assignment" \
- --group_size 2 \
+ --group_size 1 \
  --is_group_size_frac "false" \
  --partition_count 1 \
  --is_partition_count_frac "false" \

@@ -14,7 +14,18 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"]
                      ]
 */
-data_method_pairs = ["schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "permutation_test", "nb_regression"]
+data_method_pairs = ["frangieh/co_culture/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "frangieh/control/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "frangieh/ifn_gamma/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "liscovitch/experiment_big/chromatin": ["liscovitch_method"],
+                     "liscovitch/experiment_small/chromatin": ["liscovitch_method"],
+                     "papalexi/eccite_screen/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "papalexi/eccite_screen/protein": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "schraivogel/ground_truth_tapseq/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
+                     "simulated/experiment_1/gene": ["liscovitch_method", "permutation_test", "nb_regression"]
                      ]
 
 
@@ -80,6 +91,6 @@ optional_args = [
 "", // liscovitch_method
 "n_rep=50", // mimosca
 "", // weissman_method
-"n_rep=10000", // permutation_test
+"n_rep=1000", // permutation_test
 "" // nb_regression
 ]
