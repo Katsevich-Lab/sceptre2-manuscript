@@ -8,7 +8,7 @@ source ~/.research_config
 py_dir=$KATS_SOFT_DIR/py
 
 # create a Python virtual environment for this project if it does not already exist
-if [ ! -d $py_dir/lowmoi-venv ] 
+if [ ! -d $py_dir/lowmoi-venv ]
 then
     python -m venv $py_dir/lowmoi-venv
 fi
@@ -32,4 +32,5 @@ python -m pip install joblib
 python -m pip install matplotlib
 python -m pip install seaborn
 python -m pip install numexpr
+python -m pip install requests
 
