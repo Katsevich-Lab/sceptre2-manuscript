@@ -4,4 +4,4 @@ bash_scripts/.nextflow*
 .DS_Store
 R_scripts/.Rhistory
 plotting/.Rhistory
-.DS_Store
+bash_scripts/trace*
