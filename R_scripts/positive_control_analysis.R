@@ -7,10 +7,12 @@ data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
 papers <- c("frangieh", "papalexi", "schraivogel")
 methods <- c(schraivogel_method, liscovitch_method, mimosca,
              weissman_method, seurat_de)
-names(methods) <- c("schraivogel", "liscovitch", "mimosca", "weissman", "seurat")
+names(methods) <- c("schraivogel", "liscovitch", "mimosca",
+                    "weissman", "seurat", "permutation_test",
+                    "nb_regression")
 
 # set up results tibble
-results <- tibble::tibble(
+results <- tibble(
   paper = character(),
   dataset = character(),
   method = character(),
