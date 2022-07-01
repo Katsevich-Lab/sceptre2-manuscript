@@ -1,8 +1,9 @@
 library(ondisc)
 sceptre2_data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
 papers <- list.files(sceptre2_data_dir)
+papers <- papers[papers != "gasperini"]
 
-# This script performs cell-wise QC.
+# This script performs cell-wise QC, among other operations, on low MOI data.
 # We (i) restrict attention to cells that received a single gRNA (as determined by the original authors) and
 # (ii) filter for cells that passed other QC metrics implemented by the original authors (stored in the "passed_qc" column).
 
@@ -10,9 +11,8 @@ papers <- list.files(sceptre2_data_dir)
 N_CELLS_PER_GRNA_THRESH <- 10
 FRAC_EXPRESSED_TRHESH <- 0.005
 
-# 0) General save and read multimodal_odm functions
-# save
-save_multimodal_odm <- function(multimodal_odm, paper, dataset, metadata_file_name, sceptre2_data_dir = paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")) {
+# 0) save all modalities function
+save_all_modalities <- function(multimodal_odm, paper, dataset, metadata_file_name, sceptre2_data_dir = paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")) {
   dataset_dir <- paste0(sceptre2_data_dir, paper, "/", dataset)
   modality_list <- multimodal_odm@modalities |> names()
   for (modality in modality_list) {
@@ -21,32 +21,34 @@ save_multimodal_odm <- function(multimodal_odm, paper, dataset, metadata_file_na
   }
 }
 
-# read
-read_multimodal_odm <- function(paper, dataset, sceptre2_data_dir = paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")) {
-  dataset_dir <- paste0(sceptre2_data_dir, paper, "/", dataset)
-  modality_vect <- list.files(dataset_dir)
-  odm_list <- list()
-  for (modality in modality_vect) {
-    odm_dir <- paste0(dataset_dir, "/", modality, "/")
-    curr_odm <- read_odm(odm_fp = paste0(odm_dir, "matrix.odm"),
-                         metadata_fp = paste0(odm_dir, "metadata_orig.rds"))
-    odm_list <- c(odm_list, curr_odm)
+# 1) process multimodal ODM function
+process_multimodal_odm <- function(mm_odm) {
+  cell_covariate_m <- mm_odm |> get_cell_covariates()
+  cell_covariate_m <- cell_covariate_m |> dplyr::mutate(grna_assignment_n_nonzero = NULL,
+                                                        grna_assignment_n_umis = NULL)
+  cell_covariate_colnames <- colnames(cell_covariate_m)
+  shared_covariates <- c("batch", "p_mito", "phase", "bio_rep", "lane")
+  for (shared_covariate in shared_covariates) {
+    match_col_names <- grep(pattern = shared_covariate, x = cell_covariate_colnames, value = TRUE)
+    if (length(match_col_names) >= 1) {
+      cell_covariate_m[[shared_covariate]] <- cell_covariate_m[[match_col_names[1]]]
+      for (match_col_name in match_col_names) cell_covariate_m[[match_col_name]] <- NULL
+    }
   }
-  names(odm_list) <- modality_vect
-  ret <- multimodal_ondisc_matrix(odm_list)
-  return(ret)
+  mm_odm@global_cell_covariates <- cell_covariate_m
+  return(mm_odm)
 }
 
-# 1) Set the MIMOSCA formula objects
+# 2) Set the MIMOSCA formula objects
 mimosca_formula_objs <- list(frangieh = formula(~ n_nonzero + n_umis + phase + batch + 0),
                              schraivogel = formula(~ n_nonzero + n_umis + batch + 0),
-                             papalexi = formula(~ n_nonzero + n_umis + batch + phase + p_mito + 0),
+                             papalexi = formula(~ n_nonzero + n_umis + bio_rep + phase + p_mito + 0),
                              liscovitch = formula(~ n_nonzero + n_fragments + 0),
                              simulated = formula(~ n_nonzero + n_umis + 0))
 
 nb_regression_formula_objs <- list(frangieh = "~ offset(log(n_umis)) + log(n_nonzero) + phase + batch",
                                    schraivogel = "~ offset(log(n_umis)) + log(n_nonzero) + batch",
-                                   papalexi = "~ offset(log(n_umis)) + log(n_nonzero) + batch + phase + p_mito",
+                                   papalexi = "~ offset(log(n_umis)) + log(n_nonzero) + bio_rep + phase + p_mito",
                                    liscovitch = "~ offset(log(n_fragments))",
                                    simulated = "~ offset(log(n_umis)) + log(n_nonzero)")
 
@@ -57,7 +59,9 @@ for (paper in papers) {
   for (dataset in datasets) {
     # load the dataset into a multimodal ODM
     print(paste0("paper: ", paper, " dataset: ", dataset))
-    mm_odm <- read_multimodal_odm(paper, dataset)
+    multimodal_metadata_fp <- paste0(paper_dir, dataset, "/multimodal_metadata.rds")
+    if (file.exists(multimodal_metadata_fp)) file.remove(multimodal_metadata_fp)
+    mm_odm <- lowmoi::read_all_modalities(paper, dataset)
 
     # i. perform cell QC; restrict attention to 1 gRNA/cell and "passed_qc" cells (if applicable)
     global_cell_covariates <- mm_odm |> get_cell_covariates()
@@ -93,9 +97,7 @@ for (paper in papers) {
     remaining_modalities <- modalities[!(modalities %in% c("grna_assignment", "grna_expression"))]
     for (modality in remaining_modalities) {
       modality_odm <- get_modality(mm_odm_sub, modality)
-      exp_mat <- lowmoi::load_whole_odm(modality_odm)
-      frac_expressed <- Matrix::rowSums(exp_mat >= 1)/ncol(exp_mat)
-      feats_to_keep <- frac_expressed > FRAC_EXPRESSED_TRHESH
+      feats_to_keep <- get_highly_expressed_features(modality_odm, FRAC_EXPRESSED_TRHESH)
       mm_odm_sub@modalities[[modality]] <- modality_odm[feats_to_keep,]
     }
 
@@ -117,7 +119,12 @@ for (paper in papers) {
       modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs[[paper]]
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
-    # Finally, write the modified multimodal odm
-    save_multimodal_odm(multimodal_odm = mm_odm_sub, paper = paper, dataset = dataset, metadata_file_name = "metadata_qc.rds")
+    
+    # Write the modified multimodal odm
+    save_all_modalities(multimodal_odm = mm_odm_sub, paper = paper, dataset = dataset, metadata_file_name = "metadata_qc.rds")
+    
+    # v. create a multimodal ondisc matrix free of redundancy and write
+    mm_odm_sub_proc <- process_multimodal_odm(mm_odm_sub)
+    save_multimodal_odm(multimodal_odm = mm_odm_sub_proc, multimodal_metadata_fp = multimodal_metadata_fp)
   }
 }

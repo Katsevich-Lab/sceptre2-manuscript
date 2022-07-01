@@ -28,3 +28,5 @@ Rscript ../R_scripts/create_synthetic_data.R
 
 # 7. run the uniform processing step (which includes cell and feature qc)
 Rscript ../R_scripts/uniform_processing.R
+
+# 8. run all undercover pipelines

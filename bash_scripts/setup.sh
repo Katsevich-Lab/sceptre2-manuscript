@@ -11,44 +11,59 @@ source ~/.research_config
 #   |- schraivogel
 #      |- ground_truth_tapseq
 #          |- gene
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #      |- ground_truth_perturbseq
 #          |- gene
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #      |- enhancer_screen_chr8
 #          |- gene
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #      |- enhancer_screen_chr11
 #          |- gene
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #   |- papalexi
 #      |- eccite_screen
 #          |- gene
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #          |- protein
 #   |- liscovitch
 #       |- experiment_small
 #          |- chromatin
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #       |- experiment_big
 #          |- chromatin
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #   |- frangieh
 #       |- control
 #          |- gene
 #          |- protein
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #       |- ifn-gamma
 #          |- gene
 #          |- protein
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #       |- co-culture
 #          |- gene
 #          |- protein
-#          |- grna
+#          |- grna_expression
+#          |- grna_assignment
 #   |- simulated
 #      |- gene
-#      |- grna
+#      |- grna_expression
+#      |- grna_assignment
+#   |- gasperini
+#      |- gene
+#      |- grna_expression
+#      |- grna_assignment
 # |- results
 
 sceptre2_dir=$LOCAL_SCEPTRE2_DATA_DIR
@@ -57,25 +72,25 @@ sceptre2_data_dir=$sceptre2_dir"data/"
 rm -rf $sceptre2_data_dir
 mkdir -p $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene" \
  $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna_expression" \
-  $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna_assignment" \
+ $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna_assignment" \
  $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/gene" \
  $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/grna_expression" \
-  $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/grna_assignment" \
+ $sceptre2_data_dir"schraivogel/ground_truth_perturbseq/grna_assignment" \
  $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/gene" \
  $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/grna_expression" \
-  $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/grna_assignment" \
+ $sceptre2_data_dir"schraivogel/enhancer_screen_chr8/grna_assignment" \
  $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/gene" \
  $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/grna_expression" \
-  $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/grna_assignment" \
+ $sceptre2_data_dir"schraivogel/enhancer_screen_chr11/grna_assignment" \
  $sceptre2_data_dir"papalexi/eccite_screen/gene" \
  $sceptre2_data_dir"papalexi/eccite_screen/grna_expression" \
-  $sceptre2_data_dir"papalexi/eccite_screen/grna_assignment" \
+ $sceptre2_data_dir"papalexi/eccite_screen/grna_assignment" \
  $sceptre2_data_dir"papalexi/eccite_screen/protein" \
  $sceptre2_data_dir"liscovitch/experiment_small/chromatin" \
  $sceptre2_data_dir"liscovitch/experiment_small/grna_expression" \
-  $sceptre2_data_dir"liscovitch/experiment_small/grna_assignment" \
+ $sceptre2_data_dir"liscovitch/experiment_small/grna_assignment" \
  $sceptre2_data_dir"liscovitch/experiment_big/grna_expression" \
-  $sceptre2_data_dir"liscovitch/experiment_big/grna_assignment" \
+ $sceptre2_data_dir"liscovitch/experiment_big/grna_assignment" \
  $sceptre2_data_dir"liscovitch/experiment_big/chromatin" \
  $sceptre2_data_dir"frangieh/co_culture/gene" \
  $sceptre2_data_dir"frangieh/co_culture/protein" \
@@ -86,6 +101,9 @@ mkdir -p $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene" \
  $sceptre2_data_dir"frangieh/ifn_gamma/gene" \
  $sceptre2_data_dir"frangieh/ifn_gamma/protein" \
  $sceptre2_data_dir"frangieh/ifn_gamma/grna_assignment" \
+ $sceptre2_data_dir"gasperini/at_scale/gene" \
+ $sceptre2_data_dir"gasperini/at_scale/grna_expression" \
+ $sceptre2_data_dir"gasperini/at_scale/grna_assignment" \
  $sceptre2_data_dir"simulated/experiment_1/gene" \
  $sceptre2_data_dir"simulated/experiment_1/grna_expression" \
  $sceptre2_data_dir"simulated/experiment_1/grna_assignment" \

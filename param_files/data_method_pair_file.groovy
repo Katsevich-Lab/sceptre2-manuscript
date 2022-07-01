@@ -14,6 +14,7 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"]
                      ]
 */
+
 data_method_pairs = ["frangieh/co_culture/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
                      "frangieh/control/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
                      "frangieh/ifn_gamma/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
