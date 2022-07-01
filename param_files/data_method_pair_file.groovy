@@ -53,18 +53,18 @@ col_names = ["schraivogel_method",
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[34, 13, 45, 35, 48, 45, 45], // frangieh/co_culture/gene
-[23, 9,  45, 26, 33, 45, 45], // frangieh/control/gene
-[36, 13, 45, 34, 51, 45, 45], // frangieh/ifn_gamma/gene
-[2,  1,  45, 1,  1,  45, 45], // liscovitch/experiment_big/chromatin
-[2,  1,  45, 1,  1,  45, 45], // liscovitch/experiment_small/chromatin
-[18, 6,  45, 19, 21, 45, 45], // papalexi/eccite_screen/gene
-[2,  1,  45, 5,  1,  45, 45], // papalexi/eccite_screen/protein
-[6,  12, 45, 18, 5,  45, 45], // schraivogel/enhancer_screen_chr11/gene
-[8,  14, 45, 21, 5,  45, 45], // schraivogel/enhancer_screen_chr8/gene
-[44, 11, 45, 31, 33, 45, 45], // schraivogel/ground_truth_perturbseq/gene
-[2,  1,  45, 5,  1,  45, 45], // schraivogel/ground_truth_tapseq/gene
-[28, 7,  45, 17, 18, 45, 45] // simulated/experiment_1/gene
+[34, 13, 13, 35, 48, 2, 2], // frangieh/co_culture/gene
+[23,  9, 45, 26, 33, 2, 2], // frangieh/control/gene
+[36, 13, 13, 34, 51, 2, 2], // frangieh/ifn_gamma/gene
+[2,   1,  1,  1,  1, 2, 2], // liscovitch/experiment_big/chromatin
+[2,   1,  1,  1,  1, 2, 2], // liscovitch/experiment_small/chromatin
+[18,  6,  6, 19, 21, 2, 2], // papalexi/eccite_screen/gene
+[2,   1,  1,  5,  1, 2, 2], // papalexi/eccite_screen/protein
+[6,  12, 12, 18,  5, 2, 2], // schraivogel/enhancer_screen_chr11/gene
+[8,  14, 14, 21,  5, 2, 2], // schraivogel/enhancer_screen_chr8/gene
+[44, 11, 11, 31, 33, 2, 2], // schraivogel/ground_truth_perturbseq/gene
+[2,   1,  1,  5,  1, 2, 2], // schraivogel/ground_truth_tapseq/gene
+[28,  7,  7, 17, 18, 2, 2] // simulated/experiment_1/gene
 ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, permutation_test, nb_regression
 
