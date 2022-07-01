@@ -6,11 +6,13 @@ library(tibble)
 data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
 papers <- c("frangieh", "papalexi", "schraivogel")
 methods <- c(schraivogel_method, liscovitch_method, mimosca,
-             weissman_method, seurat_de)
-names(methods) <- c("schraivogel", "liscovitch", "mimosca", "weissman", "seurat")
+             weissman_method, seurat_de, permutation_test, nb_regression)
+names(methods) <- c("schraivogel", "liscovitch", "mimosca",
+                    "weissman", "seurat", "permutation",
+                    "nb_regression")
 
 # set up results tibble
-results <- tibble::tibble(
+results <- tibble(
   paper = character(),
   dataset = character(),
   method = character(),
@@ -58,7 +60,7 @@ for (paper in papers) {
 
     for(method_name in names(methods)){
       cat(sprintf("Applying %s...\n", method_name))
-      result <- do.call(methods[[method_name]], list(response_odm, grna_odm, response_gRNA_group_pairs))
+      result <- do.call(methods[[method_name]], list(response_odm, grna_odm, response_gRNA_group_pairs[1,]))
       result <- result |>
         mutate(method = method_name, dataset = dataset, paper = paper) |>
         select(paper, dataset, method, response_id, gRNA_group, p_value)
