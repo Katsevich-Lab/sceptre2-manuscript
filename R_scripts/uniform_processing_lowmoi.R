@@ -1,7 +1,6 @@
 library(ondisc)
 sceptre2_data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
-papers <- list.files(sceptre2_data_dir)
-papers <- papers[papers != "gasperini"]
+papers <- c("frangieh", "liscovitch",  "papalexi", "schraivogel", "simulated")
 
 # This script performs cell-wise QC, among other operations, on low MOI data.
 # We (i) restrict attention to cells that received a single gRNA (as determined by the original authors) and
@@ -11,35 +10,7 @@ papers <- papers[papers != "gasperini"]
 N_CELLS_PER_GRNA_THRESH <- 10
 FRAC_EXPRESSED_TRHESH <- 0.005
 
-# 0) save all modalities function
-save_all_modalities <- function(multimodal_odm, paper, dataset, metadata_file_name, sceptre2_data_dir = paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")) {
-  dataset_dir <- paste0(sceptre2_data_dir, paper, "/", dataset)
-  modality_list <- multimodal_odm@modalities |> names()
-  for (modality in modality_list) {
-    save_odm(odm = get_modality(multimodal_odm, modality),
-             metadata_fp = paste0(dataset_dir, "/", modality, "/", metadata_file_name))
-  }
-}
-
-# 1) process multimodal ODM function
-process_multimodal_odm <- function(mm_odm) {
-  cell_covariate_m <- mm_odm |> get_cell_covariates()
-  cell_covariate_m <- cell_covariate_m |> dplyr::mutate(grna_assignment_n_nonzero = NULL,
-                                                        grna_assignment_n_umis = NULL)
-  cell_covariate_colnames <- colnames(cell_covariate_m)
-  shared_covariates <- c("batch", "p_mito", "phase", "bio_rep", "lane")
-  for (shared_covariate in shared_covariates) {
-    match_col_names <- grep(pattern = shared_covariate, x = cell_covariate_colnames, value = TRUE)
-    if (length(match_col_names) >= 1) {
-      cell_covariate_m[[shared_covariate]] <- cell_covariate_m[[match_col_names[1]]]
-      for (match_col_name in match_col_names) cell_covariate_m[[match_col_name]] <- NULL
-    }
-  }
-  mm_odm@global_cell_covariates <- cell_covariate_m
-  return(mm_odm)
-}
-
-# 2) Set the MIMOSCA formula objects
+# 1) Set the MIMOSCA formula objects
 mimosca_formula_objs <- list(frangieh = formula(~ n_nonzero + n_umis + phase + batch + 0),
                              schraivogel = formula(~ n_nonzero + n_umis + batch + 0),
                              papalexi = formula(~ n_nonzero + n_umis + bio_rep + phase + p_mito + 0),
@@ -119,12 +90,12 @@ for (paper in papers) {
       modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs[[paper]]
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
-    
-    # Write the modified multimodal odm
-    save_all_modalities(multimodal_odm = mm_odm_sub, paper = paper, dataset = dataset, metadata_file_name = "metadata_qc.rds")
-    
+
+    # Write all modalities
+    lowmoi::save_all_modalities(multimodal_odm = mm_odm_sub, paper = paper, dataset = dataset, metadata_file_name = "metadata_qc.rds")
+
     # v. create a multimodal ondisc matrix free of redundancy and write
-    mm_odm_sub_proc <- process_multimodal_odm(mm_odm_sub)
+    mm_odm_sub_proc <- lowmoi::process_multimodal_odm(mm_odm_sub)
     save_multimodal_odm(multimodal_odm = mm_odm_sub_proc, multimodal_metadata_fp = multimodal_metadata_fp)
   }
 }

@@ -26,7 +26,8 @@ bash create_sym_links.sh
 # 6. create the synthetic data
 Rscript ../R_scripts/create_synthetic_data.R
 
-# 7. run the uniform processing step (which includes cell and feature qc)
-Rscript ../R_scripts/uniform_processing.R
+# 7. run the low MOI uniform processing step (which includes cell and feature qc)
+Rscript ../R_scripts/uniform_processing_lowmoi.R
 
-# 8. run all undercover pipelines
+# 8. run the high MOI uniform processing step
+Rscript ../R_scripts/uniform_processing_highmoi.R

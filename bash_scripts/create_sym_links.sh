@@ -6,6 +6,7 @@ papalexi_proc_dir=$LOCAL_PAPALEXI_2021_DATA_DIR"processed/"
 liscovitch_proc_dir=$LOCAL_LISCOVITCH_2021_DATA_DIR"processed/"
 schraivogel_proc_dir=$LOCAL_SCHRAIVOGEL_2020_DATA_DIR"processed/"
 frangieh_proc_dir=$LOCAL_FRANGIEH_2021_DATA_DIR"processed/"
+gasperini_proc_dir=$LOCAL_GASPERINI_2019_V2_DATA_DIR"at-scale/processed/"
 
 # Papalexi data
 # gene
@@ -79,7 +80,7 @@ ln -sf $schraivogel_proc_dir"ground_truth_tapseq/grna_expression/raw_ungrouped_m
 ln -sf $schraivogel_proc_dir"ground_truth_tapseq/grna_assignment/raw_ungrouped.odm" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna_assignment/matrix.odm"
 ln -sf $schraivogel_proc_dir"ground_truth_tapseq/grna_assignment/raw_ungrouped_metadata.rds" $sceptre2_data_dir"schraivogel/ground_truth_tapseq/grna_assignment/metadata_orig.rds"
 
-# Frangieh
+# Frangieh data
 # copy the gene odms
 ln -sf $frangieh_proc_dir"co_culture/gene/gene_expression_matrix.odm" $sceptre2_data_dir"frangieh/co_culture/gene/matrix.odm"
 ln -sf $frangieh_proc_dir"control/gene/gene_expression_matrix.odm" $sceptre2_data_dir"frangieh/control/gene/matrix.odm"
@@ -104,3 +105,14 @@ ln -sf $frangieh_proc_dir"ifn_gamma/grna_assignment/grna_assignments_ungrouped_m
 ln -sf $frangieh_proc_dir"co_culture/protein/protein_expression_metadata.rds" $sceptre2_data_dir"frangieh/co_culture/protein/metadata_orig.rds"
 ln -sf $frangieh_proc_dir"control/protein/protein_expression_metadata.rds" $sceptre2_data_dir"frangieh/control/protein/metadata_orig.rds"
 ln -sf $frangieh_proc_dir"ifn_gamma/protein/protein_expression_metadata.rds" $sceptre2_data_dir"frangieh/ifn_gamma/protein/metadata_orig.rds"
+
+# Gasperini data
+# gene modalaity
+ln -sf $gasperini_proc_dir"gene/matrix.odm" $sceptre2_data_dir"gasperini/at_scale/gene/matrix.odm"
+ln -sf $gasperini_proc_dir"gene/metadata.rds" $sceptre2_data_dir"gasperini/at_scale/gene/metadata_orig.rds"
+# grna_expression modality
+ln -sf $gasperini_proc_dir"grna_expression/matrix.odm" $sceptre2_data_dir"gasperini/at_scale/grna_expression/matrix.odm"
+ln -sf $gasperini_proc_dir"grna_expression/metadata.rds" $sceptre2_data_dir"gasperini/at_scale/grna_expression/metadata_orig.rds"
+# grna_assignment modality
+ln -sf $gasperini_proc_dir"grna_assignment/matrix.odm" $sceptre2_data_dir"gasperini/at_scale/grna_assignment/matrix.odm"
+ln -sf $gasperini_proc_dir"grna_assignment/metadata.rds" $sceptre2_data_dir"gasperini/at_scale/grna_assignment/metadata_orig.rds"
