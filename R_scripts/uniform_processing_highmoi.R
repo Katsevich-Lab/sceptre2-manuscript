@@ -10,6 +10,10 @@ for (paper in papers) {
   datasets <- list.files(paper_dir)
   for (dataset in datasets) {
     print(paste0("paper: ", paper, " dataset: ", dataset))
+    multimodal_metadata_fp <- paste0(paper_dir, dataset, "/multimodal_metadata.rds")
+    neg_control_pairs_fp <-  paste0(paper_dir, dataset, "/neg_control_pairs.rds")
+    if (file.exists(multimodal_metadata_fp)) file.remove(multimodal_metadata_fp)
+    if (file.exists(neg_control_pairs_fp)) file.remove(neg_control_pairs_fp)
     mm_odm <- lowmoi::read_all_modalities(paper, dataset)
 
     # i. perform cell qc; restrict attention to cells with at least 1 grna and 1 gene expressed
@@ -47,7 +51,20 @@ for (paper in papers) {
 
     # v. create a multimodal ondisc matrix free of redundancy and write
     mm_odm_sub_proc <- lowmoi::process_multimodal_odm(mm_odm_sub, FALSE)
-    multimodal_metadata_fp <- paste0(paper_dir, dataset, "/multimodal_metadata.rds")
     save_multimodal_odm(multimodal_odm = mm_odm_sub_proc, multimodal_metadata_fp = multimodal_metadata_fp)
+
+    # vi. write the set of negative control grna group-gene pairs
+    ntcs <- mm_odm_sub_proc |>
+      get_modality("grna_assignment") |>
+      ondisc::get_feature_covariates() |>
+      dplyr::filter(target == "non-targeting") |>
+      dplyr::pull(grna_group) |> unique()
+
+    gene_ids <- mm_odm_sub_proc |>
+      get_modality("gene") |>
+      ondisc::get_feature_ids()
+
+    neg_control_pairs <- expand.grid(gene_id = gene_ids, grna_group = ntcs)
+    saveRDS(neg_control_pairs, neg_control_pairs_fp)
   }
 }
