@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Limit NF driver to 2 GB memory
-export NXF_OPTS="-Xms500M -Xmx2G"
+# Limit NF driver to 5 GB memory
+export NXF_OPTS="-Xms500M -Xmx5G"
 
 #############
 # INPUT FILES
