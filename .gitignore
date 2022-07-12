@@ -5,3 +5,5 @@ bash_scripts/.nextflow*
 R_scripts/.Rhistory
 plotting/.Rhistory
 bash_scripts/trace*
+pipeline_launch_scripts/undercover/.nextflow*
+pipeline_launch_scripts/undercover/run_undercover_grna_pipeline.sh.o*
