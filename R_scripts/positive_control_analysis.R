@@ -17,7 +17,7 @@ results <- tibble(
   dataset = character(),
   method = character(),
   response_id = character(),
-  gRNA_group = character(),
+  grna_group = character(),
   p_value = numeric()
 )
 
@@ -40,11 +40,11 @@ for (paper in papers) {
     targeted_genes <- intersect(grna_odm |> get_feature_covariates() |> pull(target),
                                   response_odm |> get_feature_ids())
 
-    response_gRNA_group_pairs <- grna_odm |>
+    response_grna_group_pairs <- grna_odm |>
       get_feature_covariates() |>
-      rownames_to_column(var = "gRNA_group") |>
+      rownames_to_column(var = "grna_group") |>
       filter(target %in% targeted_genes) |>
-      select(gRNA_group, target) |>
+      select(grna_group, target) |>
       rename(response_id = target)
 
     feature_covariates <- grna_odm |>
@@ -60,10 +60,10 @@ for (paper in papers) {
 
     for(method_name in names(methods)){
       cat(sprintf("Applying %s...\n", method_name))
-      result <- do.call(methods[[method_name]], list(response_odm, grna_odm, response_gRNA_group_pairs[1,]))
+      result <- do.call(methods[[method_name]], list(response_odm, grna_odm, response_grna_group_pairs[1,]))
       result <- result |>
         mutate(method = method_name, dataset = dataset, paper = paper) |>
-        select(paper, dataset, method, response_id, gRNA_group, p_value)
+        select(paper, dataset, method, response_id, grna_group, p_value)
       results <- results |> bind_rows(result)
     }
   }

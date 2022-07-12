@@ -3,7 +3,7 @@ sceptre2_data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/"
 papers <- c("frangieh", "liscovitch",  "papalexi", "schraivogel", "simulated")
 
 # This script performs cell-wise QC, among other operations, on low MOI data.
-# We (i) restrict attention to cells that received a single gRNA (as determined by the original authors) and
+# We (i) restrict attention to cells that received a single grna (as determined by the original authors) and
 # (ii) filter for cells that passed other QC metrics implemented by the original authors (stored in the "passed_qc" column).
 
 # set params
@@ -34,7 +34,7 @@ for (paper in papers) {
     if (file.exists(multimodal_metadata_fp)) file.remove(multimodal_metadata_fp)
     mm_odm <- lowmoi::read_all_modalities(paper, dataset)
 
-    # i. perform cell QC; restrict attention to 1 gRNA/cell and "passed_qc" cells (if applicable)
+    # i. perform cell QC; restrict attention to 1 grna/cell and "passed_qc" cells (if applicable)
     global_cell_covariates <- mm_odm |> get_cell_covariates()
     cell_logical_v <- global_cell_covariates$grna_assignment_n_nonzero == 1
     passed_qc_v <- grepl(pattern = "passed_qc", x = colnames(global_cell_covariates))
@@ -46,16 +46,16 @@ for (paper in papers) {
 
     # ii. perform feature QC
     modalities <- names(mm_odm_sub@modalities)
-    # grna assignment modality: keep features expressed in N_CELLS_PER_GRNA_THRESH cells. Also, add a "gRNA_assigned" column to the cell covariate matrix.
+    # grna assignment modality: keep features expressed in N_CELLS_PER_GRNA_THRESH cells. Also, add a "grna_assigned" column to the cell covariate matrix.
     grna_assign_modality <- get_modality(mm_odm_sub, "grna_assignment")
     grna_assign_mat <- lowmoi::load_whole_odm(grna_assign_modality)
-    gRNA_assignments <- apply(X = grna_assign_mat,
+    grna_assignments <- apply(X = grna_assign_mat,
                               MARGIN = 2,
                               FUN = function(col) names(which.max(col))) |> unname()
     grna_assign_modality <- grna_assign_modality |>
-      mutate_cell_covariates(assigned_gRNA = gRNA_assignments)
-    n_cells_per_gRNA <- Matrix::rowSums(grna_assign_mat)
-    grnas_to_keep <- n_cells_per_gRNA >= N_CELLS_PER_GRNA_THRESH
+      mutate_cell_covariates(assigned_grna = grna_assignments)
+    n_cells_per_grna <- Matrix::rowSums(grna_assign_mat)
+    grnas_to_keep <- n_cells_per_grna >= N_CELLS_PER_GRNA_THRESH
     mm_odm_sub@modalities[["grna_assignment"]] <- grna_assign_modality[grnas_to_keep,]
 
     # grna expression modality (if applicable): keep the same features as above
@@ -78,7 +78,7 @@ for (paper in papers) {
       modality_odm@ondisc_matrix@feature_ids <- gsub(pattern = "_", replacement = "-", x = modality_odm@ondisc_matrix@feature_ids, fixed = TRUE)
       row.names(modality_odm@feature_covariates) <- gsub(pattern = "_", replacement = "-", x = row.names(modality_odm@feature_covariates), fixed = TRUE)
       if (modality == "grna_assignment") {
-        modality_odm <- mutate_cell_covariates(modality_odm, assigned_gRNA = gsub(pattern = "_", replacement = "-", x = assigned_gRNA, fixed = TRUE))
+        modality_odm <- mutate_cell_covariates(modality_odm, assigned_grna = gsub(pattern = "_", replacement = "-", x = assigned_grna, fixed = TRUE))
       }
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }

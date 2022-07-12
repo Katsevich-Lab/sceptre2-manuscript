@@ -80,7 +80,7 @@ p_undercover_stat_untrans <- ggplot(data = res_proc, mapping = aes(y = p_value, 
 
 
 comp_df <- res_proc |>
-  dplyr::select(undercover_gRNA, Dataset = dataset_rename, Method, clock_time, max_ram) |>
+  dplyr::select(undercover_grna, Dataset = dataset_rename, Method, clock_time, max_ram) |>
   dplyr::distinct() |>
   dplyr::group_by(Dataset, Method) |>
   dplyr::summarize(m_clock_time = mean(clock_time)/60, m_max_ram = mean(max_ram)) |>
