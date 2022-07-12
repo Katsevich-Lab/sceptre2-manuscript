@@ -85,13 +85,13 @@ data_method_queue_matrix = [
 ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, permutation_test, nb_regression
 
-// FOURTH, define an ordered list of optional arguments to each of the methods ( Should be strings of the form "arg1=value1;arg2=value2;arg3=value3")
+// FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1;arg2=value2;arg3=value3")
 optional_args = [
 "", // schraivogel_method
 "", // seurat_de
 "", // liscovitch_method
 "n_rep=50", // mimosca
 "", // weissman_method
-"n_rep=1000", // permutation_test
-"" // nb_regression
+"n_rep=1000;progress=FALSE", // permutation_test
+"progress=FALSE" // nb_regression
 ]
