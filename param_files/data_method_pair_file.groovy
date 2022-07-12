@@ -1,5 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-
+/*
 data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
                      "frangieh/control/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
                      "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
@@ -13,8 +13,8 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"],
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "permutation_test", "nb_regression"]
                      ]
+*/
 
-/*
 data_method_pairs = ["frangieh/co_culture/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
                      "frangieh/control/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
                      "frangieh/ifn_gamma/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
@@ -28,7 +28,7 @@ data_method_pairs = ["frangieh/co_culture/gene": ["liscovitch_method", "permutat
                      "schraivogel/ground_truth_tapseq/gene": ["liscovitch_method", "permutation_test", "nb_regression"],
                      "simulated/experiment_1/gene": ["liscovitch_method", "permutation_test", "nb_regression"]
                      ]
-*/
+
 
 // FIRST, define the row and column names of the below matrices and vectors
 row_names = ["frangieh/co_culture/gene",
