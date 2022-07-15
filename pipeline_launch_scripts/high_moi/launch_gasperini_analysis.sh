@@ -48,4 +48,5 @@ nextflow run timothy-barry/sceptre-pipeline -r main \
  --pair_pod_size $pair_pod_size \
  --grna_modality_name "grna_expression" \
  --n_pairs_to_sample $n_pairs_to_sample \
- -resume
+ -resume \
+ -profile standard
