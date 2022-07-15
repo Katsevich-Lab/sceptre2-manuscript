@@ -17,4 +17,5 @@ nextflow run undercover-grna-pipeline -r main \
  --is_partition_count_frac "false" \
  --machine_name $MACHINE_NAME \
  --time $curr_time \
- --max_retries 2
+ --max_retries 2 \
+ -profile standard

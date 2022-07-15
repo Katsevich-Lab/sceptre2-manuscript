@@ -21,7 +21,7 @@ for i in ${!group_sizes[@]}; do
    --is_partition_count_frac "true" \
    --machine_name $MACHINE_NAME \
    --time $curr_time \
-   --max_retries 0
+   -profile standard
 
   wait
 done
