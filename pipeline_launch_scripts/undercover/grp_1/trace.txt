@@ -1,0 +1,1513 @@
+task_id	hash	native_id	name	status	exit	realtime	peak_vmem	peak_rss
+1	1d/5962ba	2254153	obtain_dataset_ntc_tuples	COMPLETED	0	10.7s	1 GB	352.5 MB
+6	d7/43bcd5	2254158	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 25s	38.7 GB	38 GB
+13	4e/333402	2254165	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 24s	38.7 GB	38 GB
+20	92/3fa1be	2254171	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 26s	38.7 GB	38 GB
+27	1b/2a5f98	2254179	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 17s	38.7 GB	38 GB
+2	1c/cc1b50	2254156	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 13s	25.8 GB	24.9 GB
+9	3e/6ffd0b	2254161	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 39s	25.7 GB	24.9 GB
+16	59/b7969a	2254169	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 45s	25.8 GB	24.9 GB
+3	6a/acf597	2254154	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 32s	10.5 GB	9.7 GB
+10	02/189891	2254162	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 34s	10.5 GB	9.7 GB
+17	a1/11b6e7	2254168	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 4s	10.5 GB	9.7 GB
+23	ba/e069d9	2254175	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 24s	25.7 GB	24.8 GB
+34	09/61ea48	2254186	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 28s	38.7 GB	38 GB
+41	ef/5eabc9	2254193	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 20s	38.7 GB	38 GB
+48	a4/b83da2	2254200	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 37s	38.7 GB	38 GB
+55	67/3d0d98	2254207	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 20s	38.7 GB	38 GB
+24	16/285d8c	2254176	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 20s	10.5 GB	9.7 GB
+37	b0/8dda61	2254190	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	16m 53s	25.8 GB	24.9 GB
+30	3e/49ca9f	2254182	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 20s	25.8 GB	24.9 GB
+31	af/484616	2254184	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 28s	10.5 GB	9.7 GB
+44	c8/cc8110	2254196	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	19m 16s	25.8 GB	24.9 GB
+69	ac/0831d5	2254222	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 40s	38.7 GB	38 GB
+76	80/8b1caa	2254228	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 37s	38.7 GB	38 GB
+83	dc/e63efe	2254235	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 37s	38.7 GB	38 GB
+90	ad/4788f3	2254243	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 20s	38.7 GB	38 GB
+62	0e/b40fe9	2254214	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 19s	38.7 GB	38 GB
+97	96/0d1877	2254249	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 20s	38.7 GB	38 GB
+104	01/c5c848	2254256	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 36s	38.7 GB	38 GB
+111	19/984880	2254263	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 40s	38.7 GB	38 GB
+58	98/68c179	2254210	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	13m 51s	26.4 GB	25.5 GB
+125	eb/71cd17	2254276	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 6s	38.7 GB	38 GB
+118	3b/886aaf	2254270	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 27s	38.7 GB	38 GB
+132	b5/3c5e15	2254283	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 27s	38.7 GB	38 GB
+1732	36/9f0a41	2254379	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	27.9s	4.2 GB	3.6 GB
+139	e0/47836c	2254290	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 45s	38.7 GB	38 GB
+153	9b/1eb427	2254304	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 45s	38.7 GB	38 GB
+146	f5/ec1e39	2254300	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 45s	38.7 GB	38 GB
+51	df/72707c	2254203	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 51s	25.8 GB	24.9 GB
+160	6b/194824	2254311	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 22s	38.7 GB	38 GB
+167	cb/f0db5f	2254319	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 19s	38.7 GB	38 GB
+38	e5/e99ea9	2254189	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m	10.5 GB	9.7 GB
+174	67/778dfc	2254326	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 11s	38.7 GB	38 GB
+181	3d/73bb20	2254334	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 32s	38.7 GB	38 GB
+188	1a/d06326	2254340	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 50s	38.7 GB	38 GB
+45	56/53f0ed	2254197	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 52s	10.5 GB	9.7 GB
+195	a2/e8c7e9	2254347	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 16s	38.7 GB	38 GB
+657	cb/33661e	2254363	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 22s	27.4 GB	26.7 GB
+1406	67/4fcc23	2254365	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	4m 31s	41.7 GB	41 GB
+52	86/0da130	2254204	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 20s	10.5 GB	9.7 GB
+1953	e2/943764	2254423	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	48.7s	4.4 GB	3.6 GB
+12	20/c0e48e	2254163	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	55m 53s	27.6 GB	26.7 GB
+59	51/4b66ee	2254211	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 24s	10.5 GB	9.7 GB
+86	06/07e3b2	2254238	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	14m 45s	25.7 GB	24.9 GB
+580	59/4c032f	2254389	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 31s	27.4 GB	26.7 GB
+1988	90/03e035	2254425	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	46.5s	4.4 GB	3.7 GB
+65	97/2f300f	2254217	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 21s	25.4 GB	24.6 GB
+72	9c/f6e2ea	2254224	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 28s	25.8 GB	24.9 GB
+121	e2/7be566	2254273	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 9s	25.8 GB	24.9 GB
+93	27/7e776c	2254245	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 24s	26.4 GB	25.5 GB
+100	f0/2fcff9	2254252	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 39s	25.7 GB	24.9 GB
+114	5c/014e43	2254265	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 44s	25.8 GB	24.9 GB
+128	be/ddf5ae	2254280	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 5s	25.4 GB	24.6 GB
+142	90/cb2e0c	2254294	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 44s	25.8 GB	24.9 GB
+149	a1/8d1617	2254301	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 14s	25.7 GB	24.9 GB
+156	dd/c64aa9	2254307	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 57s	25.8 GB	24.9 GB
+177	2a/c249a5	2254328	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	15m 25s	25.8 GB	24.9 GB
+79	bd/501d3b	2254231	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	20m 17s	25.8 GB	24.9 GB
+107	85/85030b	2254258	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	19m 49s	25.7 GB	24.9 GB
+713	f8/5cfa17	2254410	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 33s	27.4 GB	26.7 GB
+1813	c7/f83d1d	2254443	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 3s	4.2 GB	3.5 GB
+5	7a/2cc718	2254157	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 2m 2s	27.6 GB	26.7 GB
+191	3d/193c04	2254343	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	15m 21s	25.8 GB	24.9 GB
+2623	d0/18ccad	2254427	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 15s	16.1 GB	15.5 GB
+1689	b8/e314f8	2254442	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	52.7s	4.3 GB	3.6 GB
+135	5f/895ec6	2254287	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	20m 30s	25.8 GB	24.9 GB
+66	5a/e237f7	2254218	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 41s	10.5 GB	9.7 GB
+1863	8b/bd5a4b	2254451	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 7s	2.5 GB	1.7 GB
+170	0d/0f70e7	2254323	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 40s	25.7 GB	24.9 GB
+1738	ef/007bb0	2254450	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	49.2s	4.3 GB	3.6 GB
+163	d1/0ea036	2254315	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	20m 36s	25.8 GB	24.9 GB
+19	12/e1519d	2254172	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	54m 33s	27.6 GB	26.7 GB
+2567	94/ce067d	2254438	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 14s	16.2 GB	15.5 GB
+1795	e5/afce50	2254458	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	28.6s	4.2 GB	3.6 GB
+184	4e/eeef55	2254336	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 39s	25.8 GB	24.9 GB
+965	ac/f49cce	2254446	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	3m 3s	27.4 GB	26.7 GB
+94	42/0c7449	2254246	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 34s	10.5 GB	9.7 GB
+2310	f7/71108e	2254461	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 39s	1.1 GB	411.6 MB
+73	7e/9a16b9	2254225	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 43s	10.5 GB	9.7 GB
+80	93/4f0349	2254232	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 31s	10.5 GB	9.7 GB
+101	04/065a5e	2254254	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 12s	10.5 GB	9.7 GB
+108	65/950035	2254260	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 7s	10.5 GB	9.7 GB
+136	10/429988	2254288	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 57s	10.5 GB	9.7 GB
+143	58/52eb7a	2254295	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 23s	10.5 GB	9.7 GB
+150	71/ef9fda	2254303	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 32s	10.5 GB	9.7 GB
+157	83/586d10	2254309	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 13s	10.5 GB	9.7 GB
+584	d2/3b15e9	2254403	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	19m 52s	7.4 GB	6.6 GB
+1294	9f/a736e3	2254434	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 36s	41.7 GB	41 GB
+293	04/c7e4ea	2254441	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 25s	38.7 GB	38 GB
+2079	10/d1e111	2254478	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	58.5s	4.4 GB	3.7 GB
+87	3f/851d37	2254239	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 50s	10.5 GB	9.7 GB
+129	8d/f1f2e2	2254282	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 47s	10.5 GB	9.7 GB
+171	3f/5928eb	2254322	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 17s	10.5 GB	9.7 GB
+198	ca/9d9ced	2254350	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	20m 33s	25.8 GB	24.9 GB
+26	62/88131e	2254178	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	56m 7s	27.6 GB	26.7 GB
+1548	0a/467e4c	2254435	run_method (papalexi/eccite_screen/gene+schraivogel_method)	COMPLETED	0	8m 57s	13.5 GB	12.7 GB
+1617	e9/2b487d	2254486	run_method (papalexi/eccite_screen/protein+nb_regression)	COMPLETED	0	11.2s	1.1 GB	394.8 MB
+164	fc/6dd458	2254316	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 37s	10.5 GB	9.7 GB
+1021	34/f2aa7f	2254469	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 46s	27.4 GB	26.7 GB
+2382	c1/c927d6	2254489	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	17.4s	1.3 GB	469.8 MB
+1077	1d/b1f685	2254466	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 17s	41.7 GB	41 GB
+1101	37/41d9e3	2254380	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 22s	28.2 GB	27.3 GB
+583	a5/37e5e4	2254402	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 34s	18.8 GB	18 GB
+1028	40/8223e2	2254477	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 28s	41.7 GB	41 GB
+2469	d2/bf4e7d	2254495	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	11.6s	1.1 GB	436.5 MB
+185	d2/2cde54	2254337	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 38s	10.5 GB	9.7 GB
+115	35/2fef34	2254267	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	30m 10s	10.5 GB	9.7 GB
+2078	e8/974b1c	2254493	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	50.6s	4.3 GB	3.6 GB
+1102	31/34afae	2254381	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 18s	9.8 GB	9 GB
+1662	f9/2a9e04	2254501	run_method (papalexi/eccite_screen/protein+liscovitch_method)	COMPLETED	0	10.8s	1 GB	344.9 MB
+178	a8/73e13a	2254331	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 54s	10.5 GB	9.7 GB
+730	f5/d9486d	2254413	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 20s	18.8 GB	18 GB
+2312	c8/61f734	2254503	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	17.9s	1.3 GB	467 MB
+2080	3a/571c9d	2254494	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 7s	2.7 GB	1.9 GB
+2439	3e/389fdd	2254504	run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method)	COMPLETED	0	13.4s	1 GB	372.8 MB
+1392	ca/72015f	2254481	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	4m 8s	41.7 GB	41 GB
+2133	33/16872c	2254487	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 42s	29.8 GB	29.1 GB
+1087	ac/aa8a6f	2254391	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	17m 29s	28.2 GB	27.3 GB
+199	a0/a739ce	2254352	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	27m 1s	10.5 GB	9.7 GB
+1760	a6/0a5443	2254510	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	28.2s	4.2 GB	3.6 GB
+2413	2f/3953a8	2254511	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	11.6s	1.1 GB	429.3 MB
+192	bb/030eec	2254344	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	27m	10.5 GB	9.7 GB
+2591	35/bb6d5d	2254399	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	20m 21s	21.1 GB	20.2 GB
+233	75/0c9ced	2254428	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	15m 44s	26 GB	25.1 GB
+2182	03/a3989d	2254502	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 30s	29.8 GB	29.1 GB
+1339	55/b13c14	2254394	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	20m 58s	28.2 GB	27.3 GB
+2255	3b/98f068	2254371	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	28m 19s	29.2 GB	28.3 GB
+394	7d/8b1732	2254420	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 55s	25.8 GB	24.9 GB
+419	27/665ae5	2254513	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 30s	38.7 GB	38 GB
+1088	ed/e33139	2254392	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 54s	9.8 GB	9 GB
+577	b1/4d1ffe	2254444	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 55s	7.4 GB	6.6 GB
+1353	53/2286d0	2254448	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	17m 18s	28.2 GB	27.3 GB
+710	d7/ac1740	2254445	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 30s	7.4 GB	6.6 GB
+1343	1a/924d4e	2254519	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 57s	41.7 GB	41 GB
+122	9b/333015	2254275	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	39m 39s	10.5 GB	9.7 GB
+2593	62/4835b8	2254400	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	35m 52s	4.7 GB	4 GB
+54	b9/96236c	2254206	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	52m 7s	27.6 GB	26.7 GB
+1472	a1/296ab6	2254411	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	22m 27s	28.2 GB	27.3 GB
+395	c5/41e984	2254421	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 23s	10.5 GB	9.7 GB
+513	47/6323f3	2254490	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 58s	18.8 GB	18 GB
+33	9d/347061	2254185	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	58m 56s	27.6 GB	26.7 GB
+1974	23/2e2dda	2254533	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	47.2s	4.4 GB	3.6 GB
+1193	ac/b9b73f	2254422	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 53s	9.8 GB	9 GB
+1042	9b/be9ed5	2254529	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 48s	41.7 GB	41 GB
+2637	39/796648	2254534	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 4s	16.2 GB	15.5 GB
+709	d5/bdfd3b	2254507	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 19s	18.8 GB	18 GB
+2087	98/8c2245	2254387	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	35m 35s	29.2 GB	28.3 GB
+1480	27/ed4222	2254449	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 56s	9.8 GB	9 GB
+1024	d8/d98ce9	2254474	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 48s	28.2 GB	27.4 GB
+290	29/8e6c67	2254439	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 44s	10.5 GB	9.7 GB
+1151	75/5e20b0	2254455	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 25s	9.8 GB	9 GB
+436	74/3aed81	2254464	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	23m 37s	25.8 GB	24.9 GB
+1521	22/3aee00	2254484	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 42s	28.2 GB	27.3 GB
+514	22/d4d692	2254491	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 31s	7.4 GB	6.6 GB
+1410	8f/926f12	2254457	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	25m 4s	9.8 GB	9 GB
+40	3b/f31e46	2254191	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 5m 22s	27.6 GB	26.7 GB
+605	dc/6e099b	2254497	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 42s	7.4 GB	6.6 GB
+2101	f7/d17556	2254412	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	32m 20s	29.2 GB	28.3 GB
+549	11/a66043	2254514	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 44s	7.4 GB	6.6 GB
+1763	8f/b837f2	2254556	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	57.2s	4.1 GB	3.5 GB
+2122	d2/969d01	2254417	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	33m 49s	29.2 GB	28.3 GB
+2150	82/875ceb	2254431	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	32m 31s	29.2 GB	28.3 GB
+1764	11/46ced3	2254557	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 10s	4.2 GB	3.5 GB
+2448	a7/3e1f05	2254559	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	11.6s	1.1 GB	429.3 MB
+1025	e0/90136f	2254473	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	28m 33s	9.8 GB	9 GB
+1325	6d/ceac47	2254521	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	17m 18s	28.2 GB	27.4 GB
+61	be/8c64eb	2254213	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	54m 37s	27.6 GB	26.7 GB
+103	28/64473e	2254255	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	54m 31s	27.5 GB	26.7 GB
+2565	10/f677ec	2254436	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	37m 11s	4.7 GB	4 GB
+2449	8f/35330e	2254560	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 12s	1.1 GB	391.7 MB
+1185	a2/887f0b	2254526	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	17m 20s	28.2 GB	27.3 GB
+89	af/78886f	2254241	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	55m 48s	27.6 GB	26.7 GB
+472	76/559ac1	2254496	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 39s	10.5 GB	9.7 GB
+1529	70/aa4d1c	2254500	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	25m 39s	9.8 GB	9 GB
+1830	68/06a24c	2254571	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	28.4s	4.2 GB	3.6 GB
+110	df/23b588	2254262	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	57m 4s	27.6 GB	26.7 GB
+47	af/75425d	2254199	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 11m 19s	27.6 GB	26.7 GB
+461	7d/a7b5bf	2254563	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 18s	38.7 GB	38 GB
+1545	55/0c0b45	2254564	run_method (papalexi/eccite_screen/gene+weissman_method)	COMPLETED	0	2m 24s	18.2 GB	17.6 GB
+117	0a/6e322e	2254269	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	57m 15s	27.6 GB	26.7 GB
+1983	30/f28e24	2254579	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	54s	4.5 GB	3.7 GB
+2178	c2/038de7	2254460	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	34m 8s	29.2 GB	28.3 GB
+1168	56/444326	2254568	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 53s	41.7 GB	41 GB
+377	39/c2f99d	2254572	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 50s	38.7 GB	38 GB
+807	f7/5793f4	2254543	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	14m 20s	18.8 GB	18 GB
+647	25/fda5ff	2254532	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	19m 19s	7.4 GB	6.6 GB
+1592	68/067027	2254397	run_method (papalexi/eccite_screen/gene+liscovitch_method)	COMPLETED	0	58m 19s	4.9 GB	4.2 GB
+1585	65/e75e68	2254406	run_method (papalexi/eccite_screen/gene+liscovitch_method)	COMPLETED	0	57m 42s	4.9 GB	4.2 GB
+68	0c/746f9c	2254219	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 2m 19s	27.5 GB	26.7 GB
+1186	c2/383dc5	2254525	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 27s	9.8 GB	9 GB
+124	2c/2ab9d4	2254277	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 2m 35s	27.6 GB	26.7 GB
+2539	36/4e6e49	2254588	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	1m 43s	16.1 GB	15.5 GB
+2115	15/5597f7	2254522	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	28m 8s	29.2 GB	28.3 GB
+415	ba/fc3481	2254547	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	19m	25.7 GB	24.9 GB
+1059	cb/2bed18	2254555	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	18m 48s	28.2 GB	27.3 GB
+426	7a/a5ecd0	2254593	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 48s	38.7 GB	38 GB
+96	dc/18ecdc	2254248	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 9m 41s	27.6 GB	26.7 GB
+2053	a5/3b0837	2254597	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	45s	4.5 GB	3.7 GB
+1591	fd/4c4850	2254578	run_method (papalexi/eccite_screen/gene+seurat_de)	COMPLETED	0	13m 11s	5.1 GB	4.3 GB
+2196	d7/b7c0bd	2254594	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 31s	29.8 GB	29.1 GB
+416	91/0dfb3e	2254548	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 59s	10.5 GB	9.7 GB
+2214	cc/48fb33	2254408	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 21s	7.3 GB	6.4 GB
+75	e7/f2864c	2254227	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 22m 10s	27.6 GB	26.7 GB
+289	67/aab2b7	2254589	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 56s	25.8 GB	24.9 GB
+1839	f8/396ffb	2254605	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	25.2s	4.1 GB	3.5 GB
+131	bf/20bd08	2254284	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 18s	27.5 GB	26.7 GB
+1228	d7/11d2bd	2254580	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 52s	9.8 GB	9 GB
+1573	5b/d47e19	2254604	run_method (papalexi/eccite_screen/gene+weissman_method)	COMPLETED	0	2m	18.2 GB	17.6 GB
+4	c9/217e91	2254155	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 6m 48s	9.9 GB	9.3 GB
+1417	08/aceca0	2254584	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 1s	9.8 GB	9 GB
+11	5a/1dd9e6	2254164	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 6m 49s	9.9 GB	9.3 GB
+2635	9a/5128dd	2254554	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	37m 14s	4.7 GB	4 GB
+138	68/61e86d	2254291	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 43s	27.5 GB	26.7 GB
+1589	c8/0cca49	2254396	run_method (papalexi/eccite_screen/gene+nb_regression)	COMPLETED	0	1h 26m 33s	1.1 GB	409.3 MB
+1458	f2/d8eb9c	2254595	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	20m 50s	28.2 GB	27.4 GB
+1318	86/85ca75	2254598	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	17m 21s	28.2 GB	27.3 GB
+18	f8/f58c6f	2254170	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 7m 18s	9.9 GB	9.3 GB
+82	5d/456b2b	2254234	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 33m 16s	27.6 GB	26.7 GB
+25	9f/e84772	2254177	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 3m 56s	9.9 GB	9.3 GB
+2215	fb/1b589d	2254398	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 34m 27s	7 GB	6.3 GB
+2689	fb/1e6983	2254603	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	19m 49s	21.1 GB	20.2 GB
+2630	65/12e652	2254622	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 17s	16.1 GB	15.5 GB
+7	8b/b69c3d	2254160	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 20s	1.3 GB	673 MB
+1459	f1/7571c6	2254599	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	26m 50s	9.8 GB	9 GB
+618	09/d4050d	2254612	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 52s	18.8 GB	18 GB
+145	17/0cbae1	2254297	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	58m 11s	27.6 GB	26.7 GB
+152	2b/b54b99	2254305	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	56m 58s	27.6 GB	26.7 GB
+2490	87/b6d58a	2254631	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	13.4s	1.1 GB	474.7 MB
+835	98/be7f28	2254614	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 47s	18.8 GB	18 GB
+573	22/1ac418	2254626	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 32s	27.4 GB	26.7 GB
+32	02/7fc0a8	2254183	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 11m 11s	9.9 GB	9.3 GB
+2102	e7/55f415	2254531	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 2m 37s	7.3 GB	6.4 GB
+744	ad/de46d6	2254617	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 31s	18.8 GB	18 GB
+28	fc/ddd1d7	2254181	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 15m 25s	1.3 GB	673.1 MB
+667	6e/58cfa5	2254619	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 56s	18.8 GB	18 GB
+159	0b/41bfab	2254312	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	56m 38s	27.6 GB	26.7 GB
+1941	37/3c3ea8	2254640	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	54.7s	4.5 GB	3.7 GB
+21	e9/b915c0	2254173	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 23m 29s	1.3 GB	673.2 MB
+745	65/3cbe3c	2254618	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 43s	7.4 GB	6.6 GB
+35	cd/2a5a20	2254187	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 15m 51s	1.3 GB	673.2 MB
+1785	1d/c6a5a3	2254643	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 16s	4.2 GB	3.5 GB
+46	36/d6c082	2254198	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 4m 58s	9.9 GB	9.3 GB
+2671	73/c3f0b0	2254362	run_method (simulated/experiment_1/gene+mimosca)	COMPLETED	0	3m 34s	10.4 GB	9.6 GB
+14	3c/f0f37b	2254166	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 31m 38s	1.3 GB	672.9 MB
+479	ae/4e2c86	2254611	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 27s	10.5 GB	9.7 GB
+42	6d/414b8a	2254194	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 13m 6s	1.3 GB	673.2 MB
+2602	75/35849c	2254644	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 11s	16.2 GB	15.5 GB
+2425	6a/d5fbfc	2254650	run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method)	COMPLETED	0	13.8s	1.1 GB	410.9 MB
+39	a5/20e59a	2254192	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 7m 21s	9.9 GB	9.3 GB
+166	65/cc0e96	2254318	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	57m 27s	27.6 GB	26.7 GB
+1556	9a/0665d5	2254628	run_method (papalexi/eccite_screen/gene+seurat_de)	COMPLETED	0	13m 56s	5.1 GB	4.3 GB
+49	e2/a240c1	2254201	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 15m 59s	1.3 GB	673.5 MB
+1722	29/de2a18	2254656	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 15s	4.2 GB	3.5 GB
+173	a7/c68bc6	2254325	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	59m 7s	27.6 GB	26.7 GB
+450	4a/11a181	2254624	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	16m 50s	25.8 GB	24.9 GB
+53	19/072e33	2254205	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 9m 6s	9.9 GB	9.3 GB
+870	77/d0465b	2254635	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 52s	18.8 GB	18 GB
+2672	bd/7157a0	2254659	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 6s	16.1 GB	15.5 GB
+1708	da/5adc4f	2254661	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 16s	4.2 GB	3.5 GB
+180	0e/e9554a	2254332	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 31s	27.5 GB	26.7 GB
+1842	38/062f10	2254664	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 8s	2.5 GB	1.7 GB
+1841	ea/919e29	2254663	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 16s	4.2 GB	3.5 GB
+60	d1/90caa7	2254212	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 7m 27s	9.9 GB	9.3 GB
+56	26/057c3d	2254208	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 18m 38s	1.3 GB	673.5 MB
+1826	2c/da4b23	2254670	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	1m 2s	4.1 GB	3.5 GB
+1961	b8/bc5baa	2254671	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 7s	2.7 GB	1.9 GB
+279	a2/3e8b08	2254666	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 12s	38.7 GB	38 GB
+1586	8a/c762d7	2254407	run_method (papalexi/eccite_screen/gene+mimosca)	COMPLETED	0	7m 33s	12.4 GB	11.6 GB
+2385	50/8837e6	2254674	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	14s	1.1 GB	429.3 MB
+1566	f1/f8b8e7	2254673	run_method (papalexi/eccite_screen/gene+weissman_method)	COMPLETED	0	1m 57s	18.2 GB	17.6 GB
+102	3a/22b57b	2254253	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 4m 5s	9.9 GB	9.3 GB
+451	cd/3d7a13	2254625	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 25s	10.5 GB	9.7 GB
+758	78/8eb4f0	2254653	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 33s	18.8 GB	18 GB
+8	30/c27676	2254159	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 47m 50s	1.4 GB	713.6 MB
+727	6c/4c068a	2254676	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	3m 1s	27.4 GB	26.7 GB
+95	67/c9b63b	2254247	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 6m 30s	9.9 GB	9.3 GB
+338	bb/4fd869	2254647	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 4s	25.8 GB	24.9 GB
+2409	b6/e9342f	2254681	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	33.5s	1.8 GB	1002.4 MB
+63	f8/0ecb44	2254215	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 19m 12s	1.3 GB	673.3 MB
+433	84/d90aee	2254675	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 38s	38.7 GB	38 GB
+2408	be/f31f00	2254680	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 42s	1.1 GB	411.5 MB
+1868	55/79071e	2254684	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	51.5s	4.1 GB	3.5 GB
+2393	76/09c13b	2254688	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 3s	1.1 GB	391.7 MB
+137	5a/bdd14e	2254289	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 7m 12s	9.9 GB	9.3 GB
+187	4e/772294	2254339	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	58m 8s	27.6 GB	26.7 GB
+1158	f2/effd42	2254637	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 2s	9.8 GB	9 GB
+324	6c/d46222	2254652	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 38s	25.8 GB	24.9 GB
+130	82/4e019f	2254281	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 7m 54s	9.9 GB	9.3 GB
+158	e5/18568f	2254310	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 7m 5s	9.9 GB	9.3 GB
+2585	15/6dcf7f	2254609	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	43m 47s	5.4 GB	4.6 GB
+2586	30/2485d1	2254610	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	44m 3s	4.7 GB	4 GB
+1869	97/058207	2254685	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 7s	4.2 GB	3.5 GB
+1870	08/e50b38	2254686	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 16s	2.7 GB	1.8 GB
+116	a2/6c5794	2254268	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 9m 7s	9.9 GB	9.3 GB
+1862	ec/c7c11f	2254692	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 7s	4.2 GB	3.5 GB
+165	23/271efd	2254317	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 6m 45s	9.9 GB	9.3 GB
+123	72/c45f2b	2254274	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 9m 30s	9.9 GB	9.3 GB
+2112	96/ed646e	2254687	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 21s	29.8 GB	29.1 GB
+109	48/a375d6	2254261	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 11m 23s	9.9 GB	9.3 GB
+77	db/c9b4c4	2254229	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 12m 49s	1.3 GB	673.3 MB
+81	ae/7a35cb	2254233	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 11m 38s	9.9 GB	9.3 GB
+508	e7/af5176	2254355	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 5m 2s	9.9 GB	9.3 GB
+70	c9/fa4484	2254221	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 30s	1.3 GB	673.2 MB
+755	88/2808ab	2254706	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 26s	27.4 GB	26.7 GB
+67	76/1551f3	2254220	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 13m 7s	9.9 GB	9.3 GB
+15	57/15417a	2254167	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 52m 10s	1.4 GB	706.8 MB
+1082	c4/6b2523	2254384	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 5m 1s	9.3 GB	8.6 GB
+1926	bc/15a8fb	2254712	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 25s	2.7 GB	1.9 GB
+151	3e/c9b9fc	2254302	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 14m 11s	9.9 GB	9.3 GB
+161	04/1411c8	2254313	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 14m 14s	1.3 GB	673.2 MB
+2566	39/8567f5	2254437	run_method (simulated/experiment_1/gene+mimosca)	COMPLETED	0	3m 36s	10.4 GB	9.6 GB
+2485	5a/97b420	2254714	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 37s	1.1 GB	412.7 MB
+797	df/a1c32b	2254710	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 26s	27.4 GB	26.7 GB
+1976	5f/046b8d	2254719	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	43.1s	4.5 GB	3.7 GB
+105	42/2ef587	2254257	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 15m 26s	1.3 GB	673.3 MB
+144	8e/26cbf8	2254296	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 14m 10s	9.9 GB	9.3 GB
+529	fa/e50828	2254540	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 30m 44s	7 GB	6.3 GB
+2200	10/663c2f	2254601	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 1m 58s	7.3 GB	6.4 GB
+74	e4/b93140	2254226	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 15m 36s	9.9 GB	9.3 GB
+1846	cf/eb7a3a	2254728	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	25.8s	4.3 GB	3.6 GB
+1991	1f/995136	2254730	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	25.2s	4.4 GB	3.7 GB
+133	5a/ddc499	2254285	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 16m 16s	1.3 GB	673 MB
+179	35/053363	2254330	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 12m 9s	9.9 GB	9.3 GB
+1990	88/9da57f	2254729	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	48.6s	4.5 GB	3.7 GB
+2400	6b/c160e5	2254731	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 7s	1.1 GB	391.8 MB
+703	88/146a4e	2254667	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 5s	7.4 GB	6.6 GB
+1133	dc/76692e	2254716	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 33s	41.7 GB	41 GB
+2036	8b/83402d	2254739	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	41.1s	4.3 GB	3.6 GB
+119	73/14c087	2254271	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 18m 37s	1.3 GB	673.1 MB
+2117	fb/83b65f	2254523	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 40m 23s	7 GB	6.3 GB
+1189	c5/4344b2	2254723	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 33s	41.7 GB	41 GB
+314	11/f29ede	2254732	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 15s	38.7 GB	38 GB
+84	e0/dab66e	2254236	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 10s	1.3 GB	673 MB
+1075	79/f6d04e	2254404	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 2m 41s	9.3 GB	8.6 GB
+91	ac/2a5846	2254242	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 56s	1.3 GB	673.5 MB
+29	27/46d124	2254180	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 54m 3s	1.4 GB	716.7 MB
+444	a4/d2c2cd	2254660	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 32s	10.5 GB	9.7 GB
+2479	bd/4a0a1a	2254749	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	36.5s	1.8 GB	1007.6 MB
+140	da/615416	2254293	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 21m 37s	1.3 GB	673.1 MB
+1713	1f/6f4d63	2254752	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	25s	4.1 GB	3.5 GB
+98	4a/7796fa	2254251	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 22m 33s	1.3 GB	673.4 MB
+172	4b/601660	2254324	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 18m 28s	9.9 GB	9.3 GB
+1989	f8/d2f94e	2254754	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 5s	2.9 GB	2 GB
+1649	0b/3989b3	2254759	run_method (papalexi/eccite_screen/protein+mimosca)	COMPLETED	0	12.9s	1.1 GB	423.5 MB
+576	fc/c07b2e	2254702	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 47s	18.8 GB	18 GB
+1715	e4/25f7e7	2254753	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 6s	4.2 GB	3.5 GB
+1434	c6/f6cb54	2254751	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 24s	41.7 GB	41 GB
+126	23/99f174	2254278	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 26m 18s	1.3 GB	673.3 MB
+1547	d7/d96321	2254565	run_method (papalexi/eccite_screen/gene+nb_regression)	COMPLETED	0	1h 31m 50s	1.1 GB	407.5 MB
+43	fc/1a8eb8	2254195	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 49m 49s	1.4 GB	716 MB
+1802	40/c2658b	2254766	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	27.4s	4.2 GB	3.6 GB
+2048	ee/85662c	2254459	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	12m 30s	4.7 GB	3.6 GB
+1110	bd/f60290	2254415	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 10m 19s	9.3 GB	8.6 GB
+2251	b1/c329fe	2254453	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 47s	19.1 GB	18.2 GB
+2682	4c/8721dd	2254697	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	20m 31s	21.1 GB	20.2 GB
+1909	85/66b3ec	2254770	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	28.3s	4.3 GB	3.6 GB
+1523	3b/0eeb00	2254485	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 1m 25s	9.3 GB	8.6 GB
+22	30/5412c2	2254174	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 4m 36s	1.4 GB	709.8 MB
+1026	ad/d17992	2254475	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 3m 49s	9.3 GB	8.6 GB
+1070	a8/3d37db	2254765	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 19s	41.7 GB	41 GB
+1031	1e/8d898c	2254707	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	20m 37s	28.2 GB	27.4 GB
+112	dc/d6ba43	2254264	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 31m 42s	1.3 GB	673.1 MB
+454	c3/7f5c66	2254768	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 38s	38.7 GB	38 GB
+1985	87/483968	2254467	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	13m 18s	4.7 GB	3.6 GB
+2403	cc/95dfb2	2254779	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	22.5s	1.3 GB	466.9 MB
+559	43/084d8b	2254772	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 38s	27.4 GB	26.7 GB
+1423	b3/24822a	2254703	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	23m 6s	28.2 GB	27.3 GB
+235	02/a87e0a	2254429	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 14m 28s	9.9 GB	9.3 GB
+147	92/845bd2	2254298	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 33m 57s	1.3 GB	673 MB
+430	d0/43dac3	2254700	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 55s	10.5 GB	9.7 GB
+1645	c5/db2353	2254788	run_method (papalexi/eccite_screen/protein+nb_regression)	COMPLETED	0	14.3s	1.1 GB	393.9 MB
+2070	0b/51e381	2254789	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	24.1s	4.3 GB	3.6 GB
+2119	61/118b44	2254778	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 29s	29.8 GB	29.1 GB
+923	20/fdf9a0	2254782	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 37s	27.4 GB	26.7 GB
+194	11/147bba	2254346	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 7m 14s	27.6 GB	26.7 GB
+380	c5/b90705	2254741	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 9s	25.8 GB	24.9 GB
+2306	95/ab1fe7	2254794	run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method)	COMPLETED	0	14.5s	1.1 GB	410.9 MB
+353	91/2d8981	2254709	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 1s	10.5 GB	9.7 GB
+2430	22/b59b7e	2254797	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	45.6s	1.8 GB	1003.6 MB
+1986	98/184631	2254798	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	24.8s	4.3 GB	3.6 GB
+2277	0d/bb7485	2254620	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 5m 7s	7.3 GB	6.4 GB
+36	24/2f17dc	2254188	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 4m 2s	1.4 GB	706.7 MB
+685	b3/d4bc95	2254796	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 32s	27.4 GB	26.7 GB
+383	4b/427a8f	2254354	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 23s	27.6 GB	26.7 GB
+1981	46/ac6790	2254803	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	51s	4.4 GB	3.6 GB
+1346	c6/056d1c	2254747	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	22m 18s	28.2 GB	27.3 GB
+1252	ee/a3123c	2254802	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 23s	41.7 GB	41 GB
+57	2f/5cc397	2254209	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 27s	1.4 GB	718.1 MB
+1244	83/fd72cd	2254372	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	57m 59s	27.5 GB	26.5 GB
+2670	2e/d35e99	2254678	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	41m 29s	4.7 GB	4 GB
+1597	96/eee054	2254793	run_method (papalexi/eccite_screen/gene+schraivogel_method)	COMPLETED	0	9m 53s	13.5 GB	12.7 GB
+296	85/7dcd92	2254767	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 12s	25.7 GB	24.9 GB
+1061	ea/8203b5	2254541	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 1m 33s	9.3 GB	8.6 GB
+88	ca/ede621	2254240	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 46m 21s	9.9 GB	9.3 GB
+2684	a5/b3bc50	2254699	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	37m 4s	4.7 GB	4 GB
+2002	e1/9f8c3f	2254814	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	58.6s	4.4 GB	3.6 GB
+134	be/0e5d33	2254286	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 48m 3s	1.4 GB	712.2 MB
+168	2d/a76045	2254320	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 27m 35s	1.3 GB	673 MB
+1259	e2/251063	2254812	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 40s	41.7 GB	41 GB
+141	6d/889ee6	2254292	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 48m 10s	1.4 GB	714.1 MB
+201	c1/c66052	2254353	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 9m 36s	27.6 GB	26.7 GB
+1716	8e/7bae47	2254820	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 29s	2.7 GB	1.8 GB
+1136	25/c6c788	2254774	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 30s	28.2 GB	27.4 GB
+50	b5/1cd85c	2254202	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 10m 8s	1.4 GB	715.6 MB
+127	94/46de5f	2254279	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 50m 38s	1.4 GB	719.9 MB
+1624	8b/86fae9	2254828	run_method (papalexi/eccite_screen/protein+nb_regression)	COMPLETED	0	13.4s	1.1 GB	393.8 MB
+1623	db/4f4ac5	2254829	run_method (papalexi/eccite_screen/protein+permutation_test)	COMPLETED	0	13.2s	1.1 GB	386.8 MB
+712	41/4bb07e	2254409	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	56m 32s	19.2 GB	18.3 GB
+2683	db/ed0cf5	2254698	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	43m 40s	5.4 GB	4.6 GB
+1628	7e/cac1ac	2254833	run_method (papalexi/eccite_screen/protein+mimosca)	COMPLETED	0	12.9s	1.1 GB	423.5 MB
+384	fa/c51313	2254824	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 42s	38.7 GB	38 GB
+1066	7e/38cf21	2254783	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	20m 58s	28.2 GB	27.3 GB
+64	ab/5ce660	2254216	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 4m 30s	1.4 GB	720.6 MB
+186	0a/0f6c56	2254338	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 48m 28s	9.9 GB	9.3 GB
+193	40/46ac97	2254345	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 48m 30s	9.9 GB	9.3 GB
+200	7b/6fcd0d	2254351	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 48m 12s	9.9 GB	9.3 GB
+1794	03/f994e8	2254838	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	53.9s	4.3 GB	3.6 GB
+2086	0e/8755c4	2254839	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	51.5s	4.4 GB	3.6 GB
+375	f8/a421ac	2254528	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 14m 59s	9.9 GB	9.3 GB
+78	2a/d345bc	2254230	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 55m 39s	1.4 GB	719.4 MB
+1823	bd/741b93	2254843	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	28.9s	4.2 GB	3.6 GB
+106	05/0cb3e4	2254259	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 56m 2s	1.4 GB	712.4 MB
+1111	2b/7efa6d	2254416	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	55m 56s	27.4 GB	26.5 GB
+99	5a/fb09ae	2254250	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 56m 57s	1.4 GB	719.1 MB
+155	a4/b70fb6	2254308	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 56m 13s	1.4 GB	715.8 MB
+71	af/df7bcf	2254223	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 20s	1.4 GB	702.4 MB
+113	cb/f6f2aa	2254266	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 57m 10s	1.4 GB	710.1 MB
+417	8f/ca192a	2254549	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 9m 28s	9.9 GB	9.3 GB
+2444	9a/eb64a6	2254851	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	39.1s	1.8 GB	1006.4 MB
+2443	8f/8a0a58	2254852	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 36s	1.1 GB	412.2 MB
+1117	99/fdfc7e	2254558	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 6m 54s	9.3 GB	8.6 GB
+1653	ea/bbd768	2254855	run_method (papalexi/eccite_screen/protein+schraivogel_method)	COMPLETED	0	30s	1.5 GB	654.9 MB
+527	42/7d44c4	2254816	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 38s	18.8 GB	18 GB
+828	e0/1aca18	2254817	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 32s	18.8 GB	18 GB
+2157	35/50b40e	2254775	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	31m 4s	29.2 GB	28.3 GB
+968	7b/1644c0	2254818	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	15m 6s	18.8 GB	18 GB
+599	9c/4b2612	2254582	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	2h 2m 11s	7 GB	6.3 GB
+668	3e/eb76da	2254810	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 44s	7.4 GB	6.6 GB
+148	94/3ff5e8	2254299	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 2m 48s	1.4 GB	703.2 MB
+85	4c/71c512	2254237	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 4m 4s	1.4 GB	708.5 MB
+120	3d/ab2958	2254272	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 4m 58s	1.4 GB	718.3 MB
+1313	73/a15791	2254577	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 7m 45s	9.3 GB	8.6 GB
+370	35/466afd	2254861	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 9s	38.7 GB	38 GB
+92	97/37129c	2254244	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 5m 43s	1.4 GB	717.8 MB
+2021	a4/b17d6a	2254868	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	23.6s	4.3 GB	3.6 GB
+2210	67/357f72	2254863	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	2m 46s	29.8 GB	29.1 GB
+1040	eb/6db205	2254592	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 29s	9.3 GB	8.6 GB
+2577	e6/231fa1	2254815	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	20m 28s	21.1 GB	20.2 GB
+2075	8a/b44d69	2254875	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	26.4s	4.4 GB	3.7 GB
+162	ba/07d19f	2254314	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 53m 10s	1.4 GB	708.9 MB
+1403	95/8f4b29	2254805	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	25m 28s	9.8 GB	9 GB
+1971	b3/1d6287	2254553	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	11m 21s	4.7 GB	3.6 GB
+2322	19/57301d	2254878	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	13.5s	1.1 GB	436.8 MB
+292	d0/ccd264	2254440	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	57m 15s	27.5 GB	26.7 GB
+2263	28/8475de	2254705	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	59m 44s	7.3 GB	6.4 GB
+2010	41/1dafcd	2254877	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 8s	2.7 GB	1.9 GB
+1130	39/7bb4df	2254821	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 22s	9.8 GB	9 GB
+1027	ac/0714e1	2254476	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	51m 16s	27.4 GB	26.5 GB
+1119	71/51cf0e	2254882	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 32s	41.7 GB	41 GB
+661	fc/a64710	2254847	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 35s	7.4 GB	6.6 GB
+1569	0c/f4e885	2254876	run_method (papalexi/eccite_screen/gene+schraivogel_method)	COMPLETED	0	7m 44s	13.5 GB	12.7 GB
+682	1a/5be1c9	2254853	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m	7.4 GB	6.6 GB
+506	62/85b403	2254846	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	19m 52s	25.8 GB	24.9 GB
+154	08/213031	2254306	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	3h 17m 54s	1.3 GB	672.9 MB
+182	da/625925	2254333	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 16m 37s	1.3 GB	673 MB
+1175	3b/b534fd	2254889	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 32s	41.7 GB	41 GB
+1501	b5/10eba9	2254837	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	26m 22s	9.8 GB	9 GB
+908	10/93ea31	2254433	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 13m 2s	19.2 GB	18.3 GB
+175	7a/326be4	2254327	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 24m 44s	1.3 GB	673 MB
+2607	d1/ec2267	2254790	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	47m 43s	4.7 GB	4 GB
+1871	09/bb6600	2254899	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	46.4s	4.3 GB	3.6 GB
+2619	d1/0d2196	2254870	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	17m 41s	21.1 GB	20.2 GB
+2116	ae/3f78da	2254743	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 6m 46s	7.3 GB	6.4 GB
+2697	b7/9b3064	2254780	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	53m 25s	5.4 GB	4.6 GB
+325	d6/ea0926	2254858	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 40s	10.5 GB	9.7 GB
+2035	cc/ecc335	2254905	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	25.8s	4.4 GB	3.7 GB
+1525	b5/42d1b2	2254902	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 19s	41.7 GB	41 GB
+2037	91/85a934	2254906	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	53s	4.4 GB	3.6 GB
+1020	bd/43e05b	2254470	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 5m 58s	19.2 GB	18.3 GB
+1692	7c/ac613b	2254910	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	26.9s	4.3 GB	3.6 GB
+1833	5b/0610b7	2254911	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	1m 2s	4.1 GB	3.5 GB
+1873	84/d95983	2254587	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	9m 31s	4.4 GB	3.4 GB
+1658	ee/6d42bd	2254913	run_method (papalexi/eccite_screen/protein+permutation_test)	COMPLETED	0	12.1s	1.1 GB	387.4 MB
+581	58/a4f641	2254382	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 38m 30s	1.2 GB	556.5 MB
+2171	44/bd1934	2254850	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	32m 29s	29.2 GB	28.3 GB
+854	a2/67f008	2254377	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 40m 36s	1.2 GB	557.9 MB
+2642	61/3f54c7	2254834	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	37m 10s	4.7 GB	4 GB
+1911	9a/6f4328	2254917	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	51.6s	4.4 GB	3.6 GB
+2621	24/2b5521	2254831	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	39m 5s	4.7 GB	4 GB
+564	fa/e04e7d	2254669	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 31m 25s	7 GB	6.3 GB
+1258	db/a0e8f3	2254479	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	1h 6m 29s	27.5 GB	26.5 GB
+2231	d6/b17bdf	2254918	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	2m 41s	29.8 GB	29.1 GB
+1737	42/52c88f	2254921	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 14s	2.5 GB	1.7 GB
+2158	ad/6ca752	2254776	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 3m 44s	7.3 GB	6.4 GB
+2455	97/5e3205	2254927	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	13.8s	1.1 GB	429.3 MB
+1273	ab/be9b03	2254919	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 18s	41.7 GB	41 GB
+2651	37/218edb	2254922	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 19s	16.1 GB	15.5 GB
+2213	66/0e8723	2254864	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	32m 26s	29.2 GB	28.3 GB
+831	25/8793d6	2254508	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	59m 46s	19.2 GB	18.3 GB
+909	92/018676	2254925	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 17s	27.4 GB	26.7 GB
+1432	2f/7e7a37	2254570	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 40m 24s	9.3 GB	8.6 GB
+879	c2/ae9370	2254682	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 31m 22s	7 GB	6.3 GB
+2685	4c/f139d8	2254623	run_method (simulated/experiment_1/gene+mimosca)	COMPLETED	0	3m 31s	10.4 GB	9.6 GB
+1852	58/9849e5	2254613	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	10m 5s	4.4 GB	3.4 GB
+2489	9c/dd80cb	2254630	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	COMPLETED	0	16.1s	1.2 GB	498 MB
+1935	fe/deddc2	2254937	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	20.3s	4.4 GB	3.7 GB
+1342	68/6481d2	2254518	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	54m 19s	27.4 GB	26.5 GB
+1787	ef/b5d4a4	2254936	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	47.1s	4.3 GB	3.6 GB
+2620	8d/7012f2	2254830	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	49m 47s	5.4 GB	4.6 GB
+1921	d7/82d0c4	2254942	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	21.1s	4.1 GB	3.4 GB
+2626	f8/93f310	2254900	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	20m 33s	21.1 GB	20.2 GB
+189	6e/f35170	2254341	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 54s	1.3 GB	673.1 MB
+356	a0/3aa9cc	2254938	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 21s	38.7 GB	38 GB
+1381	9a/f9880b	2254909	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	17m 2s	28.2 GB	27.3 GB
+623	01/729db5	2254419	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 38m 31s	1.2 GB	556.8 MB
+2285	c0/fb1826	2254693	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 36m 15s	7 GB	6.3 GB
+517	45/e7b6c2	2254943	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 39s	27.4 GB	26.7 GB
+613	d9/8de771	2254721	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 31m 14s	7 GB	6.3 GB
+2386	f1/294155	2254949	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 6s	1.1 GB	391.6 MB
+516	d7/d5c666	2254524	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	58m 55s	19.2 GB	18.3 GB
+1558	12/4de21c	2254629	run_method (papalexi/eccite_screen/gene+mimosca)	COMPLETED	0	7m 35s	12.4 GB	11.6 GB
+1620	be/09caca	2254954	run_method (papalexi/eccite_screen/protein+liscovitch_method)	COMPLETED	0	11.2s	1 GB	356.8 MB
+1621	b8/d762e4	2254955	run_method (papalexi/eccite_screen/protein+mimosca)	COMPLETED	0	13.3s	1.1 GB	423.4 MB
+1321	dc/0de591	2254537	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	55m 55s	27.5 GB	26.5 GB
+915	3c/d767e6	2254536	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	57m 54s	19.2 GB	18.3 GB
+319	f3/2e46c4	2254581	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 49m 2s	9.9 GB	9.3 GB
+891	a9/6b8a10	2254928	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	14m 42s	18.8 GB	18 GB
+418	c4/6b23f5	2254550	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	53m 35s	27.6 GB	26.7 GB
+1460	e3/890529	2254600	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 38m 35s	9.3 GB	8.6 GB
+766	56/48e2cb	2254924	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 23s	7.4 GB	6.6 GB
+1126	f5/05d578	2254958	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	2m 54s	41.7 GB	41 GB
+2034	6a/1f7639	2254633	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	11m 47s	4.7 GB	3.6 GB
+674	15/e82610	2254940	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	11m 21s	18.8 GB	18 GB
+2546	8c/83cd5a	2254962	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	1m 36s	16.1 GB	15.5 GB
+169	eb/8aefc1	2254321	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 57m 31s	1.4 GB	715 MB
+1447	3a/eb3562	2254530	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	1h 3m 31s	27.5 GB	26.5 GB
+1973	56/b9067e	2254969	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	43.9s	4.3 GB	3.6 GB
+206	49/6e4f7a	2254914	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 35s	10.5 GB	9.7 GB
+1376	83/34a7c2	2254642	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 7m 16s	9.3 GB	8.6 GB
+320	6f/37abfc	2254562	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	57m 2s	27.6 GB	26.7 GB
+1858	8c/0c2935	2254973	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	29s	4.2 GB	3.6 GB
+2273	3d/24fb2e	2254965	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	2m 32s	29.8 GB	29.1 GB
+1821	76/8581df	2254968	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 11s	2.7 GB	1.8 GB
+2606	b4/02e9e3	2254879	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	46m 14s	5.4 GB	4.6 GB
+1552	a7/de5ee4	2254971	run_method (papalexi/eccite_screen/gene+weissman_method)	COMPLETED	0	1m 35s	18.2 GB	17.6 GB
+196	f2/eb10bd	2254349	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 17m 13s	1.3 GB	673.4 MB
+2471	09/d182cb	2254974	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 41s	1.1 GB	413 MB
+1411	af/f09fa5	2254668	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	1h 58m 12s	9.3 GB	8.6 GB
+615	59/3a0589	2254976	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 27s	27.4 GB	26.7 GB
+2088	44/6aa10d	2254840	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 2m 54s	7.3 GB	6.4 GB
+916	9a/1a50a4	2254977	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 30s	27.4 GB	26.7 GB
+1647	21/11f2e9	2254984	run_method (papalexi/eccite_screen/protein+seurat_de)	COMPLETED	0	15.6s	1.2 GB	399.5 MB
+183	32/33b4a9	2254335	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 55m 37s	1.4 GB	718.9 MB
+1673	16/7f7c93	2254988	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 10s	4.2 GB	3.5 GB
+1304	3c/a4b3fb	2254944	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 23s	28.2 GB	27.3 GB
+1596	54/14e9ed	2254792	run_method (papalexi/eccite_screen/gene+nb_regression)	COMPLETED	0	1h 26m 56s	1.1 GB	408.5 MB
+1995	f3/6dcf94	2254991	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	47.1s	4.4 GB	3.6 GB
+1746	8b/579099	2254993	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	21.5s	4.3 GB	3.6 GB
+277	6b/6cbc62	2254665	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 6m 39s	9.9 GB	9.3 GB
+2535	73/c21008	2254950	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	20m 20s	21.1 GB	20.2 GB
+1181	98/cb77a1	2254576	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	56m 55s	27.4 GB	26.5 GB
+176	cc/3163ec	2254329	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 9m 11s	1.4 GB	711 MB
+1022	c2/6a21cc	2254471	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 45m 22s	1.2 GB	556.8 MB
+600	c8/d1a6c6	2254583	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	58m 13s	19.2 GB	18.3 GB
+989	10/a9f498	2254983	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	11m 17s	18.8 GB	18 GB
+2410	e6/e0881d	2255001	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	20.2s	1.3 GB	471.1 MB
+1322	99/1e7d87	2254995	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 22s	41.7 GB	41 GB
+1473	be/a41dc1	2254951	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 33s	9.8 GB	9 GB
+275	ed/92431a	2254975	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	15m 3s	25.7 GB	24.9 GB
+2007	31/f1fcd2	2255005	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	25.5s	4.3 GB	3.6 GB
+734	53/7798d5	2255002	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 7s	27.4 GB	26.7 GB
+1509	b5/188c71	2254711	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	1h 59m 57s	9.3 GB	8.6 GB
+1554	d0/32699a	2254804	run_method (papalexi/eccite_screen/gene+nb_regression)	COMPLETED	0	1h 30m 58s	1.1 GB	408.3 MB
+707	d1/be24e8	2254506	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 43m 43s	1.2 GB	556.6 MB
+220	9d/74e313	2254966	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 32s	10.5 GB	9.7 GB
+698	0f/84eb22	2254596	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	56m 39s	19.2 GB	18.3 GB
+729	75/e7a36d	2254414	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 20m 34s	1.3 GB	566.1 MB
+1781	a3/8c70ad	2255013	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	27.8s	4.2 GB	3.6 GB
+969	28/c59ee0	2254989	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	19m 7s	7.4 GB	6.6 GB
+2545	78/5f2a23	2254695	run_method (simulated/experiment_1/gene+mimosca)	COMPLETED	0	3m 31s	10.4 GB	9.6 GB
+2286	a3/cabe15	2254694	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 28s	19.1 GB	18.2 GB
+190	e9/dd4efc	2254342	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 58m 56s	1.4 GB	708.6 MB
+690	ee/f97cf1	2254826	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 33m 45s	7 GB	6.3 GB
+465	c5/0fdb6f	2254980	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	27m 20s	10.5 GB	9.7 GB
+240	5a/b5ca0f	2254997	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 13s	25.7 GB	24.9 GB
+1967	fa/645e96	2255024	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	53.1s	4.4 GB	3.6 GB
+2693	7d/5a7174	2255021	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	1m 41s	16.1 GB	15.5 GB
+1914	3f/0ab4c8	2255027	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	26.8s	4.4 GB	3.7 GB
+1337	8f/0b46f5	2254393	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 34m 49s	1.5 GB	796.1 MB
+1756	89/fc9ceb	2255026	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	57s	4.1 GB	3.5 GB
+2632	42/85ed83	2254468	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 5m 54s	1.2 GB	447.8 MB
+1540	12/fb4669	2255029	run_method (liscovitch/experiment_small/chromatin+liscovitch_method)	COMPLETED	0	13.6s	1.1 GB	457.2 MB
+1539	47/16a96b	2255030	run_method (liscovitch/experiment_small/chromatin+liscovitch_method)	COMPLETED	0	13.4s	1.1 GB	457.4 MB
+197	67/60ffc5	2254348	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 54m 36s	1.4 GB	715 MB
+2108	85/cc06a5	2254986	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	31m 30s	29.2 GB	28.3 GB
+569	79/981fec	2255016	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	11m 22s	18.8 GB	18 GB
+2009	9d/9f3349	2255035	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	54.7s	4.4 GB	3.6 GB
+762	e5/7b41cd	2255034	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 26s	27.4 GB	26.7 GB
+1797	93/492b97	2255037	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	27.9s	4.2 GB	3.5 GB
+1951	a1/9ce654	2255038	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	23.4s	4.3 GB	3.6 GB
+971	e2/f1aa7b	2254590	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 10m 22s	19.2 GB	18.3 GB
+2508	0c/f628cb	2254956	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	43m 48s	5.4 GB	4.6 GB
+332	21/8cca51	2254994	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 43s	10.5 GB	9.7 GB
+1978	9e/ea344d	2254704	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	11m 10s	4.7 GB	3.6 GB
+1743	da/ba6222	2255043	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 5s	4.2 GB	3.5 GB
+1706	0d/9d953d	2255046	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	24.8s	4.1 GB	3.5 GB
+608	2a/ec5dd2	2255040	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 28s	27.4 GB	26.7 GB
+769	87/ef2f8a	2255041	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 28s	27.4 GB	26.7 GB
+2714	08/7b458c	2255044	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 5s	16.1 GB	15.5 GB
+308	c1/3ace38	2254463	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 18m 59s	1.3 GB	673.1 MB
+487	80/182de4	2254648	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 47m 12s	9.9 GB	9.3 GB
+1281	92/52b8b1	2254456	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 23m 16s	1.5 GB	795.6 MB
+2192	52/51c495	2255000	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	30m 53s	28 GB	27.1 GB
+328	ef/e589ed	2255048	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 22s	38.7 GB	38 GB
+1023	d1/4ab2ee	2254472	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 17m 34s	1.3 GB	582 MB
+723	2a/c86523	2255028	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 42s	18.8 GB	18 GB
+2168	ab/44956d	2255056	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 37s	29.8 GB	29.1 GB
+2294	4c/950930	2255057	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 39s	29.8 GB	29.1 GB
+256	02/570325	2254771	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 11m 23s	9.9 GB	9.3 GB
+1012	69/a06dfc	2254874	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 33m 40s	7 GB	6.3 GB
+662	ae/11aca3	2254881	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 29m 44s	7 GB	6.3 GB
+1572	18/0b16a1	2254727	run_method (papalexi/eccite_screen/gene+mimosca)	COMPLETED	0	7m 24s	12.4 GB	11.6 GB
+1311	50/41a10a	2255018	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 43s	28.2 GB	27.3 GB
+354	67/c9764c	2254777	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 10m 11s	9.9 GB	9.3 GB
+2389	86/3efbcf	2255071	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	21.3s	1.3 GB	469.9 MB
+676	95/a29214	2254884	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 30m 24s	7 GB	6.3 GB
+901	b1/157c50	2254634	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 20s	19.2 GB	18.3 GB
+265	00/3b8a7c	2255066	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 48s	38.7 GB	38 GB
+1885	75/747a7e	2255077	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	44s	4.5 GB	3.7 GB
+1718	04/e74a52	2255079	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	27.9s	4.2 GB	3.6 GB
+1063	7c/f1305e	2255072	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 31s	41.7 GB	41 GB
+2647	88/ab4034	2255033	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	19m 59s	21.1 GB	20.2 GB
+1595	c6/7e590a	2254920	run_method (papalexi/eccite_screen/gene+permutation_test)	COMPLETED	0	1h 15m 46s	1.1 GB	386.3 MB
+1347	58/c86d31	2255022	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 51s	9.8 GB	9 GB
+1877	85/470d3d	2255081	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 9s	2.7 GB	1.9 GB
+538	26/2ac1f8	2255080	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 33s	27.4 GB	26.7 GB
+1872	76/37e27b	2255086	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	27.6s	4.2 GB	3.6 GB
+2674	8a/f4a1ad	2254512	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 9m 52s	1.2 GB	446.5 MB
+877	f3/e038ed	2255059	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	12m 51s	18.8 GB	18 GB
+1210	94/6e6f8c	2255085	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 49s	41.7 GB	41 GB
+681	ee/b79959	2255064	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 7s	18.8 GB	18 GB
+887	cc/31e675	2254654	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 1m 3s	19.2 GB	18.3 GB
+897	72/e788ed	2254492	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 25m 21s	1.3 GB	579.7 MB
+2532	39/0a5d81	2255091	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 10s	16.1 GB	15.5 GB
+2641	28/efa6ae	2255009	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	44m 11s	5.4 GB	4.6 GB
+2095	85/7edf91	2254961	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 6m 52s	7.3 GB	6.4 GB
+1519	46/47dc29	2254482	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 30m 10s	1.5 GB	796.1 MB
+2124	04/d6ed6b	2254845	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	2h 1m 34s	7 GB	6.3 GB
+522	ad/2b542f	2254916	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 29m 20s	7 GB	6.3 GB
+268	cd/982edc	2255068	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 42s	25.8 GB	24.9 GB
+591	c9/b74950	2255069	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 54s	7.4 GB	6.6 GB
+202	28/01d073	2255094	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 18s	38.7 GB	38 GB
+673	37/853324	2254517	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 16m 43s	1.3 GB	581.7 MB
+2194	fc/4ec91a	2254854	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	2h 57s	7 GB	6.3 GB
+365	f8/bb8f76	2254418	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 57m 46s	1.4 GB	706.5 MB
+1611	b9/24b6e1	2255107	run_method (papalexi/eccite_screen/protein+schraivogel_method)	COMPLETED	0	29.8s	1.4 GB	615.2 MB
+2423	70/a38c5e	2255108	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	33.6s	1.8 GB	1003.5 MB
+873	85/04f819	2254690	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	54m 34s	19.2 GB	18.3 GB
+237	43/d092f4	2255101	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 20s	38.7 GB	38 GB
+1300	4c/a85da5	2254691	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	55m 40s	27.5 GB	26.5 GB
+652	e4/b0c6f0	2254535	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 12m 36s	1.3 GB	580.4 MB
+507	28/66c15a	2255062	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 24s	10.5 GB	9.7 GB
+2706	ec/18a0d6	2254756	run_method (simulated/experiment_1/gene+mimosca)	COMPLETED	0	3m 35s	10.4 GB	9.6 GB
+1167	2b/7bc9a2	2254683	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	59m 26s	27.4 GB	26.5 GB
+1221	ad/fc3b8f	2255061	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	25m 44s	9.8 GB	9 GB
+1577	3d/ed5dbe	2255093	run_method (papalexi/eccite_screen/gene+seurat_de)	COMPLETED	0	10m 39s	5.1 GB	4.3 GB
+818	ec/00e55d	2255112	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 26s	27.4 GB	26.7 GB
+2360	49/549ed0	2255117	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	39.1s	1.8 GB	1003.6 MB
+2063	0c/d01df0	2255121	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	18.7s	4.3 GB	3.7 GB
+1899	6c/343a31	2255120	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	48.9s	4.5 GB	3.7 GB
+2064	35/4a7598	2255122	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	46.3s	4.3 GB	3.6 GB
+717	37/e2e890	2255087	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 31s	7.4 GB	6.6 GB
+1749	81/a19ae3	2255126	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	51.5s	4.1 GB	3.5 GB
+1632	cb/a17c82	2255129	run_method (papalexi/eccite_screen/protein+schraivogel_method)	COMPLETED	0	29.1s	1.4 GB	615.2 MB
+2073	ba/2981ee	2255127	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 2s	2.7 GB	1.9 GB
+741	90/c2b660	2255125	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 25s	27.4 GB	26.7 GB
+1046	c8/e1fb97	2255078	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 38s	9.8 GB	9 GB
+2265	5f/4f7afc	2254744	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 34s	19.1 GB	18.2 GB
+1331	ec/6c54cc	2254405	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 17m 35s	1.5 GB	832.8 MB
+1602	94/be2471	2254982	run_method (papalexi/eccite_screen/gene+permutation_test)	COMPLETED	0	1h 13m 45s	1.1 GB	386.7 MB
+2402	56/9938ac	2255139	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	40.9s	1.8 GB	1001.8 MB
+420	c5/ab0514	2254551	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 15m 6s	1.3 GB	672.9 MB
+2462	ca/62fcf8	2255140	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	13.9s	1.1 GB	429.3 MB
+1576	f1/971515	2255119	run_method (papalexi/eccite_screen/gene+schraivogel_method)	COMPLETED	0	8m 59s	13.5 GB	12.7 GB
+1272	b3/640f34	2254717	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	54m	27.5 GB	26.5 GB
+1416	86/779e74	2255097	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 36s	28.2 GB	27.3 GB
+1188	05/3b4603	2254722	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	53m 12s	27.4 GB	26.5 GB
+742	83/c5583e	2254616	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 45m 57s	1.2 GB	556.9 MB
+1437	e2/afd65d	2255106	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	20m 34s	28.3 GB	27.4 GB
+1570	fb/71d935	2255137	run_method (papalexi/eccite_screen/gene+seurat_de)	COMPLETED	0	11m 9s	5.1 GB	4.3 GB
+2110	69/21f374	2254933	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 44m 26s	7 GB	6.3 GB
+2354	55/f75c16	2255150	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	19.6s	1.3 GB	470.7 MB
+2618	2c/cbb627	2254585	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 7m 30s	1.2 GB	447.1 MB
+1351	ee/f1ec92	2254544	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 27m 37s	1.5 GB	795.9 MB
+931	0f/a443d4	2254632	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 44m 21s	1.2 GB	556.8 MB
+2698	ee/f46494	2255082	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	37m 34s	4.7 GB	4 GB
+2345	bf/344947	2255155	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 36s	1.1 GB	412.5 MB
+378	69/7b2e06	2254574	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 44s	1.3 GB	673 MB
+1672	9e/6869fb	2255158	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	53.6s	4.1 GB	3.5 GB
+1755	a4/cd09d3	2255159	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	25s	4.1 GB	3.5 GB
+1283	92/0a2f0d	2255128	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	20m 27s	28.2 GB	27.4 GB
+1563	7e/3813fb	2255145	run_method (papalexi/eccite_screen/gene+seurat_de)	COMPLETED	0	11m 29s	5.1 GB	4.3 GB
+1665	ba/5e78ec	2255163	run_method (papalexi/eccite_screen/protein+permutation_test)	COMPLETED	0	10.8s	1.1 GB	387.7 MB
+1093	8f/54143a	2254447	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 17m 9s	1.5 GB	821 MB
+1171	1e/6c52af	2255142	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 15s	28.2 GB	27.3 GB
+836	b2/e26b28	2255141	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	20m 5s	7.4 GB	6.6 GB
+1849	07/dcdcb4	2255166	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 12s	2.5 GB	1.7 GB
+442	79/66bd00	2254505	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 54s	1.4 GB	718.7 MB
+1169	e7/a163b6	2254569	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 29m 43s	1.5 GB	795.9 MB
+1553	92/6497e4	2255017	run_method (papalexi/eccite_screen/gene+permutation_test)	COMPLETED	0	1h 14m 20s	1.1 GB	386.6 MB
+1778	a5/59d429	2255167	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 7s	4.2 GB	3.5 GB
+1036	ae/bed11f	2254575	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 28m 16s	1.5 GB	795.7 MB
+373	48/55fc40	2255148	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 13s	25.8 GB	24.9 GB
+1655	bc/90485c	2255177	run_method (papalexi/eccite_screen/protein+liscovitch_method)	COMPLETED	0	11s	1 GB	345 MB
+231	bb/b70599	2254586	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 19m 47s	1.3 GB	673.3 MB
+2234	1d/2a6245	2255123	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	33m 40s	29.2 GB	28.3 GB
+944	70/7ac11d	2255176	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 32s	27.4 GB	26.7 GB
+207	c0/aa84c3	2254915	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 10m	9.9 GB	9.3 GB
+272	9a/f31f50	2255179	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 21s	38.7 GB	38 GB
+1711	ab/6e7eab	2255183	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	28.3s	4.2 GB	3.6 GB
+405	a0/1f49b9	2255182	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 23s	38.7 GB	38 GB
+393	d1/c90f74	2254520	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 56m 28s	1.4 GB	721.8 MB
+1333	0e/854b7e	2255149	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 57s	9.8 GB	9 GB
+1215	3c/44fb4b	2254929	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 10m 35s	9.3 GB	8.6 GB
+345	48/c6f44c	2255164	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 20s	26.4 GB	25.5 GB
+438	d3/735b45	2254923	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 13m 58s	9.9 GB	9.3 GB
+2248	83/8eb5da	2255146	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	31m 11s	29.2 GB	28.3 GB
+1857	2c/58873d	2255190	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	53.7s	4.3 GB	3.6 GB
+1811	fe/b50853	2255193	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	25.1s	4.1 GB	3.5 GB
+1371	8b/ba573c	2255189	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 21s	41.7 GB	41 GB
+1135	a5/c5d342	2254498	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 19m 3s	1.5 GB	831.5 MB
+1906	20/fe1819	2255196	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	51.7s	4.5 GB	3.7 GB
+1697	39/be6b09	2255197	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	28.1s	4.2 GB	3.6 GB
+1488	73/7ca0d4	2254952	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 5m 39s	9.3 GB	8.6 GB
+1092	97/2acb09	2254607	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 24m 14s	1.5 GB	796.3 MB
+1520	20/789ff8	2254483	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 25m 7s	1.5 GB	839.3 MB
+259	84/cd233e	2254606	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 26m 44s	1.3 GB	672.9 MB
+2011	e5/728c89	2255200	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	51.5s	4.5 GB	3.7 GB
+1806	71/3cf1f3	2255204	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 6s	4.2 GB	3.5 GB
+1946	be/313664	2255205	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	52.5s	4.4 GB	3.6 GB
+219	5b/bb313a	2255181	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 43s	25.8 GB	24.9 GB
+1927	12/d5fbc4	2255206	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	56s	4.5 GB	3.7 GB
+2691	57/d1ef91	2255151	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	37m 21s	4.7 GB	4 GB
+2071	cf/9d4604	2255208	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	42.3s	4.3 GB	3.6 GB
+1882	e6/a0015f	2255209	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	44.2s	4.3 GB	3.6 GB
+1856	b1/bd0e03	2255211	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 14s	2.5 GB	1.7 GB
+2245	13/8c4e0a	2255210	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 35s	29.8 GB	29.1 GB
+606	43/e9801c	2255039	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 30m 42s	7 GB	6.3 GB
+339	62/4552b7	2255178	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 14s	10.5 GB	9.7 GB
+1233	96/f83bf7	2254509	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 26m 24s	1.5 GB	836 MB
+574	c1/889b54	2254701	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 47m 55s	1.2 GB	556.9 MB
+1448	3c/c509bd	2255216	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 19s	41.7 GB	41 GB
+1155	a7/f5cc0d	2254636	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 23m 17s	1.5 GB	796.2 MB
+2301	a2/57b90c	2255218	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.3s	1.1 GB	396.5 MB
+2458	86/47a545	2255219	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	37.9s	1.9 GB	1012.3 MB
+2193	aa/9fc7cf	2255133	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 49s	7.3 GB	6.4 GB
+2450	5b/23256d	2255222	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 36s	1.1 GB	411.7 MB
+1482	5f/aef239	2254769	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	59m 54s	27.5 GB	26.5 GB
+2235	25/377315	2255124	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 5m 53s	7.3 GB	6.4 GB
+379	ba/e7b275	2254573	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 7m 13s	1.4 GB	717 MB
+1352	fb/af8104	2254545	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 16m 24s	1.5 GB	834.6 MB
+759	e7/bdfef2	2255203	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 22s	7.4 GB	6.6 GB
+488	e4/ce0dcc	2254781	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	54m 5s	27.5 GB	26.7 GB
+2427	22/45182f	2255227	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.3s	1.1 GB	469.4 MB
+963	87/926a23	2255012	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 56m 35s	7 GB	6.3 GB
+2166	f6/fa37e7	2255054	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 38m 38s	7 GB	6.3 GB
+2696	27/eeabd6	2255202	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	21m 3s	21.1 GB	20.2 GB
+382	42/9510e6	2254932	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 40m 53s	9.9 GB	9.3 GB
+2544	d4/000161	2255180	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	37m 54s	4.7 GB	4 GB
+856	6b/d87816	2255221	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 23s	18.8 GB	18 GB
+1390	a1/3314d2	2254999	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 14m 30s	9.3 GB	8.6 GB
+2504	d8/ac52b8	2255239	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.3s	1.1 GB	405.1 MB
+1964	c1/8dd844	2254844	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	14m 7s	4.7 GB	3.6 GB
+920	e9/c88e8c	2255213	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 45s	7.4 GB	6.6 GB
+1421	44/303897	2254672	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 27m 22s	1.5 GB	796.1 MB
+1669	04/ce4b53	2255244	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	27.5s	4.2 GB	3.6 GB
+448	ba/4e7640	2254679	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 25m 23s	1.3 GB	673.4 MB
+2688	7a/5e35d8	2254720	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 3m 29s	1.2 GB	448 MB
+1227	7e/4dc628	2255217	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 38s	28.2 GB	27.3 GB
+2090	26/c796d6	2254856	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 25s	19.1 GB	18.2 GB
+2707	af/ce7b52	2255242	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 18s	16.1 GB	15.5 GB
+648	c7/88ad03	2255036	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 56m 7s	7 GB	6.3 GB
+767	67/50c88e	2255099	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 29m 39s	7 GB	6.3 GB
+1890	04/6a53ef	2255250	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	46s	4.4 GB	3.6 GB
+2059	51/152900	2255251	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 11s	2.7 GB	1.9 GB
+1742	06/c4efd7	2255252	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	54.6s	4.1 GB	3.5 GB
+1904	90/266563	2255254	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	45.9s	4.4 GB	3.6 GB
+1767	70/2651bd	2255255	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	28.2s	4.2 GB	3.6 GB
+585	a7/78939d	2255098	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 32m 51s	7 GB	6.3 GB
+950	fe/1c88e2	2254800	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	59m 58s	19.2 GB	18.3 GB
+640	53/2753ba	2255230	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 9s	7.4 GB	6.6 GB
+1199	b4/45b506	2255226	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 34s	28.2 GB	27.3 GB
+1132	36/087cbc	2254822	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	55m 33s	27.4 GB	26.5 GB
+1626	79/62faf5	2255266	run_method (papalexi/eccite_screen/protein+seurat_de)	COMPLETED	0	15.8s	1.2 GB	405.4 MB
+2264	b6/2cd111	2255058	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 58m 47s	7 GB	6.3 GB
+1200	76/f50141	2255225	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 28s	9.8 GB	9 GB
+997	0f/474149	2255235	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	21m 44s	7.4 GB	6.6 GB
+2085	ac/a0adcd	2255269	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	45s	4.3 GB	3.6 GB
+2332	4b/eeab46	2255271	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	41.5s	1.8 GB	1004.2 MB
+1507	88/373d7b	2255247	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	15m 44s	28.2 GB	27.4 GB
+2494	50/f8ffc4	2255274	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	18.7s	1.2 GB	411.4 MB
+903	70/46a2cd	2254746	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 44m 24s	1.2 GB	556.8 MB
+204	00/a236f5	2254646	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 53m 49s	1.4 GB	712.8 MB
+627	27/3e9393	2255144	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 29m	7 GB	6.3 GB
+2438	31/829676	2255278	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	19.2s	1.2 GB	411.3 MB
+408	dc/a7d319	2255246	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	19m 58s	25.8 GB	24.9 GB
+505	85/db54ae	2254645	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 55m 58s	1.4 GB	701.8 MB
+2219	21/b9f788	2254357	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	5h 33s	1.2 GB	463.3 MB
+2505	83/79bf28	2255281	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 12s	1.1 GB	391.4 MB
+381	bf/1b055b	2255243	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 50s	10.5 GB	9.7 GB
+521	c0/76efab	2255259	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 25s	7.4 GB	6.6 GB
+1397	ee/61a9b5	2255076	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 4m 20s	9.3 GB	8.6 GB
+612	12/e74d6e	2255262	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 27s	7.4 GB	6.6 GB
+893	b7/a6ed9b	2255152	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 28m 52s	7 GB	6.3 GB
+462	5e/e7e467	2254734	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 12m 53s	1.3 GB	673.2 MB
+261	fb/a832aa	2255263	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	19m 45s	25.8 GB	24.9 GB
+315	a7/991047	2254733	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 18m 37s	1.3 GB	673.3 MB
+811	37/baafd2	2255277	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 28s	27.4 GB	26.7 GB
+776	ea/44b459	2255283	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 35s	27.4 GB	26.7 GB
+1280	df/73c396	2255275	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	2m 44s	41.7 GB	41 GB
+1231	93/7d6815	2255280	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 14s	41.7 GB	41 GB
+1938	f0/352d30	2255296	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	49.9s	4.3 GB	3.6 GB
+728	c8/33749b	2254762	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 46m 26s	1.2 GB	556.8 MB
+2592	0d/889ea7	2255229	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	43m 16s	5.4 GB	4.6 GB
+1190	42/bd6a56	2254724	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 31m 9s	1.5 GB	795.9 MB
+754	72/f786ac	2254835	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 3m 50s	19.2 GB	18.3 GB
+2033	07/887240	2255301	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	26.4s	4.4 GB	3.7 GB
+1758	09/348496	2255300	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 27s	2.7 GB	1.8 GB
+2039	63/35b75e	2255302	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	50.3s	4.5 GB	3.7 GB
+2318	f9/e8fb7c	2255305	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	39.4s	1.9 GB	1012.1 MB
+1531	ec/a38b9e	2254842	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	55m 14s	27.4 GB	26.5 GB
+2067	c4/57b6dd	2255307	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	51.4s	4.5 GB	3.7 GB
+616	f4/aa0eda	2254786	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 42m 23s	1.2 GB	556.7 MB
+2555	70/79c6ba	2254755	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 3m 57s	1.2 GB	449.3 MB
+686	d5/b0391f	2254795	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 40m 48s	1.2 GB	558.1 MB
+1734	51/e46787	2255313	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	23.5s	4.1 GB	3.5 GB
+2365	2a/f5a9d5	2255310	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 6s	1.1 GB	391.2 MB
+2537	de/e8148d	2255261	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	35m 23s	4.7 GB	4 GB
+553	35/d069db	2254791	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 43m 35s	1.2 GB	556.7 MB
+2344	98/554201	2255316	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 13s	1.1 GB	391.8 MB
+1477	1a/6dcace	2254738	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 26m 14s	1.5 GB	797.8 MB
+282	11/773e02	2255289	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 31s	25.7 GB	24.9 GB
+1955	b8/75ff5d	2255319	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	48.4s	4.5 GB	3.7 GB
+1257	5f/992b25	2255100	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 13m 47s	9.3 GB	8.6 GB
+1183	c6/f23375	2254736	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 31m 57s	1.5 GB	796.3 MB
+1330	53/cb6702	2254737	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 33m 48s	1.5 GB	796.2 MB
+625	cc/f35c94	2255311	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	10m 56s	18.8 GB	18 GB
+982	71/8d83fe	2255312	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	10m 59s	18.8 GB	18 GB
+431	8e/57bb1e	2255109	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 14m 46s	9.9 GB	9.3 GB
+1678	34/4d848f	2255327	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	26.2s	4.2 GB	3.5 GB
+701	a1/1a3634	2254750	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 16m 56s	1.3 GB	577.1 MB
+1395	2f/354593	2255294	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	22m 21s	28.2 GB	27.3 GB
+1630	6e/5d2c34	2255329	run_method (papalexi/eccite_screen/protein+permutation_test)	COMPLETED	0	13.1s	1.1 GB	387.4 MB
+2114	9a/7775bd	2254426	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	5h 10m 53s	1.2 GB	464.1 MB
+793	aa/984102	2255317	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	10m 51s	18.8 GB	18 GB
+1396	dd/59bf51	2255295	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 36s	9.8 GB	9 GB
+819	ea/3d09fd	2254813	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 46m 43s	1.2 GB	556.9 MB
+1407	23/04b704	2254742	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 29m 20s	1.5 GB	796.3 MB
+542	f6/7ab7ea	2255314	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 49s	7.4 GB	6.6 GB
+898	81/d61867	2255322	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	10m 45s	18.8 GB	18 GB
+561	39/6b1ce5	2254773	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 12m 8s	1.3 GB	580.5 MB
+2123	12/53e92b	2255258	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 43s	7.3 GB	6.4 GB
+2120	d1/045e22	2254373	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	COMPLETED	0	5h 43m 26s	1.1 GB	391.3 MB
+980	55/4b209d	2254827	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 38m 31s	1.2 GB	556.8 MB
+1889	39/fc716e	2255343	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	50.2s	4.3 GB	3.6 GB
+1860	e6/d46437	2255345	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	22.8s	4.1 GB	3.5 GB
+2690	03/0d4035	2255282	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	41m 36s	5.4 GB	4.6 GB
+1543	ce/dd41f6	2255268	run_method (papalexi/eccite_screen/gene+liscovitch_method)	COMPLETED	0	58m 45s	4.9 GB	4.2 GB
+1788	96/ac57c2	2255349	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	29s	4.2 GB	3.6 GB
+1414	b1/75e5ec	2254764	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 29m 3s	1.5 GB	796.3 MB
+1191	8b/284848	2254725	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 11m 33s	1.5 GB	835.6 MB
+312	c3/65c6da	2255114	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 37m 3s	9.9 GB	9.3 GB
+1702	f9/988787	2255353	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 5s	2.7 GB	1.8 GB
+733	01/89354e	2254873	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	59m 12s	19.2 GB	18.3 GB
+2060	13/c6c509	2255355	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	47s	4.5 GB	3.7 GB
+991	98/4c8d07	2255231	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 30m 44s	7 GB	6.3 GB
+1864	9d/f0b58c	2255357	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	1m 2s	4.3 GB	3.6 GB
+1512	3e/e27cce	2254757	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 41m 50s	1.5 GB	796.1 MB
+1652	11/e5bea8	2255360	run_method (papalexi/eccite_screen/protein+nb_regression)	COMPLETED	0	12.7s	1.1 GB	385.9 MB
+2407	c9/d4bf7a	2255361	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 10s	1.1 GB	391.7 MB
+1384	d0/21eecd	2254887	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	53m	27.5 GB	26.5 GB
+814	41/676ba3	2255350	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	10m 57s	18.8 GB	18 GB
+815	5f/b46998	2255341	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 27s	7.4 GB	6.6 GB
+1637	6f/2a8750	2255364	run_method (papalexi/eccite_screen/protein+permutation_test)	COMPLETED	0	12.7s	1.1 GB	388.6 MB
+2392	27/e7c92d	2255366	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.4s	1.1 GB	475 MB
+482	6f/f10989	2255362	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 32s	38.7 GB	38 GB
+696	21/454df8	2255346	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 51s	7.4 GB	6.6 GB
+2224	c1/1b2198	2255365	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 28s	29.8 GB	29.1 GB
+967	56/f8f61f	2254819	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 15m 22s	1.3 GB	581.6 MB
+1922	bc/8255a4	2254948	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	11m 32s	4.7 GB	3.6 GB
+1650	e4/7ea311	2255371	run_method (papalexi/eccite_screen/protein+weissman_method)	COMPLETED	0	11.6s	1 GB	352.1 MB
+1276	8b/023b9a	2255344	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	22m 20s	28.2 GB	27.4 GB
+1578	6e/62227c	2255304	run_method (papalexi/eccite_screen/gene+liscovitch_method)	COMPLETED	0	56m 33s	4.9 GB	4.2 GB
+303	f9/537437	2255356	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	14m 18s	25.8 GB	24.9 GB
+2135	d7/071aa9	2254488	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	5h 28m 8s	1.2 GB	463.7 MB
+274	90/c06434	2254761	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 51m 4s	1.4 GB	716.2 MB
+2130	1a/a4f75f	2255284	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 4m 50s	7.3 GB	6.4 GB
+1418	e8/c6289e	2255195	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 7m 21s	9.3 GB	8.6 GB
+938	02/dc4fc9	2254859	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 45m 44s	1.2 GB	556.6 MB
+1098	48/9e5ab6	2255377	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	2m 46s	41.7 GB	41 GB
+930	ab/abd8af	2255380	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 31s	27.4 GB	26.7 GB
+2227	53/787a50	2255347	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	26m 25s	29.2 GB	28.3 GB
+2242	cf/da78e8	2255306	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 2m 5s	7.3 GB	6.4 GB
+748	c5/13fca9	2255385	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 34s	27.4 GB	26.7 GB
+1282	0b/c098be	2254726	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 32m 44s	1.5 GB	834.7 MB
+254	ee/623a7f	2255367	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 5s	25.8 GB	24.9 GB
+2411	d7/a54a69	2255390	run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method)	COMPLETED	0	12.3s	1.1 GB	410.9 MB
+2268	fc/fbcee4	2254542	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	5h 11m 45s	1.2 GB	462.5 MB
+1312	7f/503255	2255352	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	26m 6s	9.8 GB	9 GB
+832	c2/3bbd0b	2255388	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 36s	27.4 GB	26.7 GB
+397	44/f733b0	2254912	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	52m	27.6 GB	26.7 GB
+992	7b/4517a6	2254896	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 3m 40s	19.2 GB	18.3 GB
+852	69/82a371	2254904	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	59m 58s	19.2 GB	18.3 GB
+768	56/8006b2	2254908	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	56m 14s	19.2 GB	18.3 GB
+385	f9/d0f62d	2254825	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 17m 8s	1.3 GB	673.1 MB
+692	71/ca038d	2255391	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 26s	27.4 GB	26.7 GB
+1930	d7/bcb64a	2255398	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	25.4s	4.3 GB	3.6 GB
+1931	b8/bb887a	2255399	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	45.7s	4.3 GB	3.6 GB
+2081	66/31c956	2255400	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	53.6s	4.5 GB	3.7 GB
+2680	5f/874e0b	2254657	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 18m 32s	1.1 GB	393.7 MB
+2701	39/260b73	2254651	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 20m 43s	1.1 GB	393.5 MB
+1819	16/a321fc	2255405	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	56.6s	4.1 GB	3.5 GB
+1883	15/d9d3ec	2255406	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	52.9s	4.4 GB	3.7 GB
+2074	40/6c02bc	2255407	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	43.8s	4.5 GB	3.7 GB
+1216	c4/6fa458	2254930	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	56m 44s	27.5 GB	26.5 GB
+2348	75/a73cd4	2255408	run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method)	COMPLETED	0	12.4s	1.1 GB	410.9 MB
+2350	c9/3d1109	2255409	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.8s	1.1 GB	446.9 MB
+1274	15/70de15	2254823	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 29m 45s	1.5 GB	796.2 MB
+1513	19/a53930	2254758	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 12m 11s	1.5 GB	819.4 MB
+2205	09/33a45d	2254567	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	5h 12m 40s	1.2 GB	462 MB
+2240	44/edb542	2254527	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	5h 28m 19s	1.2 GB	463.8 MB
+2512	b8/e41544	2254639	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 29m 46s	1.1 GB	393.6 MB
+993	8d/ad879a	2255411	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 32s	27.4 GB	26.7 GB
+955	19/ca346d	2255383	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 31s	7.4 GB	6.6 GB
+2331	d1/9f8a37	2255417	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 41s	1.1 GB	411.5 MB
+2643	0e/1c14c8	2255010	run_method (simulated/experiment_1/gene+mimosca)	COMPLETED	0	3m 32s	10.3 GB	9.6 GB
+1608	2f/2ae760	2255423	run_method (papalexi/eccite_screen/protein+weissman_method)	COMPLETED	0	11.6s	1.1 GB	392 MB
+355	e8/1eda90	2254939	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	52m 47s	27.6 GB	26.7 GB
+473	a4/024109	2255233	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 5m 52s	9.9 GB	9.3 GB
+977	06/9ba6a8	2255287	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 29m 36s	7 GB	6.3 GB
+1698	49/e3c770	2255004	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	10m 19s	4.4 GB	3.4 GB
+592	0b/c068e3	2255288	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 30m 17s	7 GB	6.3 GB
+772	49/6fa4d0	2255402	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 54s	18.8 GB	18 GB
+528	18/1a5018	2255394	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 29s	7.4 GB	6.6 GB
+731	ac/1e3137	2255395	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 52s	7.4 GB	6.6 GB
+1355	ed/0fbee1	2255248	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 1m 51s	9.3 GB	8.6 GB
+1642	95/778894	2255430	run_method (papalexi/eccite_screen/protein+mimosca)	COMPLETED	0	10.9s	1.1 GB	423.4 MB
+1886	7f/8d209a	2255421	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	25.7s	4.3 GB	3.7 GB
+737	d9/c03dba	2255416	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 25s	18.8 GB	18 GB
+1316	6f/79cb65	2254832	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 36m 49s	1.5 GB	796.2 MB
+604	45/63b774	2255418	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 32s	18.8 GB	18 GB
+1638	a9/eeaac5	2255439	run_method (papalexi/eccite_screen/protein+nb_regression)	COMPLETED	0	11.3s	1.1 GB	393.9 MB
+512	bd/421dde	2254799	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 5m 30s	1.4 GB	708.1 MB
+1532	33/adf7dd	2255432	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 19s	41.7 GB	41 GB
+1845	21/e866c5	2255031	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	10m 21s	4.4 GB	3.4 GB
+341	7d/03a528	2254945	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 1m 51s	27.6 GB	26.7 GB
+1192	67/4c91c5	2255412	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 25s	28.2 GB	27.3 GB
+1113	2c/05321f	2254848	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 22m 19s	1.5 GB	796.2 MB
+524	39/352bdc	2255440	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 29s	27.4 GB	26.7 GB
+2204	30/5271d0	2254566	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	COMPLETED	0	5h 38m 49s	1.1 GB	391.6 MB
+2372	aa/b29464	2255447	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 3s	1.1 GB	391.6 MB
+2624	1b/736754	2254641	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 49m 7s	1.1 GB	393.5 MB
+2547	ad/595893	2254696	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 19m 17s	1.1 GB	393.4 MB
+1489	17/f5258c	2254953	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	56m 46s	27.5 GB	26.5 GB
+1583	84/62c2c8	2255426	run_method (papalexi/eccite_screen/gene+schraivogel_method)	COMPLETED	0	9m 21s	13.5 GB	12.7 GB
+2094	c5/0797d6	2255396	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	32m 55s	29.2 GB	28.3 GB
+1674	44/759b89	2255453	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 15s	2.5 GB	1.7 GB
+1584	38/6a6936	2255427	run_method (papalexi/eccite_screen/gene+seurat_de)	COMPLETED	0	11m 1s	5.1 GB	4.3 GB
+939	49/64cb23	2254860	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 19m 17s	1.3 GB	583.1 MB
+1925	4a/ae437d	2255457	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	52.7s	4.4 GB	3.6 GB
+2056	3f/cbe717	2255459	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	25.6s	4.3 GB	3.6 GB
+2057	c9/4138df	2255460	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	42.3s	4.3 GB	3.6 GB
+342	d6/a3e056	2255455	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 18s	38.7 GB	38 GB
+975	d6/4eca86	2255425	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 49s	18.8 GB	18 GB
+1105	19/cf7e65	2255456	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 23s	41.7 GB	41 GB
+2156	64/39ca8f	2254649	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	4h 53m 29s	1.2 GB	462.7 MB
+434	f4/4c4afd	2254865	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 35s	1.3 GB	673.2 MB
+568	cd/c54cec	2254872	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 11m 50s	1.3 GB	582.7 MB
+504	8f/21aaba	2254867	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 16s	1.3 GB	673.1 MB
+2167	64/6d506f	2255055	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 11s	19 GB	18.2 GB
+2025	0e/aa53a7	2255468	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	49s	4.5 GB	3.7 GB
+485	76/2b8f4d	2255424	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	18m 54s	25.7 GB	24.9 GB
+1049	2d/194789	2255473	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 22s	41.7 GB	41 GB
+1222	2e/68c221	2255290	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	1h 59m 21s	9.3 GB	8.6 GB
+2378	1d/f45317	2255474	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.2s	1.1 GB	398.3 MB
+1100	ad/4e16cb	2254801	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 19m 53s	1.5 GB	832.1 MB
+1452	82/39876b	2255428	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 51s	9.8 GB	9 GB
+876	5b/139b7e	2254880	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 11m 11s	1.3 GB	583.8 MB
+1148	8f/489ead	2254862	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 31m 45s	1.5 GB	795.9 MB
+2454	77/df8824	2255110	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	COMPLETED	0	16.3s	1.2 GB	498.1 MB
+1619	78/17d2dc	2255481	run_method (papalexi/eccite_screen/protein+seurat_de)	COMPLETED	0	14.8s	1.2 GB	405.5 MB
+2050	62/54ded1	2255480	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	45.1s	4.3 GB	3.6 GB
+1278	98/4264dd	2255297	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 1m 53s	9.3 GB	8.6 GB
+545	58/bccc58	2255483	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 30s	27.4 GB	26.7 GB
+2118	0b/b01495	2255103	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	12m 52s	19.1 GB	18.2 GB
+2364	64/7ace66	2255486	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.7s	1.1 GB	436.4 MB
+2111	54/919a25	2255102	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 19s	19.1 GB	18.2 GB
+2482	d2/02759c	2255113	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	COMPLETED	0	15.9s	1.2 GB	498.2 MB
+633	19/425b82	2255458	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 52s	7.4 GB	6.6 GB
+2333	c4/f029c3	2255489	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	18.6s	1.3 GB	456.2 MB
+455	0e/904b23	2254886	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 16m 41s	1.3 GB	673.4 MB
+1879	f4/90399c	2255493	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	18s	4.4 GB	3.7 GB
+2528	ba/bf79b0	2255466	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	20m 23s	21.1 GB	20.2 GB
+2221	0c/65845c	2255369	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 15m 55s	7.3 GB	6.4 GB
+2162	8c/dc7942	2254615	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	COMPLETED	0	5h 36m 32s	1.1 GB	391.7 MB
+2270	1f/5162a1	2255393	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 5m 11s	7.3 GB	6.4 GB
+311	96/f2f829	2255469	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 2s	10.5 GB	9.7 GB
+880	ac/be2bb0	2255003	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 54s	19.2 GB	18.3 GB
+1297	a5/aede92	2255476	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 27s	28.2 GB	27.3 GB
+2515	4a/2b4801	2255438	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	42m 51s	5.4 GB	4.6 GB
+1052	2d/7426f3	2255478	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	20m 9s	28.2 GB	27.4 GB
+317	f4/9ccf44	2255482	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 31s	25.8 GB	24.9 GB
+1182	29/2b8424	2255500	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 22s	41.7 GB	41 GB
+1812	56/faf58d	2255505	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	52.4s	4.1 GB	3.5 GB
+1157	88/bf64fa	2255484	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 36s	28.2 GB	27.3 GB
+490	95/f5bef2	2254891	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 20m 18s	1.3 GB	673.2 MB
+800	ed/9bfbdf	2255497	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	14m 4s	18.8 GB	18 GB
+1196	29/831a2d	2255508	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 21s	41.7 GB	41 GB
+1103	7f/f439db	2255326	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 3m 44s	9.3 GB	8.6 GB
+1349	05/f5314a	2255023	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	59m 14s	27.5 GB	26.5 GB
+1667	79/49f129	2255513	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 11s	2.7 GB	1.8 GB
+2319	82/effa22	2255514	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	19s	1.3 GB	453.3 MB
+1298	67/56544c	2255488	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 40s	9.8 GB	9 GB
+1050	d1/753faf	2254894	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 27m 9s	1.5 GB	796.2 MB
+246	df/d2ab85	2254871	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 54m 22s	1.4 GB	713.4 MB
+273	20/2efa12	2254907	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 15m 44s	1.3 GB	674.9 MB
+1777	de/f3db90	2255518	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	53.4s	4.1 GB	3.5 GB
+2562	c7/476e52	2254934	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 5m 55s	1.2 GB	450.8 MB
+2001	6b/47c534	2255520	run_method (schraivogel/enhancer_screen_chr8/gene+permutation_test)	COMPLETED	0	41.8s	4.3 GB	3.6 GB
+2588	9d/4dd4c2	2255519	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 28s	16.1 GB	15.5 GB
+928	29/a1b9f8	2255379	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 30m 43s	7 GB	6.3 GB
+2137	fe/91d621	2255422	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	58m 28s	7.3 GB	6.4 GB
+2645	99/ed852d	2254760	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 23m 7s	1.1 GB	393.6 MB
+1661	73/c0a1f7	2255525	run_method (papalexi/eccite_screen/protein+seurat_de)	COMPLETED	0	14.4s	1.2 GB	432.8 MB
+2487	78/dee79f	2255527	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	18.3s	1.3 GB	466.8 MB
+2243	7a/502c3b	2255372	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 36m 49s	7 GB	6.3 GB
+1670	cb/ac4798	2255154	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	8m 31s	4.4 GB	3.4 GB
+2457	fe/65a23e	2255523	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 42s	1.1 GB	412.6 MB
+310	43/b17b7f	2255501	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	16m 38s	26.4 GB	25.5 GB
+2486	64/db8ff2	2255526	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	41.4s	1.9 GB	1011.6 MB
+684	e1/535698	2255065	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	53m 34s	19.2 GB	18.3 GB
+1723	e8/47e13a	2255535	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 5s	2.7 GB	1.8 GB
+914	ea/3b2003	2255354	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 49m 25s	7 GB	6.3 GB
+1207	63/0e5c62	2255498	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 9s	9.8 GB	9 GB
+1372	f6/88cca7	2254901	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 27m 21s	1.5 GB	795.9 MB
+643	ac/351bac	2255533	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 39s	27.4 GB	26.7 GB
+1164	5b/b4d9a1	2255502	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 12s	28.2 GB	27.4 GB
+1159	3e/3a1b8e	2255338	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 9m 10s	9.3 GB	8.6 GB
+2658	e2/7fb72e	2255541	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	1m 30s	16.1 GB	15.5 GB
+1947	39/77f44e	2255544	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 6s	2.7 GB	1.9 GB
+1754	3e/96e3c5	2255160	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	9m 4s	4.4 GB	3.4 GB
+700	6a/8cf26c	2254963	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 44m 10s	1.2 GB	556.8 MB
+1179	5b/dd7d70	2255499	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	25m 26s	9.8 GB	9 GB
+866	9a/844a21	2255083	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	59m 49s	19.2 GB	18.3 GB
+224	67/94d4e9	2254931	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 21m 30s	1.3 GB	673.4 MB
+2272	6b/d915b9	2255157	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 34s	19.1 GB	18.2 GB
+1705	eb/5db921	2255171	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	8m 50s	4.4 GB	3.4 GB
+626	4a/5a0374	2255515	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 48s	7.4 GB	6.6 GB
+1444	09/91017a	2255512	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 32s	28.2 GB	27.4 GB
+1686	bb/0b3e86	2255554	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	51.3s	4.1 GB	3.5 GB
+2113	62/b97b4d	2254662	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	COMPLETED	0	5h 46m 45s	1.1 GB	391.3 MB
+593	da/ddfd33	2255070	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 2m 44s	19.2 GB	18.3 GB
+678	4f/5ab042	2255552	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 35s	27.4 GB	26.7 GB
+2700	44/b74d7a	2255558	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 14s	16.1 GB	15.5 GB
+956	68/82912c	2255384	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 49m 29s	7 GB	6.3 GB
+2549	52/b19399	2255536	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	19m 52s	21.1 GB	20.2 GB
+1853	28/c94d71	2255563	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	25.6s	4.1 GB	3.5 GB
+830	36/3a4814	2255387	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 50m 6s	7 GB	6.3 GB
+2666	e0/b1b0b0	2254785	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 33m 57s	1.1 GB	393.5 MB
+429	31/f9fbc4	2255548	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 32s	25.8 GB	24.9 GB
+1236	99/9d3bcd	2255368	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 5m 23s	9.3 GB	8.6 GB
+2216	6f/7562ed	2255191	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 17s	19.1 GB	18.2 GB
+2047	45/c1cac9	2255568	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	27.2s	4.4 GB	3.7 GB
+362	f3/2db51c	2255089	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	1h 9m 9s	27.5 GB	26.7 GB
+654	ae/de4066	2255543	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	21m 44s	7.4 GB	6.6 GB
+2045	48/60b4dd	2255567	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 9s	2.7 GB	1.9 GB
+680	a8/f6483f	2254947	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 16m 20s	1.3 GB	576.3 MB
+297	55/4e6771	2255538	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 11s	10.5 GB	9.7 GB
+1728	a2/63a70a	2255572	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	54.1s	4.1 GB	3.5 GB
+1388	b0/f4229a	2255549	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 1s	28.3 GB	27.4 GB
+630	6a/f7d573	2254981	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 50m 24s	1.2 GB	556.9 MB
+637	b1/66f560	2255007	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 43m 30s	1.2 GB	556.6 MB
+391	e4/643af7	2255569	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 19s	38.7 GB	38 GB
+1056	d7/8e1ebb	2255571	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 23s	41.7 GB	41 GB
+2082	31/633a14	2255580	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	25.1s	4.4 GB	3.7 GB
+1861	70/02dc0b	2255579	run_method (schraivogel/enhancer_screen_chr11/gene+permutation_test)	COMPLETED	0	1m 4s	4.1 GB	3.5 GB
+1491	0a/90f2b7	2254935	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 36m 33s	1.5 GB	796.2 MB
+1121	4b/251323	2254883	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 15m 37s	1.5 GB	826 MB
+2317	74/112e87	2255581	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 50s	1.1 GB	412.1 MB
+1627	7b/7ff9bc	2255587	run_method (papalexi/eccite_screen/protein+liscovitch_method)	COMPLETED	0	11.1s	1 GB	351.7 MB
+346	d0/d7326c	2255547	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 15s	10.5 GB	9.7 GB
+1568	b5/f9ccb6	2255446	run_method (papalexi/eccite_screen/gene+nb_regression)	COMPLETED	0	1h 28m 35s	1.1 GB	408.6 MB
+1041	3f/9dbb5e	2255135	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	57m 6s	27.4 GB	26.5 GB
+2476	26/425753	2255590	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	14s	1.1 GB	429.3 MB
+2184	32/8890f4	2254740	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	5h 14m 18s	1.2 GB	463.7 MB
+1495	d0/bb8f9b	2255378	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 7m 50s	9.3 GB	8.6 GB
+860	d7/30fb79	2255588	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 35s	27.4 GB	26.7 GB
+1424	78/efb6c9	2255557	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 55s	9.8 GB	9 GB
+1765	51/43773c	2255593	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 28s	2.7 GB	1.8 GB
+2415	ce/3f93ca	2255594	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 49s	1.1 GB	411 MB
+907	e1/6b315f	2255452	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 31m 12s	7 GB	6.3 GB
+2716	64/0b822d	2254987	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 52s	1.2 GB	449.8 MB
+1997	81/4b7c32	2255599	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	48.1s	4.5 GB	3.7 GB
+2613	c3/d18edb	2255521	run_method (simulated/experiment_1/gene+seurat_de)	COMPLETED	0	43m 37s	5.4 GB	4.6 GB
+864	dd/3d1ba6	2255564	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	19m 40s	7.4 GB	6.6 GB
+779	19/8a61d8	2255578	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 37s	18.8 GB	18 GB
+2649	df/53c732	2255546	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	37m 1s	4.7 GB	4 GB
+679	15/516a38	2255063	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 38m 31s	1.2 GB	556.1 MB
+2440	52/7c8fde	2255236	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	COMPLETED	0	14.9s	1.2 GB	498 MB
+2395	08/834b28	2255606	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	40.5s	1.8 GB	1002.8 MB
+2355	fe/c02712	2255607	run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method)	COMPLETED	0	12.1s	1 GB	370.4 MB
+2436	3e/59df18	2255605	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 39s	1.1 GB	412.3 MB
+2292	f8/67e969	2255454	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 34m 25s	7 GB	6.3 GB
+1656	1e/e001ef	2255609	run_method (papalexi/eccite_screen/protein+mimosca)	COMPLETED	0	11.5s	1.1 GB	423.4 MB
+1657	4b/c4e7e8	2255611	run_method (papalexi/eccite_screen/protein+weissman_method)	COMPLETED	0	12.5s	1 GB	345.4 MB
+1412	52/93e26d	2255153	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	56m 21s	27.5 GB	26.5 GB
+2316	e1/c52f3e	2255613	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 4s	1.1 GB	391.8 MB
+492	fd/a6edd3	2255585	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	16m 49s	26.4 GB	25.5 GB
+2280	86/5dea9a	2255616	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 14s	29.8 GB	29.1 GB
+917	42/13f9d5	2255042	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 46m 44s	1.2 GB	558.2 MB
+1907	cf/d3c0a4	2255620	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	26.6s	4.2 GB	3.5 GB
+825	cd/3dbe6a	2255618	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 45s	27.4 GB	26.7 GB
+1165	c8/901612	2255574	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	24m 56s	9.8 GB	9 GB
+402	d2/97f491	2255576	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 8s	10.5 GB	9.7 GB
+2201	4b/5c80b0	2255470	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	COMPLETED	0	1h 34m 27s	7 GB	6.3 GB
+1891	30/e26257	2255622	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 2s	2.7 GB	1.9 GB
+1109	5f/5d9323	2255582	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 21s	9.8 GB	9 GB
+2311	60/ba19de	2255627	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	41s	1.8 GB	1004.3 MB
+2583	9d/1e527a	2255019	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 7m 4s	1.2 GB	445.9 MB
+439	8a/7cfb29	2255161	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	57m 47s	27.6 GB	26.7 GB
+2612	37/534916	2255595	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	19m 32s	21.1 GB	20.2 GB
+2040	61/8ee048	2255631	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	25.7s	4.3 GB	3.6 GB
+1822	79/9b0486	2255629	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	48.4s	4.3 GB	3.6 GB
+2038	e0/e32c74	2255630	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 2s	2.7 GB	1.9 GB
+918	ec/290082	2254978	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 23m	1.3 GB	599.7 MB
+2600	99/3b95fa	2255562	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	39m 28s	4.7 GB	4 GB
+1516	49/55f047	2255437	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	1h 59m 23s	9.3 GB	8.6 GB
+2207	8c/23f872	2255537	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h	7.3 GB	6.5 GB
+1605	21/b1ed9c	2255638	run_method (papalexi/eccite_screen/protein+seurat_de)	COMPLETED	0	14.9s	1.3 GB	493.2 MB
+210	97/b695e5	2255008	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 16m 16s	1.3 GB	672.9 MB
+1740	ed/96cb62	2255253	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	8m 50s	4.4 GB	3.4 GB
+1320	63/986c03	2255436	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 2m 33s	9.3 GB	8.6 GB
+1364	d8/283c79	2255637	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 19s	41.7 GB	41 GB
+2206	4e/1f1af1	2255589	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	31m 34s	29.2 GB	28.3 GB
+1635	ee/4c929c	2255642	run_method (papalexi/eccite_screen/protein+mimosca)	COMPLETED	0	15.3s	1.1 GB	423.5 MB
+902	6b/a3692f	2255641	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 3s	27.4 GB	26.7 GB
+1461	c9/de3d95	2255175	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	58m 44s	27.4 GB	26.5 GB
+1204	8c/5911fc	2254967	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 38m 2s	1.5 GB	796 MB
+1590	b6/be514f	2255634	run_method (papalexi/eccite_screen/gene+schraivogel_method)	COMPLETED	0	8m 57s	13.5 GB	12.7 GB
+2343	9b/34b2fb	2255650	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.5s	1.1 GB	457.5 MB
+1176	68/320999	2254964	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 39m 22s	1.5 GB	795.8 MB
+2377	95/64cee5	2255272	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	COMPLETED	0	15.2s	1.2 GB	498 MB
+2525	af/91c502	2255643	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 12s	16.2 GB	15.5 GB
+1664	df/b9cfd2	2255652	run_method (papalexi/eccite_screen/protein+weissman_method)	COMPLETED	0	11s	1 GB	345.4 MB
+1768	0d/f5baa5	2255256	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	9m 1s	4.4 GB	3.4 GB
+2126	af/6570ac	2255649	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	2m 38s	29.8 GB	29.1 GB
+720	be/aeaa97	2255651	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 4s	27.4 GB	26.7 GB
+2646	22/0e0198	2255032	run_method (simulated/experiment_1/gene+nb_regression)	COMPLETED	0	2h 10m 9s	1.2 GB	448.6 MB
+775	25/267c34	2255192	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	59m 30s	19.2 GB	18.3 GB
+1217	5d/519ded	2255657	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 35s	41.7 GB	41 GB
+2023	09/a2814a	2255660	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	52.4s	4.4 GB	3.7 GB
+976	23/a21faa	2255621	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	22m 26s	7.4 GB	6.6 GB
+337	58/b4b212	2254959	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 55m 44s	1.4 GB	716 MB
+2521	29/460c9c	2255625	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	21m 31s	21.1 GB	20.2 GB
+1187	a5/72af56	2255449	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 6m 40s	9.3 GB	8.6 GB
+1688	e3/aa15ac	2255663	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 15s	2.7 GB	1.8 GB
+1949	62/381d99	2255665	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	27.7s	4.4 GB	3.7 GB
+326	e1/d737e7	2255443	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 10m 28s	9.9 GB	9.3 GB
+2614	f4/406297	2255596	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	40m 55s	4.7 GB	4 GB
+399	8e/5d32e7	2255015	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 29m 25s	1.3 GB	673.2 MB
+1386	fb/a28b0e	2254979	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 40m 17s	1.5 GB	795.9 MB
+2617	ee/510425	2254869	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 21m 10s	1.1 GB	393.8 MB
+774	b8/8fc37a	2255509	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 31m 2s	7 GB	6.3 GB
+1116	85/d01c95	2255632	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 43s	9.8 GB	9 GB
+899	26/9029bf	2255639	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 11s	7.4 GB	6.6 GB
+2497	11/a06ad9	2255677	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.7s	1.1 GB	436.4 MB
+1246	68/15c638	2255020	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 29m 43s	1.5 GB	796.3 MB
+2164	88/22e04c	2255619	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	31m 3s	28.4 GB	27.5 GB
+2391	39/9225d0	2255318	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	COMPLETED	0	18.2s	1.2 GB	498 MB
+2559	f9/b3960f	2255299	run_method (simulated/experiment_1/gene+mimosca)	COMPLETED	0	3m 35s	10.4 GB	9.6 GB
+2357	1e/066f67	2255680	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.1s	1.1 GB	405.1 MB
+1497	18/65063f	2255675	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	2m 47s	41.7 GB	41 GB
+2509	36/c6b6ba	2255614	run_method (simulated/experiment_1/gene+liscovitch_method)	COMPLETED	0	36m 49s	4.7 GB	4 GB
+1464	53/cf3ce2	2254941	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 19m 5s	1.5 GB	844.3 MB
+2217	16/028387	2255676	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 30s	29.8 GB	29.1 GB
+1816	21/66e36f	2255687	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	26.5s	3.9 GB	3.2 GB
+1453	d2/732edc	2255429	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 21m 45s	9.3 GB	8.6 GB
+724	b1/497f30	2255648	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	17m 55s	7.4 GB	6.6 GB
+423	8a/fae7d8	2255636	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	25m 3s	10.5 GB	9.7 GB
+2027	55/ea60ea	2255298	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	11m 10s	4.7 GB	3.6 GB
+716	ac/4dddd5	2255672	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	10m 12s	18.8 GB	18 GB
+495	3e/50c782	2255220	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	57m 57s	27.6 GB	26.7 GB
+537	c0/277540	2255194	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 4m 51s	19.2 GB	18.3 GB
+2291	3d/2772e1	2255575	run_method (schraivogel/ground_truth_perturbseq/gene+seurat_de)	COMPLETED	0	1h 2m 14s	7.3 GB	6.4 GB
+996	88/09172a	2255669	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	15m 33s	18.8 GB	18 GB
+2244	31/52d5b5	2255315	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 22s	19 GB	18.2 GB
+2483	ff/b758b8	2255700	run_method (schraivogel/ground_truth_tapseq/gene+weissman_method)	COMPLETED	0	12.3s	1.1 GB	396.8 MB
+534	32/452d03	2255674	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	14m 4s	18.8 GB	18 GB
+2154	6a/3cfc1c	2255699	run_method (schraivogel/ground_truth_perturbseq/gene+weissman_method)	COMPLETED	0	3m 32s	29.8 GB	29.1 GB
+1279	84/eabbe4	2255212	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	1h 6m 25s	27.4 GB	26.5 GB
+474	4b/186e22	2255234	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	56m 29s	27.5 GB	26.7 GB
+1149	cf/14900b	2254960	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 14m 53s	1.5 GB	837.9 MB
+421	13/53f596	2254970	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	3h 8m 23s	1.4 GB	715.8 MB
+1820	9e/ab0256	2255706	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 7s	4.2 GB	3.5 GB
+2129	21/0691ca	2255653	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	31m 42s	29.2 GB	28.3 GB
+248	92/9b2121	2255662	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	26m 24s	10.5 GB	9.7 GB
+2136	d0/975810	2255655	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	31m 59s	29.2 GB	28.3 GB
+1622	28/25935c	2255709	run_method (papalexi/eccite_screen/protein+weissman_method)	COMPLETED	0	11.9s	1 GB	347.4 MB
+665	88/990900	2255169	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 40m 40s	1.2 GB	556.9 MB
+683	b7/f953ce	2255553	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 29m 58s	7 GB	6.3 GB
+1360	65/b357d2	2255686	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	18m 48s	28.2 GB	27.3 GB
+1474	6f/835004	2255492	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 8m 56s	9.3 GB	8.6 GB
+295	08/acb286	2255006	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 56m 44s	1.4 GB	713.7 MB
+1094	ec/500748	2255685	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 24s	28.3 GB	27.5 GB
+531	5d/a9cf74	2255710	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 32s	27.4 GB	26.7 GB
+1518	eb/82cb20	2255717	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 36s	41.7 GB	41 GB
+1494	5c/4405c7	2255684	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 41s	9.8 GB	9 GB
+2195	c4/7b7a43	2255331	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 27s	19.1 GB	18.2 GB
+2233	eb/48eb03	2254841	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	5h 8m 40s	1.2 GB	462.2 MB
+2374	db/727570	2255722	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	39.7s	1.8 GB	1003.1 MB
+469	2f/85baf0	2255111	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 19m 47s	1.3 GB	673.1 MB
+2309	05/c2dc5d	2255725	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 5s	1.1 GB	391.7 MB
+409	2f/bcdaa5	2255688	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 47s	10.5 GB	9.7 GB
+664	23/078629	2255727	run_method (frangieh/control/gene+weissman_method)	COMPLETED	0	2m 33s	27.4 GB	26.7 GB
+2373	29/551dc4	2255729	run_method (schraivogel/ground_truth_tapseq/gene+nb_regression)	COMPLETED	0	1m 43s	1.1 GB	411.8 MB
+2076	ba/ddeee6	2255335	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	13m 46s	4.7 GB	3.6 GB
+1067	33/25db46	2255695	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 57s	9.8 GB	9 GB
+2398	e6/9e7f1e	2255363	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	COMPLETED	0	15.6s	1.2 GB	498.1 MB
+1438	ef/ca8922	2255696	run_method (frangieh/ifn_gamma/gene+seurat_de)	COMPLETED	0	23m 40s	9.8 GB	9 GB
+765	14/aca5db	2255712	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 30s	18.8 GB	18 GB
+1551	69/8923af	2255339	run_method (papalexi/eccite_screen/gene+mimosca)	COMPLETED	0	7m 59s	12.4 GB	11.6 GB
+1356	d3/559cd9	2255249	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	58m 23s	27.4 GB	26.5 GB
+2404	f5/096207	2255736	run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method)	COMPLETED	0	12.5s	1.1 GB	410.9 MB
+496	95/675eac	2255732	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 18s	38.7 GB	38 GB
+1855	10/a9e79b	2255739	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 7s	4.2 GB	3.5 GB
+369	b5/138f8e	2255267	run_method (frangieh/co_culture/gene+mimosca)	COMPLETED	0	52m 7s	27.6 GB	26.7 GB
+1776	57/1dee5b	2255742	run_method (schraivogel/enhancer_screen_chr11/gene+weissman_method)	COMPLETED	0	24.1s	4.1 GB	3.5 GB
+844	4b/4f9f13	2255570	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 30m 39s	7 GB	6.3 GB
+349	03/14e5a5	2255737	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 34s	38.7 GB	38 GB
+1194	40/b1e651	2255507	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 10m 16s	9.3 GB	8.6 GB
+2484	0c/f98b12	2255743	run_method (schraivogel/ground_truth_tapseq/gene+permutation_test)	COMPLETED	0	1m 11s	1.1 GB	391.4 MB
+1379	a1/6a13c4	2255088	run_method (frangieh/ifn_gamma/gene+permutation_test)	COMPLETED	0	2h 42m 20s	1.5 GB	796.2 MB
+2654	92/57fcc6	2255708	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	19m 44s	21.1 GB	20.2 GB
+203	1f/3936ec	2255147	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 15m 41s	1.3 GB	673.1 MB
+1701	df/e76cdc	2255746	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 3s	4.2 GB	3.5 GB
+1933	e0/7ace37	2255747	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 9s	2.9 GB	2 GB
+1639	46/580b62	2255752	run_method (papalexi/eccite_screen/protein+schraivogel_method)	COMPLETED	0	25.2s	1.4 GB	575.9 MB
+1129	ae/bdfc57	2255715	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m 15s	28.3 GB	27.4 GB
+1245	7f/17cf88	2255745	run_method (frangieh/ifn_gamma/gene+weissman_method)	COMPLETED	0	3m 22s	41.7 GB	41 GB
+2519	f6/e91759	2254898	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 24m 46s	1.1 GB	393.5 MB
+335	72/e5d29c	2255751	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	2m 31s	38.7 GB	38 GB
+493	5b/aa3096	2255707	run_method (frangieh/co_culture/gene+seurat_de)	COMPLETED	0	24m 47s	10.5 GB	9.7 GB
+2526	c1/4a16e8	2254890	run_method (simulated/experiment_1/gene+permutation_test)	COMPLETED	0	4h 36m 54s	1.1 GB	393.6 MB
+267	1a/912825	2255067	run_method (frangieh/co_culture/gene+nb_regression)	COMPLETED	0	2h 56m 42s	1.4 GB	713 MB
+2018	60/7efde5	2255759	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	44.4s	4.5 GB	3.7 GB
+2501	bc/17dfa0	2255760	run_method (schraivogel/ground_truth_tapseq/gene+seurat_de)	COMPLETED	0	19s	1.2 GB	406.1 MB
+2004	be/a83dc7	2255763	run_method (schraivogel/enhancer_screen_chr8/gene+seurat_de)	COMPLETED	0	35.4s	4.5 GB	3.7 GB
+1567	bc/e0a62a	2255604	run_method (papalexi/eccite_screen/gene+permutation_test)	COMPLETED	0	1h 22m 55s	1.1 GB	386.3 MB
+1205	0c/f79a88	2254990	run_method (frangieh/ifn_gamma/gene+nb_regression)	COMPLETED	0	3h 26m 18s	1.5 GB	837.4 MB
+1467	26/539696	2255530	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	COMPLETED	0	2h 5m 27s	9.3 GB	8.6 GB
+602	cd/e0ce63	2255198	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 40m 5s	1.2 GB	556.8 MB
+2020	f1/3abf64	2255370	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	13m 25s	4.7 GB	3.6 GB
+2003	f3/41e6dc	2255762	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 8s	2.7 GB	1.9 GB
+1982	b1/766881	2255766	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 23s	2.7 GB	1.9 GB
+1745	33/c88645	2255770	run_method (schraivogel/enhancer_screen_chr11/gene+seurat_de)	COMPLETED	0	55s	4.3 GB	3.6 GB
+1744	96/0af846	2255769	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 8s	2.6 GB	1.7 GB
+1960	75/cc16fd	2255771	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	49.1s	4.4 GB	3.6 GB
+1739	34/fbff86	2255772	run_method (schraivogel/enhancer_screen_chr11/gene+liscovitch_method)	COMPLETED	0	26.7s	4.3 GB	3.6 GB
+2296	05/c1e0eb	2254888	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	COMPLETED	0	4h 46m 1s	1.2 GB	461 MB
+786	2c/58188c	2255741	run_method (frangieh/control/gene+schraivogel_method)	COMPLETED	0	13m 26s	18.8 GB	18 GB
+368	65/37810e	2255528	run_method (frangieh/co_culture/gene+liscovitch_method)	COMPLETED	0	2h 10m 37s	9.9 GB	9.3 GB
+942	3a/808d04	2255598	run_method (frangieh/control/gene+liscovitch_method)	COMPLETED	0	1h 32m 48s	7 GB	6.3 GB
+1996	f9/6626bf	2255777	run_method (schraivogel/enhancer_screen_chr8/gene+schraivogel_method)	COMPLETED	0	1m 8s	2.7 GB	1.9 GB
+1800	1e/53be98	2255781	run_method (schraivogel/enhancer_screen_chr11/gene+schraivogel_method)	COMPLETED	0	1m 4s	2.7 GB	1.8 GB
+1013	5b/a53e25	2255293	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	59m 52s	19.2 GB	18.3 GB
+1616	de/e5ca6a	2255782	run_method (papalexi/eccite_screen/protein+permutation_test)	COMPLETED	0	11.4s	1.1 GB	387.7 MB
+510	ea/4a35ac	2255778	run_method (frangieh/co_culture/gene+weissman_method)	COMPLETED	0	3m 18s	38.7 GB	38 GB
+2367	8b/6f126e	2255783	run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method)	COMPLETED	0	39.5s	1.8 GB	1001.9 MB
+1122	b8/19c86b	2255738	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	COMPLETED	0	19m	28.2 GB	27.4 GB
+1575	34/fb1657	2255617	run_method (papalexi/eccite_screen/gene+nb_regression)	COMPLETED	0	1h 27m 40s	1.1 GB	409.1 MB
+2595	d3/5196d4	2255784	run_method (simulated/experiment_1/gene+weissman_method)	COMPLETED	0	2m 8s	16.1 GB	15.5 GB
+1929	97/423eae	2255397	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	COMPLETED	0	11m 11s	4.7 GB	3.6 GB
+1328	c7/4e48b8	2255320	run_method (frangieh/ifn_gamma/gene+mimosca)	COMPLETED	0	54m 47s	27.4 GB	26.5 GB
+2241	bd/48a647	2255726	run_method (schraivogel/ground_truth_perturbseq/gene+schraivogel_method)	COMPLETED	0	31m 53s	29.2 GB	28.3 GB
+1555	4d/591234	2255780	run_method (papalexi/eccite_screen/gene+schraivogel_method)	COMPLETED	0	8m 59s	13.5 GB	12.7 GB
+2299	13/b046a1	2255794	run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method)	COMPLETED	0	12.4s	1.1 GB	410.9 MB
+2132	d5/69ed4a	2255403	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	COMPLETED	0	13m 58s	19 GB	18.2 GB
+1775	9b/9193c1	2255414	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	COMPLETED	0	8m 9s	4.4 GB	3.4 GB
+810	93/267c26	2255286	run_method (frangieh/control/gene+mimosca)	COMPLETED	0	1h 12m 41s	19.2 GB	18.3 GB
+1644	08/9692e2	2255797	run_method (papalexi/eccite_screen/protein+permutation_test)	COMPLETED	0	11.3s	1.1 GB	386.7 MB
+1827	b6/5df309	2255796	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 11s	4.2 GB	3.5 GB
+1587	83/774375	2255795	run_method (papalexi/eccite_screen/gene+weissman_method)	COMPLETED	0	1m 55s	18.2 GB	17.6 GB
+1694	3f/d3797a	2255800	run_method (schraivogel/enhancer_screen_chr11/gene+nb_regression)	COMPLETED	0	1m 3s	4.2 GB	3.5 GB
+2563	54/03c68d	2255756	run_method (simulated/experiment_1/gene+schraivogel_method)	COMPLETED	0	21m 47s	21.1 GB	20.2 GB
+1004	06/9dd8cd	2255761	run_method (frangieh/control/gene+seurat_de)	COMPLETED	0	18m 13s	7.4 GB	6.6 GB
+672	04/0e6124	2255223	run_method (frangieh/control/gene+permutation_test)	COMPLETED	0	1h 52m 49s	1.2 GB	556.9 MB
+1654	05/c73f0b	2255805	run_method (papalexi/eccite_screen/protein+seurat_de)	COMPLETED	0	14.8s	1.2 GB	405.5 MB
+457	b1/1a4f17	2255775	run_method (frangieh/co_culture/gene+schraivogel_method)	COMPLETED	0	17m 18s	25.8 GB	24.9 GB
+2072	8e/3ad12e	2255804	run_method (schraivogel/enhancer_screen_chr8/gene+nb_regression)	COMPLETED	0	56.1s	4.4 GB	3.6 GB
+603	ec/7ac96d	2255184	run_method (frangieh/control/gene+nb_regression)	COMPLETED	0	2h 15m 22s	1.3 GB	577.2 MB
+1972	f9/d02998	2255809	run_method (schraivogel/enhancer_screen_chr8/gene+weissman_method)	COMPLETED	0	22.6s	4.3 GB	3.6 GB
+1970	c7/51d2dd	2255808	run_method (schraivogel/enhancer_screen_chr8/gene+liscovitch_method)	COMPLETED	0	24.8s	4.4 GB	3.7 GB
+497	12/835573	2255188	run_method (frangieh/co_culture/gene+permutation_test)	COMPLETED	0	2h 16m 15s	1.3 GB	673.3 MB
+2169	90/1abba1	2254849	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	ABORTED	-	-	-	-
+2282	01/65b09a	2254895	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	ABORTED	-	-	-	-
+2673	98/e00ddd	2254957	run_method (simulated/experiment_1/gene+permutation_test)	ABORTED	-	-	-	-
+2106	2e/374920	2254985	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	ABORTED	-	-	-	-
+2128	d7/1045df	2254996	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	ABORTED	-	-	-	-
+1219	64/e8e502	2255060	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+2212	70/339a25	2255084	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	ABORTED	-	-	-	-
+2239	94/0c1bbd	2255090	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	ABORTED	-	-	-	-
+2121	35/ce9e05	2255104	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	ABORTED	-	-	-	-
+1086	66/e1ea8f	2255105	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+477	b5/b64a45	2255131	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+1506	b3/b83256	2255132	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+344	13/3b4d81	2255134	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+1484	e0/84f6ac	2255162	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+1534	7d/ac2839	2255170	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+1457	5d/f07e5c	2255173	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+1456	9c/0630d5	2255174	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+1295	b4/29c210	2255185	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+351	93/6d575d	2255187	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+1296	38/b69893	2255199	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+841	66/a61801	2255207	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1449	4e/471dd5	2255215	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+2289	5b/674512	2255224	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	ABORTED	-	-	-	-
+2589	35/03f318	2255228	run_method (simulated/experiment_1/gene+permutation_test)	ABORTED	-	-	-	-
+2107	c1/b1722d	2255237	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	ABORTED	-	-	-	-
+757	2f/9cb257	2255240	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1275	d3/4c3047	2255241	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+925	1b/e46c0b	2255260	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1226	8d/cb279c	2255270	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+2218	ed/69b936	2255276	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	ABORTED	-	-	-	-
+2540	cc/4f65ca	2255285	run_method (simulated/experiment_1/gene+permutation_test)	ABORTED	-	-	-	-
+2681	42/26a2a2	2255291	run_method (simulated/experiment_1/gene+nb_regression)	ABORTED	-	-	-	-
+1001	e9/876511	2255303	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+2288	22/05e401	2255321	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	ABORTED	-	-	-	-
+1078	88/48460a	2255323	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+966	36/57e495	2255325	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+280	45/48c26d	2255328	run_method (frangieh/co_culture/gene+permutation_test)	ABORTED	-	-	-	-
+2190	4e/2538b3	2255330	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	ABORTED	-	-	-	-
+413	b0/db3da7	2255332	run_method (frangieh/co_culture/gene+permutation_test)	ABORTED	-	-	-	-
+1366	af/551d80	2255333	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+1317	00/466953	2255334	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+1051	52/931371	2255336	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+799	88/7dd2a1	2255337	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+588	55/42db61	2255342	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+875	f8/bf6958	2255359	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+2246	62/499c25	2255373	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	ABORTED	-	-	-	-
+484	6e/1aa1b6	2255374	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+1083	d3/947635	2255376	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+1106	1d/8a4d26	2255381	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+936	a4/0663a7	2255382	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+1517	97/619be8	2255386	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+1267	c3/05fb3d	2255392	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+770	aa/ec5f72	2255401	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+2134	8a/f244c7	2255404	run_method (schraivogel/ground_truth_perturbseq/gene+permutation_test)	ABORTED	-	-	-	-
+1195	c5/89c43f	2255413	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+2041	3c/575d16	2255415	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	ABORTED	-	-	-	-
+999	e1/9f4884	2255419	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+1533	96/331dd0	2255433	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+1307	c1/ff7cc1	2255434	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+2603	7d/fe8304	2255435	run_method (simulated/experiment_1/gene+permutation_test)	ABORTED	-	-	-	-
+1239	5e/76f75b	2255441	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+1443	ef/dad872	2255442	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+1146	6e/2f2088	2255445	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+663	5a/7ff64f	2255448	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+2597	25/e1f674	2255450	run_method (simulated/experiment_1/gene+nb_regression)	ABORTED	-	-	-	-
+957	ab/251d0f	2255461	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+2580	0d/b99728	2255462	run_method (simulated/experiment_1/gene+mimosca)	ABORTED	-	-	-	-
+705	64/8a630b	2255463	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+1309	e1/5ff757	2255464	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+428	22/44edd0	2255467	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+2202	69/bfc754	2255471	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	ABORTED	-	-	-	-
+2569	1b/4d34ae	2255472	run_method (simulated/experiment_1/gene+nb_regression)	ABORTED	-	-	-	-
+687	8b/854ae9	2255475	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+2524	b9/54745a	2255477	run_method (simulated/experiment_1/gene+mimosca)	ABORTED	-	-	-	-
+708	13/3815b3	2255485	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1293	87/8dfe14	2255487	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+414	0f/7746d0	2255490	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+847	44/cfc5fd	2255491	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+1015	bd/5c94bb	2255494	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+1002	0a/18e354	2255496	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1170	5b/d66e0c	2255503	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+546	f8/1abd88	2255506	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+2275	6b/a0e887	2255510	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	ABORTED	-	-	-	-
+1232	f3/2137c6	2255511	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+1265	b9/bcd78a	2255516	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+959	75/e1a2f4	2255522	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+562	1d/6f99ea	-	run_method (frangieh/control/gene+schraivogel_method)	FAILED	-	-	-	-
+1218	d9/e96ed2	2255524	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+595	bc/3dcd34	2255529	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+2510	0e/3492f3	2255531	run_method (simulated/experiment_1/gene+mimosca)	ABORTED	-	-	-	-
+644	25/bca515	2255532	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+848	2b/b074f9	2255534	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+299	5d/07b6d6	2255539	run_method (frangieh/co_culture/gene+mimosca)	ABORTED	-	-	-	-
+2657	e6/b5c8a2	2255540	run_method (simulated/experiment_1/gene+mimosca)	ABORTED	-	-	-	-
+575	54/f16eda	2255542	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+2125	6e/1ff737	2255550	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	ABORTED	-	-	-	-
+677	81/a0a0e8	2255551	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+218	34/719fbb	2255555	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+974	33/82c9bf	2255556	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+2699	cc/45c2b2	2255559	run_method (simulated/experiment_1/gene+mimosca)	ABORTED	-	-	-	-
+1915	5b/99cce0	2255561	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	ABORTED	-	-	-	-
+953	0a/e1aaaa	2255565	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+266	65/5616b7	2255573	run_method (frangieh/co_culture/gene+permutation_test)	ABORTED	-	-	-	-
+1069	fe/0c9f7c	2255577	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+1344	cd/23cb5c	2255583	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+1478	cd/07e90f	2255584	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+1153	28/bd2169	2255586	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+861	04/66677b	2255592	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+491	36/f457b6	2255597	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+985	5f/3d07f1	2255600	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+1223	60/890c44	2255601	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+1225	e8/873bee	2255602	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+1391	58/a68bbb	2255603	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+257	75/588be4	2255608	run_method (frangieh/co_culture/gene+mimosca)	ABORTED	-	-	-	-
+2083	01/aa6036	2255612	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	ABORTED	-	-	-	-
+694	81/4c9f6a	2255615	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+2096	8f/58baff	2255623	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	ABORTED	-	-	-	-
+2097	36/5ec416	2255624	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	ABORTED	-	-	-	-
+1145	da/6b13b2	2255626	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	ABORTED	-	-	-	-
+1118	a7/5573d0	2255633	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+1593	c5/fb8e46	2255635	run_method (papalexi/eccite_screen/gene+mimosca)	ABORTED	-	-	-	-
+900	9d/cf501d	2255640	run_method (frangieh/control/gene+liscovitch_method)	ABORTED	-	-	-	-
+2527	f4/e685f1	2255644	run_method (simulated/experiment_1/gene+nb_regression)	ABORTED	-	-	-	-
+221	4d/476808	2255645	run_method (frangieh/co_culture/gene+liscovitch_method)	ABORTED	-	-	-	-
+922	4c/61316e	2255646	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+2131	9f/ae8c47	2255654	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	ABORTED	-	-	-	-
+714	62/eb7e97	2255656	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+791	12/d48d51	2255658	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+792	7d/8c5862	2255659	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1142	67/17c928	2255661	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+543	fb/358a9c	2255664	run_method (frangieh/control/gene+liscovitch_method)	ABORTED	-	-	-	-
+526	be/bbb2a9	2255666	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+778	be/9904ff	2255667	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+995	1d/a2a20e	2255668	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1292	1c/d33706	2255671	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	ABORTED	-	-	-	-
+1180	99/03d613	2255673	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	ABORTED	-	-	-	-
+208	fe/959ec8	2255678	run_method (frangieh/co_culture/gene+mimosca)	ABORTED	-	-	-	-
+1880	cc/3bf0e3	2255679	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	ABORTED	-	-	-	-
+284	5f/7f0f20	2255681	run_method (frangieh/co_culture/gene+liscovitch_method)	ABORTED	-	-	-	-
+1009	6f/34f097	2255682	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1260	74/6e1064	2255683	run_method (frangieh/ifn_gamma/gene+permutation_test)	ABORTED	-	-	-	-
+890	40/259642	2255689	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1394	b1/cbebef	2255690	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+777	e2/fd96e7	2255691	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+2653	9a/b1b3ec	2255692	run_method (simulated/experiment_1/gene+nb_regression)	ABORTED	-	-	-	-
+350	3a/a66273	2255694	run_method (frangieh/co_culture/gene+permutation_test)	ABORTED	-	-	-	-
+2160	12/71834e	2255697	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	ABORTED	-	-	-	-
+316	d4/13f919	2255698	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+1901	31/54657d	2255701	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	ABORTED	-	-	-	-
+567	e4/2c5c61	2255702	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+2608	e9/989b18	2255703	run_method (simulated/experiment_1/gene+mimosca)	ABORTED	-	-	-	-
+1072	5d/ef6650	2255705	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+532	8f/c0ad7f	2255711	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+771	63/05332a	2255713	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+1128	be/ae49ed	2255714	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+260	f7/1f1847	2255716	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+432	84/9cc3e0	2255718	run_method (frangieh/co_culture/gene+mimosca)	ABORTED	-	-	-	-
+929	1b/2a5e76	2255719	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+932	0c/88def0	2255720	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+833	99/394c85	2255723	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+1810	d4/704625	2255724	run_method (schraivogel/enhancer_screen_chr11/gene+mimosca)	ABORTED	-	-	-	-
+666	33/bf4cf9	2255728	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+946	cd/6e69d3	2255730	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+2636	00/499a8e	2255731	run_method (simulated/experiment_1/gene+mimosca)	ABORTED	-	-	-	-
+498	35/96c8a7	2255733	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+1250	01/b5f5b4	2255734	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	ABORTED	-	-	-	-
+1436	23/1cbf2b	2255735	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+736	42/7103e4	2255744	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+2419	28/9d2a50	2255748	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	ABORTED	-	-	-	-
+372	ed/1db23a	2255749	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+1415	30/801747	2255750	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+2138	5f/fa079a	2255753	run_method (schraivogel/ground_truth_perturbseq/gene+liscovitch_method)	ABORTED	-	-	-	-
+579	f3/dfd9e4	2255754	run_method (frangieh/control/gene+mimosca)	ABORTED	-	-	-	-
+2561	fa/63b948	2255755	run_method (simulated/experiment_1/gene+permutation_test)	ABORTED	-	-	-	-
+1054	4a/03ddbb	2255757	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	ABORTED	-	-	-	-
+1319	0b/ab3e1d	2255758	run_method (frangieh/ifn_gamma/gene+seurat_de)	ABORTED	-	-	-	-
+1503	84/28ece3	2255765	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+1255	93/51a19b	2255767	run_method (frangieh/ifn_gamma/gene+schraivogel_method)	ABORTED	-	-	-	-
+1254	83/a6bbc9	2255768	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+2711	00/bc75e1	2255773	run_method (simulated/experiment_1/gene+seurat_de)	ABORTED	-	-	-	-
+456	74/97204f	2255774	run_method (frangieh/co_culture/gene+nb_regression)	ABORTED	-	-	-	-
+1235	4d/e2a235	2255776	run_method (frangieh/ifn_gamma/gene+seurat_de)	ABORTED	-	-	-	-
+1303	9f/c2dd9d	2255779	run_method (frangieh/ifn_gamma/gene+nb_regression)	ABORTED	-	-	-	-
+1936	db/0f0f7d	2255785	run_method (schraivogel/enhancer_screen_chr8/gene+mimosca)	ABORTED	-	-	-	-
+2433	d9/4a4b1f	2255786	run_method (schraivogel/ground_truth_tapseq/gene+mimosca)	ABORTED	-	-	-	-
+2668	28/20ec2e	2255787	run_method (simulated/experiment_1/gene+schraivogel_method)	ABORTED	-	-	-	-
+205	5b/956fef	2255788	run_method (frangieh/co_culture/gene+schraivogel_method)	ABORTED	-	-	-	-
+743	2e/925017	2255790	run_method (frangieh/control/gene+nb_regression)	ABORTED	-	-	-	-
+518	37/2d6d96	2255791	run_method (frangieh/control/gene+permutation_test)	ABORTED	-	-	-	-
+1314	bf/dd46e0	2255792	run_method (frangieh/ifn_gamma/gene+mimosca)	ABORTED	-	-	-	-
+464	61/a4d7f5	2255793	run_method (frangieh/co_culture/gene+schraivogel_method)	ABORTED	-	-	-	-
+2629	5f/40cc90	2255798	run_method (simulated/experiment_1/gene+mimosca)	ABORTED	-	-	-	-
+2631	db/c4432d	2255799	run_method (simulated/experiment_1/gene+permutation_test)	ABORTED	-	-	-	-
+2279	d9/eed6fd	2255801	run_method (schraivogel/ground_truth_perturbseq/gene+mimosca)	ABORTED	-	-	-	-
+238	d2/efc357	2255802	run_method (frangieh/co_culture/gene+permutation_test)	ABORTED	-	-	-	-
+795	f2/b7febb	2255803	run_method (frangieh/control/gene+liscovitch_method)	ABORTED	-	-	-	-
+927	20/0b0721	2255806	run_method (frangieh/control/gene+seurat_de)	ABORTED	-	-	-	-
+2247	28/6f8869	2255810	run_method (schraivogel/ground_truth_perturbseq/gene+nb_regression)	ABORTED	-	-	-	-
+1000	9a/fce4c1	2255811	run_method (frangieh/control/gene+weissman_method)	ABORTED	-	-	-	-
+1530	40/3fe78a	2255812	run_method (frangieh/ifn_gamma/gene+liscovitch_method)	ABORTED	-	-	-	-
