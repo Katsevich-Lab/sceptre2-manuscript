@@ -1,6 +1,6 @@
 # get fps/data
 undercover_res_fp <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
-                            "results/undercover_grna_analysis/result.rds")
+                            "results/undercover_grna_analysis/undercover_result_grp_size_2.rds")
 undercover_res <- readRDS(undercover_res_fp)
 fig_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/figures/")
 
@@ -21,12 +21,14 @@ library(katlabutils)
 undercover_res |>
   dplyr::group_by(dataset, method) |>
   dplyr::summarize(count = dplyr::n()) |>
-  dplyr::summarize(n_pvals_coincide = all(diff(count) == 0))
+  dplyr::summarize(n_pvals_coincide = all(diff(count) == 0)) |>
+  dplyr::pull(n_pvals_coincide) |> all()
 
 # i) confirm there are no NAs
-undercover_res |>
+all(undercover_res |>
   dplyr::group_by(dataset, method) |>
-  dplyr::summarize(count = sum(is.na(p_value)))
+  dplyr::summarize(count = sum(is.na(p_value))) |>
+  dplyr::pull(count) == 0)
 
 ############################
 # 2. Create the p-value plot
@@ -40,7 +42,7 @@ res_proc <- undercover_res |>
 
 p_undercover_stat_trans <- ggplot(data = res_proc, mapping = aes(y = p_value, color = Method)) +
   geom_vline(xintercept = 0.01) +
-  stat_qq_points(ymin = 1e-10) +
+  stat_qq_points(ymin = 1e-10, size = 0.8) +
   facet_wrap(~dataset_rename_w_pairs, scales = "free", labeller = label_wrap_gen(35)) +
   geom_abline() +
   stat_qq_band() +
@@ -55,7 +57,7 @@ p_undercover_stat_trans <- ggplot(data = res_proc, mapping = aes(y = p_value, co
 
 p_undercover_stat_untrans <- ggplot(data = res_proc, mapping = aes(y = p_value, color = Method)) +
   geom_vline(xintercept = 0.01) +
-  stat_qq_points(ymin = 1e-10) +
+  stat_qq_points(ymin = 1e-10, size = 0.8) +
   facet_wrap(~dataset_rename_w_pairs, scales = "free", labeller = label_wrap_gen(35)) +
   geom_abline() +
   stat_qq_band() +
@@ -105,9 +107,27 @@ p_undercover_comp <- ggplot(data = comp_df, mapping = aes(x = Method, y = value,
   theme_bw() +
   scale_y_continuous(trans='log2')
 
-ggsave(filename = paste0(fig_dir, "undercov_grna_trans.png"),
+# save plots
+ggsave(filename = paste0(fig_dir, "undercov_grna_trans_grp2.png"),
        plot = p_undercover_stat_trans, device = "png", scale = 1, width = 11, height = 6, dpi = 330)
-ggsave(filename = paste0(fig_dir, "undercov_grna_untrans.png"),
+
+ggsave(filename = paste0(fig_dir, "undercov_grna_untrans_grp2.png"),
        plot = p_undercover_stat_untrans, device = "png", scale = 1, width = 11, height = 6, dpi = 330)
+
 ggsave(filename = paste0(fig_dir, "undercov_grna_comp.pdf"),
        plot = p_undercover_comp, device = "pdf", scale = 0.8, width = 14, height = 5, dpi = 330)
+
+# other error metrics: number of rejected pairs after Bonf correction
+alpha <- 0.1
+bonf_correct <- res_proc |>
+  dplyr::group_by(dataset, method) |>
+  dplyr::summarize(reject = (p_value < alpha/dplyr::n())) |>
+  dplyr::summarize(n_reject = sum(reject)) |>
+  dplyr::ungroup()
+
+bonf_correct |>
+  ggplot2::ggplot(ggplot2::aes(x = method, y = n_reject)) +
+  ggplot2::geom_col() + 
+  facet_wrap(~dataset) +
+  ggplot2::scale_y_log10() +
+  theme_bw()
