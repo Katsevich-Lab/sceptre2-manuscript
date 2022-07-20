@@ -27,10 +27,10 @@ result_fp=$PWD"/sceptre_result.rds"
 ###############
 # formula, threshold, B, side, n_pairs_to_sample, gene_pod_size, grna_group_pod_size, pair_pod_size are optional args
 formula="~p_mito+batch+log(gene_n_nonzero)+log(gene_n_umis)+log(grna_expression_n_nonzero)+log(grna_expression_n_umis)"
-gene_pod_size=100
-grna_group_pod_size=100
-pair_pod_size=1000
-n_pairs_to_sample=200000
+gene_pod_size=5
+grna_group_pod_size=5
+pair_pod_size=10
+n_pairs_to_sample=500
 
 ########################
 # invoke the NF pipeline
@@ -48,5 +48,6 @@ nextflow run timothy-barry/sceptre-pipeline -r main \
  --pair_pod_size $pair_pod_size \
  --grna_modality_name "grna_expression" \
  --n_pairs_to_sample $n_pairs_to_sample \
+ --full_output "true" \
  -resume \
- -profile standard
+ -profile aws

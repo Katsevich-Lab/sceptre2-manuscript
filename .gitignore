@@ -2,6 +2,7 @@ R_scripts/.Rhistory
 param_files/.Rhistory
 bash_scripts/.nextflow*
 .DS_Store
+*/.DS_Store
 R_scripts/.Rhistory
 plotting/.Rhistory
 bash_scripts/trace*
