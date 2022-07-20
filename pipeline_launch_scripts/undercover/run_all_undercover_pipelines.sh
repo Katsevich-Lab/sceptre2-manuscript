@@ -9,9 +9,13 @@ is_group_size_fracs=("false" "false" "false" "true")
 result_file_names=("undercover_result_grp_size_1.rds" "undercover_result_grp_size_2.rds" "undercover_result_grp_size_3.rds" "undercover_result_grp_size_05.rds")
 
 for i in ${!group_sizes[@]}; do
+  cur_dir="grp_${group_sizes[$i]}"
+  mkdir -p $cur_dir
+  cd $cur_dir
+  
   curr_time=$(date '+%m%d%H%M')
   nextflow run undercover-grna-pipeline -r main \
-   --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/data_method_pair_pair_file.groovy" \
+   --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/data_method_pair_file.groovy" \
    --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
    --result_file_name "${result_file_names[$i]}" \
    --grna_modality "assignment" \
@@ -21,7 +25,7 @@ for i in ${!group_sizes[@]}; do
    --is_partition_count_frac "true" \
    --machine_name $MACHINE_NAME \
    --time $curr_time \
-   --max_retries 0
-
+   -profile standard
   wait
+  cd ..
 done

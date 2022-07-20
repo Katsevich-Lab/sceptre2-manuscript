@@ -34,11 +34,11 @@ for (paper in papers) {
     response_fp <- paste0(paper, "/", dataset, "/gene")
     response_odm <-load_dataset_modality(data_fp = response_fp)
 
-    if(paper == "schraivogel"){
+    if (paper == "schraivogel") {
       grna_odm <- grna_odm |> mutate_feature_covariates(target = known_effect)
     }
     targeted_genes <- intersect(grna_odm |> get_feature_covariates() |> pull(target),
-                                  response_odm |> get_feature_ids())
+                                response_odm |> get_feature_ids())
 
     response_grna_group_pairs <- grna_odm |>
       get_feature_covariates() |>

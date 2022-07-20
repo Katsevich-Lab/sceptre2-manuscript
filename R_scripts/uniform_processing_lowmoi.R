@@ -54,13 +54,21 @@ for (paper in papers) {
                               FUN = function(col) names(which.max(col))) |> unname()
     grna_assign_modality <- grna_assign_modality |>
       mutate_cell_covariates(assigned_grna = grna_assignments)
+    if (paper == "schraivogel") {
+      grna_assign_modality <- grna_assign_modality |>
+        mutate_feature_covariates(target = known_effect, known_effect = NULL)
+    }
     n_cells_per_grna <- Matrix::rowSums(grna_assign_mat)
     grnas_to_keep <- n_cells_per_grna >= N_CELLS_PER_GRNA_THRESH
     mm_odm_sub@modalities[["grna_assignment"]] <- grna_assign_modality[grnas_to_keep,]
-
+    
     # grna expression modality (if applicable): keep the same features as above
     if ("grna_expression" %in% modalities) {
       grna_expression_modality <- get_modality(mm_odm_sub, "grna_expression")
+      if (paper == "schraivogel") {
+        grna_expression_modality <- grna_expression_modality |>
+          mutate_feature_covariates(target = known_effect, known_effect = NULL)
+      }
       mm_odm_sub@modalities[["grna_expression"]] <- grna_expression_modality[grnas_to_keep,]
     }
 
@@ -97,5 +105,15 @@ for (paper in papers) {
     # v. create a multimodal ondisc matrix free of redundancy and write
     mm_odm_sub_proc <- lowmoi::process_multimodal_odm(mm_odm_sub)
     save_multimodal_odm(multimodal_odm = mm_odm_sub_proc, multimodal_metadata_fp = multimodal_metadata_fp)
+
+    # vi. write the positive control pairs
+    if (paper %in% c("frangieh", "papalexi", "schraivogel")) {
+      grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
+      gene_modality <- mm_odm_sub_proc |> get_modality("gene")
+      targets <- intersect(grna_assignment_modality |> ondisc::get_feature_covariates() |> dplyr::pull(target),
+                           gene_modality |> ondisc::get_feature_ids())
+      pc_pairs <- data.frame(grna_group = targets, response_id = targets)
+      saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/pos_control_pairs.rds"))
+    }
   }
 }
