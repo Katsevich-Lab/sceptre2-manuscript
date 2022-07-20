@@ -7,7 +7,11 @@ plotting/.Rhistory
 bash_scripts/trace*
 pipeline_launch_scripts/undercover/.nextflow*
 pipeline_launch_scripts/undercover/run_undercover_grna_pipeline.sh.o*
+
 pipeline_launch_scripts/high_moi/.nextflow*
-pipeline_launch_scripts/high_moi/run_undercover_grna_pipeline.sh.o*
 pipeline_launch_scripts/high_moi/launch_gasperini_analysis.sh.o*
 pipeline_launch_scripts/high_moi/launch_gasperini_analysis.sh.e*
+
+pipeline_launch_scripts/positive_control/.nextflow*
+pipeline_launch_scripts/positive_control/launch_gasperini_analysis.sh.o*
+pipeline_launch_scripts/positive_control/launch_gasperini_analysis.sh.e*

@@ -108,4 +108,5 @@ mkdir -p $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene" \
  $sceptre2_data_dir"simulated/experiment_1/grna_expression" \
  $sceptre2_data_dir"simulated/experiment_1/grna_assignment" \
  $sceptre2_dir"results/undercover_grna_analysis" \
- $sceptre2_dir"results/highmoi_pipeline"
+ $sceptre2_dir"results/highmoi_pipeline" \
+ $sceptre2_dir"results/positive_control_analysis"
