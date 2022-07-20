@@ -50,4 +50,4 @@ nextflow run timothy-barry/sceptre-pipeline -r main \
  --n_pairs_to_sample $n_pairs_to_sample \
  --full_output "true" \
  -resume \
- -profile standard
+ -profile aws
