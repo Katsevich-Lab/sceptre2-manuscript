@@ -1,0 +1,94 @@
+---
+title: "Replicability of Seurat DE undercover discoveries"
+author: "Gene"
+date: '2022-06-15'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+In this script we assess the replicability of the Seurat DE NTC-gene associations across the three Frangieh datasets.
+
+First we load the results data frame:
+```{r, message = FALSE}
+library(tidyverse)
+sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+results <- readRDS(sprintf("%sresults/undercover_grna_analysis/result.rds", sceptre2_dir)) 
+```
+
+Next let's apply a BH correction to each dataset at level 0.05:
+```{r}
+significant_pairs <- results |>
+  filter(method == "seurat_de", 
+         dataset %in% c("frangieh_ifn_gamma_gene", 
+                        "frangieh_control_gene", 
+                        "frangieh_co_culture_gene")) |> 
+  group_by(dataset) |> 
+  mutate(p_value_adj = p.adjust(p_value, method = "fdr")) |> 
+  filter(p_value_adj <= 0.05) |> 
+  ungroup() |>
+  select(undercover_gRNA, response_id, dataset)
+significant_pairs
+```
+We see there are `r nrow(significant_pairs)` significant pairs. Let's see how these pairs overlap across datasets:
+```{r}
+significant_pairs |>
+  mutate(present = TRUE) |>
+  pivot_wider(
+    names_from = "dataset",
+    values_from = "present",
+    values_fill = FALSE
+  ) |>
+  mutate(num_datasets = 
+           frangieh_ifn_gamma_gene +
+           frangieh_control_gene +
+           frangieh_co_culture_gene) |>
+  pull(num_datasets) |>
+  table()
+```
+
+We see that all but one of the pairs is specific to a single dataset. Next let's check the representation of gRNAs among significant pairs, regardless of the gene they are paired with:
+```{r}
+significant_pairs |>
+  select(undercover_gRNA, dataset) |>
+  unique() |>
+  mutate(present = TRUE) |>
+  pivot_wider(
+    names_from = "dataset",
+    values_from = "present",
+    values_fill = FALSE
+  ) |>
+  mutate(num_datasets = 
+           frangieh_ifn_gamma_gene +
+           frangieh_control_gene +
+           frangieh_co_culture_gene) |>
+  pull(num_datasets) |>
+  table()
+```
+
+We see that the majority of undercover gRNAs have at least one significant gene associated with them across all three datasets. Finally let's check the representation of genes among significant pairs, regardless of the gRNA they are paired with:
+```{r}
+significant_pairs |>
+  select(response_id, dataset) |>
+  unique() |>
+  mutate(present = TRUE) |>
+  pivot_wider(
+    names_from = "dataset",
+    values_from = "present",
+    values_fill = FALSE
+  ) |>
+  mutate(num_datasets = 
+           frangieh_ifn_gamma_gene +
+           frangieh_control_gene +
+           frangieh_co_culture_gene) |>
+  pull(num_datasets) |>
+  table()
+```
+
+We see that among the genes that turn up significant with at least one gRNA, the majority are specific to one dataset.
+
+In my opinion, these results weaken the hypothesis that the p-value inflation we are seeing is caused by NTCs having real effects. They show that the NTC effects, even if present, are not consistently significant across datasets. Admittedly, the results are consistent with weak but global NTC effects, in which case the genes involved in the significant pairs would appear random. However, in the case that NTC effects are weak but global, we would expect a global--albeit small--shift in the p-values toward zero. 
+The global QQ plots for Seurat DE do not provide much evidence of such a global shift.
