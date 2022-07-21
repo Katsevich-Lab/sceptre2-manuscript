@@ -15,16 +15,12 @@ gene_odm_fp=$gasp_data_dir"gene/matrix.odm"
 # iii) grna ODM
 grna_odm_fp=$gasp_data_dir"grna_expression/matrix.odm"
 # iv) gene-grna group pairs
-pair_fp=$LOCAL_SCEPTRE2_DATA_DIR/results/resampling_distributions/pairs.rds
+pair_fp=$gasp_data_dir"neg_control_pairs.rds"
 
 ##############
 # OUTPUT FILE:
 ##############
-result_fp=$LOCAL_SCEPTRE2_DATA_DIR/results/resampling_distributions/sceptre_result.rds
-
-if [ -f "$result_fp" ]; then
-  exit
-fi
+result_fp=$PWD"/sceptre_result.rds"
 
 ###############
 # OPTIONAL ARGS
@@ -33,7 +29,8 @@ fi
 formula="~p_mito+batch+log(gene_n_nonzero)+log(gene_n_umis)+log(grna_expression_n_nonzero)+log(grna_expression_n_umis)"
 gene_pod_size=5
 grna_group_pod_size=5
-pair_pod_size=100
+pair_pod_size=10
+n_pairs_to_sample=500
 
 ########################
 # invoke the NF pipeline
@@ -50,5 +47,7 @@ nextflow run timothy-barry/sceptre-pipeline -r main \
  --grna_group_pod_size $grna_group_pod_size \
  --pair_pod_size $pair_pod_size \
  --grna_modality_name "grna_expression" \
+ --n_pairs_to_sample $n_pairs_to_sample \
  --full_output "true" \
- -resume
+ -resume \
+ -profile aws
