@@ -26,6 +26,10 @@ if [ -f "$result_fp" ]; then
   exit
 fi
 
+if [ ! -f "$pair_fp" ]; then
+  Rscript $LOCAL_CODE_DIR/sceptre2-manuscript/writeups/resampling_distributions/create_benchmark_pairs.R
+fi
+
 ###############
 # OPTIONAL ARGS
 ###############
