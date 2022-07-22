@@ -53,4 +53,5 @@ nextflow run timothy-barry/sceptre-pipeline -r main \
  --formula $formula \
  --grna_modality_name "grna_expression" \
  --inference_method "gcm" \
+ -profile local \
  -resume
