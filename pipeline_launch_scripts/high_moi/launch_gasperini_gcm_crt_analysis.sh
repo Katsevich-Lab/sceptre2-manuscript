@@ -33,7 +33,7 @@ fi
 formula="~p_mito+batch+log(gene_n_nonzero)+log(gene_n_umis)+log(grna_expression_n_nonzero)+log(grna_expression_n_umis)"
 gene_pod_size=5
 grna_group_pod_size=5
-pair_pod_size=100
+pair_pod_size=25
 
 ########################
 # invoke the NF pipeline
