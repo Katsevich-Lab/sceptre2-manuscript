@@ -27,6 +27,7 @@ if [ -f "$result_fp" ]; then
 fi
 
 if [ ! -f "$pair_fp" ]; then
+  echo "Generating benchmark pairs..."
   Rscript $LOCAL_CODE_DIR/sceptre2-manuscript/writeups/resampling_distributions/create_benchmark_pairs.R
 fi
 
@@ -44,17 +45,12 @@ formula="~p_mito+batch+log(gene_n_nonzero)+log(gene_n_umis)+log(grna_expression_
 ########################
 nextflow pull timothy-barry/sceptre-pipeline
 nextflow run timothy-barry/sceptre-pipeline -r main \
-# nextflow run $LOCAL_CODE_DIR/sceptre-pipeline-gcm/main.nf \
  --multimodal_metadata_fp $multimodal_metadata_fp \
  --gene_odm_fp $gene_odm_fp \
  --grna_odm_fp $grna_odm_fp \
  --pair_fp $pair_fp \
  --result_fp $result_fp \
  --formula $formula \
-#  --gene_pod_size $gene_pod_size \
-#  --grna_group_pod_size $grna_group_pod_size \
-#  --pair_pod_size $pair_pod_size \
  --grna_modality_name "grna_expression" \
-#  --full_output "true" \
  --inference_method "gcm" \
  -resume
