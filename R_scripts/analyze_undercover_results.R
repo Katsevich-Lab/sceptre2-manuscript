@@ -1,6 +1,6 @@
 # get fps/data
 undercover_res_fp <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
-                            "results/undercover_grna_analysis/undercover_result_grp_size_2.rds")
+                            "results/undercover_grna_analysis/undercover_result_grp_size_3.rds")
 undercover_res <- readRDS(undercover_res_fp)
 fig_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/figures/")
 
@@ -108,10 +108,10 @@ p_undercover_comp <- ggplot(data = comp_df, mapping = aes(x = Method, y = value,
   scale_y_continuous(trans='log2')
 
 # save plots
-ggsave(filename = paste0(fig_dir, "undercov_grna_trans_grp2.png"),
+ggsave(filename = paste0(fig_dir, "undercov_grna_trans_grp3.png"),
        plot = p_undercover_stat_trans, device = "png", scale = 1, width = 11, height = 6, dpi = 330)
 
-ggsave(filename = paste0(fig_dir, "undercov_grna_untrans_grp2.png"),
+ggsave(filename = paste0(fig_dir, "undercov_grna_untrans_grp3.png"),
        plot = p_undercover_stat_untrans, device = "png", scale = 1, width = 11, height = 6, dpi = 330)
 
 ggsave(filename = paste0(fig_dir, "undercov_grna_comp.pdf"),

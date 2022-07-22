@@ -1,7 +1,7 @@
 nextflow run undercover-grna-pipeline -r main \
  --data_method_pair_file /home/stat/timbar/research_code/sceptre2-manuscript/param_files/data_method_pair_file.groovy \
  --result_dir /home/stat/timbar/data/projects/sceptre2/results/undercover_grna_analysis \
- --result_file_name undercover_result_grp_size_2.rds \
+ --result_file_name undercover_result_grp_size_2_new_perm.rds \
  --grna_modality assignment \
  --group_size 2 \
  --is_group_size_frac false \
