@@ -16,3 +16,7 @@ pipeline_launch_scripts/high_moi/launch_gasperini_analysis.sh.e*
 pipeline_launch_scripts/positive_control/.nextflow*
 pipeline_launch_scripts/positive_control/launch_gasperini_analysis.sh.o*
 pipeline_launch_scripts/positive_control/launch_gasperini_analysis.sh.e*
+
+pipeline_launch_scripts/undercover/grp_1/.nextflow*
+pipeline_launch_scripts/undercover/grp_2/.nextflow*
+pipeline_launch_scripts/undercover/grp_3/.nextflow*
