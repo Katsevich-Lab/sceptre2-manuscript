@@ -23,13 +23,15 @@ perform_sanity_check <- function(undercover_res) {
 }
 
 # 3. update dataset names
-update_dataset_names <- function(undercover_res) {
+update_dataset_names <- function(undercover_res, add_n_pairs = TRUE) {
   out <- undercover_res |>
     dplyr::group_by(dataset, method) |>
-    dplyr::mutate(n_pairs = dplyr::n(),
-                  dataset_rename = stringr::str_to_title(gsub(pattern = "_",replacement = " ", x = dataset)),
-                  dataset_rename_w_pairs = paste0(dataset_rename, " (", n_pairs[1], " pairs)"),
-                  Method = stringr::str_to_title(gsub(pattern = "_",replacement = " ", x = method)))
+    dplyr::mutate(dataset_rename = stringr::str_to_title(gsub(pattern = "_",replacement = " ", x = dataset)),
+                  Method = stringr::str_to_title(gsub(pattern = "_", replacement = " ", x = method)))
+  if (add_n_pairs) {
+    out <- out |> dplyr::mutate(n_pairs = dplyr::n(),
+                                dataset_rename_w_pairs = paste0(dataset_rename, " (", n_pairs[1], " pairs)"))
+  }
   return(out)
 }
   
@@ -70,7 +72,7 @@ make_untrans_qq_plot <- function(undercover_res) {
   return(p)
 }
 
-
+# 6. make computation plot
 make_computation_plot <- function(undercover_res) {
   comp_df <- undercover_res |>
     dplyr::select(undercover_grna, Dataset = dataset_rename, Method, clock_time, max_ram) |>
@@ -100,29 +102,32 @@ make_computation_plot <- function(undercover_res) {
   return(p_undercover_comp)
 }
 
-
-# other error metrics: number of rejected pairs after Bonf correction
-if (FALSE) {
-  # save plots
-  ggsave(filename = paste0(fig_dir, "undercov_grna_trans_grp3.png"),
-         plot = p_undercover_stat_trans, device = "png", scale = 1, width = 11, height = 6, dpi = 330)
-  ggsave(filename = paste0(fig_dir, "undercov_grna_untrans_grp3.png"),
-         plot = p_undercover_stat_untrans, device = "png", scale = 1, width = 11, height = 6, dpi = 330)
-  ggsave(filename = paste0(fig_dir, "undercov_grna_comp.pdf"),
-         plot = p_undercover_comp, device = "pdf", scale = 0.8, width = 14, height = 5, dpi = 330)
-  
-  
-  alpha <- 0.1
-  bonf_correct <- res_proc |>
-    dplyr::group_by(dataset, method) |>
+# 7. function to compute n Bonferoni-corrected hypotheses that have been rejected
+compute_n_bonf_rejected <- function(undercover_res, alpha = 0.05) {
+  # set.seed(10)
+  # undercover_res_sub <- undercover_res |>
+  #  dplyr::group_by(dataset_rename, Method) |>
+  #  dplyr::mutate(n_hyp = dplyr::n()) |>
+  #  dplyr::filter(n_hyp >= 5000) |>
+  #  dplyr::sample_n(size = 5000)
+  out <- undercover_res |> dplyr::group_by(dataset_rename_w_pairs, Method) |>
     dplyr::summarize(reject = (p_value < alpha/dplyr::n())) |>
     dplyr::summarize(n_reject = sum(reject)) |>
     dplyr::ungroup()
-  
-  bonf_correct |>
-    ggplot2::ggplot(ggplot2::aes(x = method, y = n_reject)) +
-    ggplot2::geom_col() + 
-    facet_wrap(~dataset) +
-    ggplot2::scale_y_log10() +
-    theme_bw()
+  return(out)
+}
+
+# 8. make n rejected pairs plot
+make_n_rejected_pairs_plot <- function(n_rejected_df, y_max = 1e5) {
+  n_rejected_df |>
+    ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
+    ggplot2::geom_col(col = "black") + 
+    facet_wrap(~dataset_rename_w_pairs, labeller = label_wrap_gen(35)) +
+    ggplot2::scale_y_log10(limits = c(1, y_max)) +
+    theme_bw() +
+    theme(legend.position = "bottom",
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          legend.title= element_blank()) +
+    ylab("N rejected (after Bonf. correction)")
 }
