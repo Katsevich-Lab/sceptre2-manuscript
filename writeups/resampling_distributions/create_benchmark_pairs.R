@@ -23,4 +23,4 @@ cis_pairs |>
          gRNAgroup %in% (get_feature_covariates(grna_odm) |> pull(grna_group))) |>
   rename(grna_group = gRNAgroup, gene_id = ENSG.targetgene) |>
   select(grna_group, gene_id, general_group) |>
-  saveRDS(paste0(sceptre2_dir, "results/resampling_distributions/benchmarking_pairs.rds"))
+  saveRDS(paste0(sceptre2_dir, "data/gasperini/at_scale/benchmarking_pairs.rds"))
