@@ -1,0 +1,29 @@
+---
+title: "Benchmarking GCM"
+output: html_document
+date: '2022-07-27'
+---
+
+```{r}
+# load libraries
+library(tidyverse)
+library(katlabutils)
+```
+
+```{r}
+# read results
+sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+gcm_results <- readRDS(paste0(sceptre2_dir, "results/highmoi_pipeline/gasperini_gcm_result.rds"))
+```
+
+```{r}
+gcm_results |> 
+  filter(general_group == "NTC") |>
+  ggplot(aes(y = p_value)) +
+  stat_qq_points(max_pts_to_plot = 10000) +
+  stat_qq_band() +
+  geom_abline() +
+  scale_x_continuous(trans = revlog_trans(base = 10)) +
+  scale_y_continuous(trans = revlog_trans(base = 10)) +
+  theme_bw()
+```
