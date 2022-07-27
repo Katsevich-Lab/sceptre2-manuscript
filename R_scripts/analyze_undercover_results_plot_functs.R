@@ -134,7 +134,8 @@ make_n_rejected_pairs_plot <- function(n_rejected_df, y_max = 1e5) {
 }
 
 # make plot associating n rejected to gRNA group size
-
+if (FALSE) {
 dataset_sub <- sub(pattern = "_", replacement = "/", x = datasets, fixed = TRUE) |>
    stringi::stri_replace_last_fixed(str = _, pattern = "_", replacement = "/")
 undercover_res |> dplyr::mutate(dataset_rename = NULL, method = NULL)
+}
