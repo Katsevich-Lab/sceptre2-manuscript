@@ -57,7 +57,7 @@ for method in "gcm" "crt" "gcm_crt"; do
      --gene_pod_size $gene_pod_size \
      --grna_group_pod_size $grna_group_pod_size \
      --pair_pod_size $pair_pod_size \
-     -profile local \
+     -profile standard \
      -resume
   else
     echo $method" analysis already done!"
