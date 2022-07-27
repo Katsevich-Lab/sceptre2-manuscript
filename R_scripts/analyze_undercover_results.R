@@ -45,4 +45,7 @@ future_lapply(X = seq(1, 3), FUN = function(i) {
   n_rejected_plot <- make_n_rejected_pairs_plot(n_rejected_df = n_rejected_df, y_max = 1e5)
   ggsave(filename = paste0(fig_dir, "barplot_no_chrom_grp=", i, ".png"),
          plot = n_rejected_plot, device = "png", scale = 1.25, dpi = 330, width = 9, height = 6)
+  
+  # 3. create plot exploring connection between effective sample size and rejection rate
+  
 })

@@ -9,5 +9,4 @@ nextflow run undercover-grna-pipeline -r main \
  --is_partition_count_frac true \
  --machine_name hpcc \
  --time 07160511 \
- -profile standard \
- -resume
+ -profile standard

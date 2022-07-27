@@ -32,6 +32,7 @@ update_dataset_names <- function(undercover_res, add_n_pairs = TRUE) {
     out <- out |> dplyr::mutate(n_pairs = dplyr::n(),
                                 dataset_rename_w_pairs = paste0(dataset_rename, " (", n_pairs[1], " pairs)"))
   }
+  out <- out |> dplyr::ungroup() |> dplyr::mutate(dataset_rename = NULL, method = NULL)
   return(out)
 }
   
@@ -103,7 +104,7 @@ make_computation_plot <- function(undercover_res) {
 }
 
 # 7. function to compute n Bonferoni-corrected hypotheses that have been rejected
-compute_n_bonf_rejected <- function(undercover_res, alpha = 0.05) {
+compute_n_bonf_rejected <- function(undercover_res, alpha = 0.05, by_gRNA = FALSE) {
   # set.seed(10)
   # undercover_res_sub <- undercover_res |>
   #  dplyr::group_by(dataset_rename, Method) |>
@@ -131,3 +132,9 @@ make_n_rejected_pairs_plot <- function(n_rejected_df, y_max = 1e5) {
           legend.title= element_blank()) +
     ylab("N rejected (after Bonf. correction)")
 }
+
+# make plot associating n rejected to gRNA group size
+
+dataset_sub <- sub(pattern = "_", replacement = "/", x = datasets, fixed = TRUE) |>
+   stringi::stri_replace_last_fixed(str = _, pattern = "_", replacement = "/")
+undercover_res |> dplyr::mutate(dataset_rename = NULL, method = NULL)
