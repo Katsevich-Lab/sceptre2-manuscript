@@ -27,7 +27,7 @@ fi
 ###############
 # formula, threshold, B, side, n_pairs_to_sample, gene_pod_size, grna_group_pod_size, pair_pod_size are optional args
 formula="~p_mito+batch+log(gene_n_nonzero)+log(gene_n_umis)+log(grna_expression_n_nonzero)+log(grna_expression_n_umis)"
-gene_pod_size=400
+gene_pod_size=30
 grna_group_pod_size=400
 pair_pod_size=400
 # gene_pod_size=4
