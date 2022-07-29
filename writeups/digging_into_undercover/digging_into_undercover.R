@@ -2,6 +2,10 @@ library(ondisc)
 library(lowmoi)
 library(tidyverse)
 
+res_fps <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
+                  "results/undercover_grna_analysis/undercover_result_grp_size_", 1:3,".rds")
+
+# make histograms for Seurat and perm on all datasets and for all group sizes.
 undercover_res_grp_1 <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
                                "results/undercover_grna_analysis/undercover_result_grp_size_1.rds") |>
   readRDS() |>
@@ -78,3 +82,4 @@ permutation_test(response_odm = response_odm,
 seurat_de(response_odm = response_odm,
           grna_odm = grna_odm_swapped,
           response_grna_group_pairs = pairs_df)
+

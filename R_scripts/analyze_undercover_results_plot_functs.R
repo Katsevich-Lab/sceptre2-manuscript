@@ -1,4 +1,13 @@
+my_cols <- ggsci::pal_npg()(7)
+
 # define several functions
+
+# 0. replace underscore with slash in dataset column
+replace_dataset_underscore_with_slash <- function(datasets) {
+  sub(pattern = "_", replacement = "/", x = datasets, fixed = TRUE) |>
+    stringi::stri_replace_last_fixed(str = _, pattern = "_", replacement = "/")
+}
+
 # 1. combine schraivogel enhancer screens
 combine_schraivogel_enhancer_screens <- function(undercover_res) {
   undercover_res |> dplyr::mutate(dataset = dataset |> forcats::fct_recode(schraivogel_enhancer_screen = "schraivogel_enhancer_screen_chr11_gene",
@@ -32,10 +41,10 @@ update_dataset_names <- function(undercover_res, add_n_pairs = TRUE) {
     out <- out |> dplyr::mutate(n_pairs = dplyr::n(),
                                 dataset_rename_w_pairs = paste0(dataset_rename, " (", n_pairs[1], " pairs)"))
   }
-  out <- out |> dplyr::ungroup() |> dplyr::mutate(dataset_rename = NULL, method = NULL)
+  out <- out |> dplyr::ungroup() |> dplyr::mutate(dataset_rename = NULL)
   return(out)
 }
-  
+
 # 4. create the untransformed qq-plot
 make_trans_qq_plot <- function(undercover_res) {
   p <- ggplot(data = undercover_res, mapping = aes(y = p_value, color = Method)) +
@@ -104,19 +113,21 @@ make_computation_plot <- function(undercover_res) {
 }
 
 # 7. function to compute n Bonferoni-corrected hypotheses that have been rejected
-compute_n_bonf_rejected <- function(undercover_res, alpha = 0.05, by_gRNA = FALSE) {
+compute_n_bonf_rejected <- function(undercover_res, alpha = 0.05) {
   # set.seed(10)
   # undercover_res_sub <- undercover_res |>
   #  dplyr::group_by(dataset_rename, Method) |>
   #  dplyr::mutate(n_hyp = dplyr::n()) |>
   #  dplyr::filter(n_hyp >= 5000) |>
   #  dplyr::sample_n(size = 5000)
-  out <- undercover_res |> dplyr::group_by(dataset_rename_w_pairs, Method) |>
+  out <- undercover_res |>
+    dplyr::group_by(dataset_rename_w_pairs, Method) |>
     dplyr::summarize(reject = (p_value < alpha/dplyr::n())) |>
     dplyr::summarize(n_reject = sum(reject)) |>
     dplyr::ungroup()
   return(out)
 }
+
 
 # 8. make n rejected pairs plot
 make_n_rejected_pairs_plot <- function(n_rejected_df, y_max = 1e5) {
@@ -133,9 +144,64 @@ make_n_rejected_pairs_plot <- function(n_rejected_df, y_max = 1e5) {
     ylab("N rejected (after Bonf. correction)")
 }
 
-# make plot associating n rejected to gRNA group size
-if (FALSE) {
-dataset_sub <- sub(pattern = "_", replacement = "/", x = datasets, fixed = TRUE) |>
-   stringi::stri_replace_last_fixed(str = _, pattern = "_", replacement = "/")
-undercover_res |> dplyr::mutate(dataset_rename = NULL, method = NULL)
+
+# 9. make histograms
+make_histograms <- function(undercover_res_to_plot, fill) {
+  ggplot(data = undercover_res_to_plot, mapping = aes(x = p_value)) +
+    facet_wrap(dataset_rename_w_pairs ~ ., scales = "free_y", labeller = label_wrap_gen(35)) +
+    geom_histogram(bins = 15, aes(y = stat(density)),
+                   col = "black", boundary = 0, fill = fill) +
+    theme_bw() + xlab("p-value") + ylab("Density")
+}
+
+
+# 10. append the number of undercover cells
+append_n_undercover_cells <- function(undercover_res) {
+  undercover_res |>
+    group_by(undercover_grna, dataset_slash) |>
+    group_modify(function(tibble, key) {
+      print(paste0("Working on ", key$undercover_grna, " ", key$dataset_slash))
+      dataset_name <- as.character(key$dataset_slash)
+      undercover_grna <- strsplit(x = as.character(key$undercover_grna), split = ",", fixed = TRUE) |> unlist()
+      grna_feature_covariates <- lowmoi::get_grna_dataset_name(dataset_name, "assignment") |> 
+        lowmoi::load_dataset_modality() |>
+        ondisc::get_feature_covariates()
+      n_undercover_cells <- grna_feature_covariates[undercover_grna, "n_nonzero"] |> sum()
+      mutate(tibble, n_undercover_cells = n_undercover_cells)
+    })
+}
+  
+# 11. for each dataset-method pair, return the number of rejections and number of cells for each undercover gRNA
+get_n_reject_n_undercover_cells_df <- function(undercover_res, alpha) {
+  undercover_res |>
+    dplyr::group_by(dataset_rename_w_pairs, method) |>
+    dplyr::mutate(reject = (p_value < alpha/dplyr::n())) |>
+    dplyr::group_by(dataset_rename_w_pairs, method, undercover_grna) |>
+    dplyr::summarize(n_reject = sum(reject),
+                     n_undercover_cells = n_undercover_cells[1],
+                     dataset = dataset[1]) |>
+    dplyr::ungroup()
+}
+
+# 12. associate n undercover cells w n rejections
+associate_n_undercover_cells_w_n_rejections <- function(n_rejected_n_cells_df_sub) {
+  lm_df <- n_rejected_n_cells_df_sub |>
+    group_by(dataset_rename_w_pairs, method) |>
+    group_modify(function(tibble, key) {
+      fit <- lm(formula = n_reject ~ n_undercover_cells, data = tibble)
+      s <- summary(fit)
+      p <- s$coefficients["n_undercover_cells", "Pr(>|t|)"]
+      coefs <- coef(fit)
+      data.frame(intercept = coefs[[1]], slope = coefs[[2]], p_val = p)
+    })
+  
+  p <- ggplot(data = n_rejected_n_cells_df_sub,
+         mapping = aes(y = n_reject, x = n_undercover_cells)) +
+    facet_wrap(. ~ dataset_rename_w_pairs, scales = "free", labeller = label_wrap_gen(35)) +
+    geom_point() +
+    geom_abline(data = lm_df,
+                mapping = aes(slope = slope, intercept = intercept, col = p_val < 0.05),
+                lwd = 0.7) + theme_bw() + 
+    xlab("N undercover cells") + ylab("N reject")
+  return(p)
 }
