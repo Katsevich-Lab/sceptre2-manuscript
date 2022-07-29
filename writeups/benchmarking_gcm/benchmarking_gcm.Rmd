@@ -25,5 +25,7 @@ gcm_results |>
   geom_abline() +
   scale_x_continuous(trans = revlog_trans(base = 10)) +
   scale_y_continuous(trans = revlog_trans(base = 10)) +
+  labs(x = "Expected p-value", 
+       y = "Observed p-value") +
   theme_bw()
 ```
