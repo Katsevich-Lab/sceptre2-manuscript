@@ -63,9 +63,15 @@ pair_to_check <- undercover_res_sub_wide_samp_near_line |>
    filter(seurat_de >= 0.45 & seurat_de <= 0.55) |>
    sample_n(1)
 
+
 # load data
 dataset_name <- pair_to_check$dataset_sub
 undercover_ntc_name_in <- as.character(pair_to_check$undercover_grna)
+
+if (FALSE) {
+  dataset_name <- "frangieh/co_culture/gene"
+  undercover_ntc_name <- "NO-SITE-812"
+}
 
 response_odm <- load_dataset_modality(dataset_name)
 grna_dataset_name <- get_grna_dataset_name(dataset_name, "assignment")

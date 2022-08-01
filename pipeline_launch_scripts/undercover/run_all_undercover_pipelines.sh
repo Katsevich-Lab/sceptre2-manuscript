@@ -6,13 +6,13 @@ nextflow pull https://github.com/Katsevich-Lab/undercover-grna-pipeline
 
 group_sizes=("1" "2" "3" "0.5")
 is_group_size_fracs=("false" "false" "false" "true")
-result_file_names=("undercover_result_grp_size_1.rds" "undercover_result_grp_size_2.rds" "undercover_result_grp_size_3.rds" "undercover_result_grp_size_05.rds")
+result_file_names=("undercover_result_grp_size_1.rds" "undercover_result_grp_size_2.rds" "undercover_result_grp_size_3.rds" "undercover_result_grp_size_half.rds")
 
 for i in ${!group_sizes[@]}; do
   cur_dir="grp_${group_sizes[$i]}"
   mkdir -p $cur_dir
   cd $cur_dir
-  
+
   curr_time=$(date '+%m%d%H%M')
   nextflow run undercover-grna-pipeline -r main \
    --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/data_method_pair_file.groovy" \

@@ -130,3 +130,9 @@ for (curr_method in methods) {
            plot = p, device = "png", scale = 1.5, width = 14, height = 8, dpi = 330)
   }
 }
+
+# investigate Frangieh co-culture
+undercover_res |>
+  filter(method == "permutation_test" & dataset == "frangieh_co_culture_gene") |>
+  arrange(p_value) |>
+  print(n = 30)
