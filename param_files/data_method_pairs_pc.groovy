@@ -1,6 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
 
-/*
 data_method_pairs_indiv = ["frangieh/ifn_gamma/gene": ["schraivogel_method", "mimosca"],
                            "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "mimosca"],
                            "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "mimosca"]
@@ -15,9 +14,6 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                              "schraivogel/ground_truth_perturbseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
                              "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"]
                             ]
-*/
-data_method_pairs_indiv = ["schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "mimosca"]]
-data_method_pairs_grouped = ["schraivogel/enhancer_screen_chr11/gene": ["seurat_de"]]
 
 
 // FIRST, define the row and column names of the below matrices and vectors
