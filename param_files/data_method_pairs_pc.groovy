@@ -1,23 +1,20 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-/*
+
+
 data_method_pairs_indiv = ["frangieh/ifn_gamma/gene": ["schraivogel_method", "mimosca"],
                            "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "mimosca"],
                            "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "mimosca"]
                           ]
 
-data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method", "weissman_method", "permutation_test", "nb_regression"],
-                             "frangieh/control/gene": ["seurat_de", "liscovitch_method", "weissman_method", "permutation_test", "nb_regression"],
-                             "frangieh/ifn_gamma/gene": ["seurat_de", "liscovitch_method", "weissman_method", "permutation_test", "nb_regression"],
-                             "papalexi/eccite_screen/gene": ["seurat_de", "liscovitch_method", "weissman_method", "permutation_test", "nb_regression"],
-                             "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method", "weissman_method", "permutation_test", "nb_regression"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "weissman_method", "permutation_test", "nb_regression"],
-                             "schraivogel/ground_truth_perturbseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "permutation_test", "nb_regression"],
-                             "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "permutation_test", "nb_regression"]
+data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
+                             "frangieh/control/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
+                             "frangieh/ifn_gamma/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
+                             "papalexi/eccite_screen/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
+                             "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
+                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
+                             "schraivogel/ground_truth_perturbseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
+                             "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"]
                             ]
-*/
-data_method_pairs_indiv = ["schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "mimosca"]]
-
-data_method_pairs_grouped = ["schraivogel/ground_truth_tapseq/gene": ["seurat_de", "nb_regression"]]
 
 
 // FIRST, define the row and column names of the below matrices and vectors
@@ -65,10 +62,10 @@ data_method_queue_matrix = [
 ["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q", "all.q"],  // frangieh/ifn_gamma/gene
 ["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_big/chromatin
 ["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_small/chromatin
-["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"],  // papalexi/eccite_screen/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q", "short.q"],  // papalexi/eccite_screen/gene
 ["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // papalexi/eccite_screen/protein
-["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
-["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"],  // schraivogel/enhancer_screen_chr8/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q", "short.q"],  // schraivogel/enhancer_screen_chr8/gene
 ["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q", "all.q"], // schraivogel/ground_truth_perturbseq/gene
 ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/ground_truth_tapseq/gene
 ["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q", "all.q"] // simulated/experiment_1/gene
