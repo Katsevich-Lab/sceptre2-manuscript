@@ -56,12 +56,13 @@ for (paper in papers) {
       mutate_cell_covariates(assigned_grna = grna_assignments)
     if (paper == "schraivogel") {
       grna_assign_modality <- grna_assign_modality |>
-        mutate_feature_covariates(target = known_effect, known_effect = NULL)
+        mutate_feature_covariates(target = ifelse(is.na(known_effect), target, known_effect),
+                                  known_effect = NULL)
     }
     n_cells_per_grna <- Matrix::rowSums(grna_assign_mat)
     grnas_to_keep <- n_cells_per_grna >= N_CELLS_PER_GRNA_THRESH
     mm_odm_sub@modalities[["grna_assignment"]] <- grna_assign_modality[grnas_to_keep,]
-    
+
     # grna expression modality (if applicable): keep the same features as above
     if ("grna_expression" %in% modalities) {
       grna_expression_modality <- get_modality(mm_odm_sub, "grna_expression")
