@@ -130,18 +130,18 @@ compute_n_bonf_rejected <- function(undercover_res, alpha = 0.05) {
 
 
 # 8. make n rejected pairs plot
-make_n_rejected_pairs_plot <- function(n_rejected_df, y_max = 1e5) {
+make_n_rejected_pairs_plot <- function(n_rejected_df, y_max = 1e5, scales = "fixed", log_trans = TRUE) {
   n_rejected_df |>
     ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
     ggplot2::geom_col(col = "black") + 
-    facet_wrap(~dataset_rename_w_pairs, labeller = label_wrap_gen(35)) +
-    ggplot2::scale_y_log10(limits = c(1, y_max)) +
+    facet_wrap(~dataset_rename_w_pairs, labeller = label_wrap_gen(35), scales = scales) +
     theme_bw() +
     theme(legend.position = "bottom",
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
           legend.title= element_blank()) +
-    ylab("N rejected (after Bonf. correction)")
+    ylab("N rejected (after Bonf. correction)") +
+    if (log_trans) ggplot2::scale_y_log10(limits = c(1, y_max)) else NULL 
 }
 
 

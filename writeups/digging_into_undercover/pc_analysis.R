@@ -23,6 +23,11 @@ pc_res |>
 # combine Schraivogel screens
 pc_res <- pc_res |>
   dplyr::mutate(dataset = gsub(pattern = "/", replacement = "_", fixed = TRUE, x = dataset))
-pc_res_2 <- combine_schraivogel_enhancer_screens(pc_res) |>
+pc_res <- combine_schraivogel_enhancer_screens(pc_res) |>
   update_dataset_names(TRUE)
 
+# compute number of Bonferoni rejections
+n_bonf_reject <- compute_n_bonf_rejected(pc_res)
+
+# plot the number of Bonferoni rejections
+make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject, y_max = NULL, scales = "free", log_trans = FALSE)

@@ -1,20 +1,14 @@
 // FIRST, define the dataset-method pairs to analyze in a map
 
-data_method_pairs_indiv = ["frangieh/ifn_gamma/gene": ["schraivogel_method", "mimosca"],
-                           "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "mimosca"],
-                           "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "mimosca"]
+data_method_pairs_indiv = ["frangieh/co_culture/gene": ["schraivogel_method", "mimosca"],
+                           "frangieh/control/gene": ["schraivogel_method", "mimosca"],
+                           "papalexi/eccite_screen/gene": ["schraivogel_method", "mimosca"],
+                           "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "mimosca"],
+                           "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "mimosca"]
                           ]
 
-data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
-                             "frangieh/control/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
-                             "frangieh/ifn_gamma/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
-                             "papalexi/eccite_screen/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
-                             "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
-                             "schraivogel/ground_truth_perturbseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
-                             "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression", "schraivogel_method", "mimosca"]
+data_method_pairs_grouped = ["schraivogel/ground_truth_tapseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression", "schraivogel_method", "mimosca"]
                             ]
-
 
 // FIRST, define the row and column names of the below matrices and vectors
 row_names = ["frangieh/co_culture/gene",
