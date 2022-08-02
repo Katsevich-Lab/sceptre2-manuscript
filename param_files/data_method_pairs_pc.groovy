@@ -12,7 +12,7 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                              "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
                              "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
                              "schraivogel/ground_truth_perturbseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"],
-                             "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression"]
+                             "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "nb_regression", "schraivogel_method", "mimosca"]
                             ]
 
 
@@ -77,6 +77,6 @@ optional_args = [
 "", // liscovitch_method
 "n_rep=50", // mimosca
 "", // weissman_method
-"n_rep=1000;progress=FALSE", // permutation_test
-"progress=FALSE" // nb_regression
+"n_rep=1000", // permutation_test
+"" // nb_regression
 ]
