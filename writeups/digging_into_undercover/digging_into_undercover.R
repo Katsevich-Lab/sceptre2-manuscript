@@ -52,18 +52,26 @@ ggplot(data = undercover_res_sub_wide_samp_near_line,
   geom_point(size = 0.8, alpha = 0.3) +
   theme_bw() +
   geom_abline(intercept = 0, slope = 1,
-              col = "darkred", lwd = 1.1) + 
-  geom_abline(intercept = blue_int, slope = blue_slope,
-              col = "blue", lwd = 1.1)
+              col = "darkred", lwd = 1.1) # +
+#  scale_x_continuous(trans = revlog_trans(base = 10)) +
+#  scale_y_continuous(trans = revlog_trans(base = 10))
+#  geom_abline(intercept = blue_int, slope = blue_slope,
+#              col = "blue", lwd = 1.1) 
 
 # pick a random point(s) to investigate
 pair_to_check <- undercover_res_sub_wide_samp_near_line |>
    filter(seurat_de >= 0.45 & seurat_de <= 0.55) |>
    sample_n(1)
 
+
 # load data
 dataset_name <- pair_to_check$dataset_sub
 undercover_ntc_name_in <- as.character(pair_to_check$undercover_grna)
+
+if (FALSE) {
+  dataset_name <- "frangieh/co_culture/gene"
+  undercover_ntc_name <- "NO-SITE-812"
+}
 
 response_odm <- load_dataset_modality(dataset_name)
 grna_dataset_name <- get_grna_dataset_name(dataset_name, "assignment")
@@ -75,11 +83,19 @@ grna_odm_swapped <- grna_odm |> mutate_feature_covariates(target = grna_feature_
 pairs_df <- pair_to_check |> summarize(grna_group = "undercover", response_id = pair_to_check$response_id)
 
 # run permutation test
-permutation_test(response_odm = response_odm,
+perm_res <- permutation_test(response_odm = response_odm,
                  grna_odm = grna_odm_swapped,
-                 response_grna_group_pairs = pairs_df)
+                 response_grna_group_pairs = pairs_df,
+                 return_permuted_test_stats = TRUE,
+                 test_stat = "mann_whit")
 # run seurat
 seurat_de(response_odm = response_odm,
           grna_odm = grna_odm_swapped,
           response_grna_group_pairs = pairs_df)
+
+
+# plot resampled test stats
+x <-perm_res |>
+  select(resample_1:resample_1000) |>
+  as.numeric()
 
