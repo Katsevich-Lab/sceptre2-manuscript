@@ -1,31 +1,148 @@
 ---
-title: "Benchmarking GCM"
+title: "Benchmarking GCM-based variants of SCEPTRE"
 output: html_document
-date: '2022-07-27'
+date: '2022-08-02'
 ---
 
-```{r}
+```{r, message = FALSE, echo = FALSE}
 # load libraries
 library(tidyverse)
 library(katlabutils)
 ```
 
-```{r}
+```{r, echo = FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+```{r, echo = FALSE, message = FALSE}
 # read results
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 gcm_results <- readRDS(paste0(sceptre2_dir, "results/highmoi_pipeline/gasperini_gcm_result.rds"))
+gcm_crt_results <- readRDS(paste0(sceptre2_dir, "results/highmoi_pipeline/gasperini_gcm_crt_result.rds"))
+crt_results <- readRDS(paste0(sceptre2_dir, "results/highmoi_pipeline/gasperini_crt_result.rds"))
+gasp_results <- read_tsv(paste0(.get_config_path("LOCAL_GASPERINI_2019_V2_DATA_DIR"), "at-scale/raw/GSE120861_all_deg_results.at_scale.txt"))
+
+# concatenate results and join with Gasperini's results to get site_type column,
+# restrict attention to site_type = "NTC", "positive_ctrl", "selfTSS"
+results <- bind_rows(
+  gcm_results |> mutate(method = "GCM"),
+  crt_results |> mutate(method = "NB CRT"),
+  gcm_crt_results |> mutate(method = "GCM CRT")
+) |>
+  mutate(method = factor(method, levels = c("NB CRT", "GCM CRT", "GCM"))) |>
+  left_join(gasp_results |> 
+              select(gRNA_group, ENSG, site_type) |> 
+              rename(grna_group = gRNA_group, gene_id = ENSG),
+    by = c("grna_group", "gene_id")
+  ) |>
+  filter(site_type %in% c("NTC", "positive_ctrl", "selfTSS")) |>
+  select(gene_id, grna_group, method, p_value, site_type)
+
+# remove a few weird duplicates
+rows_to_keep <- results |>
+  mutate(rownum = row_number()) |>
+  group_by(gene_id, grna_group, method) |>
+  filter(rownum == min(rownum)) |>
+  pull(rownum)
+results <- results[rows_to_keep,]
 ```
 
-```{r}
-gcm_results |> 
-  filter(general_group == "NTC") |>
-  ggplot(aes(y = p_value)) +
-  stat_qq_points(max_pts_to_plot = 10000) +
+In this writeup, we benchmark the performance of three SCEPTRE variants on the Gasperini negative and positive control data. The first is "NB CRT", the original version. The second is "GCM CRT", which is the CRT using the GCM test statistic based on Poisson regression of Y on Z. The third is "GCM", which is the resampling-free GCM test. 
+
+# Negative control results
+
+Let's look at the distributions of the NTC p-values for the three methods.
+```{r, echo = FALSE, fig.width = 4.5, fig.height=4.5}
+results |> 
+  filter(site_type == "NTC") |>
+  ggplot(aes(y = p_value, colour = method)) +
+  stat_qq_points(max_pts_to_plot = 10000, ymin = 1e-10) +
   stat_qq_band() +
   geom_abline() +
   scale_x_continuous(trans = revlog_trans(base = 10)) +
   scale_y_continuous(trans = revlog_trans(base = 10)) +
   labs(x = "Expected p-value", 
        y = "Observed p-value") +
+  theme_bw() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom")
+```
+
+```{r, echo = FALSE, fig.width=7, fig.height =2.5}
+results |> 
+  filter(site_type == "NTC") |>
+  ggplot(aes(x = p_value)) +
+  geom_histogram(boundary = 0, binwidth = 0.05, colour = "black") + 
+  facet_wrap(~method) +
+  labs(x = "p-value") +
   theme_bw()
 ```
+
+We see that the NB CRT has the best calibration, followed by GCM CRT, followed by GCM. The two CRT-based methods are markedly better than the asymptotic GCM method. It's likely that asymptopia has not kicked in yet. The slight miscalibration in the tails for the CRT-based methods is likely due to poor skew-t fit, induced by discreteness. This hypothesis remains to be verified. 
+
+# Positive control results
+
+```{r, echo = FALSE, fig.width = 6, fig.height = 2.5}
+results |>
+  filter(site_type == "positive_ctrl") |>
+  mutate(p_value = pmax(p_value, .Machine$double.eps)) |>
+  ggplot(aes(x = method, y = p_value)) +
+  geom_violin(fill = "dodgerblue") +
+  scale_y_log10() +
+  labs(y = "p-value", 
+       title = "Enhancer-targeting perturbations") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+
+results |>
+  filter(site_type == "selfTSS") |>
+  mutate(p_value = pmax(p_value, .Machine$double.eps)) |>
+  ggplot(aes(x = method, y = p_value)) +
+  geom_violin(fill = "dodgerblue") +
+  scale_y_log10() +
+  labs(y = "p-value",
+       title = "TSS-targeting perturbations") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+```
+
+GCM has smaller p-values for positive control perturbations, while the two CRT-based methods perform similarly. 
+
+# Comparing the two CRT-based methods
+
+Let's see how the p-values from the two CRT-based methods compare with each other. 
+```{r, echo = FALSE, fig.width = 7, fig.height = 2.5}
+results |> 
+  filter(method %in% c("NB CRT", "GCM CRT")) |>
+  select(gene_id, grna_group, p_value, method, site_type) |>
+  pivot_wider(names_from = method, values_from = p_value) |>
+  filter((site_type %in% c("selfTSS", "positive_ctrl")) | row_number() %% 500 == 0) |>
+  mutate(site_type = factor(site_type, 
+                            levels = c("NTC", "positive_ctrl", "selfTSS"),
+                            labels = c("Non-targeting", "Enhancer-targeting", "TSS-targeting"))) |>
+  ggplot(aes(x = `NB CRT`, y = `GCM CRT`)) +
+  geom_point() +
+  geom_abline() +
+  facet_wrap(~site_type) +
+  theme_bw()
+```  
+
+```{r, echo = FALSE, fig.width = 7, fig.height = 2.5}
+results |> 
+  filter(method %in% c("NB CRT", "GCM CRT")) |>
+  select(gene_id, grna_group, p_value, method, site_type) |>
+  pivot_wider(names_from = method, values_from = p_value) |>
+  filter((site_type %in% c("selfTSS", "positive_ctrl")) | row_number() %% 500 == 0) |>
+  mutate(site_type = factor(site_type, 
+                            levels = c("NTC", "positive_ctrl", "selfTSS"),
+                            labels = c("Non-targeting", "Enhancer-targeting", "TSS-targeting"))) |>
+  ggplot(aes(x = `NB CRT`, y = `GCM CRT`)) +
+  geom_point() +
+  geom_abline() +
+  facet_wrap(~site_type, scales = "free") +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme_bw()
+```
+
+It looks like there's decent good agreement in the bulk of the distribution, but less good agreement as you get farther into the tail.
