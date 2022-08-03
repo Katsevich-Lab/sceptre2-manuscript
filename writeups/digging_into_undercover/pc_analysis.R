@@ -1,6 +1,6 @@
 # load data; set figure dir
 pc_res_fp <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/positive_control_analysis/pc_result.rds")
-fig_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/figures/undercover_figs/")
+fig_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/digging_into_undercover/undercover_figs/")
 
 # load packages and data
 library(tidyverse)
@@ -30,4 +30,5 @@ pc_res <- combine_schraivogel_enhancer_screens(pc_res) |>
 n_bonf_reject <- compute_n_bonf_rejected(pc_res)
 
 # plot the number of Bonferoni rejections
-make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject, y_max = NULL, scales = "free", log_trans = FALSE)
+p <- make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject, y_max = NULL, scales = "free", log_trans = FALSE)
+ggsave(filename = paste0(fig_dir, "pc_results.png"), plot = p, device = "png", scale = 1.1, width = 8, height = 6, dpi = 330)
