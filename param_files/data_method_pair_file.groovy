@@ -1,5 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-
+/*
 data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression"],
                      "frangieh/control/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression"],
                      "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression"],
@@ -13,20 +13,25 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression"],
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression"]
                      ]
+*/
 
 /*
-data_method_pairs = ["frangieh/co_culture/gene": ["permutation_test"],
-                     "frangieh/control/gene": ["permutation_test"],
-                     "frangieh/ifn_gamma/gene": ["permutation_test"],
-                     "papalexi/eccite_screen/gene": ["permutation_test"],
-                     "papalexi/eccite_screen/protein": ["permutation_test"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["permutation_test"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["permutation_test"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["permutation_test"],
-                     "schraivogel/ground_truth_tapseq/gene": ["permutation_test"],
-                     "simulated/experiment_1/gene": ["permutation_test"]
+data_method_pairs = ["frangieh/co_culture/gene": ["sceptre"],
+                     "frangieh/control/gene": ["sceptre"],
+                     "frangieh/ifn_gamma/gene": ["sceptre"],
+                     "papalexi/eccite_screen/gene": ["sceptre"],
+                     "papalexi/eccite_screen/protein": ["sceptre"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["sceptre"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["sceptre"],
+                     "schraivogel/ground_truth_tapseq/gene": ["sceptre"],
+                     "simulated/experiment_1/gene": ["sceptre"]
                      ]
 */
+
+data_method_pairs = ["papalexi/eccite_screen/gene": ["sceptre"],
+                     "schraivogel/ground_truth_tapseq/gene": ["sceptre"]
+                     ]
 
 // FIRST, define the row and column names of the below matrices and vectors
 row_names = ["frangieh/co_culture/gene",
@@ -47,39 +52,40 @@ col_names = ["schraivogel_method",
              "mimosca",
              "weissman_method",
              "permutation_test",
-             "nb_regression"]
+             "nb_regression",
+             "sceptre"]
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[34, 13, 13, 35, 49, 5, 5], // frangieh/co_culture/gene
-[23,  9, 45, 26, 34, 5, 5], // frangieh/control/gene
-[36, 13, 13, 34, 53, 5, 5], // frangieh/ifn_gamma/gene
-[2,   1,  1,  1,  1, 1, 1], // liscovitch/experiment_big/chromatin
-[2,   1,  1,  1,  1, 1, 1], // liscovitch/experiment_small/chromatin
-[18,  6,  6, 19, 22, 5, 5], // papalexi/eccite_screen/gene
-[2,   1,  1,  5,  1, 2, 2], // papalexi/eccite_screen/protein
-[6,  12, 12, 18,  6, 5, 5], // schraivogel/enhancer_screen_chr11/gene
-[8,  14, 14, 21,  6, 5, 5], // schraivogel/enhancer_screen_chr8/gene
-[44, 11, 11, 31, 34, 5, 5], // schraivogel/ground_truth_perturbseq/gene
-[2,   1,  1,  5,  1, 2, 2], // schraivogel/ground_truth_tapseq/gene
-[28,  7,  7, 17, 19, 5, 5] // simulated/experiment_1/gene
+[34, 13, 13, 35, 49, 5, 5, 5], // frangieh/co_culture/gene
+[23,  9, 45, 26, 34, 5, 5, 5], // frangieh/control/gene
+[36, 13, 13, 34, 53, 5, 5, 5], // frangieh/ifn_gamma/gene
+[2,   1,  1,  1,  1, 1, 1, 1], // liscovitch/experiment_big/chromatin
+[2,   1,  1,  1,  1, 1, 1, 1], // liscovitch/experiment_small/chromatin
+[18,  6,  6, 19, 22, 5, 5, 5], // papalexi/eccite_screen/gene
+[2,   1,  1,  5,  1, 2, 2, 5], // papalexi/eccite_screen/protein
+[6,  12, 12, 18,  6, 5, 5, 5], // schraivogel/enhancer_screen_chr11/gene
+[8,  14, 14, 21,  6, 5, 5, 5], // schraivogel/enhancer_screen_chr8/gene
+[44, 11, 11, 31, 34, 5, 5, 5], // schraivogel/ground_truth_perturbseq/gene
+[2,   1,  1,  5,  1, 2, 2, 5], // schraivogel/ground_truth_tapseq/gene
+[28,  7,  7, 17, 19, 5, 5, 5] // simulated/experiment_1/gene
 ]
-// schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, permutation_test, nb_regression
+// schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, permutation_test, nb_regression, sceptre
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
-["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q"],  // frangieh/co_culture/gene
-["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q"], // frangieh/control/gene
-["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q"],  // frangieh/ifn_gamma/gene
-["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_big/chromatin
-["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_small/chromatin
-["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "short.q"],  // papalexi/eccite_screen/gene
-["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // papalexi/eccite_screen/protein
-["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
-["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"],  // schraivogel/enhancer_screen_chr8/gene
-["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q"], // schraivogel/ground_truth_perturbseq/gene
-["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/ground_truth_tapseq/gene
-["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q"] // simulated/experiment_1/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q",   "all.q"],  // frangieh/co_culture/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q",   "all.q"], // frangieh/control/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q",   "all.q"],  // frangieh/ifn_gamma/gene
+["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_big/chromatin
+["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // liscovitch/experiment_small/chromatin
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "short.q", "all.q"],  // papalexi/eccite_screen/gene
+["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // papalexi/eccite_screen/protein
+["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q", "short.q"],  // schraivogel/enhancer_screen_chr8/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q",   "all.q"], // schraivogel/ground_truth_perturbseq/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q", "short.q"], // schraivogel/ground_truth_tapseq/gene
+["short.q", "short.q", "short.q", "all.q",   "short.q", "all.q",   "all.q",   "all.q"] // simulated/experiment_1/gene
 ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, permutation_test, nb_regression
 
@@ -91,5 +97,6 @@ optional_args = [
 "n_rep=50", // mimosca
 "", // weissman_method
 "progress=FALSE", // permutation_test
-"progress=FALSE" // nb_regression
+"progress=FALSE", // nb_regression
+"" // sceptre
 ]
