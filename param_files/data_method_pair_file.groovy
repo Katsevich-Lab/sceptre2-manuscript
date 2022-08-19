@@ -15,7 +15,6 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      ]
 */
 
-/*
 data_method_pairs = ["frangieh/co_culture/gene": ["sceptre"],
                      "frangieh/control/gene": ["sceptre"],
                      "frangieh/ifn_gamma/gene": ["sceptre"],
@@ -27,11 +26,7 @@ data_method_pairs = ["frangieh/co_culture/gene": ["sceptre"],
                      "schraivogel/ground_truth_tapseq/gene": ["sceptre"],
                      "simulated/experiment_1/gene": ["sceptre"]
                      ]
-*/
 
-data_method_pairs = ["papalexi/eccite_screen/gene": ["sceptre"],
-                     "schraivogel/ground_truth_tapseq/gene": ["sceptre"]
-                     ]
 
 // FIRST, define the row and column names of the below matrices and vectors
 row_names = ["frangieh/co_culture/gene",
