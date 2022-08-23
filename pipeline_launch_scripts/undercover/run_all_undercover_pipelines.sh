@@ -4,9 +4,13 @@ export NXF_OPTS="-Xms500M -Xmx5G" # limit NF driver to 5 GB of memory
 source ~/.research_config
 nextflow pull https://github.com/Katsevich-Lab/undercover-grna-pipeline
 
-group_sizes=("1" "2" "3" "0.5")
-is_group_size_fracs=("false" "false" "false" "true")
-result_file_names=("undercover_result_grp_size_1.rds" "undercover_result_grp_size_2.rds" "undercover_result_grp_size_3.rds" "undercover_result_grp_size_half.rds")
+# group_sizes=("1" "2" "3" "0.5")
+# is_group_size_fracs=("false" "false" "false" "true")
+# result_file_names=("undercover_result_grp_size_1.rds" "undercover_result_grp_size_2.rds" "undercover_result_grp_size_3.rds" "undercover_result_grp_size_half.rds")
+
+group_sizes=("1")
+is_group_size_fracs=("false")
+result_file_names=("undercover_result_grp_size_1_sceptre.rds")
 
 for i in ${!group_sizes[@]}; do
   cur_dir="grp_${group_sizes[$i]}"
