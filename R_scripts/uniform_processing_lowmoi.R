@@ -17,6 +17,10 @@ mimosca_formula_objs <- list(frangieh = formula(~ n_nonzero + n_umis + phase + b
                              liscovitch = formula(~ n_nonzero + n_fragments + 0),
                              simulated = formula(~ n_nonzero + n_umis + 0))
 
+mimosca_formula_objs_protein <- list(frangieh = formula(~ n_umis + phase + batch + 0),
+                                     papalexi = formula(~ n_umis + bio_rep + phase + p_mito + 0))
+
+
 # 1.ii) Set the NB regression formula objects
 nb_regression_formula_objs <- list(frangieh = "~ offset(log(n_umis)) + log(n_nonzero) + phase + batch",
                                    schraivogel = "~ offset(log(n_umis)) + log(n_nonzero) + batch",
@@ -24,12 +28,18 @@ nb_regression_formula_objs <- list(frangieh = "~ offset(log(n_umis)) + log(n_non
                                    liscovitch = "~ offset(log(n_fragments))",
                                    simulated = "~ offset(log(n_umis)) + log(n_nonzero)")
 
+nb_regression_formula_objs_protein <- list(frangieh = "~ offset(log(n_umis)) + phase + batch",
+                                           papalexi = "~ offset(log(n_umis)) + bio_rep + phase + p_mito")
+
 # 1.iii) Set the sceptre formula objects
 sceptre_formula_objs <- list(frangieh = ~ log(response_n_umis) + log(response_n_nonzero) + phase + batch,
                              schraivogel = ~ log(response_n_umis) + log(response_n_nonzero) + batch,
                              papalexi = ~ log(response_n_umis) + log(response_n_nonzero) + bio_rep + phase + p_mito,
                              liscovitch = ~ log(response_n_fragments),
                              simulated = ~ log(response_n_umis) + log(response_n_nonzero))
+
+sceptre_formula_objs_protein <- list(frangieh = ~ log(response_n_umis) + phase + batch,
+                                     papalexi = ~ log(response_n_umis) + bio_rep + phase + p_mito)
 
 # 2) loop over datasets, loading all modalities
 for (paper in papers) {
@@ -103,9 +113,16 @@ for (paper in papers) {
     # iv. add the mimosca/nb formula objects to each response modality
     for (modality in remaining_modalities) {
       modality_odm <- get_modality(mm_odm_sub, modality)
-      modality_odm@misc[["mimosca_formula"]] <- mimosca_formula_objs[[paper]]
-      modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs[[paper]]
-      modality_odm@misc[["sceptre_formula"]] <- sceptre_formula_objs[[paper]]
+      if (modality == "protein") {
+        modality_odm@misc[["mimosca_formula"]] <- mimosca_formula_objs_protein[[paper]]
+        modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs_protein[[paper]]
+        modality_odm@misc[["sceptre_formula"]] <- sceptre_formula_objs_protein[[paper]] 
+      }
+      else {
+        modality_odm@misc[["mimosca_formula"]] <- mimosca_formula_objs[[paper]]
+        modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs[[paper]]
+        modality_odm@misc[["sceptre_formula"]] <- sceptre_formula_objs[[paper]] 
+      }
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
 
