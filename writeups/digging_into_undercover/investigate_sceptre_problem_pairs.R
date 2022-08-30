@@ -1,7 +1,7 @@
+fig_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/digging_into_undercover/figs_aug_2022/")
 load_all("~/research_code/sceptre2/")
 problem_pairs <- readRDS(file = "~/Desktop/sceptre_problem_pairs_frangieh_control_gene.rds")
-control_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
-                      "data/frangieh/control/")
+control_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/frangieh/control/")
 undercover_grnas <- problem_pairs$undercover_grna |> unique()
 
 get_sceptre_function_args_for_pair <- function(problem_pairs, undercover_grna) {
@@ -40,7 +40,7 @@ get_sceptre_function_args_for_pair <- function(problem_pairs, undercover_grna) {
               grna_group_column_name = "target",
               B = 1e5,
               side = "both",
-              full_output = TRUE)
+              full_output = 2)
   return(ret)
 }
 
@@ -54,10 +54,25 @@ funct_args <- get_sceptre_function_args_for_pair(problem_pairs = problem_pairs,
 funct_args$response_grna_group_pairs <- funct_args$response_grna_group_pairs |> dplyr::sample_n(15)
 curr_problem_pairs <- problem_pairs |>
   dplyr::filter(undercover_grna == curr_undercover_grna)
-out <- do.call(what = run_sceptre_low_moi, args = funct_args) |> tibble::as_tibble()
+out <- do.call(what = run_sceptre_low_moi, args = funct_args)
 
-i <- 15
-compute_empirical_p_value_result_row(out[i,])
-out[i, "p_value"]
-plot_fitted_density_result_row(out[i,])
-compute_ks_test_result_row(out[i,])
+### going inside the function
+mm_odm <- funct_args[[1]]
+response_grna_group_pairs <- funct_args[[2]]
+form <- funct_args[[3]]
+response_modality_name <- funct_args[[4]]
+grna_modality_name <- funct_args[[5]]
+grna_group_column_name <- funct_args[[6]]
+B <- funct_args[[7]]
+side <- funct_args[[8]]
+full_output <- funct_args[[9]]
+###
+
+
+ggplot(data = out, mapping = aes(x = n_control_cells_with_expression, y = ks_stat)) +
+  geom_point() +
+  scale_x_log10()
+
+ggplot(data = out, mapping = aes(x = n_treatment_cells_with_expression, y = ks_stat)) +
+  geom_point() +
+  scale_x_log10()
