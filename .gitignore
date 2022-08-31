@@ -18,3 +18,5 @@ pipeline_launch_scripts/undercover/run_undercover_grna_pipeline.sh.o*
 pipeline_launch_scripts/undercover/grp_1/.nextflow*
 pipeline_launch_scripts/undercover/grp_2/.nextflow*
 pipeline_launch_scripts/undercover/grp_3/.nextflow*
+
+pipeline_launch_scripts/debug/.nextflow*
