@@ -93,5 +93,5 @@ optional_args = [
 "", // weissman_method
 "progress=FALSE", // permutation_test
 "progress=FALSE", // nb_regression
-"" // sceptre
+"output_amount=2" // sceptre
 ]
