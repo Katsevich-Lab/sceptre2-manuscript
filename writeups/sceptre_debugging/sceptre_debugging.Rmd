@@ -1,5 +1,5 @@
 ---
-title: "Statistical debugging of `sceptre`"
+title: "Statistical debugging of `sceptre` part 1: goodness of the skew-normal fit"
 author: "Tim"
 date: "2022-09-03"
 output: html_document
@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # load packages
 devtools::load_all("~/research_code/sceptre2/")
 devtools::load_all("~/research_code/lowmoi/")
+library(mgcv)
 library(tidyverse)
 reverselog_trans <- function(base = exp(1)) {
     trans <- function(x) -log(x, base)
@@ -39,21 +40,11 @@ sceptre_debug <- sceptre_debug |>
   filter(dataset != "papalexi/eccite_screen/protein")
 ```
 
--   KS statistic as a good measure of fit quality.
+`sceptre` currently is not calibrated on low MOI single-cell CRISPR screen data. The objective of this analysis is to figure out why. I applied `sceptre` (within the context of the the undercover pipeline) to 500 randomly-selected genes from each dataset. I used `B = 100,000` permutations to enable precise comparisons between the "true" permutation p-value and the approximate permutation p-value based on the skew-normal fit. I analyzed the results and made three main discoveries: (i) the KS statistic is a good metric for skew-normal fit quality; (ii) a good skew-normal fit is required to produce an accurate p-value; and (iii) "effective sample size" --- in particular the number of control cells with a nonzero expression level --- is the primary driver of skew-normal fit quality.
 
--   The effect of poor fit quality on the p-value approximation.
+## The KS statistic is a good single-number summary of skew-normal quality of fit
 
--   The determinants of poor KS fit quality. Difference between low and high MOI.
-
--   Is poor skew-normal fit the primary (or at least a primary) cause of miscalibration? Examining qq-plots of p-values for the conditioned on different skew-normal fit quality.
-
--   Other issues - (1) the precomputation; is the precomputation "meaningful" for very small sample sizes? What might we do instead? (2) convergence of the skew-normal; are there issues? (3) is it possible that we are fitting too many covariates?
-
--   Conclusions and recommendations.
-
-## The KS statistic is a good single-number summary for skew-normal quality of fit
-
-First, I verified that the KS statistic is a good single-number summary of skew-normal fit quality. Based on visual inspection of many resampling distributions, I partitioned the KS statistics into four categories to simplify the analysis: good, adequate, subpar, and poor (see table below).
+First, I verified that the KS statistic is a good single-number summary of skew-normal fit quality. Based on visual inspection of many resampling distributions, I partitioned the KS statistics into four categories summarizing goodness of fit: good, adequate, subpar, and poor (see table below).
 
 | KS statistic range          | Categorization |
 |-----------------------------|----------------|
@@ -113,9 +104,7 @@ Finally, here are four in the **poor** category.
 plot(cowplot_lists$poor)
 ```
 
-The KS statistic appears to closely track fit quality. Also, as the fit gets worse, the skew-normal fit deviates more from the N(0,1) distribution.
-
-I computed the fraction of pairs falling into each category for each dataset. I created a mosaic plot to visualize these data. We see that "good" is the most common category, although there is a fair amount of variation across datasets.
+The KS statistic appears to closely track fit quality. Also, as the fit gets worse, the skew-normal fit deviates more from the N(0,1) distribution. I computed the fraction of pairs falling into each category for each dataset, presented below.
 
 ```{r, echo=FALSE}
 skew_normal_fit <- sceptre_debug |>
@@ -131,6 +120,8 @@ colnames(skew_normal_fit_m) <- rep("", ncol(skew_normal_fit_m))
 rownames(skew_normal_fit_m) <- rep("", nrow(skew_normal_fit_m))
 skew_normal_fit |> dplyr::mutate_at(.vars = c("good", "adequate", "subpar", "poor"), ~ round(., 3)) |> knitr::kable()
 ```
+
+I also created a mosaic plot to visualize these results. We see that "good" is the most common category, although there is a fair amount of variation across datasets.
 
 Color legend:
 
@@ -166,7 +157,9 @@ Datasets from left to right:
 mosaicplot(skew_normal_fit_m, color = TRUE, main = "Mosaic plot of KS statistic fits")
 ```
 
-## Relationship between goodness of fit and accuracy of the p-value approximation
+Despite the fact that "good" is the most common category, subpar and poor skew-normal fits appear to be more common than perhaps we had expected.
+
+## A good skew-normal fit is required for accurate p-value approximation
 
 I next investigated the relationship between goodness of the skew-normal fit (as quantified by the KS statistic) and accuracy of the skew-normal p-value. I calculated the discrepancy between the "true" empirical p-value $p_{emp}$ (carried out to $B = 100,000$ replicates) and the skew-normal p-value $p_{sn}$. I considered two measures of discrepancy: $p_{dif}$, the absolute value of the difference between the p-values (defined as $p_{dif} = |p_{emp} - p_{sn}|$), and $p_{rat}$, the ratio of the skew-normal p-value to the empirical p-value (defined as $p_{rat} = p_{sn}/p_{emp}$). The former measure is more meaningful for p-values in the bulk of the distribution, while the latter is more meaningful for p-values in the tail.
 
@@ -208,7 +201,7 @@ ggplot(data = sceptre_debug_sub |> filter(
   labs(col = "SN Fit")
 ```
 
-Finally, I plotted the empirical p-values against the skew-normal p-values, separating the "good" and "poor" pairs into different figures and faceting by dataset. I performed a negative log 10 transformation of the axes to focus on the tail of the distributions. The plot below shows the "good" pairs. We see fairly good agreement between the empirical and skew-normal p-values, with mild discordance for the Frangieh datasets.
+Finally, I directly plotted the empirical p-values against the skew-normal p-values, putting the "good" and "poor" pairs into different figures (while ignoring the "adequate" and "subpar" pairs for simplicity) and faceting by dataset. The plot below shows the "good" pairs. We see fairly strong agreement between the empirical and skew-normal p-values, with mild discordance for the Frangieh datasets. Scales are negative log 10 transformed to accentuate the tails of the distributions.
 
 ```{r, echo = FALSE}
 ggplot(data = sceptre_debug_sub |> filter(p_value > 1e-8, ks_fit == "good"),
@@ -222,7 +215,7 @@ ggplot(data = sceptre_debug_sub |> filter(p_value > 1e-8, ks_fit == "good"),
   scale_y_continuous(trans=reverselog_trans(10))
 ```
 
-The next plot shows the "poor" pairs. The disagreement between the empirical and skew-normal p-values is much more extreme.
+The next plot shows the empirical and skew-normal p-values of the "poor" pairs. The disagreement between these two sets of p-values is much more extreme here.
 
 ```{r, echo = FALSE}
 ggplot(data = sceptre_debug_sub |> filter(p_value > 1e-8, ks_fit == "poor"),
@@ -236,13 +229,15 @@ ggplot(data = sceptre_debug_sub |> filter(p_value > 1e-8, ks_fit == "poor"),
   scale_y_continuous(trans=reverselog_trans(10))
 ```
 
-Pairs above the blue line have a skew-normal p-value that is **larger** (i.e., less significant) than the empirical p-value. Pairs below the blue line, by contrast, have a skew-normal p-value that is **smaller** (i.e., more significant) than the empirical p-value. Pairs below the blue line therefore are more concerning than pairs above, and it is clear that pairs with a "poor" skew-normal fit are much more likely to fall far below the blue line than pairs with a "good fit." We can conclude that poor skew-normal fits are more likely to result in grossly inflated p-values than a good skew-normal fits.
+Pairs above the blue line have a skew-normal p-value that is **larger** (i.e., less significant) than the empirical p-value. Pairs below the blue line, by contrast, have a skew-normal p-value that is **smaller** (i.e., more significant) than the empirical p-value. Pairs below the blue line therefore are more concerning than pairs above, and it is clear that pairs with a "poor" skew-normal fit are much more likely to fall far below the blue line than pairs with a "good fit." We conclude that a poor skew-normal fit is more likely to result in a grossly inflated p-value than a good skew-normal fit.
 
-Overall, these analyses indicate (perhaps unsurprisingly) that the quality of the skew-normal fit matters very much: good skew-normal fits lead to reasonably good p-value approximations; conversely, poor skew-normal fits lead to poor approximations.
+Overall, these analyses indicate (perhaps unsurprisingly) that the quality of the skew-normal fit matters: good skew-normal fits lead to reasonably good p-value approximations, while poor skew-normal fits lead to poor approximations.
 
-## Determinants of poor skew-normal fit
+## Small effective sample size leads to poor skew-normal fit
 
-I next sought to determine the determinants of skew-normal fit quality.
+I next sought to understand why the skew-normal fit sometimes is poor. I hypothesized that there are three main determinants of goodness of the skew-normal fit: (i) the number of "treatment" cells (i.e., cells that receive a targeting gRNA) with non-zero gene expression, (ii) the number of "control" cells (i.e., cells that receive a non-targeting gRNA) with non-zero gene expression, and (iii) goodness of the negative binomial GLM fit to the data. The test statistic that `sceptre` uses is a score statistic derived from a distilled negative binomial GLM. When the "effective sample size" is large, and when the negative binomial GLM fits the data well, the permuted test statistics form a $N(0,1)$ distribution. (I am pretty certain that this can be proven, but I have not yet done so.) As we deviate from this ideal setting, the permuted test statistics deviate from the theoretical $N(0,1)$ distribution, causing the skew-normal fit to degrade.
+
+I therefore empirically tested the hypothesis that "effective sample size" (as quantified by the number of treatment cells, N treatment cells, and the number of control cells, N control cells) impacts quality of the skew-normal fit (as quantified by the KS statistic). First, I plotted the KS statistic against N treatment cells, log-transforming both *x* and *y* axes. The trend is clear: as N treatment cells increases, the KS statistic decreases (signifying better skew-normal fit to the empirical distribution of permuted statistics).
 
 ```{r, echo = FALSE}
 ggplot(data = sceptre_debug,
@@ -252,8 +247,12 @@ ggplot(data = sceptre_debug,
   scale_x_log10() +
   scale_y_log10() +
    facet_wrap(.~dataset) +
-  theme_bw()
+  theme_bw() +
+  xlab("N treatment cells + 1") +
+  ylab("KS statistic")
 ```
+
+I created a similar plot for N control cells (below), and the results were even more striking: the KS statistic and N control cells exhibited a consistent strong and negative (albeit nonlinear) association.
 
 ```{r, echo = FALSE}
 ggplot(data = sceptre_debug,
@@ -262,11 +261,25 @@ ggplot(data = sceptre_debug,
   geom_point(cex = 0.5, alpha = 0.5) +
   scale_x_log10() +
   scale_y_log10() +
-   facet_wrap(.~dataset) + theme_bw()
+   facet_wrap(.~dataset) +
+  theme_bw() +
+  xlab("N control cells + 1") +
+  ylab("KS statistic")
 ```
 
-```{r, cache=TRUE, echo = FALSE}
-library(mgcv)
+To quantify the extent to which N treatment cells and N control cells explain variation in the KS statistic, I fitted the following three GAMs to each dataset:
+
+$$
+\begin{cases}
+\textrm{log}(\textrm{KS statistic}) \sim s(\textrm{log}(\textrm{N treatment cells})) \\
+\textrm{log}(\textrm{KS statistic}) \sim s(\textrm{log}(\textrm{N control cells})) \\
+\textrm{log}(\textrm{KS statistic}) \sim s(\textrm{log}(\textrm{N control cells})) + s(\textrm{log}(\textrm{N control cells})),
+\end{cases}
+$$
+
+where $s$ denotes a spline. I assumed a Gaussian response and an identity link in all three cases. I extracted from the fitted models the percent of deviance (in the response) explained by the predictors. The results are below. We see that in general, N treatment cells and N control cells together explain a large fraction of the deviance in the response ($>85\%$ on all real datasets, except the Schraivogel enhancer screen 11 dataset). Individually, N control cells explains a larger fraction of the deviance than does N treatment cells. This analysis convincingly validates the hypothesis that "effective sample size" --- as measured by N treatment cells and N control cells --- controls quality of the skew-normal fit.
+
+```{r, cache=TRUE, echo=FALSE, message=FALSE}
 # Fitting GAMs to each; two questions: (i) fraction deviance explained?
 # (ii) what sample size do we need (for both treated and untreated) to have a "good" fit?
 gam_out <- sceptre_debug |>
@@ -275,14 +288,29 @@ gam_out <- sceptre_debug |>
          n_treatment_cells_with_expression,
          n_control_cells_with_expression) |>
  mutate(lg_ks_stat = log(ks_stat),
-           lg_n_treatment = log(n_treatment_cells_with_expression + 1),
-           lg_n_control = log(n_control_cells_with_expression + 1)) |>
+        lg_n_treatment = log(n_treatment_cells_with_expression + 1),
+        lg_n_control = log(n_control_cells_with_expression + 1)) |>
   group_by(dataset) |>
   group_map(.f = function(tbl, key) {
+    # fits
     fit_n_treatment <- gam(formula = lg_ks_stat ~ s(lg_n_treatment), data = tbl)
     fit_n_control <- gam(formula = lg_ks_stat ~ s(lg_n_control), data = tbl)
     fit_both <- gam(formula = lg_ks_stat ~ s(lg_n_treatment) + s(lg_n_control), data = tbl)
     
+    # predict
+    newdata <- data.frame(n_control = seq(1, 5000)) |>
+      dplyr::mutate(lg_n_control = log(n_control + 1))
+    pred_means <- predict(object = fit_n_control, newdata = newdata, se.fit = TRUE)        
+    pred_df <- newdata |> dplyr::mutate(
+      lg_ks = pred_means$fit,
+      upper_ci = exp(pred_means$fit + 1.96 * pred_means$se.fit),
+      lower_ci =  exp(pred_means$fit - 1.96 * pred_means$se.fit),
+      ks = exp(lg_ks))
+    
+    # minimal value N control cells value for "good" skew-normal fit
+    min_n_control <- pred_df$n_control[min(which(pred_df$ks < 0.01))]
+    
+    # deviance
     dev_explained_n_treatment <- summary(fit_n_treatment)$dev.expl
     dev_explained_n_control <- summary(fit_n_control)$dev.expl
     dev_explained_both <- summary(fit_both)$dev.expl
@@ -290,11 +318,13 @@ gam_out <- sceptre_debug |>
     list(dataset = as.character(key$dataset),
          dev_explained_n_treatment = dev_explained_n_treatment,
          dev_explained_n_control = dev_explained_n_control,
-         dev_explained_both = dev_explained_both)
+         dev_explained_both = dev_explained_both,
+         min_n_control = min_n_control,
+         pred_df = pred_df)
   })
 ```
 
-```{r}
+```{r, echo=FALSE}
 dev_explained <- data.frame(
   dataset = sapply(gam_out, function(elem) elem[["dataset"]]),
   dev_explained_n_treatment = sapply(gam_out, function(elem) elem[["dev_explained_n_treatment"]]),
@@ -303,5 +333,63 @@ dev_explained <- data.frame(
   mutate_at(c("dev_explained_n_treatment",
               "dev_explained_n_control",
               "dev_explained_both"), ~round(., 3))
+
 dev_explained |> knitr::kable()
 ```
+
+Given that N control cells appears to be more important than N treatment cells in determining quality of the skew-normal fit, I sought to determine the (rough) number of control cells with nonzero expression required to obtain a "good" skew-normal fit (defined as KS statistic \< 0.01). To this end, I evaluated the (second of the three) fitted GAMs on a grid of values for N treatment cells and identified the minimal value of N treatment cells that rendered the average KS statistic below 0.01. These dataset-specific thresholds are as follows:
+
+```{r, echo = FALSE}
+min_n_control <- sapply(gam_out, function(elem) elem$min_n_control)
+dataset_names <- sapply(gam_out, function(elem) elem$dataset)
+min_n_control_df <- data.frame(dataset = dataset_names, n_control_cells_threshold = min_n_control)
+min_n_control_df |> knitr::kable()
+```
+
+These thresholds number in the hundreds for the real datasets. Finally, I plotted the fitted mean (alongside pointwise 95% CIs) for each GAM. The horizontal red line indicates a KS statistic value of 0.01 (the boundary for a "good" fit), and the vertical black line indicates the value of N control cells for which a given dataset yields an (average) KS statistic of 0.01.
+
+```{r, echo = FALSE}
+to_plot <- lapply(gam_out, function(elem) {
+  elem$pred_df |> 
+    mutate(dataset = elem$dataset)
+}) |> bind_rows()
+ggplot(data = to_plot, mapping = aes(x = n_control + 1,
+                                     y = ks,
+                                     ymin = lower_ci,
+                                     ymax = upper_ci)) +
+  geom_ribbon(fill = "grey") +
+  geom_line(col = "darkblue", lwd = 0.8) +
+  geom_vline(mapping = aes(xintercept = n_control_cells_threshold),
+             data = min_n_control_df) +
+  facet_wrap(.~dataset) +
+  theme_bw() +
+  scale_x_log10() +
+  scale_y_log10() +
+  ylab("KS statistic") +
+  xlab("N control cells + 1") +
+  geom_hline(yintercept = 0.01, col = "darkred")
+```
+
+## Closing thoughts
+
+In this writeup I demonstrated three main claims: (i) the KS statistic is a good metric for skew-normal fit quality; (ii) a good skew-normal fit is required for an accurate p-value; and (iii) "effective sample size" --- in particular the number of control cells with a nonzero expression level --- is the primary driver of skew-normal fit quality. Skew-normal fit becomes good when (conservatively) this value crosses about 500. I conclude with a few closing thoughts.
+
+-   **Three core challenges of single-cell CRISPR screen analysis**. Our various analyses (including this one) have illuminated three core challenges to single-cell CRISPR screen analysis, shared across low and high MOI:
+
+    -   Correctly specifying gene expression models.
+
+    -   Accounting for technical covariates, both to control type-I error control and boost power.
+
+    -   Sparsity/discreteness of the data.
+
+    This writeup largely focused the third challenge. Sparsity renders the "effective sample size" small, leading to poor skew-normal fits and inaccurate (and potentially hugely inflated) p-values.
+
+-   **Low vs. high MOI**. We have observed that sparsity is a greater challenge in low MOI than in high MOI, and now we know why: the number of *control* cells with a nonzero expression level drives effective sample size, and this quantity is much smaller in low MOI than it is in high MOI. This is because the control group in low MOI is the set of cells that received a non-targeting gRNA, whereas the control group in high MOI is the complement of the set of cells that received a targeting gRNA.
+
+-   **A more sophisticated model for goodness of skew-normal fit**. In the above analysis I derived dataset-specific thresholds for producing a "good" skew-normal fit by fitting GAMs with a single predictor: N control cells. We might consider obtaining better thresholds by leveraging more sophisticated, multivariate models, based either on GAMs or other methods (e.g., ML algorithms).
+
+-   **Leftover variability in the KS statistics**. I hypothesize that most of the "leftover" deviance in the KS statistics (i.e., the deviance not explained by the models) is due to variability in the quality of the negative binomial GLM fit. I intend on exploring this hypothesis in an updated version of this writeup.
+
+-   **The effect of QC**. We applied fairly lax QC to the datasets that we analyzed (so as to put the competing methods into a "hard" problem setting). Presumably, as one applies more stringent QC, the problem of sparsity/discreteness diminishes.
+
+-   **Connections to calibration**. Our ultimate goal of course is to propose a well-calibrated method. In my next writeup ("Part 2") I will ask and attempt to answer the following questions: Are the empirical p-values calibrated? Are skew-normal p-values that are computed from pairs with large effective sample size calibrated? Is the Fisher exact test calibrated? Can we synthesize these ideas to propose a unified, well-calibrated method in all problem settings?
