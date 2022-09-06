@@ -121,7 +121,7 @@ rownames(skew_normal_fit_m) <- rep("", nrow(skew_normal_fit_m))
 skew_normal_fit |> dplyr::mutate_at(.vars = c("good", "adequate", "subpar", "poor"), ~ round(., 3)) |> knitr::kable()
 ```
 
-I also created a mosaic plot to visualize these results. We see that "good" is the most common category, although there is a fair amount of variation across datasets.
+I also created a mosaic plot to visualize these proportions. We see that "good" is the most common category, although there is a fair amount of variation across datasets.
 
 Color legend:
 
@@ -201,7 +201,7 @@ ggplot(data = sceptre_debug_sub |> filter(
   labs(col = "SN Fit")
 ```
 
-Finally, I directly plotted the empirical p-values against the skew-normal p-values, putting the "good" and "poor" pairs into different figures (while ignoring the "adequate" and "subpar" pairs for simplicity) and faceting by dataset. The plot below shows the "good" pairs. We see fairly strong agreement between the empirical and skew-normal p-values, with mild discordance for the Frangieh datasets. Scales are negative log 10 transformed to accentuate the tails of the distributions.
+Finally, I directly plotted the empirical p-values against the skew-normal p-values, placing the "good" and "poor" pairs into different figures (while ignoring the "adequate" and "subpar" pairs for simplicity) and faceting by dataset. The plot below shows the "good" pairs. We see fairly strong agreement between the empirical and skew-normal p-values, with mild discordance for the Frangieh datasets. Scales are negative log 10 transformed to accentuate the tails of the distributions.
 
 ```{r, echo = FALSE}
 ggplot(data = sceptre_debug_sub |> filter(p_value > 1e-8, ks_fit == "good"),
@@ -215,7 +215,7 @@ ggplot(data = sceptre_debug_sub |> filter(p_value > 1e-8, ks_fit == "good"),
   scale_y_continuous(trans=reverselog_trans(10))
 ```
 
-The next plot shows the empirical and skew-normal p-values of the "poor" pairs. The disagreement between these two sets of p-values is much more extreme here.
+The next figure plots the empirical p-values against the skew-normal p-values for the "poor" pairs. The disagreement between these two sets of p-values is much more extreme.
 
 ```{r, echo = FALSE}
 ggplot(data = sceptre_debug_sub |> filter(p_value > 1e-8, ks_fit == "poor"),
@@ -392,4 +392,4 @@ In this writeup I demonstrated three main claims: (i) the KS statistic is a good
 
 -   **The effect of QC**. We applied fairly lax QC to the datasets that we analyzed (so as to put the competing methods into a "hard" problem setting). Presumably, as one applies more stringent QC, the problem of sparsity/discreteness diminishes.
 
--   **Connections to calibration**. Our ultimate goal of course is to propose a well-calibrated method. In my next writeup ("Part 2") I will ask and attempt to answer the following questions: Are the empirical p-values calibrated? Are skew-normal p-values that are computed from pairs with large effective sample size calibrated? Is the Fisher exact test calibrated? Can we synthesize these ideas to propose a unified, well-calibrated method in all problem settings?
+-   **Connections to calibration**. Our ultimate goal of course is to propose a well-calibrated method. In my next writeup ("Part 2") I will ask and attempt to answer the following questions: Are the empirical p-values calibrated? Are skew-normal p-values that are computed from pairs with large effective sample size calibrated? Is the Fisher exact test calibrated? Can we synthesize these ideas to propose a unified method that is well-calibrated method in all problem settings?
