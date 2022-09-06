@@ -372,13 +372,13 @@ ggplot(data = to_plot, mapping = aes(x = n_control + 1,
 
 ## Closing thoughts
 
-In this writeup I demonstrated three main claims: (i) the KS statistic is a good metric for skew-normal fit quality; (ii) a good skew-normal fit is required for an accurate p-value; and (iii) "effective sample size" --- in particular the number of control cells with a nonzero expression level --- is the primary driver of skew-normal fit quality. Skew-normal fit becomes good when (conservatively) this value crosses about 500. I conclude with a few closing thoughts.
+In this writeup I demonstrated three main claims: (i) the KS statistic is a good metric for skew-normal fit quality; (ii) a good skew-normal fit is required to produce an accurate p-value; and (iii) "effective sample size" --- in particular the number of control cells with a nonzero expression level --- is the primary driver of skew-normal fit quality. Skew-normal fit becomes good when this value crosses about 500 (conservatively). I conclude with a few closing thoughts.
 
--   **Three core challenges of single-cell CRISPR screen analysis**. Our various analyses (including this one) have illuminated three core challenges to single-cell CRISPR screen analysis, shared across low and high MOI:
+-   **Three core challenges of single-cell CRISPR screen analysis**. Our various analyses (including this one) have illuminated three core challenges of single-cell CRISPR screen analysis, which are shared across low and high MOI:
 
     -   Correctly specifying gene expression models.
 
-    -   Accounting for technical covariates, both to control type-I error control and boost power.
+    -   Accounting for technical covariates, both to control type-I error control and to boost power.
 
     -   Sparsity/discreteness of the data.
 
