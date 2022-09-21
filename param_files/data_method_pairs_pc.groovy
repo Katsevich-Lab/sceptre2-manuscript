@@ -1,5 +1,4 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-
 data_method_pairs_indiv = ["frangieh/co_culture/gene": ["schraivogel_method", "mimosca"],
                            "frangieh/control/gene": ["schraivogel_method", "mimosca"],
                            "papalexi/eccite_screen/gene": ["schraivogel_method", "mimosca"],

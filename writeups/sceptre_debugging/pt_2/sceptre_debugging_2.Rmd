@@ -1,0 +1,113 @@
+---
+title: 'Statistical debugging of `sceptre` part 2: calibration'
+author: "Tim"
+date: "2022-09-06"
+output: html_document
+---
+
+```{r, message = FALSE}
+# load packages
+library(tidyverse)
+library(katlabutils)
+
+# load results
+fisher_exact_res <- readRDS("/Users/timbarry/research_offsite/projects/sceptre2/results/undercover_grna_analysis/fisher_exact_1.rds")
+sceptre_debug_res <- readRDS("/Users/timbarry/research_offsite/projects/sceptre2/results/undercover_grna_analysis/sceptre_debug.rds")
+```
+
+In this writeup I investigate why `sceptre` is miscalibrated.
+
+## Fisher's exact test
+
+```{r, cache=TRUE, echo=FALSE}
+p <- ggplot(data = fisher_exact_res,
+             mapping = aes(y = p_value)) +
+   stat_qq_points(ymin = 1e-10, size = 0.8) +
+   facet_wrap(~dataset, scales = "free") +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(base = 10)) +
+   scale_y_continuous(trans = revlog_trans(base = 10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+p
+```
+
+Investigating the conservative p-values of 1.
+
+```{r, eval=FALSE}
+fisher_exact_1s <- fisher_exact_res |>
+  filter(p_value == 1) |>
+  select(-method, -p_value)
+
+
+# join with sceptre debug results to obtain rowwise contingency tables
+sceptre_debug_select <- sceptre_debug_res |>
+  select(response_id, undercover_grna, dataset,
+         n_treatment_cells_with_expression,
+         n_treatment_cells_without_expression,
+         n_control_cells_with_expression,
+         n_control_cells_without_expression)
+
+fisher_exact_1s_aug <- left_join(x = fisher_exact_1s,
+                                 y = sceptre_debug_select,
+                                 by = c("response_id", "undercover_grna", "dataset")) |>
+  na.omit()
+
+fisher_exact_1s_aug |>
+  group_by(dataset) |>
+  summarize(m_n_treatment = 100 * mean(n_treatment_cells_with_expression == 0))
+
+
+# examine 25 randomly-selected pairs, performing a Fisher exact test (here) on all of them, confirming that we get a 1
+x <- fisher_exact_1s_aug |>
+  filter(dataset == "schraivogel/enhancer_screen_chr11/gene") |>
+  select(n_treatment_cells_with_expression,
+         n_treatment_cells_without_expression,
+         n_control_cells_with_expression,
+         n_control_cells_without_expression)
+
+fisher_redo_df <- apply(x, 1, function(r) {
+  m <- matrix(c(r[["n_treatment_cells_with_expression"]],
+              r[["n_treatment_cells_without_expression"]],
+              r[["n_control_cells_with_expression"]],
+              r[["n_control_cells_without_expression"]]), nrow = 2)
+  rownames(m) <- c("treatment", "control")
+  colnames(m) <- c("no_expression", "expression")
+  fit_fet <- fisher.test(m)
+  fit_chs <- chisq.test(m)
+  c(estimate = fit$estimate, p_value = fit$p.value)
+}) |> t()
+```
+
+What is going on with perturb-seq inflation?
+
+```{r}
+outlier_ntcs <- fisher_exact_res |>
+  filter(dataset == "schraivogel/ground_truth_perturbseq/gene") |>
+  filter(p_value <= 1e-4) |>
+  pull(undercover_grna) |>
+  as.character() |>
+  table() |>
+  sort(decreasing = TRUE) |>
+  head(5) |>
+  names()
+
+ggplot(data = fisher_exact_res,
+       mapping = aes(y = p_value)) +
+   stat_qq_points(ymin = 1e-10, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+    scale_x_continuous(trans = revlog_trans(base = 10)) +
+    scale_y_continuous(trans = revlog_trans(base = 10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
