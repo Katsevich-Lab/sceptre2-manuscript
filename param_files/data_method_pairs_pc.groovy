@@ -73,7 +73,7 @@ row_names = ["frangieh/co_culture/gene",
                              ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q", "short.q"], // schraivogel/ground_truth_tapseq/gene
                              ["short.q", "short.q", "short.q", "all.q",   "short.q",   "all.q",   "short.q", "all.q"] // simulated/experiment_1/gene
                              ]
-                            // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, nb_regression, fisher_exact, sceptre
+ // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, nb_regression, fisher_exact, sceptre
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1;arg2=value2;arg3=value3")
 optional_args = [
