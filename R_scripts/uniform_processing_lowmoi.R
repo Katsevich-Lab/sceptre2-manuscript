@@ -136,8 +136,9 @@ for (paper in papers) {
 
     # v. create a multimodal ondisc matrix free of redundancy and write
     mm_odm_sub_proc <- lowmoi::process_multimodal_odm(mm_odm_sub)
-    save_multimodal_odm(multimodal_odm = mm_odm_sub_proc, multimodal_metadata_fp = multimodal_metadata_fp)
-
+    save_multimodal_odm(multimodal_odm = mm_odm_sub_proc,
+                        multimodal_metadata_fp = multimodal_metadata_fp)
+    
     # vi. write the positive control pairs
     if (paper %in% c("frangieh", "papalexi", "schraivogel")) {
       grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
