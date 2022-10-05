@@ -141,12 +141,22 @@ for (paper in papers) {
     
     # vi. write the positive control pairs
     if (paper %in% c("frangieh", "papalexi", "schraivogel")) {
+      # grouped pairs
       grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
       gene_modality <- mm_odm_sub_proc |> get_modality("gene")
-      targets <- intersect(grna_assignment_modality |> ondisc::get_feature_covariates() |> dplyr::pull(target),
+      
+      grna_feature_df <- grna_assignment_modality |> ondisc::get_feature_covariates()
+      targets <- intersect(grna_feature_df |> dplyr::pull(target),
                            gene_modality |> ondisc::get_feature_ids())
       pc_pairs <- data.frame(grna_group = targets, response_id = targets)
-      saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/pos_control_pairs.rds"))
+      saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/pos_control_pairs_grouped.rds"))
+      
+      # ungrouped pairs
+      ungroup_map <- data.frame(grna_id = row.names(grna_feature_df),
+                                grna_group = grna_feature_df$target)
+      ungroup_pc_pairs <- dplyr::left_join(ungroup_map, pc_pairs, by = "grna_group") |>
+        na.omit() |> dplyr::select(grna_id, response_id)
+      saveRDS(ungroup_pc_pairs, file = paste0(paper_dir, dataset, "/pos_control_pairs_single.rds"))
     }
   }
 }
