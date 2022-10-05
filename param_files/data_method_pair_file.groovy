@@ -1,4 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
+/*
 data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression", "fisher_exact", "sceptre"],
                      "frangieh/control/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression", "fisher_exact", "sceptre"],
                      "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression", "fisher_exact", "sceptre"],
@@ -12,6 +13,9 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression", "fisher_exact", "sceptre"],
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "nb_regression", "fisher_exact", "sceptre"]
                      ]
+*/
+
+data_method_pairs = ["schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "fisher_exact", "sceptre"]]
 
 // FIRST, define the row and column names of the below matrices and vectors
 row_names = ["frangieh/co_culture/gene",

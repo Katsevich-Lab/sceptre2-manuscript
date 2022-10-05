@@ -5,30 +5,82 @@ date: "2022-09-06"
 output: html_document
 ---
 
-```{r, message = FALSE}
+```{r, message = FALSE, echo = FALSE}
 # load packages
 library(tidyverse)
 library(katlabutils)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+# load the auxilliary functions
+funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
+source(funct_script)
 
 # load results
-fisher_exact_res <- readRDS("/Users/timbarry/research_offsite/projects/sceptre2/results/undercover_grna_analysis/fisher_exact_1.rds")
-sceptre_debug_res <- readRDS("/Users/timbarry/research_offsite/projects/sceptre2/results/undercover_grna_analysis/sceptre_debug.rds")
+# 1. Fisher exact test negative control results
+# 2. Fisher exact test positive control results
+# 3. effective sample size data frame (number of cells with nonzero expression per gRNA)
+# 4. undercover result for group size = 1
+
+# 1. 
+fisher_exact_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/fisher_exact_1.rds"))
+# 2.
+pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results.rds"))
+# 3.
+sample_size_df <- readRDS(paste0(result_dir, "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
+  dplyr::mutate(dataset = dataset_concat,
+                dataset_concat = NULL, paper = NULL, modality = NULL) |>
+  dplyr::rename(grna_group = target, response_id = feature_id)
+# 4.
+undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  dplyr::select(-clock_time, -max_ram) |>
+  dplyr::filter(method %in% c("seurat_de", "liscovitch_method", "schraivogel_method", "weissman_method", "mimosca"))
+# 5.
+undercover_res_sceptre <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1_sceptre.rds")) |>
+  dplyr::select(-clock_time, -max_ram)
+undercover_res <- rbind(undercover_res, undercover_res_sceptre)
 ```
 
-In this writeup I investigate why `sceptre` is miscalibrated.
+```{r, message = FALSE, echo = FALSE}
+# Combine the results of the Schraivogel datasets
+replace_slash_w_underscore <- function(df) {
+  df |> dplyr::mutate(dataset = gsub(pattern = "/",
+                                replacement = "_",
+                                fixed = TRUE,
+                                x = dataset))
+}
 
-## Fisher's exact test
+sample_size_df <-
+  sample_size_df |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens()
 
-```{r, cache=TRUE, echo=FALSE}
+pc_res <- pc_res |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens() |>
+  update_dataset_names()
+
+undercover_res <- undercover_res |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens() |>
+  update_dataset_names()
+```
+
+## Calibration of Fisher's exact test
+
+I applied Fisher's exact test to analyze the negative control data within the context of the undercover pipeline. First, I plot the p-values on a transfored scale.
+
+```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center"}
+fisher_exact_res <- update_dataset_names(undercover_res = fisher_exact_res, TRUE)
+
 p <- ggplot(data = fisher_exact_res,
              mapping = aes(y = p_value)) +
    stat_qq_points(ymin = 1e-10, size = 0.8) +
-   facet_wrap(~dataset, scales = "free") +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
    geom_abline(col = "darkred") +
    stat_qq_band() +
    theme_bw() +
-   scale_x_continuous(trans = revlog_trans(base = 10)) +
-   scale_y_continuous(trans = revlog_trans(base = 10)) +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
    labs(x = "Expected quantile", y = "Observed quantile") +
    theme(legend.position = "bottom",
          panel.grid.major = element_blank(),
@@ -37,77 +89,160 @@ p <- ggplot(data = fisher_exact_res,
 p
 ```
 
-Investigating the conservative p-values of 1.
+Overall, the results look quite good. Fisher's test exhibits good calibration far into the tail on all datasets except two: the Papalexi protein data and the Schraivogel perturb-seq data. Next, I plot the results on the untransformed scale.
 
-```{r, eval=FALSE}
-fisher_exact_1s <- fisher_exact_res |>
-  filter(p_value == 1) |>
-  select(-method, -p_value)
-
-
-# join with sceptre debug results to obtain rowwise contingency tables
-sceptre_debug_select <- sceptre_debug_res |>
-  select(response_id, undercover_grna, dataset,
-         n_treatment_cells_with_expression,
-         n_treatment_cells_without_expression,
-         n_control_cells_with_expression,
-         n_control_cells_without_expression)
-
-fisher_exact_1s_aug <- left_join(x = fisher_exact_1s,
-                                 y = sceptre_debug_select,
-                                 by = c("response_id", "undercover_grna", "dataset")) |>
-  na.omit()
-
-fisher_exact_1s_aug |>
-  group_by(dataset) |>
-  summarize(m_n_treatment = 100 * mean(n_treatment_cells_with_expression == 0))
-
-
-# examine 25 randomly-selected pairs, performing a Fisher exact test (here) on all of them, confirming that we get a 1
-x <- fisher_exact_1s_aug |>
-  filter(dataset == "schraivogel/enhancer_screen_chr11/gene") |>
-  select(n_treatment_cells_with_expression,
-         n_treatment_cells_without_expression,
-         n_control_cells_with_expression,
-         n_control_cells_without_expression)
-
-fisher_redo_df <- apply(x, 1, function(r) {
-  m <- matrix(c(r[["n_treatment_cells_with_expression"]],
-              r[["n_treatment_cells_without_expression"]],
-              r[["n_control_cells_with_expression"]],
-              r[["n_control_cells_without_expression"]]), nrow = 2)
-  rownames(m) <- c("treatment", "control")
-  colnames(m) <- c("no_expression", "expression")
-  fit_fet <- fisher.test(m)
-  fit_chs <- chisq.test(m)
-  c(estimate = fit$estimate, p_value = fit$p.value)
-}) |> t()
-```
-
-What is going on with perturb-seq inflation?
-
-```{r}
-outlier_ntcs <- fisher_exact_res |>
-  filter(dataset == "schraivogel/ground_truth_perturbseq/gene") |>
-  filter(p_value <= 1e-4) |>
-  pull(undercover_grna) |>
-  as.character() |>
-  table() |>
-  sort(decreasing = TRUE) |>
-  head(5) |>
-  names()
-
-ggplot(data = fisher_exact_res,
-       mapping = aes(y = p_value)) +
+```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center"}
+p <- ggplot(data = fisher_exact_res,
+             mapping = aes(y = p_value)) +
    stat_qq_points(ymin = 1e-10, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
    geom_abline(col = "darkred") +
    stat_qq_band() +
    theme_bw() +
-    scale_x_continuous(trans = revlog_trans(base = 10)) +
-    scale_y_continuous(trans = revlog_trans(base = 10)) +
+   scale_x_reverse() +
+   scale_y_reverse() +
    labs(x = "Expected quantile", y = "Observed quantile") +
    theme(legend.position = "bottom",
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank())
+p
+```
+
+We see some conservative p-values in the bulk of the distribution.
+
+# Positive control results
+
+```{r, echo=FALSE,  fig.height = 7, fig.width = 8, warning=FALSE, message=FALSE}
+n_bonf_reject <- compute_n_bonf_rejected(pc_res)
+p <- make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject,
+                                y_max = NULL,
+                                scales = "free",
+                                log_trans = FALSE)
+p
+```
+
+The Fisher exact test lags somewhat behind the other methods on the metric of power; however, the Fisher exact test *does* seem capable of making discoveries on positive control data.
+
+Now, we explore the connection between (effective) sample size and power (as quantified by the number of Bonferoni rejections on the positive control pairs).
+
+```{r, echo = FALSE, message=FALSE}
+# compute the real and effective sample size for each positive control pair
+pc_res_pairs <- pc_res |>
+  dplyr::select(grna_group, response_id, dataset) |>
+  dplyr::distinct()
+
+pc_res_pairs_plus_nt <- rbind(pc_res_pairs,
+                              data.frame(grna_group = "non-targeting",
+                                         response_id = pc_res_pairs$response_id,
+                                         dataset = pc_res_pairs$dataset))
+sample_size_df_sub <- dplyr::left_join(pc_res_pairs_plus_nt, sample_size_df,
+                                       by = c("response_id", "grna_group", "dataset"))
+samp_sizes <- apply(X = pc_res_pairs, MARGIN = 1, FUN = function(r) {
+  grna_group <- as.character(r[["grna_group"]])
+  response_id <- as.character(r[["response_id"]])
+  dataset <- as.character(r[["dataset"]])
+  # print(paste(grna_group, response_id, dataset))
+  treatment_cell_sizes <- sample_size_df_sub |>
+      dplyr::filter(response_id == !!response_id,
+                    grna_group == !!grna_group,
+                    dataset == !!dataset) |>
+      summarize(s_n_nonzero = sum(n_nonzero_cells),
+                s_n_cells = sum(n_cells))
+  
+  control_cell_sizes <- sample_size_df_sub |>
+      dplyr::filter(response_id == !!response_id,
+                    grna_group == "non-targeting",
+                    dataset == !!dataset) |>
+      summarize(s_n_nonzero = sum(n_nonzero_cells),
+                s_n_cells = sum(n_cells))
+  
+    c(trt_n_nonzero = treatment_cell_sizes$s_n_nonzero,
+               trt_n_cells = treatment_cell_sizes$s_n_cells,
+               cntrl_n_nonzero = control_cell_sizes$s_n_nonzero,
+               cntrl_n_cells = control_cell_sizes$s_n_cells)
+}) |> t()
+alpha <- 0.05
+samp_sizes_2 <- cbind(pc_res_pairs, as.data.frame(samp_sizes)) |>
+  dplyr::mutate(effective_sample_size = trt_n_nonzero + cntrl_n_nonzero)
+pc_res_with_samp_sizes <- dplyr::left_join(pc_res, samp_sizes_2,
+                                           by = c("grna_group", "response_id", "dataset")) |>
+  dplyr::group_by(dataset, method) |>
+  dplyr::mutate(reject = (p_value <= alpha/dplyr::n())) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(lt = (p_value < 0.001))
+```
+
+Plot p-value vs. sample size.
+
+```{r, echo = FALSE, message=FALSE, fig.height = 7, fig.width = 8}
+# smallest effective sample size such that we reject
+fisher_pc_res <- pc_res_with_samp_sizes |>
+  dplyr::filter(method == "fisher_exact",
+                dataset != "schraivogel_ground_truth_perturbseq_gene") |>
+  dplyr::group_by(dataset) |>
+  mutate(min_effective_sample_size = min(effective_sample_size[lt], na.rm = TRUE))
+
+p <- ggplot(data = fisher_pc_res |> dplyr::filter(),
+       mapping = aes(y = p_value, x = effective_sample_size, col = lt)) +
+  geom_point(size = 0.8) +
+  facet_wrap(dataset_rename_w_pairs ~ .,
+             scales = "free_x",
+             labeller = label_wrap_gen(35)) + theme_bw() +
+  scale_color_manual(values = c("darkred", "darkblue")) +
+  guides(color=guide_legend(title="p < 5e-4")) +
+  geom_vline(mapping = aes(xintercept = min_effective_sample_size)) +
+  xlab("Effective sample size (N cells with nonzero expression)")
+p
+```
+
+```{r, echo = FALSE, message=FALSE}
+fisher_pc_res |>
+  select(dataset, min_effective_sample_size) |>
+  distinct() |>
+  rename("Min effective sample size to reject" = "min_effective_sample_size",
+         "Dataset" = "dataset") |>
+  knitr::kable()
+```
+
+What happens when we remove the \~30% of pairs with effective sample sizes that are too small? Does calibration become OK?
+
+# Calibration after removal of pairs with small effective sample sizes
+
+Effective sample size is simple to compute for the negative control analysis: for a given feature, simply count the number of negative control cells with nonzero expression.
+
+```{r}
+ntc_effective_samp_size <- sample_size_df |>
+  filter(grna_group == "non-targeting") |>
+  group_by(response_id, dataset) |>
+  summarize(effective_samp_size = sum(n_nonzero_cells))
+```
+
+Many of the pairs in our dataset have an effective sample size of below 250.
+
+```{r}
+effective_samp_size_thresh <- 250
+p <- ggplot(data = ntc_effective_samp_size,
+       mapping = aes(x = effective_samp_size)) +
+  geom_histogram() + facet_wrap(dataset~., scales ="free") +
+  theme_bw() +
+  xlab("Effective sample size") +
+  ylab("Count") +
+  scale_x_log10() + geom_vline(xintercept = effective_samp_size_thresh, col = "darkred")
+```
+
+First, here are the results on all pairs.
+
+```{r, fig.height = 7, fig.width = 8}
+undercover_res_w_samp_size <- dplyr::left_join(undercover_res,
+                                               ntc_effective_samp_size, by = c("response_id", "dataset"))
+make_trans_qq_plot(undercover_res_w_samp_size)
+```
+
+Next, here are the results on the pairs that pass the more stringent QC threshold.
+
+```{r, fig.height = 7, fig.width = 8}
+undercover_res_w_samp_size |>
+  filter(effective_samp_size >= 250) |>
+  make_trans_qq_plot()
 ```
