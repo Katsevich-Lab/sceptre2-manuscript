@@ -38,6 +38,8 @@ undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercove
 undercover_res_sceptre <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1_sceptre.rds")) |>
   dplyr::select(-clock_time, -max_ram)
 undercover_res <- rbind(undercover_res, undercover_res_sceptre)
+# 6.
+undercover_res_grp_size_half <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_half_schraivogel_perturb_seq.rds"))
 ```
 
 ```{r, message = FALSE, echo = FALSE}
@@ -67,6 +69,10 @@ pc_res <- pc_res |>
 undercover_res <- undercover_res |>
   replace_slash_w_underscore() |>
   combine_schraivogel_enhancer_screens() |>
+  update_dataset_names()
+
+undercover_res_grp_size_half <- undercover_res_grp_size_half |>
+  replace_slash_w_underscore() |>
   update_dataset_names()
 ```
 
@@ -151,7 +157,7 @@ perturb_seq_to_plot <- rbind(undercover_res,
                              fisher_exact_res_plot) |>
                                filter(dataset == "schraivogel_ground_truth_perturbseq_gene")
 
-p <- ggplot(data = perturb_seq_to_plot,
+p1 <- ggplot(data = perturb_seq_to_plot,
              mapping = aes(y = p_value, col = Method)) +
    stat_qq_points(ymin = 1e-10, size = 0.8) +
    facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
@@ -165,9 +171,31 @@ p <- ggplot(data = perturb_seq_to_plot,
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank())
-p
+p1
 ```
 
 One possible explanation for the miscalibration that we observe is confounding. Gene carried out an analysis to assess the extent to which the perturbation indicators are confounded by the technical factors across datasets. Gene did not find any evidence of confounding on the Schraivogel perturb-seq data. Thus, confounding likely is not the culprit for the problems that we see here (unless, of course, there is unmeasured confounding, which is challenging to assess).
 
-I hypothesized that variability among the NTCs might be responsible for the miscalibration that we observe. If some NTCs actually have an effect (i.e., if some NTCs are not true NTCs), and if others have no effect, then the undercover *p*-values would contain some amount of signal. To investigate this hypothesis, I carried out an undercover analysis in which I randomly partitioned the NTCs into two equally sized groups of "control" and "undercover" gRNAs. This procedure should help to "average out" and thus mitigate the effect of any non-true NTC(s).
+I hypothesized that variability among the NTCs might be responsible for the miscalibration that we observe. If some NTCs actually have an effect (i.e., if some NTCs are not true NTCs), and if others have no effect, then the undercover *p*-values contain some amount of signal. To investigate this hypothesis, I carried out an undercover analysis in which I randomly partitioned the NTCs into two equally sized groups of "control" and "undercover" gRNAs, "averaging out" and thus mitigating the effect of any non-true NTC(s). (In other words, I ran the undercover gRNA pipeline, setting the group size equal to half the total number of NTCs.)
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE}
+p1 <- ggplot(data = undercover_res_grp_size_half,
+             mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-10, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+p1
+```
+
+The calibration of the *p-*values improves considerably. However, the methods still are miscalibrated. I suspect that variability among the NTCs is at least partially responsible, but the full story still is not clear.
+
+# Question 4: what is a meaningful QC threshold to use?

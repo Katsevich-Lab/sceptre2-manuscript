@@ -1,4 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
+/*
 data_method_pairs_indiv = ["frangieh/co_culture/gene": ["schraivogel_method", "mimosca"],
                            "frangieh/control/gene": ["schraivogel_method", "mimosca"],
                            "frangieh/ifn_gamma/gene": ["schraivogel_method", "mimosca"],
@@ -8,7 +9,9 @@ data_method_pairs_indiv = ["frangieh/co_culture/gene": ["schraivogel_method", "m
                            "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "mimosca"],
                            "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "mimosca"]
                           ]
+*/
 
+data_method_pairs_indiv = []
 data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method", "weissman_method", "fisher_exact", "sceptre"],
                              "frangieh/control/gene": ["seurat_de", "liscovitch_method", "weissman_method", "fisher_exact", "sceptre"],
                              "frangieh/ifn_gamma/gene": ["seurat_de", "liscovitch_method", "weissman_method", "fisher_exact", "sceptre"],
