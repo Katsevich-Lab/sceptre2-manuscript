@@ -12,11 +12,12 @@ pipeline_launch_scripts/high_moi/launch_gasperini_analysis.sh.o*
 pipeline_launch_scripts/high_moi/launch_gasperini_analysis.sh.e*
 
 pipeline_launch_scripts/positive_control/.nextflow*
-
 pipeline_launch_scripts/undercover/.nextflow*
 pipeline_launch_scripts/undercover/run_undercover_grna_pipeline.sh.o*
 pipeline_launch_scripts/undercover/grp_1/.nextflow*
 pipeline_launch_scripts/undercover/grp_2/.nextflow*
 pipeline_launch_scripts/undercover/grp_3/.nextflow*
-
 pipeline_launch_scripts/debug/.nextflow*
+
+writeups/sceptre_debugging/pt_2/sceptre_debugging_2_cache
+writeups/sceptre_debugging/pt_2/sceptre_debugging_2_files
