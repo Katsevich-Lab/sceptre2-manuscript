@@ -1,5 +1,5 @@
 ---
-title: 'Statistical debugging of `sceptre` part 2: calibration'
+title: 'Statistical debugging of `sceptre` part 2'
 author: "Tim"
 date: "2022-09-06"
 output: html_document
@@ -49,6 +49,11 @@ replace_slash_w_underscore <- function(df) {
                                 x = dataset))
 }
 
+fisher_exact_res_plot <- fisher_exact_res |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens() |>
+  update_dataset_names(TRUE)
+
 sample_size_df <-
   sample_size_df |>
   replace_slash_w_underscore() |>
@@ -65,14 +70,21 @@ undercover_res <- undercover_res |>
   update_dataset_names()
 ```
 
-## Calibration of Fisher's exact test
+We seek to answer four outstanding questions in this writeup:
 
-I applied Fisher's exact test to analyze the negative control data within the context of the undercover pipeline. First, I plot the p-values on a transfored scale.
+1.  Is the Fisher exact test calibrated on the negative control data? If so, can we draw conclusions about why the other methods might be miscalibrated?
+2.  Why does the Fisher exact test yield a large fraction of p-values equal to exactly 1?
+3.  Why are the methods poorly calibrated on the Schraivogel perturb-seq data?
+4.  What QC threshold should we be using? If we adopt a more stringent QC threshold, do the methods remain miscalibrated?
 
-```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center"}
+# Question 1: Is the Fisher exact test calibrated on the negative control data?
+
+I applied Fisher's exact test to the negative control data within the framework of the undercover pipeline (using group size = 1). Below, I plot the resulting *p*-values on a negative log 10 transformed scale.
+
+```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center", cache=TRUE}
 fisher_exact_res <- update_dataset_names(undercover_res = fisher_exact_res, TRUE)
 
-p <- ggplot(data = fisher_exact_res,
+p <- ggplot(data = fisher_exact_res_plot,
              mapping = aes(y = p_value)) +
    stat_qq_points(ymin = 1e-10, size = 0.8) +
    facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
@@ -89,10 +101,12 @@ p <- ggplot(data = fisher_exact_res,
 p
 ```
 
-Overall, the results look quite good. Fisher's test exhibits good calibration far into the tail on all datasets except two: the Papalexi protein data and the Schraivogel perturb-seq data. Next, I plot the results on the untransformed scale.
+Amazingly, the *p*-values are calibrated far into the tail of the distribution on all of the datasets (with the exception of the Papalexi protein data and the Schraivogel perturb-seq data; more on those below). Hence, confounding likely is negligible (because if confounding were non-negligible, then the Fisher exact test, which is a test of *marginal* rather than *conditional* independence, would be miscalibrated). Seurat DE and SCEPTRE (not depicted) also are nonparametric tests of marginal independence. Both of these methods are miscalibrated on the negative control data. The miscalibration of Seurat DE and SCEPTRE likely is not the result of confounding; rather, the assumptions that Seurat DE and SCEPTRE make about the null distribution of the test statistic (i.e., that the test statistic is Gaussian distributed or skew-normal distributed) likely are wrong for some fraction of the pairs.
 
-```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center"}
-p <- ggplot(data = fisher_exact_res,
+Next, I plot the negative control *p*-values on an untransformed scale.
+
+```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center", cache=TRUE}
+p <- ggplot(data = fisher_exact_res_plot,
              mapping = aes(y = p_value)) +
    stat_qq_points(ymin = 1e-10, size = 0.8) +
    facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
@@ -109,11 +123,11 @@ p <- ggplot(data = fisher_exact_res,
 p
 ```
 
-We see some conservative p-values in the bulk of the distribution.
+A nontrivial fraction of the p-values is exactly equal to one, causing the bulk of the distribution to be conservative. I investigate reasons for this in the next section.
 
-# Positive control results
+Finally, I applied Fisher's exact test to the (grouped) positive control data. The number of discoveries that the Fisher's exact test made after a Bonferoni correction is plotted below (the results of the other methods are plotted as well for reference). Clearly, Fisher's exact test quite capable of making discoveries. However, Fisher's exact test does appear to be slightly less powerful than the other methods (aside from MIMOSCA); this might be a result of the fact that Fisher's exact test is the only calibrated method among those plotted.
 
-```{r, echo=FALSE,  fig.height = 7, fig.width = 8, warning=FALSE, message=FALSE}
+```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center", warning=FALSE, message=FALSE}
 n_bonf_reject <- compute_n_bonf_rejected(pc_res)
 p <- make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject,
                                 y_max = NULL,
@@ -122,127 +136,38 @@ p <- make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject,
 p
 ```
 
-The Fisher exact test lags somewhat behind the other methods on the metric of power; however, the Fisher exact test *does* seem capable of making discoveries on positive control data.
+Some questions remain regarding the application of Fisher's exact test to single-cell CRISPR screen data (for example, how should the contingency table be constructed for highly expressed features)? Nonetheless, if I had to advise a biologist tomorrow about what method he should use to analyze his single-cell CRISPR screen data, I would recommend Fisher's exact test.
 
-Now, we explore the connection between (effective) sample size and power (as quantified by the number of Bonferoni rejections on the positive control pairs).
+# Question 2: Why does the Fisher exact test yield a large fraction of p-values exactly equal to one?
 
-```{r, echo = FALSE, message=FALSE}
-# compute the real and effective sample size for each positive control pair
-pc_res_pairs <- pc_res |>
-  dplyr::select(grna_group, response_id, dataset) |>
-  dplyr::distinct()
+The Fisher exact test yields a *p*-value exactly equal to one for
 
-pc_res_pairs_plus_nt <- rbind(pc_res_pairs,
-                              data.frame(grna_group = "non-targeting",
-                                         response_id = pc_res_pairs$response_id,
-                                         dataset = pc_res_pairs$dataset))
-sample_size_df_sub <- dplyr::left_join(pc_res_pairs_plus_nt, sample_size_df,
-                                       by = c("response_id", "grna_group", "dataset"))
-samp_sizes <- apply(X = pc_res_pairs, MARGIN = 1, FUN = function(r) {
-  grna_group <- as.character(r[["grna_group"]])
-  response_id <- as.character(r[["response_id"]])
-  dataset <- as.character(r[["dataset"]])
-  # print(paste(grna_group, response_id, dataset))
-  treatment_cell_sizes <- sample_size_df_sub |>
-      dplyr::filter(response_id == !!response_id,
-                    grna_group == !!grna_group,
-                    dataset == !!dataset) |>
-      summarize(s_n_nonzero = sum(n_nonzero_cells),
-                s_n_cells = sum(n_cells))
-  
-  control_cell_sizes <- sample_size_df_sub |>
-      dplyr::filter(response_id == !!response_id,
-                    grna_group == "non-targeting",
-                    dataset == !!dataset) |>
-      summarize(s_n_nonzero = sum(n_nonzero_cells),
-                s_n_cells = sum(n_cells))
-  
-    c(trt_n_nonzero = treatment_cell_sizes$s_n_nonzero,
-               trt_n_cells = treatment_cell_sizes$s_n_cells,
-               cntrl_n_nonzero = control_cell_sizes$s_n_nonzero,
-               cntrl_n_cells = control_cell_sizes$s_n_cells)
-}) |> t()
-alpha <- 0.05
-samp_sizes_2 <- cbind(pc_res_pairs, as.data.frame(samp_sizes)) |>
-  dplyr::mutate(effective_sample_size = trt_n_nonzero + cntrl_n_nonzero)
-pc_res_with_samp_sizes <- dplyr::left_join(pc_res, samp_sizes_2,
-                                           by = c("grna_group", "response_id", "dataset")) |>
-  dplyr::group_by(dataset, method) |>
-  dplyr::mutate(reject = (p_value <= alpha/dplyr::n())) |>
-  dplyr::ungroup() |>
-  dplyr::mutate(lt = (p_value < 0.001))
-```
+# Question 3: Why are the methods miscalibrated on the Schraivogel perturb-seq data?
 
-Plot p-value vs. sample size.
+All methods (with the exception of MIMOSCA) are miscalibrated on the Schraivogel perturb-seq data. Why is this the case?
 
-```{r, echo = FALSE, message=FALSE, fig.height = 7, fig.width = 8}
-# smallest effective sample size such that we reject
-fisher_pc_res <- pc_res_with_samp_sizes |>
-  dplyr::filter(method == "fisher_exact",
-                dataset != "schraivogel_ground_truth_perturbseq_gene") |>
-  dplyr::group_by(dataset) |>
-  mutate(min_effective_sample_size = min(effective_sample_size[lt], na.rm = TRUE))
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE}
+perturb_seq_to_plot <- rbind(undercover_res,
+                             fisher_exact_res_plot) |>
+                               filter(dataset == "schraivogel_ground_truth_perturbseq_gene")
 
-p <- ggplot(data = fisher_pc_res |> dplyr::filter(),
-       mapping = aes(y = p_value, x = effective_sample_size, col = lt)) +
-  geom_point(size = 0.8) +
-  facet_wrap(dataset_rename_w_pairs ~ .,
-             scales = "free_x",
-             labeller = label_wrap_gen(35)) + theme_bw() +
-  scale_color_manual(values = c("darkred", "darkblue")) +
-  guides(color=guide_legend(title="p < 5e-4")) +
-  geom_vline(mapping = aes(xintercept = min_effective_sample_size)) +
-  xlab("Effective sample size (N cells with nonzero expression)")
+p <- ggplot(data = perturb_seq_to_plot,
+             mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-10, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
 p
 ```
 
-```{r, echo = FALSE, message=FALSE}
-fisher_pc_res |>
-  select(dataset, min_effective_sample_size) |>
-  distinct() |>
-  rename("Min effective sample size to reject" = "min_effective_sample_size",
-         "Dataset" = "dataset") |>
-  knitr::kable()
-```
+One possible explanation for the miscalibration that we observe is confounding. Gene carried out an analysis to assess the extent to which the perturbation indicators are confounded by the technical factors across datasets. Gene did not find any evidence of confounding on the Schraivogel perturb-seq data. Thus, confounding likely is not the culprit for the problems that we see here (unless, of course, there is unmeasured confounding, which is challenging to assess).
 
-What happens when we remove the \~30% of pairs with effective sample sizes that are too small? Does calibration become OK?
-
-# Calibration after removal of pairs with small effective sample sizes
-
-Effective sample size is simple to compute for the negative control analysis: for a given feature, simply count the number of negative control cells with nonzero expression.
-
-```{r}
-ntc_effective_samp_size <- sample_size_df |>
-  filter(grna_group == "non-targeting") |>
-  group_by(response_id, dataset) |>
-  summarize(effective_samp_size = sum(n_nonzero_cells))
-```
-
-Many of the pairs in our dataset have an effective sample size of below 250.
-
-```{r}
-effective_samp_size_thresh <- 250
-p <- ggplot(data = ntc_effective_samp_size,
-       mapping = aes(x = effective_samp_size)) +
-  geom_histogram() + facet_wrap(dataset~., scales ="free") +
-  theme_bw() +
-  xlab("Effective sample size") +
-  ylab("Count") +
-  scale_x_log10() + geom_vline(xintercept = effective_samp_size_thresh, col = "darkred")
-```
-
-First, here are the results on all pairs.
-
-```{r, fig.height = 7, fig.width = 8}
-undercover_res_w_samp_size <- dplyr::left_join(undercover_res,
-                                               ntc_effective_samp_size, by = c("response_id", "dataset"))
-make_trans_qq_plot(undercover_res_w_samp_size)
-```
-
-Next, here are the results on the pairs that pass the more stringent QC threshold.
-
-```{r, fig.height = 7, fig.width = 8}
-undercover_res_w_samp_size |>
-  filter(effective_samp_size >= 250) |>
-  make_trans_qq_plot()
-```
+I hypothesized that variability among the NTCs might be responsible for the miscalibration that we observe. If some NTCs actually have an effect (i.e., if some NTCs are not true NTCs), and if others have no effect, then the undercover *p*-values would contain some amount of signal. To investigate this hypothesis, I carried out an undercover analysis in which I randomly partitioned the NTCs into two equally sized groups of "control" and "undercover" gRNAs. This procedure should help to "average out" and thus mitigate the effect of any non-true NTC(s).
