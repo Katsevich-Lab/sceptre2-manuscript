@@ -48,7 +48,7 @@ update_dataset_names <- function(undercover_res, add_n_pairs = TRUE) {
 # 4. create the untransformed qq-plot
 make_trans_qq_plot <- function(undercover_res) {
   p <- ggplot(data = undercover_res, mapping = aes(y = p_value, color = Method)) +
-    stat_qq_points(ymin = 1e-10, size = 0.8) +
+    stat_qq_points(ymin = 1e-10, size = 0.6) +
     facet_wrap(~dataset_rename_w_pairs, scales = "free", labeller = label_wrap_gen(35)) +
     geom_abline() +
     stat_qq_band() +
