@@ -15,7 +15,19 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      ]
 */
 
-data_method_pairs = ["schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "fisher_exact", "sceptre"]]
+data_method_pairs = ["frangieh/co_culture/gene": ["fisher_exact"],
+                     "frangieh/control/gene": ["fisher_exact"],
+                     "frangieh/ifn_gamma/gene": ["fisher_exact"],
+                     "liscovitch/experiment_big/chromatin": ["fisher_exact"],
+                     "liscovitch/experiment_small/chromatin": ["fisher_exact"],
+                     "papalexi/eccite_screen/gene": ["fisher_exact"],
+                     "papalexi/eccite_screen/protein": ["fisher_exact"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["fisher_exact"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["fisher_exact"],
+                     "schraivogel/ground_truth_perturbseq/gene": ["fisher_exact"],
+                     "schraivogel/ground_truth_tapseq/gene": ["fisher_exact"],
+                     "simulated/experiment_1/gene": ["fisher_exact"]
+                     ]
 
 // FIRST, define the row and column names of the below matrices and vectors
 row_names = ["frangieh/co_culture/gene",

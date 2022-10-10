@@ -1,0 +1,194 @@
+---
+title: '`sceptre` debugging part 3'
+author: "Tim"
+date: "2022-10-10"
+output: html_document
+---
+
+```{r, message = FALSE, echo = FALSE}
+
+# load packages
+library(tidyverse)
+library(katlabutils)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+# load the auxilliary functions
+funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
+source(funct_script)
+
+# 1. Fisher exact test negative control results
+fisher_exact_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/fisher_exact_1.rds"))
+# 2. Positive control results
+pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results.rds"))
+# 3. sample size information df
+sample_size_df <- readRDS(paste0(result_dir, "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
+  dplyr::mutate(dataset = dataset_concat,
+                dataset_concat = NULL, paper = NULL, modality = NULL) |>
+  dplyr::rename(grna_group = target, response_id = feature_id)
+# 4. undercover results (excluding Fisher) for group size = 1
+undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  dplyr::select(-clock_time, -max_ram) |>
+  dplyr::filter(method %in% c("seurat_de", "liscovitch_method", "schraivogel_method", "weissman_method", "mimosca"))
+# 5. undercover result sceptre (rbind with above undercover results)
+undercover_res_sceptre <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1_sceptre.rds")) |>
+  dplyr::select(-clock_time, -max_ram)
+undercover_res <- rbind(undercover_res, undercover_res_sceptre, fisher_exact_res)
+# 6. singleton positive control results
+pc_res_singleton <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results_singleton.rds")) |> rename("grna_id" = "grna_group")
+```
+
+```{r, message = FALSE, echo = FALSE}
+# Combine the results of the Schraivogel datasets
+replace_slash_w_underscore <- function(df) {
+  df |> dplyr::mutate(dataset = gsub(pattern = "/",
+                                replacement = "_",
+                                fixed = TRUE,
+                                x = dataset))
+}
+
+update_df <- function(df) {
+  df |>
+    replace_slash_w_underscore() |>
+    combine_schraivogel_enhancer_screens() |>
+    update_dataset_names(add_n_pairs = FALSE)
+}
+
+sample_size_df <- sample_size_df |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens() 
+pc_res <- update_df(pc_res)
+pc_res_singleton <- update_df(pc_res_singleton)
+undercover_res <- update_df(undercover_res)
+```
+
+This is the third writeup in the `sceptre` debugging series. I ask and attempt to answer several questions.
+
+1.  To what extent does applying a more stringent QC threshold *actually* make the problem easier?
+
+# Does applying more stringent QC actually make the problem easier?
+
+In the previous writeup we saw that applying more stringent QC appears to improve the calibration of all methods across all datasets. However, using a more stringent QC threshold reduces the total number of pairs plotted, thereby preventing us from looking far out into the tail of the distribution. Thus, the apparent improvement in calibration might be a result of the reduction in the number of pairs plotted rather than an actual improvement in calibration.
+
+We thefore seek to asses whether there is a true change in calibration that results from increasing the QC threshold (controlling for the number of pairs plotted). To this end, for each method, we create a QQ-plot that consists of two sets of pairs: (i) the *N* pairs that survive the QC threshold, and (ii) *N* pairsrandomly sampled (without replacement) from the full set of pairs. If these two sets of pairs differ in calibration quality --- and in particular, if the former set of pairs exhibits better calibration than the latter --- then we can conclude that QC actually does make the problem easier. Our QC threshold is an effective sample size of 250 cells or greater.
+
+```{r, message = FALSE, echo = FALSE}
+qc_thresh <- 250
+
+ntc_effective_samp_size <- sample_size_df |>
+  filter(grna_group == "non-targeting") |>
+  group_by(response_id, dataset) |>
+  summarize(effective_samp_size = sum(n_nonzero_cells))
+
+undercover_res_sub <- undercover_res |>
+  left_join(ntc_effective_samp_size, by = c("response_id", "dataset")) |>
+  filter(method %in% c("seurat_de", "sceptre", "fisher_exact"),
+         dataset %in% c("frangieh_co_culture_gene",
+                        "papalexi_eccite_screen_gene",
+                        "schraivogel_enhancer_screen",
+                        "schraivogel_ground_truth_tapseq_gene",
+                        "frangieh_control_gene",
+                        "frangieh_ifn_gamma_gene"))
+
+undercover_res_sub_qc <- undercover_res_sub |>
+  filter(effective_samp_size >= qc_thresh) |>
+  mutate(pair_type = "QC")
+
+n_after_qc <- undercover_res_sub_qc |>
+    group_by(method, dataset) |>
+    summarize(count = n()) |>
+    filter(method == "seurat_de") |>
+    select(dataset, count)
+
+undercover_res_sub_downsample <- 
+  undercover_res_sub |>
+  group_by(method, dataset) |>
+  group_modify(.f = function(tbl, key) {
+    curr_method <- as.character(key$method)
+    curr_dataset <- as.character(key$dataset)
+    n_to_draw <- n_after_qc |>
+      filter(dataset == curr_dataset) |>
+      pull(count)
+    out <- sample_n(tbl, size = n_to_draw, replace = FALSE)
+}) |> ungroup() |> mutate(pair_type = "Downsample")
+
+to_plot <- rbind(undercover_res_sub_qc,
+                 undercover_res_sub_downsample) |> update_dataset_names(TRUE)
+
+rm(n_after_qc); rm(undercover_res_sub_downsample); rm(undercover_res_sub); rm(undercover_res_sub_qc)
+```
+
+First, we plot the results for the Fisher exact test.
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 6.5, fig.width = 8}
+p1 <- ggplot(data = to_plot |> filter(method == "fisher_exact"),
+             mapping = aes(y = p_value, col = pair_type)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  scale_color_manual(values = c("chartreuse4", "dodgerblue3")) +
+  labs(color = "Pair subset")
+p1
+```
+
+We do not observe a major difference between the QC'ed pairs and the randomly downsampled pairs in any of the plots. Next, we plot the results for Seurat DE.
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 6.5, fig.width = 8}
+p1 <- ggplot(data = to_plot |> filter(method == "seurat_de"),
+             mapping = aes(y = p_value, col = pair_type)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  scale_color_manual(values = c("chartreuse4", "dodgerblue3")) +
+  labs(color = "Pair subset")
+p1
+```
+
+We do see a difference here. On the Frangieh datasets (which are fairly sparse), the QC'ed pairs demonstrate much better calibration than the randomly downsampled pairs. On the Papalexi and Schraivogel datasets, by contrast, the QC'ed pairs and downsampled pairs appear to be similarly well-calibrated.
+
+Finally, we plot the results for SCEPTRE.
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 6.5, fig.width = 8}
+p1 <- ggplot(data = to_plot |> filter(method == "sceptre"),
+             mapping = aes(y = p_value, col = pair_type)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  scale_color_manual(values = c("chartreuse4", "dodgerblue3")) +
+  labs(color = "Pair subset")
+p1
+```
+
+The SCEPTRE results are similar to the Seurat DE results: QC leads to marked improvement on the Frangieh datasets but does not make much of a difference on the Schraivogel and Papalexi datasets. Additionally, SCEPTRE appears to be better calibrated on the Papalexi and Frangieh datasets, while Seurat DE appears to be better calibrated on the Frangieh datasets.
+
+Why do we observe this difference between the Frangieh datasets on one hand and the Papalexi and Schraivogel datasets on the other? The Frangieh datasets are sparser than the Papalexi and Schraivogel datasets, and so applying QC results in a much larger reduction in the nu
+
+```{r}
+
+```

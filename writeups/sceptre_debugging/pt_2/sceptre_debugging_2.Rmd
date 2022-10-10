@@ -77,11 +77,11 @@ undercover_res_grp_size_half <- undercover_res_grp_size_half |>
   update_dataset_names()
 ```
 
-We seek to answer four outstanding questions in this writeup:
+I seek to answer four outstanding questions in this writeup:
 
 1.  Is the Fisher exact test calibrated on the negative control data? If so, can we draw conclusions about why the other methods might be miscalibrated?
 2.  Why does the Fisher exact test yield a large fraction of p-values equal to exactly 1?
-3.  Why are the methods poorly calibrated on the Schraivogel perturb-seq data?
+3.  Why are all methods poorly calibrated on the Schraivogel perturb-seq data?
 4.  What QC threshold should we be using? If we adopt a more stringent QC threshold, do the methods remain miscalibrated?
 
 # Question 1: Is the Fisher exact test calibrated on the negative control data?
@@ -132,7 +132,7 @@ p
 
 A nontrivial fraction of the p-values is exactly equal to one, causing the bulk of the distribution to be conservative. I investigate reasons for this in the next section.
 
-Finally, I applied Fisher's exact test to the (grouped) positive control data. The number of discoveries that the Fisher's exact test made after a Bonferoni correction is plotted below (the results of the other methods are plotted as well for reference). Clearly, Fisher's exact test quite capable of making discoveries. However, Fisher's exact test does appear to be slightly less powerful than the other methods (aside from MIMOSCA); this might be a result of the fact that Fisher's exact test is the only calibrated method among those plotted.
+Finally, I applied Fisher's exact test to the (grouped) positive control data. The number of discoveries that the Fisher's exact test made after a Bonferoni correction is plotted below (the results of the other methods are plotted as well for reference). Clearly, Fisher's exact test quite capable of making discoveries. However, Fisher's exact test does appear to be slightly less powerful than the other methods (aside from MIMOSCA); this (at least in part) is a result of the fact that Fisher's exact test is the only calibrated method among those plotted.
 
 ```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center", warning=FALSE, message=FALSE}
 n_bonf_reject <- compute_n_bonf_rejected(pc_res)
@@ -147,7 +147,9 @@ Some questions remain regarding the application of Fisher's exact test to single
 
 # Question 2: Why does the Fisher exact test yield a large fraction of p-values exactly equal to one?
 
-The Fisher exact test yields a *p*-value exactly equal to one for a large fraction of the negative control pairs. This likely is due to the fact that, for highly expressed features (e.g., protein data), the contingency table is extremely unbalanced. We might ameliorate this problem by dichotomizing the gene expression counts at their median rather than at zero.
+The Fisher exact test yields a *p*-value exactly equal to one for a large fraction of the negative control pairs. This likely is due to the fact that, for highly expressed features (e.g., protein data), the contingency table is extremely unbalanced, with almost all cells categories as "highly expressed." We might ameliorate this problem by dichotomizing the gene expression counts at their median rather than at zero.
+
+More on this to come in a future iteration of this writeup.
 
 # Question 3: Why are the methods miscalibrated on the Schraivogel perturb-seq data?
 
@@ -177,7 +179,7 @@ p1
 
 One possible explanation for the miscalibration that we observe is confounding. Gene carried out an analysis to assess the extent to which the perturbation indicators are confounded by the technical factors across datasets. Gene did not find any evidence of confounding on the Schraivogel perturb-seq data. Thus, confounding likely is not the culprit for the problems that we see here (unless, of course, there is unmeasured confounding).
 
-I hypothesized that variability among the NTCs might be responsible for the miscalibration that we observe. If some NTCs actually have an effect (i.e., if some NTCs are not true NTCs), and if others have no effect, then the undercover *p*-values contain some amount of signal. To investigate this hypothesis, I carried out an undercover analysis in which I randomly partitioned the NTCs into two equally sized groups of "control" and "undercover" gRNAs, "averaging out" and thus mitigating the effect of any non-true NTC(s). (In other words, I ran the undercover gRNA pipeline, setting the group size equal to half the total number of NTCs.)
+I hypothesized that variability among the NTCs might be responsible for the miscalibration that we observe. If some NTCs actually have an effect (i.e., if some NTCs are not true NTCs), and if others have no effect, then the undercover *p*-values contain some amount of signal. To investigate this hypothesis, I carried out an undercover analysis in which I randomly partitioned the NTCs into two equally sized groups of "control" and "undercover" gRNAs, "averaging out" and thus mitigating the effect of any non-true NTC(s). (In other words, I ran the undercover gRNA pipeline on the Schraivogel perturb-seq data, setting the group size equal to half the total number of NTCs.)
 
 ```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE}
 p1 <- ggplot(data = undercover_res_grp_size_half,
@@ -253,11 +255,11 @@ pc_res_singleton_w_samp_size_2 |>
 
 Effective sample sizes for the (singleton) positive control pairs range from zero up to several thousand in most cases (and up to 10,000+ on the Schraivogel ground truth perturb-seq data).
 
-Next, I plot the Fisher exact *p*-value vs. the effective sample size of each pair on each of the positive control datasets. Pairs with a *p*-value of above 0.001 are colored in red and those below 0.001 are colored in blue. (The number 0.001 was chosen somewhat arbitrarily; basically, 0.001 is a proxy for the threshold that a *p*-value might have to surpass for the pair to be rejected.) The vertical black line indicates the pair with the smallest effective sample size such that its *p*-value is less than 0.001. Across datasets, we see that the minimum effective sample size required to reject a pair at the 0.001 level is about 500.
+Next, I plot the Fisher exact *p*-value vs. the effective sample size of each pair on each of the positive control datasets. Pairs with a *p*-value of above 0.001 are colored in red and those below 0.001 are colored in blue. (The number 0.001 was chosen somewhat arbitrarily; 0.001 is meant to be a proxy for a multiple testing correction threshold.) The vertical black line indicates the pair with the smallest effective sample size such that its *p*-value is less than 0.001. Across datasets, we see that the minimum effective sample size required to reject a pair at the 0.001 level is about 500.
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.height = 7, fig.width = 9, fig.align = "center"}
 to_plot <- pc_res_singleton_w_samp_size_2 |>
-  mutate(p_lt_001 = p_value <= 0.001) |>
+  mutate(p_lt_001 = p_value <= 0.05) |>
   mutate(p_lt_001_f = factor(p_lt_001, levels = c(FALSE, TRUE), labels = c("no", "yes"))) |>
   group_by(method, dataset) |>
   mutate(qc_thresh = min(effective_sample_size[p_lt_001])) |>
@@ -274,7 +276,7 @@ to_plot |>
   scale_color_manual(values = c("darkred", "darkblue")) + labs(color = "p < 0.001") + geom_vline(aes(xintercept = qc_thresh))
 ```
 
-We the same plot for Seurat DE. The results are similar to those of the Fisher exact test.
+We create the same plot for Seurat DE. The results are similar to those of the Fisher exact test.
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.height = 7, fig.width = 9, fig.align = "center"}
 to_plot |>
@@ -289,16 +291,33 @@ to_plot |>
 
 The apparent minimum effective sample size required to reject at a 0.001 level (i.e., \$\\approx\$ 250 - 750) is surprisingly large.
 
+```{r}
+to_plot |>
+  filter(method == "fisher_exact") |>
+  ggplot(mapping = aes(x = effective_sample_size,
+                       fill = p_lt_001)) +
+  geom_density(alpha = 0.8) + facet_wrap(dataset_rename_w_pairs ~ .,
+                            scales = "free",
+                            labeller = label_wrap_gen(35)) +
+  xlab("Effective sample size") +
+  ylab("p-value") +
+  xlim(c(0, NA)) +
+  theme_bw() +
+  scale_color_manual(values = c("darkred", "darkblue")) +
+  labs(color = "p < 0.001") +
+  geom_vline(aes(xintercept = qc_thresh))
+```
+
 # The impact stringent QC on calibration
 
-As we apply increasingly stringent QC, the problem becomes easier, and thus calibration should improve. We test that hypothesis here. First, we plot the results that we obtain using the default QC (i.e., filtering for genes that are expressed in > 0.005 of cells).
+As we apply increasingly stringent QC, the problem becomes easier, and thus calibration improves. We test that hypothesis here. First, we plot the results that we obtain using the default QC (i.e., filtering for genes that are expressed in > 0.005 of cells).
 
 ```{r, warning=FALSE, echo=FALSE, message = FALSE, fig.height = 7, fig.width = 9, fig.align = "center"}
 ntc_effective_samp_size <- sample_size_df |>
   filter(grna_group == "non-targeting") |>
   group_by(response_id, dataset) |>
   summarize(effective_samp_size = sum(n_nonzero_cells))
-# mean(ntc_effective_samp_size$effective_samp_size >= 250)
+# mean(ntc_effective_samp_size$effective_samp_size >= 100)
 
 undercover_res_w_samp_size <-
   rbind(undercover_res |> filter(!(dataset %in%
@@ -310,7 +329,7 @@ undercover_res_w_samp_size <-
 make_trans_qq_plot(undercover_res_w_samp_size)
 ```
 
-Next, we remove all pairs with an effective sample size of less than 250. This amounts to removing 30% of pairs. The calibration improves, especially on the fairly sparse Frangieh data.
+Next, we remove all pairs with an effective sample size of less than 250. This amounts to removing 30% of pairs. The calibration improves, especially on the sparse Frangieh data.
 
 ```{r, warning=FALSE, echo=FALSE, fig.height = 7, fig.width = 9, fig.align = "center"}
 undercover_res_w_samp_size |>
@@ -320,7 +339,7 @@ undercover_res_w_samp_size |>
   make_trans_qq_plot()
 ```
 
-Next, we restrict our attention to pairs that have an effective sample size exceeding 750. This amounts to removing 50% of (the original) pairs. Calibration improves further.
+Finally, we restrict our attention to pairs that have an effective sample size exceeding 750. This amounts to removing 50% of (the original) pairs. Calibration improves further.
 
 ```{r, warning=FALSE, echo=FALSE, fig.height = 7, fig.width = 9, fig.align = "center"}
 # mean(ntc_effective_samp_size$effective_samp_size >= 750)
@@ -340,4 +359,4 @@ For better or for worse, when we restrict our attention to more "meaningful" reg
 
 -   Might it be worthwhile to re-analyze the Perturb-seq data by running PCA on the expression matrix and including the top PCs as covariates? This could help to capture any unmeasured confounding.
 
--   We have roughly 9.5 weeks until December 15. Can we come up with a week-by-week plan to get a working manuscript finished by that deadline? Leaving 3 weeks to making figures and writing, this leaves about 6.5 weeks for finalizing results.
+-   We have roughly 9.5 weeks until December 15. Assuming that we still are aiming for that deadline, can we come up with a week-by-week plan to get a manuscript preprinted by then? Leaving 3 weeks to making figures and writing, this leaves about 6.5 weeks for finalizing results.
