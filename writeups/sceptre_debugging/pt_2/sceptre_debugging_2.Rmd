@@ -89,10 +89,13 @@ I seek to answer four outstanding questions in this writeup:
 I applied Fisher's exact test to the negative control data within the framework of the undercover pipeline (using group size = 1). Below, I plot the resulting *p*-values on a negative log 10 transformed scale.
 
 ```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center", cache=TRUE}
-fisher_exact_res <- update_dataset_names(undercover_res = fisher_exact_res, TRUE)
-
-p <- ggplot(data = fisher_exact_res_plot,
-             mapping = aes(y = p_value)) +
+fisher_exact_res_plot |>
+              filter(dataset %in% c("frangieh_co_culture_gene", "frangieh_control_gene",
+                                    "schraivogel_ground_truth_tapseq_gene", "schraivogel_enhancer_screen",
+                                    "simulated_experiment_1_gene", "papalexi_eccite_screen_gene",
+                                    "schraivogel_ground_truth_perturbseq_gene", "frangieh_ifn_gamma_gene",
+                                    "papalexi_eccite_screen_protein")) |>
+   ggplot(mapping = aes(y = p_value)) +
    stat_qq_points(ymin = 1e-10, size = 0.8) +
    facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
    geom_abline(col = "darkred") +
@@ -105,7 +108,6 @@ p <- ggplot(data = fisher_exact_res_plot,
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank())
-p
 ```
 
 Amazingly, the *p*-values are calibrated far into the tail of the distribution on all of the datasets (with the exception of the Papalexi protein data and the Schraivogel perturb-seq data; more on those below). Hence, confounding likely is negligible (because if confounding were non-negligible, then the Fisher exact test, which is a test of *marginal* rather than *conditional* independence, would be miscalibrated). Seurat DE and SCEPTRE (not depicted) also are nonparametric tests of marginal independence. Both of these methods are miscalibrated on the negative control data. The miscalibration of Seurat DE and SCEPTRE likely is not the result of confounding; rather, the assumptions that Seurat DE and SCEPTRE make about the null distribution of the test statistic (i.e., that the test statistic is Gaussian distributed or skew-normal distributed) likely are wrong for some fraction of the pairs.
@@ -113,8 +115,13 @@ Amazingly, the *p*-values are calibrated far into the tail of the distribution o
 Next, I plot the negative control *p*-values on an untransformed scale.
 
 ```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center", cache=TRUE}
-p <- ggplot(data = fisher_exact_res_plot,
-             mapping = aes(y = p_value)) +
+fisher_exact_res_plot |>
+              filter(dataset %in% c("frangieh_co_culture_gene", "frangieh_control_gene",
+                                    "schraivogel_ground_truth_tapseq_gene", "schraivogel_enhancer_screen",
+                                    "simulated_experiment_1_gene", "papalexi_eccite_screen_gene",
+                                    "schraivogel_ground_truth_perturbseq_gene", "frangieh_ifn_gamma_gene",
+                                    "papalexi_eccite_screen_protein")) |>
+  ggplot(mapping = aes(y = p_value)) +
    stat_qq_points(ymin = 1e-10, size = 0.8) +
    facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
    geom_abline(col = "darkred") +
@@ -127,7 +134,6 @@ p <- ggplot(data = fisher_exact_res_plot,
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank())
-p
 ```
 
 A nontrivial fraction of the p-values is exactly equal to one, causing the bulk of the distribution to be conservative. I investigate reasons for this in the next section.
@@ -147,7 +153,41 @@ Some questions remain regarding the application of Fisher's exact test to single
 
 # Question 2: Why does the Fisher exact test yield a large fraction of p-values exactly equal to one?
 
-The Fisher exact test yields a *p*-value exactly equal to one for a large fraction of the negative control pairs. This likely is due to the fact that, for highly expressed features (e.g., protein data), the contingency table is extremely unbalanced, with almost all cells categories as "highly expressed." We might ameliorate this problem by dichotomizing the gene expression counts at their median rather than at zero.
+The Fisher exact test yields a *p*-value exactly equal to one for a large fraction of the negative control pairs. What is the reasons for this? I investigate the properties of pairs with *p*-values exactly equal to one.
+
+```{r}
+ntc_effective_samp_size <- sample_size_df |>
+  filter(grna_group == "non-targeting") |>
+  group_by(response_id, dataset) |>
+  summarize(effective_samp_size = sum(n_nonzero_cells))
+
+# link up with the ntc effective sample size df
+fisher_w_samp_size <- fisher_exact_res_plot |> filter(dataset %in%
+                                                c("frangieh_co_culture_gene",
+                                                "papalexi_eccite_screen_gene",
+                                                "schraivogel_enhancer_screen",
+                                                "schraivogel_ground_truth_tapseq_gene",
+                                                "schraivogel_ground_truth_perturbseq_gene",
+                                                "frangieh_control_gene",
+                                                "frangieh_ifn_gamma_gene",
+                                               "simulated_experiment_1_gene")) |>
+  left_join(y = ntc_effective_samp_size,
+            by = c("response_id", "dataset"))
+
+x <- fisher_w_samp_size |>
+  mutate(p_is_1 = (p_value == 1)) |>
+  group_by(p_is_1, dataset) |>
+  summarize(mean_ess = mean(effective_samp_size),
+            median_ess = median(effective_samp_size)) |>
+  mutate(p_is_1 = ifelse(p_is_1, "yes", "no"))
+
+mean_ess_compare <- pivot_wider(data = x |> select(-median_ess),
+                                names_from = "p_is_1",
+                                values_from = "mean_ess")
+median_ess_compare <- pivot_wider(data = x |> select(-mean_ess),
+                                names_from = "p_is_1",
+                                values_from = "median_ess")
+```
 
 More on this to come in a future iteration of this writeup.
 
@@ -200,6 +240,34 @@ p1
 ```
 
 The calibration of the *p-*values improves considerably. However, the methods still are miscalibrated. I suspect that variability among the NTCs is at least partially responsible, but the full story still is not clear.
+
+Finally, we note that we are looking further into the tail of the Schraivogel perturb-seq dataset than (for example) the enhancer screen dataset, as the former contains more pairs. What happens when we downsample the perturb-seq dataset so that the perturb-seq dataset contains the same number of pairs as the tap-seq dataset? We attempt to answer this using Fisher's exact test.
+
+```{r}
+fisher_enh_screen <- fisher_exact_res_plot |>
+  filter(dataset == "schraivogel_enhancer_screen")
+m <- nrow(fisher_enh_screen)
+fisher_pert_seq <- fisher_exact_res_plot |>
+  filter(dataset == "schraivogel_ground_truth_perturbseq_gene") |>
+  sample_n(size = m, replace = FALSE)
+to_plot <- rbind(fisher_enh_screen, fisher_pert_seq)
+
+ggplot(data = to_plot,
+             mapping = aes(y = p_value, col = dataset)) +
+   stat_qq_points(ymin = 1e-10, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+
+The perturb-seq dataset is not all that different from the enhancer screen dataset.
 
 # Question 4: what is a meaningful QC threshold to use?
 
@@ -310,15 +378,9 @@ to_plot |>
 
 # The impact stringent QC on calibration
 
-As we apply increasingly stringent QC, the problem becomes easier, and thus calibration improves. We test that hypothesis here. First, we plot the results that we obtain using the default QC (i.e., filtering for genes that are expressed in > 0.005 of cells).
+As we apply increasingly stringent QC, the problem becomes easier, and thus calibration improves. We test that hypothesis here. First, we plot the results that we obtain using the default QC (i.e., filtering for genes that are expressed in \> 0.005 of cells).
 
 ```{r, warning=FALSE, echo=FALSE, message = FALSE, fig.height = 7, fig.width = 9, fig.align = "center"}
-ntc_effective_samp_size <- sample_size_df |>
-  filter(grna_group == "non-targeting") |>
-  group_by(response_id, dataset) |>
-  summarize(effective_samp_size = sum(n_nonzero_cells))
-# mean(ntc_effective_samp_size$effective_samp_size >= 100)
-
 undercover_res_w_samp_size <-
   rbind(undercover_res |> filter(!(dataset %in%
                                      c("liscovitch_experiment_big_chromatin",
