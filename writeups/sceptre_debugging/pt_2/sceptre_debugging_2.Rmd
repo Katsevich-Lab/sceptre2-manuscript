@@ -189,7 +189,37 @@ median_ess_compare <- pivot_wider(data = x |> select(-mean_ess),
                                 values_from = "median_ess")
 ```
 
-More on this to come in a future iteration of this writeup.
+It also is possible that latent factors confound the gRNA assignments. I ran a PCA on the gene expression matrices of the TAP-seq dataset and the perturb-seq dataset, extracting the top principal component from the first (24% variance explained) and the top two principal components from the second (28% variance explained.) I regressed the perturbation indicators onto the principal components via logistic regression and obtained a p-value via likelihood ratio test. I subsetted the data to filter for cells containing NTCs only.
+
+```{r}
+datasets <- c("ground_truth_tapseq", "ground_truth_perturbseq")
+dataset_fps <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/schraivogel/", datasets)
+
+dataset_fp <- dataset_fps[1]
+gene_metadata_fp <- paste0(dataset_fp, "/gene/metadata_qc.rds")
+gene_odm_fp <- paste0(dataset_fp, "/gene/matrix.odm")
+gene_odm <- read_odm(gene_odm_fp, gene_metadata_fp)
+grna_odm_fp <- paste0(dataset_fp, "/grna_assignment/matrix.odm")
+grna_metadata_fp <- paste0(dataset_fp, "/grna_assignment/metadata_qc.rds")
+grna_odm <- read_odm(grna_odm_fp, grna_metadata_fp)
+cellwise_targets <- lowmoi::get_target_assignments_via_max_op(grna_odm)
+gene_odm <- gene_odm[,cellwise_targets == "non-targeting"]
+grna_odm <- grna_odm[(grna_odm |> get_feature_covariates() |> dplyr::pull(target)) == "non-targeting",
+                     cellwise_targets == "non-targeting"]
+Z <- gene_odm |> get_cell_covariates() |> dplyr::select(dplyr::starts_with("pc"))
+n_ntcs <- nrow(grna_odm)
+
+ps <- sapply(seq(1, n_ntcs), function(i) {
+  y <- grna_odm[[i,]] |> as.numeric()
+  data_mat <- Z |> dplyr::mutate(y = y)
+  fit_alt <- glm(formula = y ~ ., family = "binomial", data = data_mat)
+  fit_null <- glm(formula = y ~ 1, family = "binomial", data = data_mat)
+  s <- lmtest::lrtest(fit_alt, fit_null)
+  s$`Pr(>Chisq)`[2]
+})
+sceptre::make_qq_plot(ps)
+```
+
 
 # Question 3: Why are the methods miscalibrated on the Schraivogel perturb-seq data?
 

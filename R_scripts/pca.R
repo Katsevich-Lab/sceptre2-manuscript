@@ -37,9 +37,9 @@ hist(pc1_seurat)
 
 # add leading pc as covariate
 odm <- odm |> mutate_cell_covariates(pc_1 = pc1_seurat)
-odm@misc$mimosca_formula <- update(odm@misc$mimosca_formula, ~ . + pc_1)
-odm@misc$nb_regression_formula <- paste0(odm@misc$nb_regression_formula,  " + pc_1")
-odm@misc$sceptre_formula <- update(odm@misc$sceptre_formula, ~ . + pc_1)
+odm@misc$mimosca_formula <- formula(~ n_nonzero + n_umis + batch + pc_1 - 1)
+odm@misc$nb_regression_formula <- "~ offset(log(n_umis)) + log(n_nonzero) + batch + pc_1"
+odm@misc$sceptre_formula <- formula(~ log(response_n_umis) + log(response_n_nonzero) + batch + response_pc_1)
 save_odm(odm = odm, metadata_fp = gene_metadata_fp)
 
 
@@ -69,7 +69,7 @@ names(pc1_seurat) <- names(pc2_seurat) <- NULL
 
 # Add leading PCs as covariates
 odm <- odm |> mutate_cell_covariates(pc_1 = pc1_seurat, pc_2 = pc2_seurat)
-odm@misc$mimosca_formula <- update(odm@misc$mimosca_formula, ~ . + pc_1 + pc_2)
-odm@misc$nb_regression_formula <- paste0(odm@misc$nb_regression_formula,  " + pc_1 + pc_2")
-odm@misc$sceptre_formula <- update(odm@misc$sceptre_formula, ~ . + pc_1 + pc_2)
+odm@misc$mimosca_formula <- formula(~ n_nonzero + n_umis + batch + pc_1 + pc_2 - 1)
+odm@misc$nb_regression_formula <- "~ offset(log(n_umis)) + log(n_nonzero) + batch + pc_1 + pc_2"
+odm@misc$sceptre_formula <- formula(~ log(response_n_umis) + log(response_n_nonzero) + batch + response_pc_1 + response_pc_2)
 save_odm(odm = odm, metadata_fp = gene_metadata_fp)
