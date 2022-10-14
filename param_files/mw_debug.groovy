@@ -63,5 +63,5 @@ data_method_queue_matrix = [
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1:arg2=value2:arg3=value3")
 optional_args = [
-"" // mann_whitney_perm
+"B=100000" // mann_whitney_perm
 ]
