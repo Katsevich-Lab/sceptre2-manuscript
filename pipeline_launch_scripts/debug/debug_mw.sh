@@ -6,7 +6,7 @@ curr_time=$(date '+%m%d%H%M')
 
 # run pipeline
 nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
- --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/sceptre_debug.groovy" \
+ --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/mw_debug.groovy" \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
  --result_file_name "mw_debug.rds" \
  --grna_modality "assignment" \

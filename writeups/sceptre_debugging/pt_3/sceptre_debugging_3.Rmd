@@ -1,12 +1,11 @@
 ---
-title: '`sceptre` debugging part 3'
+title: 'SCEPTRE debugging part 3'
 author: "Tim"
 date: "2022-10-10"
 output: html_document
 ---
 
 ```{r, message = FALSE, echo = FALSE}
-
 # load packages
 library(tidyverse)
 library(katlabutils)
@@ -28,13 +27,19 @@ sample_size_df <- readRDS(paste0(result_dir, "dataset_sample_sizes/n_nonzero_cel
 # 4. undercover results (excluding Fisher) for group size = 1
 undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
   dplyr::select(-clock_time, -max_ram) |>
-  dplyr::filter(method %in% c("seurat_de", "liscovitch_method", "schraivogel_method", "weissman_method", "mimosca"))
+  dplyr::filter(method %in% c("seurat_de", "liscovitch_method", "schraivogel_method", "weissman_method", "mimosca", "nb_regression"))
 # 5. undercover result sceptre (rbind with above undercover results)
 undercover_res_sceptre <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1_sceptre.rds")) |>
   dplyr::select(-clock_time, -max_ram)
 undercover_res <- rbind(undercover_res, undercover_res_sceptre, fisher_exact_res)
 # 6. singleton positive control results
 pc_res_singleton <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results_singleton.rds")) |> rename("grna_id" = "grna_group")
+# 7. sceptre debugging results
+sceptre_debug <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_debug.rds"))
+# 8. sceptre / NB results with leading PCs as covariates
+sceptre_nb_pca_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_nb_pca_1.rds"))
+# 9. 
+mw_debug <- readRDS(paste0(result_dir, "undercover_grna_analysis/mw_debug.rds"))
 ```
 
 ```{r, message = FALSE, echo = FALSE}
@@ -50,7 +55,7 @@ update_df <- function(df) {
   df |>
     replace_slash_w_underscore() |>
     combine_schraivogel_enhancer_screens() |>
-    update_dataset_names(add_n_pairs = FALSE)
+    update_dataset_names(add_n_pairs = TRUE)
 }
 
 sample_size_df <- sample_size_df |>
@@ -59,26 +64,65 @@ sample_size_df <- sample_size_df |>
 pc_res <- update_df(pc_res)
 pc_res_singleton <- update_df(pc_res_singleton)
 undercover_res <- update_df(undercover_res)
+fisher_exact_res <- update_df(fisher_exact_res)
+ks_stat_categories <- list(good = c(0, 1e-2), adequate = c(1e-2, 5e-2), subpar = c(5e-2, 0.1), poor = c(0.1, 1))
+sceptre_debug <- update_df(sceptre_debug) |>
+  mutate(ks_fit = cut(x = ks_stat,
+                      breaks = unique(unlist(ks_stat_categories)),
+                      labels = names(ks_stat_categories)))
+sceptre_nb_pca_res <- sceptre_nb_pca_res |>
+  replace_slash_w_underscore() |>
+  update_dataset_names()
 ```
 
-This is the third writeup in the `sceptre` debugging series. I ask and attempt to answer several questions.
+This is the third writeup in the SCEPTRE debugging series. The broad purpose of this series is to answer two overarching questions: (1) what are the analysis challenges, and (2) how can we address them? I ask four specific questions in this writeup.
 
-1.  To what extent does applying a more stringent QC threshold *actually* make the problem easier?
+1. To what extent does applying a more stringent QC threshold *actually* make the problem easier? (Answer: applying more stringent QC makes the problem easier on the Frangieh datasets but not on the others.)
+
+2. Do the Seurat resampling distributions resemble the SCEPTRE resampling distributions in easy and challenging problem settings?
+
+3. Might latent confounding explain the miscalibration we observe in the Schraivogel perturb-seq data? (Answer: Not really.)
+
+4. How do the *exact* (as opposed to *skew-normal*) SCEPTRE p-values look? Are they well-calibrated? (Answer: the exact SCEPTRE p-values and )
 
 # Does applying more stringent QC actually make the problem easier?
 
-In the previous writeup we saw that applying more stringent QC appears to improve the calibration of all methods across all datasets. However, using a more stringent QC threshold reduces the total number of pairs plotted, thereby preventing us from looking far out into the tail of the distribution. Thus, the apparent improvement in calibration might be a result of the reduction in the number of pairs plotted rather than an actual improvement in calibration.
+First, recall that the calibration results for SCEPTRE, Seurat DE, and Fisher exact test look as follows:
 
-We thefore seek to asses whether there is a true change in calibration that results from increasing the QC threshold (controlling for the number of pairs plotted). To this end, for each method, we create a QQ-plot that consists of two sets of pairs: (i) the *N* pairs that survive the QC threshold, and (ii) *N* pairsrandomly sampled (without replacement) from the full set of pairs. If these two sets of pairs differ in calibration quality --- and in particular, if the former set of pairs exhibits better calibration than the latter --- then we can conclude that QC actually does make the problem easier. Our QC threshold is an effective sample size of 250 cells or greater.
-
-```{r, message = FALSE, echo = FALSE}
-qc_thresh <- 250
+```{r, message = FALSE, echo = FALSE, fig.height = 8, fig.width = 8}
 datasets_to_keep <- c("frangieh_co_culture_gene",
                         "papalexi_eccite_screen_gene",
                         "schraivogel_enhancer_screen",
                         "schraivogel_ground_truth_tapseq_gene",
                         "frangieh_control_gene",
-                        "frangieh_ifn_gamma_gene")
+                        "frangieh_ifn_gamma_gene",
+                        "schraivogel_ground_truth_perturbseq_gene")
+
+p <- undercover_res |>
+  filter(dataset %in% datasets_to_keep,
+         method %in% c("seurat_de", "fisher_exact", "sceptre")) |>
+ggplot(mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+p
+```
+
+In the previous writeup we saw that applying more stringent QC appears to improve the calibration of all methods across all datasets. However, using a more stringent QC threshold reduces the total number of pairs plotted, thereby preventing us from looking far out into the tail of the distribution. Thus, the apparent improvement in calibration might be a result of the reduction in the number of pairs plotted rather than an actual improvement in calibration.
+
+We thefore seek to asses whether there is a true change in calibration that results from increasing the QC threshold (controlling for the number of pairs plotted). To this end, for each method, we create a QQ-plot that consists of two sets of pairs: (i) the *N* pairs that survive the QC threshold, and (ii) *N* pairs randomly sampled (without replacement) from the full set of pairs. If these two sets of pairs differ in calibration quality --- and in particular, if the former set of pairs exhibits better calibration than the latter --- then we can conclude that QC actually does make the problem easier. The QC that we use entails filtering for pairs with an effective sample size of 250 cells or greater.
+
+```{r, message = FALSE, echo = FALSE, fig.height = 8, fig.width = 8}
+qc_thresh <- 250
 
 ntc_effective_samp_size <- sample_size_df |>
   filter(grna_group == "non-targeting") |>
@@ -120,7 +164,7 @@ rm(n_after_qc); rm(undercover_res_sub_downsample); rm(undercover_res_sub); rm(un
 
 First, we plot the results for the Fisher exact test.
 
-```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 6.5, fig.width = 8}
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 8, fig.width = 8}
 p <- ggplot(data = to_plot |> filter(method == "fisher_exact"),
              mapping = aes(y = p_value, col = pair_type)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -142,7 +186,7 @@ p
 
 We do not observe a major difference between the QC'ed pairs and the randomly downsampled pairs in any of the plots. Next, we plot the results for Seurat DE.
 
-```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 6.5, fig.width = 8}
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 8, fig.width = 8}
 p <- ggplot(data = to_plot |> filter(method == "seurat_de"),
              mapping = aes(y = p_value, col = pair_type)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -162,11 +206,9 @@ p <- ggplot(data = to_plot |> filter(method == "seurat_de"),
 p
 ```
 
-We do see a difference here. On the Frangieh datasets (which are fairly sparse), the QC'ed pairs demonstrate much better calibration than the randomly downsampled pairs. On the Papalexi and Schraivogel datasets, by contrast, the QC'ed pairs and downsampled pairs appear to be similarly well-calibrated.
+We do see a difference here. On the Frangieh datasets (which are fairly sparse), the QC'ed pairs demonstrate much better calibration than the randomly downsampled pairs. Finally, we plot the results for SCEPTRE.
 
-Finally, we plot the results for SCEPTRE.
-
-```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 6.5, fig.width = 8}
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 8, fig.width = 8}
 p <- ggplot(data = to_plot |> filter(method == "sceptre"),
              mapping = aes(y = p_value, col = pair_type)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -186,9 +228,9 @@ p <- ggplot(data = to_plot |> filter(method == "sceptre"),
 p
 ```
 
-The SCEPTRE results are similar to the Seurat DE results: QC leads to marked improvement on the Frangieh datasets but does not make much of a difference on the Schraivogel and Papalexi datasets. Additionally, SCEPTRE appears to be better calibrated on the Papalexi and Frangieh datasets, while Seurat DE appears to be better calibrated on the Frangieh datasets.
+The SCEPTRE results are similar to the Seurat DE results: QC leads to marked improvement on the Frangieh datasets but does not make much of a difference on the Schraivogel and Papalexi datasets. 
 
-Why do we observe this difference between the Frangieh datasets on one hand and the Papalexi and Schraivogel datasets on the other? The Frangieh datasets are sparser than the Papalexi and Schraivogel datasets, and so applying QC results in a much larger change in the composition of the pairs analyzed. Below, I plot the percent decrease in the number of pairs per dataset after applying QC. The datasets that *do* use targeted sequencing (i.e., Schraivogel enhancer screen and Schraivogel TAP-seq) exhibit a small percentage decrease, whereas those that *do not* use targeted sequencing (the Frangieh and Papalexi datasets) exhibit a large percentage decrease.
+Next, we study the extent to which applying QC changes the composition of the pairs analyzed across datasets. I plot the percent decrease in the number of pairs analyzed per dataset after applying QC. The datasets that *do* use targeted sequencing (i.e., Schraivogel enhancer screen and Schraivogel TAP-seq) exhibit a small percentage decrease, whereas those that *do not* use targeted sequencing (the Frangieh and Papalexi datasets, the Schraivogel perturb-seq dataset) exhibit a large percentage decrease. This means that the composition of pairs analyzed after applying QC is substantially different on the Frangieh datasets, the Papalexi dataset, and the Schraivogel perturb-seq dataset, but not on the Schraivogel enhancer screen or TAP-seq datasets.
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 n_pairs_per_dataset <- ntc_effective_samp_size |>
@@ -214,4 +256,145 @@ p <- ggplot(data = df, mapping = aes(x = dataset, y = percent_decrease)) + geom_
 p
 ```
 
-# Is there unmeasured confounding in the Schraivogel TAP-seq and perturb-seq datasets?
+# Is there latent confounding in the Schraivogel TAP-seq and perturb-seq datasets?
+
+The Schraivogel perturb-seq and TAP-seq datsets exhibit miscalibration across methods. The miscalibration is a bit harder to detect on the TAP-seq dataset, as the TAP-seq dataset contains many fewer pairs than the perturb-seq dataset. However, if we downsample the perturb-seq dataset so that the perturb-seq dataset contains the same number of pairs as the TAP-seq dataset (2130), then the perturb-seq and TAP-seq datasets look similar. In fact, the perturb-seq dataset is better calibrated than the TAP-seq dataset.
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.height = 4, fig.width = 5}
+# determine n tapseq
+set.seed(3)
+n_tap_seq <- undercover_res |>
+  filter(dataset == "schraivogel_ground_truth_tapseq_gene",
+         method == "fisher_exact") |>
+  nrow()
+
+# downsample perturb-seq accordingly
+undercover_res_perturbseq_downsample <- undercover_res |>
+  filter(dataset == "schraivogel_ground_truth_perturbseq_gene",
+         method == "fisher_exact") |>
+  sample_n(size = n_tap_seq)
+
+to_plot <- rbind(undercover_res |>
+  filter(dataset == "schraivogel_ground_truth_tapseq_gene",
+         method == "fisher_exact"),
+  undercover_res_perturbseq_downsample)
+
+p <- ggplot(data = to_plot, mapping = aes(y = p_value, col = dataset)) +
+  stat_qq_points(ymin = 1e-9, size = 0.8) +
+  geom_abline(col = "darkred") +
+  stat_qq_band() +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected quantile", y = "Observed quantile") +
+  theme(legend.position = "bottom",
+        panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  scale_color_manual(values = c("chartreuse4", "dodgerblue3")) +
+  labs(color = "Pair subset")
+p
+```
+
+What, then, is going wrong with the TAP-seq and perturb-seq datasets? I hypothesized that there might be some amount of "latent confounding" causing miscalibration. To investigate this hypothesis, I ran a PCA on the (normalized) TAP-seq and perturb-seq gene expression datasets. The top PC of the TAP-seq dataset explained about 25% of the variance of the data; meanwhile, the top two PCs of the perturb-seq dataset explained about 30% of the variance. I added the top PC (respectively, top two PCs) of the TAP-seq (respectively, perturb-seq) dataset to the covariate matrix and reran SCPETRE and negative binomial regression. First, I present the results for SCEPTRE:
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 4, fig.width = 8}
+to_plot <- rbind(
+  undercover_res |>
+  filter(method %in% c("nb_regression", "sceptre"),
+         dataset %in% c("schraivogel_ground_truth_tapseq_gene",
+                        "schraivogel_ground_truth_perturbseq_gene")) |>
+    mutate(with_top_pc = FALSE),
+sceptre_nb_pca_res |>
+  mutate(with_top_pc = TRUE))
+
+p1 <- to_plot |>
+  filter(method == "sceptre") |>
+  ggplot(mapping = aes(y = p_value, col = with_top_pc)) +
+  stat_qq_points(ymin = 1e-8) +
+  stat_qq_band() +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  facet_wrap(dataset_rename_w_pairs~., scales = "free", labeller = label_wrap_gen(35)) +
+  labs(col = "Top PC(s) included") + 
+  theme(legend.position = "bottom")
+p1
+```
+Second, I present the results for negative binomial regression:
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 4, fig.width = 8}
+p2 <- to_plot |>
+  filter(method == "nb_regression") |>
+  ggplot(mapping = aes(y = p_value, col = with_top_pc)) +
+  stat_qq_points(ymin = 1e-8) +
+  stat_qq_band() +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  facet_wrap(dataset_rename_w_pairs~., scales = "free", labeller = label_wrap_gen(35)) +
+  labs(col = "Top PC(s) included") +
+  theme(legend.position = "bottom")
+p2
+```
+
+Including the top PC(s) does seem to improve the calibration of negative binomial regression slightly; by contrast, the calibration of SCEPTRE does not appear to change. Overall, the direction of searching for latent confounding via unsupervised learning does not appear to be especially promising.
+ 
+# Examining the exact SCEPTRE p-values
+
+I next examine the "exact" (as opposed to skew-normal) SCEPTRE p-values. I applied the "exact" version of SCEPTRE on all datasets, going out to B=100,000 permutations to obtain accurate p-values. I plot the exact SCEPTRE p-values alongside the skew-normal SCEPTRE p-values and the Fisher exact p-values. I facet along two axes: (i) dataset, and (ii) skew-normal fit quality ("good" or "bad"). I also plot the entire set of p-values (irrespective of skew-normal fit quality) alongside the pairs with "good" and "bad" skew-normal fits as a separate facet. I did not analyze the full set of pairs; I instead downsampled to save compute. Therefore, we are not looking as far out into the tail of the distribution as we typically have.
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE, fig.height = 20, fig.width = 8}
+# define the categories
+ks_stat_categories <- list("Good KS Fit" = c(0, 1e-2),
+                           "Bad KS Fit" = c(1e-2, 1))
+
+# We see the biggest improvement in calibration due to QC on the Frangieh data. Are pairs with "good" fits better calibrated than pairs with "non-good" fits?
+
+# add fisher exact res to sceptre result
+x <- left_join(x = sceptre_debug,
+               y = fisher_exact_res |> rename(fisher_p_value = p_value),
+               by = c("undercover_grna", "dataset", "response_id"))
+
+to_plot <- x |>
+  mutate(ks_fit = cut(x = ks_stat,
+                      breaks = unique(unlist(ks_stat_categories)),
+                      labels = names(ks_stat_categories))) |>
+  select(p_value_sn = p_value,
+         p_value_emp,
+         fisher_p_value,
+         dataset,
+         ks_fit) |>
+  pivot_longer(cols = c("p_value_sn", "p_value_emp", "fisher_p_value"),
+               names_to = "method") |>
+  mutate(method = factor(method,
+                         levels = c("p_value_sn", "p_value_emp", "fisher_p_value"),
+                         labels = c("Sceptre (SN)", "Sceptre (Emp)", "Fisher exact"))) |>
+  update_dataset_names(TRUE) |>
+  filter(dataset %in% datasets_to_keep)
+to_plot <- rbind(to_plot, to_plot |> mutate(ks_fit = "All pairs"))
+
+p <- to_plot |>
+  ggplot(mapping = aes(y = value, col = Method)) +
+  stat_qq_points(ymin = 1e-7, size = 0.6) +
+  facet_grid(dataset_rename_w_pairs ~ ks_fit, scales = "free", labeller = label_wrap_gen(35)) +
+  stat_qq_band() +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  xlab("Expected p-value") +
+  ylab("Observed p-value") +
+  geom_abline(col = "darkred") +
+  theme(legend.position = "bottom")
+p
+```
+
+# Conclusion: what is going on with the data?
+
+We perhaps had hoped at the outset of the project that the same statistical problems would plague all the datasets. This, however, does not seem to be the case: each dataset poses its own unique set of analysis challenges. I do my best to summarize the dataset-specific analysis challenges below.
+
+**Frangieh**: The Frangieh data are fairly straightforward. There is no confounding. SCEPTRE and Seurat DE exhibit inflation when the effective sample size is small, as the asymptotic approximations that these methods make to the null distribution of the test statistic are not very good. As we apply more stringent QC (and thus as the effective sample size grows), SCEPTRE and Seurat DE exhibit better calibration. The Fisher exact test --- a non-asymptotic test of independence --- is well-calibrated in all settings.
+
+**Papalexi**: Not totally clear, but we are close. Importantly, QC does **not** seem to make the problem easier, suggesting that something other than sparsity is causing challenges. Also, as far as calibration quality goes, SCEPTRE $\approx$ Fisher exact > Seurat DE. SCEPTRE is slightly worse than . An important question to answer is thus as follows: why is Seurat DE (in contrast to SCEPTRE and Fisher exact) so poorly calibrated on the Papalexi data?
+
+**Schraivogel**: The most mysterious data. Basically none of the methods (except for perhaps MIMOSCA) are calibrated on the TAP-seq or perturb-seq data. I have explored various possible causes of miscalibration, including latent confounding and NTC heterogeneity. None were conclusive. Another idea is to check the gRNA assignments; if some cells received both a non-targeting gRNA and a targetin gRNA, this could cause signal to creep into the undercover pipeline.
