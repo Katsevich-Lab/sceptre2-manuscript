@@ -17,4 +17,5 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --machine_name $MACHINE_NAME \
  --time $curr_time \
  --genes_to_subsample "5" \
- -profile standard
+ -profile standard \
+ -resume
