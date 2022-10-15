@@ -57,7 +57,7 @@ data_method_queue_matrix = [
 ["all.q"],  // schraivogel/enhancer_screen_chr8/gene
 ["all.q"], // schraivogel/ground_truth_perturbseq/gene
 ["all.q"], // schraivogel/ground_truth_tapseq/gene
-["short.q"] // simulated/experiment_1/gene
+["all.q"] // simulated/experiment_1/gene
 ]
 // mann_whitney_perm
 
