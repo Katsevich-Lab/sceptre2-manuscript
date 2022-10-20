@@ -16,6 +16,6 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --is_partition_count_frac "true" \
  --machine_name $MACHINE_NAME \
  --time $curr_time \
- --genes_to_subsample "5" \
+ --genes_to_subsample "10" \
  -profile standard \
  -resume

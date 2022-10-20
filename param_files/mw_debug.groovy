@@ -2,13 +2,7 @@
 data_method_pairs = ["frangieh/co_culture/gene": ["mann_whitney_perm"],
                      "frangieh/control/gene": ["mann_whitney_perm"],
                      "frangieh/ifn_gamma/gene": ["mann_whitney_perm"],
-                     "papalexi/eccite_screen/gene": ["mann_whitney_perm"],
-                     "papalexi/eccite_screen/protein": ["mann_whitney_perm"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["mann_whitney_perm"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["mann_whitney_perm"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["mann_whitney_perm"],
-                     "schraivogel/ground_truth_tapseq/gene": ["mann_whitney_perm"],
-                     "simulated/experiment_1/gene": ["mann_whitney_perm"]
+                     "papalexi/eccite_screen/gene": ["mann_whitney_perm"]
                      ]
 
 
