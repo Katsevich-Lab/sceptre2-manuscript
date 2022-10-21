@@ -1,5 +1,5 @@
-data_method_pairs = ["schraivogel/ground_truth_perturbseq/gene": ["fisher_exact"],
-                     "schraivogel/ground_truth_tapseq/gene": ["fisher_exact"]
+data_method_pairs = ["schraivogel/ground_truth_perturbseq/gene": ["fisher_exact_thresholded"],
+                     "schraivogel/ground_truth_tapseq/gene": ["fisher_exact_thresholded"]
                      ]
 
 row_names = ["schraivogel/ground_truth_perturbseq/gene",
@@ -17,5 +17,5 @@ data_method_queue_matrix = [
 ]
 
 optional_args = [
-"" // fisher_exact
+"" // fisher_exact_thresholded
 ]
