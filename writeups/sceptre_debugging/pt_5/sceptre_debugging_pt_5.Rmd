@@ -19,7 +19,6 @@ ks_stat_categories <- list(good = c(0, 1e-2),
                            adequate = c(1e-2, 5e-2),
                            subpar = c(5e-2, 0.1),
                            poor = c(0.1, 1))
-
 # load results
 # 1. sceptre debug
 sceptre_debug <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_debug.rds")) |>
@@ -33,13 +32,20 @@ sceptre_debug <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_de
                       labels = names(ks_stat_categories)),
          dataset_slash = dataset)
 
-# 2. undercover res
-undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1_sceptre.rds")) |>
-  dplyr::select(-clock_time, -max_ram)|>
+# 2. undercover res sceptre
+undercover_res <- readRDS(paste0(result_dir,
+                                 "undercover_grna_analysis/undercover_result_grp_size_1_sceptre.rds")) |>
+  dplyr::select(-clock_time, -max_ram) |>
   dplyr::filter(method == "sceptre",
                 dataset %in% datasets_to_study)
 
-# 3. sample size df
+# 3. undercover res seurat de
+undercover_res_sde <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  dplyr::select(-clock_time, -max_ram) |>
+  filter(method == "seurat_de",
+         dataset %in% datasets_to_study)
+
+# 4. sample size df
 sample_size_df <- readRDS(paste0(result_dir,
                                  "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
   dplyr::mutate(dataset = dataset_concat,
@@ -107,7 +113,9 @@ undercover_res_samp <-
 undercover_res_samp |>
   ggplot(mapping = aes(y = p_value)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
-   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 2, labeller = label_wrap_gen(35)) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free",
+              ncol = 2,
+              labeller = label_wrap_gen(35)) +
    geom_abline(col = "darkred") +
    stat_qq_band() +
    theme_bw() +
@@ -365,30 +373,74 @@ Both quantities on the right-hand side of the equation are substantially larger 
 
 Answer: Inflation (or lack thereof) is closely tied to skew-normal fit quality on the Frangieh data but not on the Papalexi data. This discrepancy comes down to differences in the shapes of the resampling distributions across datasets, with Frangieh resampling distributions being more likely to exhibit "lumps" far out into the tail.
 
-# Part 3: Why is Seurat DE poorly calibrated on the Schraivogel data?
-
+# Part 3: What is going on with Seurat DE?
 
 ```{r}
-# compute the row-wise KS stats
-x <- mw_debug |> select(-z_null) |> select(starts_with("z_"))
-ks_stats <- apply(X = x, MARGIN = 1, FUN = function(row) {
-  vect <- as.numeric(row)
-  fit <- ks.test(x = vect, pnorm)
-  fit$statistic
-})
-ks_fits <- cut(x = ks_stats,
-              breaks = unique(unlist(ks_stat_categories)),
-              labels = names(ks_stat_categories))
-mw_debug <- mw_debug |> mutate(ks_stat = ks_stats,
-                               ks_fit = ks_fits)
+set.seed(4)
+qc_thresh <- 500
+
+undercover_res_w_ess <- undercover_res_sde |>
+  left_join(y = ntc_effective_samp_size,
+            by = c("response_id", "dataset")) |>
+  mutate(pass_qc = effective_samp_size >= qc_thresh)
+  
+samp_n <- undercover_res_w_ess |>
+  group_by(pass_qc, dataset) |>
+  summarize(count = n()) |>
+  pull(count) |> min()
+
+to_plot <- undercover_res_w_ess |>
+  group_by(pass_qc, dataset) |>
+  sample_n(samp_n)
+
+to_plot |>
+  update_dataset_names() |>
+  ggplot(mapping = aes(y = p_value, col = pass_qc)) +
+  stat_qq_points(ymin = 1e-9, size = 0.8) +
+  facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 2, labeller = label_wrap_gen(35)) +
+  geom_abline(col = "darkred") +
+  stat_qq_band() +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected quantile", y = "Observed quantile") +
+  theme(legend.position = "bottom",
+       panel.grid.major = element_blank(),
+       panel.grid.minor = element_blank(),
+       panel.background = element_blank()) +
+  labs(col="Passed QC")
 ```
 
+I applied Seurat DE to a subset of the Papalexi and Frangieh data, obtaining (pretty much) exact p-values by permuting the data and computing the Mann-Whitney (MW) test statistic B=100,000 times. I assessed the quality of the standard normal approximation to the null distribution by running a KS test on the resampled test statistics. I plot examples of empirical null distributions in the "good," "adequate," "subpar," and "poor" categories.
 
+```{r, echo=FALSE}
+# update the calculation of the empirical p-value using the jittered statistics (if necessary)
+z_star <- mw_debug$z_star
+null_stat_mat <- mw_debug |>
+  select(starts_with("z_")) |>
+  select(-z_star) |>
+  as.matrix()
 
-```{r}
+p_emp <- sapply(X = seq_along(z_star), FUN = function(i) {
+  curr_z_star <- z_star[i]
+  curr_z_null <- null_stat_mat[i,] + runif(n = length(row), min = -1e-5, max = 1e-5)
+  p_emp <- sceptre2:::compute_empirical_p_value(z_star = curr_z_star,
+                                                z_null = curr_z_null,
+                                                side = "both")
+  })
+rm(null_stat_mat)
+mw_debug$p_emp <- p_emp
+
+# add the KS fit category
+mw_debug$ks_fit <- cut(x = mw_debug$ks_stat,
+                       breaks = unique(unlist(ks_stat_categories)),
+                       labels = names(ks_stat_categories))
+```
+
+```{r, echo=FALSE}
 plot_mw_debug_row <- function(row) {
   null_dist <- row |>
-    select(-z_null) |>
+    select(-z_star) |>
     select(starts_with("z_")) |>
     as.numeric()
   x_grid <- seq(-4, 4, length.out = 1001)
@@ -397,26 +449,134 @@ plot_mw_debug_row <- function(row) {
   p <- ggplot() +
     geom_histogram(data = data.frame(null_dist = null_dist),
                    mapping = aes(x = null_dist, y = ..density..),
-                   bins = 50, col = "black", fill = "white") +
+                   bins = 35, col = "black", fill = "gray") +
     geom_line(data = data.frame(x = x_grid, y = y_norm),
               mapping = aes(x = x, y = y), col = "darkred", lwd = 0.8) +
     theme_bw() +
-    geom_vline(xintercept = row$z_null, col = "darkblue", lwd = 0.7) +
-    xlab("") + ylab("")
+    geom_vline(xintercept = row$z_star, col = "darkblue", lwd = 0.7) +
+    xlab("") +
+    ylab("")
   
   ks_stat <- row$ks_stat
-  mw_p <- row$p_r
+  mw_p <- row$p_value
   emp_p <- row$p_emp
   
   tit <- paste0("KS = ", round(ks_stat, 3), "; p-MW = ", round(mw_p, 3), "; p-Emp = ", round(emp_p, 3))
-  p <- p + ggtitle(tit) 
+  p <- p + ggtitle(tit)
   return(p)
 }
 ```
 
-Plot some of the Papalexi MW fits
+```{r, message = FALSE, echo = FALSE}
+mw_debug_papa <- mw_debug |>
+  filter(dataset == "papalexi_eccite_screen_gene")
+```
+
+```{r, message = FALSE, echo = FALSE}
+ks_fit_levels <- names(ks_stat_categories)
+n_plots <- 4
+ps <- lapply(ks_fit_levels, function(ks_stat_category) {
+  x <- mw_debug_papa |>
+    filter(ks_fit == !!ks_stat_category) |>
+    sample_n(n_plots)
+  p_list <- lapply(X = seq(1, n_plots), FUN = function(i) {
+    plot_mw_debug_row(x[i,])
+  })
+  out <- cowplot::plot_grid(plotlist = p_list, ncol = 2)
+}) |> setNames(ks_fit_levels)
+```
+
+Here are four in the "good" category.
+
+```{r, echo=FALSE, fig.align = "center", fig.height = 5, fig.width = 8}
+plot(ps$good)
+```
+
+Here are four in the "adequate" category.
+
+```{r, echo=FALSE, fig.align = "center", fig.height = 5, fig.width = 8}
+plot(ps$adequate)
+```
+
+Here are four in the "subpar" category.
+
+```{r, echo=FALSE, fig.align = "center", fig.height = 5, fig.width = 8}
+plot(ps$subpar)
+```
+
+And here are four in the "poor" category.
+
+```{r, echo=FALSE, fig.align = "center", fig.height = 5, fig.width = 8}
+plot(ps$poor)
+```
+
+Next, I study the relationship between standard normal fit quality and effective sample size. I plot standard normal fit quality (as quantified by KS statistic) against effective sample size for a set of pairs sampled from the Frangieh and Papalexi datasets.
+
+```{r, message = FALSE, echo = FALSE, fig.align = "center"}
+ntc_effective_samp_size <- sample_size_df |>
+  filter(grna_group == "non-targeting") |>
+  group_by(response_id, dataset) |>
+  summarize(effective_samp_size = sum(n_nonzero_cells))
+
+mw_debug_select <- mw_debug |>
+  select(p_value, p_emp, ks_stat, dataset, undercover_grna, response_id, ks_fit) |>
+  mutate(p_rat = p_value/p_emp) |>
+ left_join(y = ntc_effective_samp_size,
+           by = c("response_id", "dataset"))  |>
+  mutate(method = "MW (perm)") |>
+  update_dataset_names()
+
+p <- mw_debug_select |>
+  ggplot(mapping = aes(x = effective_samp_size, y = ks_stat)) +
+  geom_point() +
+  facet_wrap(dataset_rename_w_pairs~., scales = "free", labeller = label_wrap_gen(35)) +
+  theme_bw() +
+  scale_x_log10() +
+  xlab("Effective sample size") +
+  ylab("KS statistic")
+p
+```
+
+We see that as effective sample size increases, the KS statistic decreases, indicating improved fit quality. Next, I plot p$_\textrm{rat}$ against the KS statistic.
 
 ```{r}
-mw_debug_papa <- mw_debug |> filter(dataset == "papalexi_eccite_screen_gene")
+mw_debug_select |>
+  ggplot(mapping = aes(x = ks_stat,
+                       y = p_rat,
+                       col = ks_fit)) +
+  geom_point() +
+  facet_wrap(dataset_rename_w_pairs ~ .,
+             scales = "free",
+             labeller = label_wrap_gen(35)) +
+  theme_bw() +
+  scale_x_log10() +
+  scale_y_log10() + 
+  xlab("KS statistic") +
+  ylab("p-rat")
 
+
+mw_debug_select |>
+  ggplot(mapping = aes(x = effective_samp_size,
+                       y = p_rat,
+                       col = ks_fit)) +
+  geom_point() +
+  facet_wrap(dataset_rename_w_pairs ~ .,
+             scales = "free",
+             labeller = label_wrap_gen(35)) +
+  theme_bw() +
+  scale_x_log10() +
+  scale_y_log10() + 
+  xlab("Effective sample size") +
+  ylab("p-rat")
 ```
+
+What is going on with those pairs that exhibit miscalibration? Do they have small effective sample sizes?
+
+```{r}
+problem_pairs <- undercover_res_w_ess |>
+  filter(p_value < 1e-4, pass_qc) |>
+  select(response_id, undercover_grna) |>
+  summarize(paste0(undercover_grna, response_id)) |>
+  pull()
+```
+

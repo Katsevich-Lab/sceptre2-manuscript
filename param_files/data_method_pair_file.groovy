@@ -15,8 +15,8 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      ]
 */
 
-data_method_pairs = ["schraivogel/ground_truth_perturbseq/gene": ["nb_regression", "sceptre"],
-                     "schraivogel/ground_truth_tapseq/gene": ["nb_regression", "sceptre"]
+data_method_pairs = ["schraivogel/ground_truth_perturbseq/gene": ["fisher_exact"],
+                     "schraivogel/ground_truth_tapseq/gene": ["fisher_exact"]
                      ]
 
 // FIRST, define the row and column names of the below matrices and vectors
@@ -83,6 +83,6 @@ optional_args = [
 "n_rep=50", // mimosca
 "", // weissman_method
 "progress=FALSE", // nb_regression
-"progress=FALSE", // fisher_exact
+"progress=FALSE;control_group=compliment", // fisher_exact
 "output_amount=1" // sceptre
 ]

@@ -38,8 +38,6 @@ pc_res_singleton <- readRDS(paste0(result_dir, "positive_control_analysis/pc_res
 sceptre_debug <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_debug.rds"))
 # 8. sceptre / NB results with leading PCs as covariates
 sceptre_nb_pca_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_nb_pca_1.rds"))
-# 9. 
-mw_debug <- readRDS(paste0(result_dir, "undercover_grna_analysis/mw_debug.rds"))
 ```
 
 ```{r, message = FALSE, echo = FALSE}
@@ -105,7 +103,10 @@ p <- undercover_res |>
          method %in% c("seurat_de", "fisher_exact", "sceptre")) |>
 ggplot(mapping = aes(y = p_value, col = Method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
-   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   facet_wrap(~dataset_rename_w_pairs,
+              scales = "free",
+              ncol = 3,
+              labeller = label_wrap_gen(35)) +
    geom_abline(col = "darkred") +
    stat_qq_band() +
    theme_bw() +
