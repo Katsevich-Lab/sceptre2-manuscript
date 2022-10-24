@@ -571,12 +571,22 @@ mw_debug_select |>
   ylab("p-rat")
 ```
 
-What is going on with those pairs that exhibit miscalibration? Do they have small effective sample sizes?
+What is going on with those pairs that exhibit miscalibration? They do not have small effective sample sizes in all cases. Therefore, what is going wrong?
 
 ```{r}
 problem_pairs <- undercover_res_w_ess |>
   filter(p_value < 1e-3, dataset == "papalexi_eccite_screen_gene") |>
-  select(response_id, undercover_grna)
+  select(response_id, undercover_grna) |>
+  mutate(dataset = "papalexi/eccite_screen/gene",
+         pair_status = "problem")
+
+ok_pairs <- undercover_res_w_ess |>
+  sample_n(size = nrow(problem_pairs)) |>
+   select(response_id, undercover_grna) |>
+  mutate(dataset = "papalexi/eccite_screen/gene",
+         pair_status = "ok")
+
+followup_pairs <- rbind(problem_pairs, ok_pairs)
+saveRDS(object = followup_pairs, file = paste0(result_dir,
+                                               "undercover_grna_analysis/mw_debug_pairs.rds"))
 ```
-
-
