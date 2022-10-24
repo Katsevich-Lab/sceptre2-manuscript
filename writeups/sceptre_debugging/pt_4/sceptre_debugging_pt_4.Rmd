@@ -40,7 +40,8 @@ undercover_res <- readRDS(paste0(result_dir,
                 dataset %in% datasets_to_study)
 
 # 3. undercover res seurat de
-undercover_res_sde <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+undercover_res_sde <- readRDS(paste0(result_dir,
+                                     "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
   dplyr::select(-clock_time, -max_ram) |>
   filter(method == "seurat_de",
          dataset %in% datasets_to_study)
@@ -574,9 +575,8 @@ What is going on with those pairs that exhibit miscalibration? Do they have smal
 
 ```{r}
 problem_pairs <- undercover_res_w_ess |>
-  filter(p_value < 1e-4, pass_qc) |>
-  select(response_id, undercover_grna) |>
-  summarize(paste0(undercover_grna, response_id)) |>
-  pull()
+  filter(p_value < 1e-3, dataset == "papalexi_eccite_screen_gene") |>
+  select(response_id, undercover_grna)
 ```
+
 

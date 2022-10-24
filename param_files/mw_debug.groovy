@@ -1,9 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-data_method_pairs = ["frangieh/co_culture/gene": ["mann_whitney_perm"],
-                     "frangieh/control/gene": ["mann_whitney_perm"],
-                     "frangieh/ifn_gamma/gene": ["mann_whitney_perm"],
-                     "papalexi/eccite_screen/gene": ["mann_whitney_perm"]
-                     ]
+data_method_pairs = ["papalexi/eccite_screen/gene": ["mann_whitney_perm"]]
 
 
 // FIRST, define the row and column names of the below matrices and vectors

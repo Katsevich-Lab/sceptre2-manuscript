@@ -1,0 +1,64 @@
+---
+title: "Debugging `sceptre` part 5"
+author: "Tim"
+date: "2022-10-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(katlabutils)
+library(tidyverse)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+# load results
+res <- readRDS(paste0(result_dir, "undercover_grna_analysis/fisher_debug.rds"))
+```
+
+```{r}
+replace_slash_w_underscore <- function(df) {
+  df |> dplyr::mutate(dataset = gsub(pattern = "/",
+                                replacement = "_",
+                                fixed = TRUE,
+                                x = dataset))
+}
+
+res <- replace_slash_w_underscore(res)
+```
+
+
+```{r}
+# first, Peturb-seq
+res |>
+  filter(dataset == "schraivogel_ground_truth_perturbseq_gene") |>
+  mutate(grna_threshold = factor(grna_threshold)) |>
+  ggplot(aes(y = p_value, col = grna_threshold)) +
+  stat_qq_points(ymin = 1e-9, size = 0.8) +
+  facet_wrap(~control_group, scales = "free", ncol = 2, labeller = label_wrap_gen(35)) +
+  geom_abline(col = "darkred") +
+  stat_qq_band() +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected quantile", y = "Observed quantile") +
+  theme(legend.position = "bottom",
+       panel.grid.major = element_blank(),
+       panel.grid.minor = element_blank(),
+       panel.background = element_blank())
+
+res |>
+  filter(dataset == "schraivogel_ground_truth_tapseq_gene") |>
+  mutate(grna_threshold = factor(grna_threshold)) |>
+  ggplot(aes(y = p_value, col = grna_threshold)) +
+  stat_qq_points(ymin = 1e-9, size = 0.8) +
+  facet_wrap(~control_group, scales = "free", ncol = 2, labeller = label_wrap_gen(35)) +
+  geom_abline(col = "darkred") +
+  stat_qq_band() +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected quantile", y = "Observed quantile") +
+  theme(legend.position = "bottom",
+       panel.grid.major = element_blank(),
+       panel.grid.minor = element_blank(),
+       panel.background = element_blank())
+```
