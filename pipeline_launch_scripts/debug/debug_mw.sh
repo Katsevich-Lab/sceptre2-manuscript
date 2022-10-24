@@ -16,5 +16,6 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --is_partition_count_frac "true" \
  --machine_name $MACHINE_NAME \
  --time $curr_time \
+ --pair_restriction $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis/mw_debug_pairs.rds" \
  -profile standard \
  -resume
