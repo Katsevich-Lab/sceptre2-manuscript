@@ -13,7 +13,9 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --group_size "1" \
  --is_group_size_frac "false" \
  --partition_count 1 \
- --is_partition_count_frac "true" \
+ --is_partition_count_frac "false" \
  --machine_name $MACHINE_NAME \
  --time $curr_time \
  -profile standard
+
+# change is_partition_count_frac to true for full run
