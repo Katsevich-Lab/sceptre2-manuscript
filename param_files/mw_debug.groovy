@@ -52,7 +52,7 @@ data_method_queue_matrix = [
 ["short.q"], // papalexi/eccite_screen/protein
 ["short.q"], // schraivogel/enhancer_screen_chr11/gene
 ["short.q"],  // schraivogel/enhancer_screen_chr8/gene
-["short.q"], // schraivogel/ground_truth_perturbseq/gene
+["all.q"], // schraivogel/ground_truth_perturbseq/gene
 ["short.q"], // schraivogel/ground_truth_tapseq/gene
 ["short.q"] // simulated/experiment_1/gene
 ]
@@ -60,5 +60,5 @@ data_method_queue_matrix = [
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1:arg2=value2:arg3=value3")
 optional_args = [
-  "B=1" // mann_whitney_perm
+  "B=50" // mann_whitney_perm
 ]
