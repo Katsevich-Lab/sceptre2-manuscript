@@ -422,16 +422,6 @@ null_stat_mat <- mw_debug |>
   select(-z_star) |>
   as.matrix()
 
-p_emp <- sapply(X = seq_along(z_star), FUN = function(i) {
-  curr_z_star <- z_star[i]
-  curr_z_null <- null_stat_mat[i,] + runif(n = length(row), min = -1e-5, max = 1e-5)
-  p_emp <- sceptre2:::compute_empirical_p_value(z_star = curr_z_star,
-                                                z_null = curr_z_null,
-                                                side = "both")
-  })
-rm(null_stat_mat)
-mw_debug$p_emp <- p_emp
-
 # add the KS fit category
 mw_debug$ks_fit <- cut(x = mw_debug$ks_stat,
                        breaks = unique(unlist(ks_stat_categories)),
@@ -469,15 +459,10 @@ plot_mw_debug_row <- function(row) {
 ```
 
 ```{r, message = FALSE, echo = FALSE}
-mw_debug_papa <- mw_debug |>
-  filter(dataset == "papalexi_eccite_screen_gene")
-```
-
-```{r, message = FALSE, echo = FALSE}
 ks_fit_levels <- names(ks_stat_categories)
 n_plots <- 4
 ps <- lapply(ks_fit_levels, function(ks_stat_category) {
-  x <- mw_debug_papa |>
+  x <- mw_debug |>
     filter(ks_fit == !!ks_stat_category) |>
     sample_n(n_plots)
   p_list <- lapply(X = seq(1, n_plots), FUN = function(i) {
@@ -511,7 +496,7 @@ And here are four in the "poor" category.
 plot(ps$poor)
 ```
 
-Next, I study the relationship between standard normal fit quality and effective sample size. I plot standard normal fit quality (as quantified by KS statistic) against effective sample size for a set of pairs sampled from the Frangieh and Papalexi datasets.
+Next, I study the relationship between standard normal fit quality and effective sample size. I plot standard normal fit quality (as quantified by KS statistic) against effective sample size for a set of pairs sampled from the Papalexi dataset.
 
 ```{r, message = FALSE, echo = FALSE, fig.align = "center"}
 ntc_effective_samp_size <- sample_size_df |>
@@ -521,14 +506,15 @@ ntc_effective_samp_size <- sample_size_df |>
 
 mw_debug_select <- mw_debug |>
   select(p_value, p_emp, ks_stat, dataset, undercover_grna, response_id, ks_fit) |>
-  mutate(p_rat = p_value/p_emp) |>
+  mutate(p_rat = p_emp/p_value) |>
  left_join(y = ntc_effective_samp_size,
            by = c("response_id", "dataset"))  |>
   mutate(method = "MW (perm)") |>
   update_dataset_names()
 
 p <- mw_debug_select |>
-  ggplot(mapping = aes(x = effective_samp_size, y = ks_stat)) +
+  ggplot(mapping = aes(x = effective_samp_size,
+                       y = ks_stat)) +
   geom_point() +
   facet_wrap(dataset_rename_w_pairs~., scales = "free", labeller = label_wrap_gen(35)) +
   theme_bw() +
@@ -542,24 +528,11 @@ We see that as effective sample size increases, the KS statistic decreases, indi
 
 ```{r}
 mw_debug_select |>
-  ggplot(mapping = aes(x = ks_stat,
-                       y = p_rat,
-                       col = ks_fit)) +
-  geom_point() +
-  facet_wrap(dataset_rename_w_pairs ~ .,
-             scales = "free",
-             labeller = label_wrap_gen(35)) +
-  theme_bw() +
-  scale_x_log10() +
-  scale_y_log10() + 
-  xlab("KS statistic") +
-  ylab("p-rat")
-
-
-mw_debug_select |>
+  mutate(bottom_out = (p_emp < 2e-05)) |>
   ggplot(mapping = aes(x = effective_samp_size,
                        y = p_rat,
-                       col = ks_fit)) +
+                       col = ks_fit,
+                       shape = bottom_out)) +
   geom_point() +
   facet_wrap(dataset_rename_w_pairs ~ .,
              scales = "free",
@@ -571,22 +544,18 @@ mw_debug_select |>
   ylab("p-rat")
 ```
 
-What is going on with those pairs that exhibit miscalibration? They do not have small effective sample sizes in all cases. Therefore, what is going wrong?
+I plot the empirical p-value against the MW p-value.
 
 ```{r}
-problem_pairs <- undercover_res_w_ess |>
-  filter(p_value < 1e-3, dataset == "papalexi_eccite_screen_gene") |>
-  select(response_id, undercover_grna) |>
-  mutate(dataset = "papalexi/eccite_screen/gene",
-         pair_status = "problem")
-
-ok_pairs <- undercover_res_w_ess |>
-  sample_n(size = nrow(problem_pairs)) |>
-   select(response_id, undercover_grna) |>
-  mutate(dataset = "papalexi/eccite_screen/gene",
-         pair_status = "ok")
-
-followup_pairs <- rbind(problem_pairs, ok_pairs)
-saveRDS(object = followup_pairs, file = paste0(result_dir,
-                                               "undercover_grna_analysis/mw_debug_pairs.rds"))
+mw_debug_select |>
+  mutate(inflation = p_value < p_emp) |>
+  ggplot(aes(x = p_value,y = p_emp, col = inflation)) +
+  geom_point() +
+  theme_bw() +
+  scale_x_log10() +
+  scale_y_log10() +
+  geom_abline(slope = 1, intercept = 0, col = "darkred") +
+  xlab("MW p-value") +
+  ylab("Empirical p-value") +
+  geom_hline(yintercept = 2e-5, col = "darkblue")
 ```

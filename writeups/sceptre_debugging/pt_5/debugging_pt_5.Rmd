@@ -1,0 +1,168 @@
+---
+title: 'Debugging sceptre 4: Understanding Schraivogel'
+author: "Tim"
+date: "2022-10-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(katlabutils)
+library(tidyverse)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+# load results
+# 1. Fisher exact res
+fisher_exact_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/fisher_exact_1.rds"))
+
+# 2. Fisher debug
+fisher_debug <- readRDS(paste0(result_dir, "undercover_grna_analysis/fisher_debug.rds"))
+
+# source functions
+funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
+source(funct_script)
+```
+
+
+```{r}
+x <- fisher_debug |>
+  filter(grna_threshold == 5) |>
+  select(response_id, p_value, control_group, undercover_grna)
+
+to_plot <- left_join(x |> filter(control_group == "ntc"),
+          x |> filter(control_group == "compliment"),
+          by = c("response_id", "undercover_grna")) |>
+  select("p_value_ntc" = "p_value.x",
+         "p_value_compliment" = "p_value.y")
+cor(to_plot$p_value_ntc, to_plot$p_value_compliment)
+
+p <- ggplot(data = to_plot, mapping = aes(x = p_value_ntc, y = p_value_compliment)) +
+  geom_point(size = 0.7, alpha = 0.2)
+```
+
+## Understanding the Schraivogel data
+
+The Schraivogel data are anomalous. Here, I seek to understand why the Schraivogel data are so different from the other data.
+
+I have tried the following strategies to alleviate the miscalibration on the Schraivogel data:
+
+1. Including the top PCs as covariates.
+2. Implementing more stringent thresholds for cell-to-gRNA assignment.
+3. Taking the "control group" to be the compliment of the set of cells that receive the targeting gRNA (as opposed to cells that receive an NT gRNA).
+
+
+
+## Other ideas
+
+MIMOSCA is doing a few additional things differently than the other methods.
+1. MIMOSCA is regressing on the entire set of gRNAs. (SCEPTRE and NB regression, by contrast, .)
+2. MIMOSCA builds the null distribution by sharing information across GENES (not gRNAs). Basically, (i) compute the "ground truth" statistic between a given gRNA and all genes, (ii) permute the gRNA vector (say) 50 times, and (iii) compute the statistic between the gRNA and all genes, producing an empirical null distribution. Use the resulting empirical null distribution to compute gene-wise p-values (as opposed to the more standard, gene-specific one).
+
+Maybe one of these two strategies could help solve the problem.
+
+```{r}
+replace_slash_w_underscore <- function(df) {
+  df |> dplyr::mutate(dataset = gsub(pattern = "/",
+                                replacement = "_",
+                                fixed = TRUE,
+                                x = dataset))
+}
+
+
+update_df <- function(df) {
+  df |>
+    replace_slash_w_underscore() |>
+    combine_schraivogel_enhancer_screens() |>
+    update_dataset_names(add_n_pairs = TRUE)
+}
+
+fisher_exact_res <- fisher_exact_res |> update_df()
+```
+
+
+```{r}
+# first, filter for Frangieh, Papalexi, and Schraivogel data 
+datasets_to_study <- c("frangieh_co_culture_gene",
+                       "papalexi_eccite_screen_gene",
+                       "frangieh_control_gene",
+                       "frangieh_ifn_gamma_gene",
+                       "schraivogel_ground_truth_perturbseq_gene")
+
+# next, downsample so that all datasets contain the same number of pairs
+n_to_sample <- fisher_exact_res |>
+  filter(dataset %in% datasets_to_study) |>
+  group_by(dataset) |>
+  summarize(count = n()) |>
+  pull(count) |>
+  min()
+
+fisher_downsample <- fisher_exact_res |>
+  filter(dataset %in% datasets_to_study) |>
+  group_by(dataset) |>
+  sample_n(n_to_sample) |>
+  update_dataset_names()
+
+fisher_downsample |>
+  ggplot(mapping = aes(y = p_value)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free",
+              ncol = 2,
+              labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  geom_hline(yintercept = 5e-5, col = "darkblue")
+```
+
+
+```{r}
+# for each dataset and ntc, count the number of pairs with p-values below 1e-4
+to_plot <- fisher_downsample |>
+  mutate(p_lt_1em4 = p_value < 5e-5) |>
+  group_by(dataset, undercover_grna) |>
+  summarize(count = sum(p_lt_1em4))
+
+to_plot |>
+  group_by(dataset) |>
+  summarize(sum(count))
+```
+
+
+```{r}
+# compare to TAP-seq
+fisher_exact_res |> 
+  filter(dataset == "schraivogel_ground_truth_tapseq_gene") |>
+  pull(undercover_grna) |>
+  unique()
+
+tap_res <- fisher_exact_res |> 
+  filter(dataset == "schraivogel_ground_truth_tapseq_gene")
+  
+tap_res |>
+   ggplot(mapping = aes(y = p_value)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free",
+              ncol = 2,
+              labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  geom_hline(yintercept = 1e-2, col = "darkblue")
+```
