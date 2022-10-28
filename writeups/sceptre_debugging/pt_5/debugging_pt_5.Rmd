@@ -1,5 +1,5 @@
 ---
-title: 'Debugging sceptre 4: Understanding Schraivogel'
+title: 'Debugging sceptre 5: Attempting to understanding the Schraivogel data'
 author: "Tim"
 date: "2022-10-24"
 output: html_document
@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, message=FALSE, error=FALSE, warning=FALSE, echo=FALSE}
 library(katlabutils)
 library(tidyverse)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
@@ -21,49 +21,28 @@ fisher_exact_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/fisher_
 # 2. Fisher debug
 fisher_debug <- readRDS(paste0(result_dir, "undercover_grna_analysis/fisher_debug.rds"))
 
+# 3. MW-MIMOSCA
+mw_mim <- readRDS(paste0(result_dir, "undercover_grna_analysis/mw_mimosca_1.rds"))
+
+# 4. MW
+mw_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  filter(method == "seurat_de") |>
+  select(-clock_time, -max_ram)
+
 # source functions
 funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
 source(funct_script)
 ```
 
-
-```{r}
-x <- fisher_debug |>
-  filter(grna_threshold == 5) |>
-  select(response_id, p_value, control_group, undercover_grna)
-
-to_plot <- left_join(x |> filter(control_group == "ntc"),
-          x |> filter(control_group == "compliment"),
-          by = c("response_id", "undercover_grna")) |>
-  select("p_value_ntc" = "p_value.x",
-         "p_value_compliment" = "p_value.y")
-cor(to_plot$p_value_ntc, to_plot$p_value_compliment)
-
-p <- ggplot(data = to_plot, mapping = aes(x = p_value_ntc, y = p_value_compliment)) +
-  geom_point(size = 0.7, alpha = 0.2)
-```
-
 ## Understanding the Schraivogel data
 
-The Schraivogel data are anomalous. Here, I seek to understand why the Schraivogel data are so different from the other data.
+The Schraivogel TAP-seq and perturb-seq data are anomalous. Here, I seek to understand why the Schraivogel data are so different from the other data. Previously, I tried to ameliorate the miscalibration on the Schraivogel data by including the top PCs of the gene expression matrix as covariates; this did not resolve the problem. Furthermore, I tested the hypothesis that some NT gRNAs might not in fact be NT gRNAs (i.e., that they have an effect); this analysis was (at best) inconclusive. Here, I investigate two further questions.
 
-I have tried the following strategies to alleviate the miscalibration on the Schraivogel data:
+- First, does changing the cell-to-gRNA assignment threshold (from 8 to, e.g., 5) improve the results? In other words, if we exlude cells that contain two or more gRNAs with 5+ (as opposed to 8+) UMI counts, does this improve calibration? The idea here is that cells containing an NT gRNA may also contain a targeting gRNA, thereby injecting some "signal" into the negative control data.
 
-1. Including the top PCs as covariates.
-2. Implementing more stringent thresholds for cell-to-gRNA assignment.
-3. Taking the "control group" to be the compliment of the set of cells that receive the targeting gRNA (as opposed to cells that receive an NT gRNA).
+- Second, does changing the set of control cells from those that receive an NT gRNA to the compliment of those that receive a targeting gRNA (i.e., the "compliment set") improve the results?
 
-
-
-## Other ideas
-
-MIMOSCA is doing a few additional things differently than the other methods.
-1. MIMOSCA is regressing on the entire set of gRNAs. (SCEPTRE and NB regression, by contrast, .)
-2. MIMOSCA builds the null distribution by sharing information across GENES (not gRNAs). Basically, (i) compute the "ground truth" statistic between a given gRNA and all genes, (ii) permute the gRNA vector (say) 50 times, and (iii) compute the statistic between the gRNA and all genes, producing an empirical null distribution. Use the resulting empirical null distribution to compute gene-wise p-values (as opposed to the more standard, gene-specific one).
-
-Maybe one of these two strategies could help solve the problem.
-
-```{r}
+```{r, message = FALSE, echo = FALSE}
 replace_slash_w_underscore <- function(df) {
   df |> dplyr::mutate(dataset = gsub(pattern = "/",
                                 replacement = "_",
@@ -71,45 +50,31 @@ replace_slash_w_underscore <- function(df) {
                                 x = dataset))
 }
 
-
-update_df <- function(df) {
-  df |>
-    replace_slash_w_underscore() |>
-    combine_schraivogel_enhancer_screens() |>
-    update_dataset_names(add_n_pairs = TRUE)
-}
-
-fisher_exact_res <- fisher_exact_res |> update_df()
+fisher_debug <- fisher_debug |>
+  replace_slash_w_underscore() |>
+  update_dataset_names()
+mw_mim <- mw_mim |>
+  replace_slash_w_underscore() |>
+  update_dataset_names(TRUE)
+mw_res <- mw_res |>
+  filter(dataset %in% unique(mw_mim$dataset)) |>
+  update_dataset_names(TRUE)
 ```
 
+I answered these questions by applying Fisher's exact test to the TAP-seq and perturb-seq datasets. I used two different control groups: first, the set of cells that received an NT, and second, the compliment set. I also varied the threshold for assigning gRNAs to cells over the set $\{1, 3, 5, 7, 8\}$. The results are presented below.
 
-```{r}
-# first, filter for Frangieh, Papalexi, and Schraivogel data 
-datasets_to_study <- c("frangieh_co_culture_gene",
-                       "papalexi_eccite_screen_gene",
-                       "frangieh_control_gene",
-                       "frangieh_ifn_gamma_gene",
-                       "schraivogel_ground_truth_perturbseq_gene")
-
-# next, downsample so that all datasets contain the same number of pairs
-n_to_sample <- fisher_exact_res |>
-  filter(dataset %in% datasets_to_study) |>
-  group_by(dataset) |>
+```{r, message = FALSE, echo = FALSE, fig.height = 8, fig.width = 8, fig.align = "center"}
+min_count <- fisher_debug |>
+  group_by(grna_threshold, control_group) |>
   summarize(count = n()) |>
   pull(count) |>
   min()
 
-fisher_downsample <- fisher_exact_res |>
-  filter(dataset %in% datasets_to_study) |>
-  group_by(dataset) |>
-  sample_n(n_to_sample) |>
-  update_dataset_names()
-
-fisher_downsample |>
-  ggplot(mapping = aes(y = p_value)) +
+p <- fisher_debug |>
+  mutate(grna_threshold = factor(grna_threshold)) |>
+  ggplot(mapping = aes(y = p_value, col = grna_threshold)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
-   facet_wrap(~dataset_rename_w_pairs, scales = "free",
-              ncol = 2,
+   facet_grid(dataset_rename_w_pairs ~ control_group, scales = "free",
               labeller = label_wrap_gen(35)) +
    geom_abline(col = "darkred") +
    stat_qq_band() +
@@ -120,49 +85,59 @@ fisher_downsample |>
    theme(legend.position = "bottom",
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
-         panel.background = element_blank()) +
-  geom_hline(yintercept = 5e-5, col = "darkblue")
+         panel.background = element_blank())
+p
 ```
 
+The Perturb-seq results are presented in the top row, and the TAP-seq datasets are presented in the bottom row. Meanwhile, the results based on using the compliment set as the control cells are presented in the first column, while those based on using NT cells as the control cells are presented in the second. Overall, choice of the control group (i.e., compliment set versus NT cells) does not seem to make much of a difference. Furthermore, the gRNA-to-cell assignment threshold likewise does not make much of a difference on the Perturb-seq data. On the TAP-seq data, by contrast, setting the gRNA threshold to 1 (a very strict threshold) does seem to improve calibration of the Fisher exact test.
 
-```{r}
-# for each dataset and ntc, count the number of pairs with p-values below 1e-4
-to_plot <- fisher_downsample |>
-  mutate(p_lt_1em4 = p_value < 5e-5) |>
-  group_by(dataset, undercover_grna) |>
-  summarize(count = sum(p_lt_1em4))
+## Builing the null distribution by sharing information across genes
+
+Recall that MIMOSCA is decently calibrated (at least in the tail) on the Perturb-seq and TAP-seq data. One possible explanation is that MIMOSCA builds its null distribution by sharing information across genes. (Specifically, for a given gRNA, MIMOSCA fits elastic net regressions of all genes onto the gRNA; then, MIMOSCA permutes the gRNA assignments and fits additional elastic net regressions by regressing the genes onto the permuted gRNA assignments. MIMOSCA uses as its null distribution the elastic net coefficients obtained from the regressions of the genes onto the permuted gRNA assignments.) I evaluated a version of the Mann-Whitney test in which I generated the null distribution by sharing information across genes in a way that is similar to MIMOSCA. The results are plotted below. The horizontal black line indicates the minimum possible p-value (based on the number of permutations; B = 50).
+
+```{r, message = FALSE, echo = FALSE, fig.height = 10, fig.width = 10, fig.align = "center"}
+min_p_df <- mw_mim |>
+  group_by(dataset_rename_w_pairs) |>
+  summarize(n_genes = length(unique(response_id))) |>
+  mutate(min_p = 2/(n_genes * 50))
+
+to_plot <- rbind(mw_mim, mw_res)
 
 to_plot |>
-  group_by(dataset) |>
-  summarize(sum(count))
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-9, size = 0.8) +
+  facet_wrap(dataset_rename_w_pairs ~ .,
+             scales = "free",
+             labeller = label_wrap_gen(35)) +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  theme(legend.position = "bottom",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+  geom_abline(col = "darkred") +
+  stat_qq_band() +
+  geom_hline(mapping = aes(yintercept = min_p), data = min_p_df) +
+  ylab("p-value")
 ```
 
+Overall, the results look fairly good and are similar to those of the Fisher exact test. (The bulk calibration is slightly better while the tail calibration is slightly worse.) However, the strategy of building a null distribution by sharing information across genes does not ameliorate the calibration issues observed on the Schraivogel data. I plot the same results on an untransformed scale.
 
-```{r}
-# compare to TAP-seq
-fisher_exact_res |> 
-  filter(dataset == "schraivogel_ground_truth_tapseq_gene") |>
-  pull(undercover_grna) |>
-  unique()
-
-tap_res <- fisher_exact_res |> 
-  filter(dataset == "schraivogel_ground_truth_tapseq_gene")
-  
-tap_res |>
-   ggplot(mapping = aes(y = p_value)) +
-   stat_qq_points(ymin = 1e-9, size = 0.8) +
-   facet_wrap(~dataset_rename_w_pairs, scales = "free",
-              ncol = 2,
-              labeller = label_wrap_gen(35)) +
-   geom_abline(col = "darkred") +
-   stat_qq_band() +
-   theme_bw() +
-   scale_x_continuous(trans = revlog_trans(10)) +
-   scale_y_continuous(trans = revlog_trans(10)) +
-   labs(x = "Expected quantile", y = "Observed quantile") +
-   theme(legend.position = "bottom",
-         panel.grid.major = element_blank(),
-         panel.grid.minor = element_blank(),
-         panel.background = element_blank()) +
-  geom_hline(yintercept = 1e-2, col = "darkblue")
+```{r, message = FALSE, echo = FALSE, fig.height = 10, fig.width = 10, fig.align = "center"}
+to_plot |>
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-9, size = 0.8) +
+  facet_wrap(dataset_rename_w_pairs ~ .,
+             scales = "free",
+             labeller = label_wrap_gen(35)) +
+  theme(legend.position = "bottom",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+  geom_abline(col = "darkred") +
+  stat_qq_band() +
+  geom_hline(mapping = aes(yintercept = min_p), data = min_p_df) +
+  ylab("p-value")
 ```
+
+The cause of miscalibration on the Perturb-seq data remains illusive.

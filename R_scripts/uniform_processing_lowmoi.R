@@ -7,7 +7,6 @@ papers <- c("frangieh", "liscovitch",  "papalexi", "schraivogel", "simulated")
 # (ii) filter for cells that passed other QC metrics implemented by the original authors (stored in the "passed_qc" column).
 
 # set params
-N_CELLS_PER_GRNA_THRESH <- 10
 FRAC_EXPRESSED_TRHESH <- 0.005
 
 # 1.i) Set the MIMOSCA formula objects
@@ -67,19 +66,16 @@ for (paper in papers) {
     # grna assignment modality: keep features expressed in N_CELLS_PER_GRNA_THRESH cells. Also, add a "grna_assigned" column to the cell covariate matrix.
     grna_assign_modality <- get_modality(mm_odm_sub, "grna_assignment")
     grna_assign_mat <- lowmoi::load_whole_odm(grna_assign_modality)
-    grna_assignments <- apply(X = grna_assign_mat,
+    assigned_grna <- apply(X = grna_assign_mat,
                               MARGIN = 2,
                               FUN = function(col) names(which.max(col))) |> unname()
     grna_assign_modality <- grna_assign_modality |>
-      mutate_cell_covariates(assigned_grna = grna_assignments)
+      mutate_cell_covariates(assigned_grna = assigned_grna)
     if (paper == "schraivogel") {
       grna_assign_modality <- grna_assign_modality |>
         mutate_feature_covariates(target = ifelse(is.na(known_effect), target, known_effect),
                                   known_effect = NULL)
     }
-    n_cells_per_grna <- Matrix::rowSums(grna_assign_mat)
-    grnas_to_keep <- n_cells_per_grna >= N_CELLS_PER_GRNA_THRESH
-    mm_odm_sub@modalities[["grna_assignment"]] <- grna_assign_modality[grnas_to_keep,]
 
     # grna expression modality (if applicable): keep the same features as above
     if ("grna_expression" %in% modalities) {
@@ -88,7 +84,6 @@ for (paper in papers) {
         grna_expression_modality <- grna_expression_modality |>
           mutate_feature_covariates(target = known_effect, known_effect = NULL)
       }
-      mm_odm_sub@modalities[["grna_expression"]] <- grna_expression_modality[grnas_to_keep,]
     }
 
     # response modalities: keep features expressed in FRAC_EXPRESSED_TRHESH of cells

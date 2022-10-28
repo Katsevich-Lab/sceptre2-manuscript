@@ -1,5 +1,5 @@
 ---
-title: 'Debuging `sceptre` 5: Understanding Papalexi and MIMOSCA'
+title: 'Debuging `sceptre` 4: Comparing SCEPTRE and Seurat DE across datasets'
 author: "Tim"
 date: "2022-10-15"
 output: html_document
@@ -88,12 +88,11 @@ mw_debug <- mw_debug |>
   replace_slash_w_underscore()
 ```
 
-This is the fifth installment of the debugging SCEPTRE series. I aim to answer the following questions.
+This is the fourth installment of the debugging SCEPTRE series. I aim to answer the following questions.
 
 1. Why is SCEPTRE reasonably well-calibrated on the Papalexi data but not on the Frangieh data?
 2. Why does applying QC improve the quality of SCEPTRE on the Papalexi data but not on the Frangieh data?
 3. Why is Seurat DE less well calibrated than SCEPTRE on the Papalexi data?
-4. Why is MIMOSCA the only calibrated method on the Schraivogel TAP-seq and Perturb-seq data?
 
 # Part 1: SCEPTRE exhibits better calibration on the Papalexi data than the Frangieh data. Also, applying QC improves the calibration quality of SCEPTRE on the Frangieh data but not on the Papalexi data.
 
@@ -128,6 +127,7 @@ undercover_res_samp |>
          panel.grid.minor = element_blank(),
          panel.background = element_blank())
 ```
+
 Next, for each dataset, I plot the pairs that pass QC alongside the pairs that do not. The comparison here is along two axes: first, across datasets, and second, within a given dataset, across pairs that passed QC versus pairs that did not. To enable meaningful comparisons along both axes, I performed downsampling so that each dataset-QC status (i.e., passed versus not passed) tuple would contain the same number of pairs. In other words, I performed downsampling so that each of the eight sets of pairs below (two for each of the four plots) would have the same number of pairs.
 
 ```{r, echo = FALSE, fig.align = "center", fig.height = 6, fig.width = 7, message=FALSE, warning=FALSE}
@@ -168,9 +168,10 @@ to_plot |>
        panel.background = element_blank()) +
   labs(col="Passed QC")
 ```
-We see that QC makes an enormous difference on the Frangieh data: the pairs that survive QC are fairly well calibrated, while those that are filtered out are poorly calibrated. By contrast, QC does not make much of a difference on the Papalexi data: the pairs that pass QC and those that do not are both fairly well-calibrated.
 
-Next, I make a similar figure, this time plotting pairs with a "good" skew-normal fit alongside those with a "bad" (i.e., not "good") skew-normal fit. Again, I downsample so that each dataset-skew-normal fit status (i.e., "good" versus "bad") tuple contains the same number of pairs. Note that the number of pairs plotted below is much smaller than the number of pairs plotted above; thus, we are not looking as far out into the tail of the distribution. Still, the trend is clear: SCEPTRE exhibits similar performance on the Papalexi data regardless of whether the skew-normal fit is good or bad. By contrast, on the Frangieh data, a good skew-normal fit is required for p-value calibration.
+We see that QC makes an enormous difference on the Frangieh data: the pairs that survive QC are fairly well calibrated, while those that are filtered out are poorly calibrated. By contrast, QC does not make much of a difference on the Papalexi data: the pairs that pass QC and those that do not are both fairly well-calibrated (altough there does seem to be a small difference).
+
+Next, I make a similar figure, this time plotting pairs with a "good" skew-normal fit alongside those with a "bad" (defined as an "adequate," "subpar," or "poor") skew-normal fit. Again, I downsample so that each dataset-skew-normal fit status (i.e., "good" versus "bad") tuple contains the same number of pairs. Note that the number of pairs plotted below is much smaller than the number of pairs plotted above; thus, we are not looking as far out into the tail of the distribution. Still, the trend is clear: SCEPTRE exhibits similar performance on the Papalexi data regardless of whether the skew-normal fit is good or bad. By contrast, on the Frangieh data, a good skew-normal fit is required for p-value calibration.
 
 ```{r, message=FALSE, warning=FALSE, fig.height = 6, fig.width = 7, echo = FALSE, fig.align = "center"}
 min_card <- sceptre_debug |>
@@ -203,7 +204,7 @@ These two sets of results are concordant: on the Frangieh and Papalexi datasets,
 
 # Part 2: Why do the Papalexi and Frangieh datasets differ in this way?
 
-I attempt to answer the following questions: Why on the Papalexi data does effective sample size not impact calibration quality? Put differently, how can pairs with a low effective sample size (and thus a poor skew-normal fit) exhibit good calibration? And why does this phenomenon not hold on the Frangieh data?
+I attempt to answer the following questions: Why on the Papalexi data does effective sample size not exert a larger impact on the calibration quality of SCEPTRE? Put differently, how can pairs with a low effective sample size (and thus a poor skew-normal fit) exhibit good calibration? And why does this phenomenon not hold on the Frangieh data?
 
 First, to get our bearings, I plot some of the SCEPTRE resampling distributions on the Papalexi data that fall into the "good," "adequate," "subpar," and "poor" categories. Here are four pairs in the **good** category:
 
@@ -376,7 +377,9 @@ Answer: Inflation (or lack thereof) is closely tied to skew-normal fit quality o
 
 # Part 3: What is going on with Seurat DE?
 
-```{r}
+The Seurat DE results (faceted by dataset and colored by QC status) are below.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 set.seed(4)
 qc_thresh <- 500
 
@@ -412,7 +415,7 @@ to_plot |>
   labs(col="Passed QC")
 ```
 
-I applied Seurat DE to a subset of the Papalexi and Frangieh data, obtaining (pretty much) exact p-values by permuting the data and computing the Mann-Whitney (MW) test statistic B=100,000 times. I assessed the quality of the standard normal approximation to the null distribution by running a KS test on the resampled test statistics. I plot examples of empirical null distributions in the "good," "adequate," "subpar," and "poor" categories.
+I applied Seurat DE to a subset of the Papalexi and Frangieh data, obtaining exact p-values by permuting the data and computing the Mann-Whitney (MW) test statistic B=100,000 times. I assessed the quality of the standard normal approximation to the null distribution by running a KS test on the resampled test statistics. I plot examples of empirical null distributions in the "good," "adequate," "subpar," and "poor" categories.
 
 ```{r, echo=FALSE}
 # update the calculation of the empirical p-value using the jittered statistics (if necessary)
@@ -496,7 +499,7 @@ And here are four in the "poor" category.
 plot(ps$poor)
 ```
 
-Next, I study the relationship between standard normal fit quality and effective sample size. I plot standard normal fit quality (as quantified by KS statistic) against effective sample size for a set of pairs sampled from the Papalexi dataset.
+Next, I study the relationship between standard normal fit quality and effective sample size. These results perhaps should be taken with a grain of salt, as I sampled non-randomly from the set of Papalexi pairs (focusing on those with very small Mann-Whitney p-values). I plot standard normal fit quality (as quantified by KS statistic) against effective sample size for a set of pairs sampled from the Papalexi dataset.
 
 ```{r, message = FALSE, echo = FALSE, fig.align = "center"}
 ntc_effective_samp_size <- sample_size_df |>
@@ -526,7 +529,7 @@ p
 
 We see that as effective sample size increases, the KS statistic decreases, indicating improved fit quality. Next, I plot p$_\textrm{rat}$ against the KS statistic.
 
-```{r}
+```{r, message = FALSE, echo = FALSE, fig.align = "center"}
 mw_debug_select |>
   mutate(bottom_out = (p_emp < 2e-05)) |>
   ggplot(mapping = aes(x = effective_samp_size,
@@ -544,9 +547,9 @@ mw_debug_select |>
   ylab("p-rat")
 ```
 
-I plot the empirical p-value against the MW p-value.
+Finally, I plot the empirical p-value against the MW p-value.
 
-```{r}
+```{r, message = FALSE, echo = FALSE, fig.align = "center"}
 mw_debug_select |>
   mutate(inflation = p_value < p_emp) |>
   ggplot(aes(x = p_value,y = p_emp, col = inflation)) +

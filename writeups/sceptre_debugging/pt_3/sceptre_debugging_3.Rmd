@@ -75,13 +75,11 @@ sceptre_nb_pca_res <- sceptre_nb_pca_res |>
 
 This is the third writeup in the SCEPTRE debugging series. The broad purpose of this series is to answer two overarching questions: (1) what are the analysis challenges, and (2) how can we address them? To this end I ask four more specific questions in this writeup.
 
-1.  To what extent does applying a more stringent QC threshold *actually* make the problem easier? (Answer: Applying more stringent QC makes the problem easier on the Frangieh data but not on the Papalexi or Schraivogel data.)
+1. To what extent does applying a more stringent QC threshold *actually* make the problem easier? (Answer: Applying more stringent QC makes the problem obviously easier on the Frangieh; this is less clearly the case on the Papalexi and Schraivogel data.)
 
-2.  Do the Seurat resampling distributions resemble the SCEPTRE resampling distributions in easy and challenging problem settings? (In progress.)
+2. Might latent confounding explain the miscalibration we observe on the Schraivogel perturb-seq data? (Answer: Not really.)
 
-3.  Might latent confounding explain the miscalibration we observe on the Schraivogel perturb-seq data? (Answer: Not really.)
-
-4.  How do the *exact* (as opposed to *skew-normal*) SCEPTRE p-values look? Are they well-calibrated? (Answer: the exact SCEPTRE p-values and skew-normal SCEPTRE p-values coincide on the Papalexi and Schraivogel data but diverge on the Frangieh data.)
+3. How do the *exact* (as opposed to *skew-normal*) SCEPTRE p-values look? Are they well-calibrated? (Answer: the exact SCEPTRE p-values and skew-normal SCEPTRE p-values coincide on the Papalexi and Schraivogel data but diverge on the Frangieh data.)
 
 Throughout, I use a modified version of the Fisher exact test in which I partition the cells into "highly" and "lowly" expressed groups based on the median expression of the gene. I then construct a contigency table based on this categorization.
 

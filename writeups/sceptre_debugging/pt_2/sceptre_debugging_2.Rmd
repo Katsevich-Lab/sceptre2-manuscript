@@ -9,6 +9,8 @@ output: html_document
 # load packages
 library(tidyverse)
 library(katlabutils)
+library(ondisc)
+
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 
 # load the auxilliary functions
@@ -110,7 +112,7 @@ fisher_exact_res_plot |>
          panel.background = element_blank())
 ```
 
-Amazingly, the *p*-values are calibrated far into the tail of the distribution on all of the datasets (with the exception of the Papalexi protein data and the Schraivogel perturb-seq data; more on those below). Hence, confounding likely is negligible (because if confounding were non-negligible, then the Fisher exact test, which is a test of *marginal* rather than *conditional* independence, would be miscalibrated). Seurat DE and SCEPTRE (not depicted) also are nonparametric tests of marginal independence. Both of these methods are miscalibrated on the negative control data. The miscalibration of Seurat DE and SCEPTRE likely is not the result of confounding; rather, the assumptions that Seurat DE and SCEPTRE make about the null distribution of the test statistic (i.e., that the test statistic is Gaussian distributed or skew-normal distributed) likely are wrong for some fraction of the pairs.
+Amazingly, the *p*-values are calibrated far into the tail of the distribution on all of the datasets (with the exception of the Papalexi protein data, the Schraivogel perturb-seq data. and the Schraivogel TAP-seq data). Hence, confounding likely is negligible (because if confounding were non-negligible, then the Fisher exact test, which is a test of marginal rather than conditional independence, would be miscalibrated). Seurat DE and SCEPTRE (not depicted) also are nonparametric tests of marginal independence. Both of these methods are miscalibrated on the negative control data. The miscalibration of Seurat DE and SCEPTRE likely is not the result of confounding; rather, the assumptions that Seurat DE and SCEPTRE make about the null distribution of the test statistic (i.e., that the test statistic is Gaussian distributed or skew-normal distributed) likely are wrong for some fraction of the pairs.
 
 Next, I plot the negative control *p*-values on an untransformed scale.
 
@@ -138,7 +140,7 @@ fisher_exact_res_plot |>
 
 A nontrivial fraction of the p-values is exactly equal to one, causing the bulk of the distribution to be conservative. I investigate reasons for this in the next section.
 
-Finally, I applied Fisher's exact test to the (grouped) positive control data. The number of discoveries that the Fisher's exact test made after a Bonferoni correction is plotted below (the results of the other methods are plotted as well for reference). Clearly, Fisher's exact test quite capable of making discoveries. However, Fisher's exact test does appear to be slightly less powerful than the other methods (aside from MIMOSCA); this (at least in part) is a result of the fact that Fisher's exact test is the only calibrated method among those plotted.
+Finally, I applied Fisher's exact test to the (grouped) positive control data. The number of discoveries that the Fisher's exact test made after a Bonferoni correction is plotted below (the results of the other methods are plotted as well for reference). Clearly, Fisher's exact test quite capable of making discoveries. However, Fisher's exact test does appear to be slightly less powerful than the other methods (aside from MIMOSCA); this (at least in part) is a result of the fact that Fisher's exact test is the only calibrated method among those plotted. Fisher's exact test also makes less efficient use of the count-valued data.
 
 ```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center", warning=FALSE, message=FALSE}
 n_bonf_reject <- compute_n_bonf_rejected(pc_res)
@@ -149,13 +151,11 @@ p <- make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject,
 p
 ```
 
-Some questions remain regarding the application of Fisher's exact test to single-cell CRISPR screen data. Nonetheless, if I had to advise a biologist tomorrow about what method she should use to analyze her single-cell CRISPR screen data, I would recommend Fisher's exact test.
-
 # Question 2: Why does the Fisher exact test yield a large fraction of p-values exactly equal to one?
 
-The Fisher exact test yields a *p*-value exactly equal to one for a large fraction of the negative control pairs. What is the reasons for this? I investigate the properties of pairs with *p*-values exactly equal to one.
+The Fisher exact test yields a *p*-value exactly equal to one for a large fraction of the negative control pairs. What is the reasons for this? I investigate the properties of pairs with *p*-values exactly equal to one. Most importantly, pairs with a Fisher exact p-value of 1 have a smaller median effective sample size than those with a p-value of less than 1.
 
-```{r}
+```{r, echo=FALSE, fig.height = 7, fig.width = 8, fig.align = "center", warning=FALSE, message=FALSE}
 ntc_effective_samp_size <- sample_size_df |>
   filter(grna_group == "non-targeting") |>
   group_by(response_id, dataset) |>
@@ -187,11 +187,101 @@ mean_ess_compare <- pivot_wider(data = x |> select(-median_ess),
 median_ess_compare <- pivot_wider(data = x |> select(-mean_ess),
                                 names_from = "p_is_1",
                                 values_from = "median_ess")
+
 ```
+
+
+```{r}
+median_ess_compare |>
+  ggplot(mapping = aes(x = no, y = yes)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0) +
+  theme_bw() +
+  xlab("Mean effective sample for pairs with p = 1") +
+  ylab("Mean effective sample for pairs with p < 1")
+```
+
+# Question 3: Why are the methods miscalibrated on the Schraivogel perturb-seq data?
+
+All methods (with the exception of MIMOSCA) are miscalibrated on the Schraivogel perturb-seq data. Why is this the case? Original results plotted below.
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE}
+perturb_seq_to_plot <- rbind(undercover_res,
+                             fisher_exact_res_plot) |>
+                               filter(dataset == "schraivogel_ground_truth_perturbseq_gene")
+
+p1 <- ggplot(data = perturb_seq_to_plot,
+             mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-10, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+p1
+```
+
+One possible explanation for the miscalibration that we observe is confounding. Gene carried out an analysis to assess the extent to which the perturbation indicators are confounded by the technical factors across datasets. Gene did not find any evidence of confounding on the Schraivogel perturb-seq data. Thus, confounding likely is not the culprit for the problems that we see here (unless, of course, there is unmeasured confounding; more on that below).
+
+I hypothesized that variability among the NTCs might be responsible for the miscalibration that we observe. If some NTCs actually have an effect (i.e., if some NTCs are not true NTCs), and if others have no effect, then the undercover *p*-values contain some amount of signal. To investigate this hypothesis, I carried out an undercover analysis in which I randomly partitioned the NTCs into two equally sized groups of "control" and "undercover" gRNAs, "averaging out" and thus mitigating the effect of any non-true NTC(s). (In other words, I ran the undercover gRNA pipeline on the Schraivogel perturb-seq data, setting the group size equal to half the total number of NTCs.)
+
+```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE}
+p1 <- ggplot(data = undercover_res_grp_size_half,
+             mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-10, size = 0.8) +
+   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+p1
+```
+
+The calibration of the *p-*values improves considerably. However, the methods still are miscalibrated. I suspect that variability among the NTCs is at least partially responsible, but the full story still is not clear.
+
+Finally, we note that we are looking further into the tail of the Schraivogel perturb-seq dataset than (for example) the enhancer screen dataset, as the former contains more pairs. What happens when we downsample the perturb-seq dataset so that the perturb-seq dataset contains the same number of pairs as the TAP-seq dataset? We attempt to answer this using Fisher's exact test.
+
+```{r, echo=FALSE}
+fisher_enh_screen <- fisher_exact_res_plot |>
+  filter(dataset == "schraivogel_enhancer_screen")
+m <- nrow(fisher_enh_screen)
+fisher_pert_seq <- fisher_exact_res_plot |>
+  filter(dataset == "schraivogel_ground_truth_perturbseq_gene") |>
+  sample_n(size = m, replace = FALSE)
+to_plot <- rbind(fisher_enh_screen, fisher_pert_seq)
+
+ggplot(data = to_plot,
+             mapping = aes(y = p_value, col = dataset)) +
+   stat_qq_points(ymin = 1e-10, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+
+The perturb-seq dataset is not all that different from the TAP-seq dataset (and in fact, the TAP-seq data likely are worse).
 
 It also is possible that latent factors confound the gRNA assignments. I ran a PCA on the gene expression matrices of the TAP-seq dataset and the perturb-seq dataset, extracting the top principal component from the first (24% variance explained) and the top two principal components from the second (28% variance explained.) I regressed the perturbation indicators onto the principal components via logistic regression and obtained a p-value via likelihood ratio test. I subsetted the data to filter for cells containing NTCs only.
 
-```{r}
+```{r, echo=FALSE}
 datasets <- c("ground_truth_tapseq", "ground_truth_perturbseq")
 dataset_fps <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/schraivogel/", datasets)
 
@@ -220,84 +310,6 @@ ps <- sapply(seq(1, n_ntcs), function(i) {
 sceptre::make_qq_plot(ps)
 ```
 
-
-# Question 3: Why are the methods miscalibrated on the Schraivogel perturb-seq data?
-
-All methods (with the exception of MIMOSCA) are miscalibrated on the Schraivogel perturb-seq data. Why is this the case?
-
-```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE}
-perturb_seq_to_plot <- rbind(undercover_res,
-                             fisher_exact_res_plot) |>
-                               filter(dataset == "schraivogel_ground_truth_perturbseq_gene")
-
-p1 <- ggplot(data = perturb_seq_to_plot,
-             mapping = aes(y = p_value, col = Method)) +
-   stat_qq_points(ymin = 1e-10, size = 0.8) +
-   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
-   geom_abline(col = "darkred") +
-   stat_qq_band() +
-   theme_bw() +
-   scale_x_continuous(trans = revlog_trans(10)) +
-   scale_y_continuous(trans = revlog_trans(10)) +
-   labs(x = "Expected quantile", y = "Observed quantile") +
-   theme(legend.position = "bottom",
-         panel.grid.major = element_blank(),
-         panel.grid.minor = element_blank(),
-         panel.background = element_blank())
-p1
-```
-
-One possible explanation for the miscalibration that we observe is confounding. Gene carried out an analysis to assess the extent to which the perturbation indicators are confounded by the technical factors across datasets. Gene did not find any evidence of confounding on the Schraivogel perturb-seq data. Thus, confounding likely is not the culprit for the problems that we see here (unless, of course, there is unmeasured confounding).
-
-I hypothesized that variability among the NTCs might be responsible for the miscalibration that we observe. If some NTCs actually have an effect (i.e., if some NTCs are not true NTCs), and if others have no effect, then the undercover *p*-values contain some amount of signal. To investigate this hypothesis, I carried out an undercover analysis in which I randomly partitioned the NTCs into two equally sized groups of "control" and "undercover" gRNAs, "averaging out" and thus mitigating the effect of any non-true NTC(s). (In other words, I ran the undercover gRNA pipeline on the Schraivogel perturb-seq data, setting the group size equal to half the total number of NTCs.)
-
-```{r, fig.align = "center", message=FALSE, warning=FALSE, echo=FALSE}
-p1 <- ggplot(data = undercover_res_grp_size_half,
-             mapping = aes(y = p_value, col = Method)) +
-   stat_qq_points(ymin = 1e-10, size = 0.8) +
-   facet_wrap(~dataset_rename_w_pairs, scales = "free", ncol = 3, labeller = label_wrap_gen(35)) +
-   geom_abline(col = "darkred") +
-   stat_qq_band() +
-   theme_bw() +
-   scale_x_continuous(trans = revlog_trans(10)) +
-   scale_y_continuous(trans = revlog_trans(10)) +
-   labs(x = "Expected quantile", y = "Observed quantile") +
-   theme(legend.position = "bottom",
-         panel.grid.major = element_blank(),
-         panel.grid.minor = element_blank(),
-         panel.background = element_blank())
-p1
-```
-
-The calibration of the *p-*values improves considerably. However, the methods still are miscalibrated. I suspect that variability among the NTCs is at least partially responsible, but the full story still is not clear.
-
-Finally, we note that we are looking further into the tail of the Schraivogel perturb-seq dataset than (for example) the enhancer screen dataset, as the former contains more pairs. What happens when we downsample the perturb-seq dataset so that the perturb-seq dataset contains the same number of pairs as the tap-seq dataset? We attempt to answer this using Fisher's exact test.
-
-```{r}
-fisher_enh_screen <- fisher_exact_res_plot |>
-  filter(dataset == "schraivogel_enhancer_screen")
-m <- nrow(fisher_enh_screen)
-fisher_pert_seq <- fisher_exact_res_plot |>
-  filter(dataset == "schraivogel_ground_truth_perturbseq_gene") |>
-  sample_n(size = m, replace = FALSE)
-to_plot <- rbind(fisher_enh_screen, fisher_pert_seq)
-
-ggplot(data = to_plot,
-             mapping = aes(y = p_value, col = dataset)) +
-   stat_qq_points(ymin = 1e-10, size = 0.8) +
-   geom_abline(col = "darkred") +
-   stat_qq_band() +
-   theme_bw() +
-   scale_x_continuous(trans = revlog_trans(10)) +
-   scale_y_continuous(trans = revlog_trans(10)) +
-   labs(x = "Expected quantile", y = "Observed quantile") +
-   theme(legend.position = "bottom",
-         panel.grid.major = element_blank(),
-         panel.grid.minor = element_blank(),
-         panel.background = element_blank())
-```
-
-The perturb-seq dataset is not all that different from the enhancer screen dataset.
 
 # Question 4: what is a meaningful QC threshold to use?
 
@@ -389,28 +401,11 @@ to_plot |>
 
 The apparent minimum effective sample size required to reject at a 0.001 level (i.e., \$\\approx\$ 250 - 750) is surprisingly large.
 
-```{r}
-to_plot |>
-  filter(method == "fisher_exact") |>
-  ggplot(mapping = aes(x = effective_sample_size,
-                       fill = p_lt_001)) +
-  geom_density(alpha = 0.8) + facet_wrap(dataset_rename_w_pairs ~ .,
-                            scales = "free",
-                            labeller = label_wrap_gen(35)) +
-  xlab("Effective sample size") +
-  ylab("p-value") +
-  xlim(c(0, NA)) +
-  theme_bw() +
-  scale_color_manual(values = c("darkred", "darkblue")) +
-  labs(color = "p < 0.001") +
-  geom_vline(aes(xintercept = qc_thresh))
-```
-
 # The impact stringent QC on calibration
 
 As we apply increasingly stringent QC, the problem becomes easier, and thus calibration improves. We test that hypothesis here. First, we plot the results that we obtain using the default QC (i.e., filtering for genes that are expressed in \> 0.005 of cells).
 
-```{r, warning=FALSE, echo=FALSE, message = FALSE, fig.height = 7, fig.width = 9, fig.align = "center"}
+```{r, warning=FALSE, echo=FALSE, message = FALSE, fig.height = 8, fig.width = 10, fig.align = "center"}
 undercover_res_w_samp_size <-
   rbind(undercover_res |> filter(!(dataset %in%
                                      c("liscovitch_experiment_big_chromatin",
@@ -423,7 +418,7 @@ make_trans_qq_plot(undercover_res_w_samp_size)
 
 Next, we remove all pairs with an effective sample size of less than 250. This amounts to removing 30% of pairs. The calibration improves, especially on the sparse Frangieh data.
 
-```{r, warning=FALSE, echo=FALSE, fig.height = 7, fig.width = 9, fig.align = "center"}
+```{r, warning=FALSE, echo=FALSE, fig.height = 8, fig.width = 10, fig.align = "center"}
 undercover_res_w_samp_size |>
   filter(effective_samp_size >= 250) |>
   select(-Method, -dataset_rename_w_pairs, -effective_samp_size, -n_pairs) |>
@@ -449,6 +444,3 @@ For better or for worse, when we restrict our attention to more "meaningful" reg
 
 -   One reason that the methods appear to be better calibrated when we apply more stringent QC is that we are analyzing fewer pairs and thus not looking as far out into the tail of the null distribution. We could look further out into the tail by increasing the group size in the undercover analysis (to, say, two) and iterating through a larger number of groups.
 
--   Might it be worthwhile to re-analyze the Perturb-seq data by running PCA on the expression matrix and including the top PCs as covariates? This could help to capture any unmeasured confounding.
-
--   We have roughly 9.5 weeks until December 15. Assuming that we still are aiming for that deadline, can we come up with a week-by-week plan to get a manuscript preprinted by then? Leaving 3 weeks to making figures and writing, this leaves about 6.5 weeks for finalizing results.
