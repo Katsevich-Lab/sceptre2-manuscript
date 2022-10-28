@@ -46,22 +46,22 @@ data_method_ram_matrix = [
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
-["short.q"],  // frangieh/co_culture/gene
-["short.q"], // frangieh/control/gene
-["short.q"],  // frangieh/ifn_gamma/gene
+["all.q"],  // frangieh/co_culture/gene
+["all.q"], // frangieh/control/gene
+["all.q"],  // frangieh/ifn_gamma/gene
 ["short.q"], // liscovitch/experiment_big/chromatin
 ["short.q"], // liscovitch/experiment_small/chromatin
-["short.q"],  // papalexi/eccite_screen/gene
+["all.q"],  // papalexi/eccite_screen/gene
 ["short.q"], // papalexi/eccite_screen/protein
 ["short.q"], // schraivogel/enhancer_screen_chr11/gene
 ["short.q"],  // schraivogel/enhancer_screen_chr8/gene
-["short.q"], // schraivogel/ground_truth_perturbseq/gene
+["all.q"], // schraivogel/ground_truth_perturbseq/gene
 ["short.q"], // schraivogel/ground_truth_tapseq/gene
-["short.q"] // simulated/experiment_1/gene
+["all.q"] // simulated/experiment_1/gene
 ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, permutation_test, nb_regression, sceptre
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1:arg2=value2:arg3=value3")
 optional_args = [
-"B=100000:output_amount=2" // sceptre
+"output_amount=1" // sceptre
 ]
