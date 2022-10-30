@@ -2,13 +2,7 @@
 data_method_pairs = ["frangieh/co_culture/gene": ["sceptre"],
                      "frangieh/control/gene": ["sceptre"],
                      "frangieh/ifn_gamma/gene": ["sceptre"],
-                     "papalexi/eccite_screen/gene": ["sceptre"],
-                     "papalexi/eccite_screen/protein": ["sceptre"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["sceptre"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["sceptre"],
-                     "schraivogel/ground_truth_tapseq/gene": ["sceptre"],
-                     "simulated/experiment_1/gene": ["sceptre"]
+                     "papalexi/eccite_screen/gene": ["sceptre"]
                      ]
 
 
