@@ -146,24 +146,46 @@ for (paper in papers) {
     save_multimodal_odm(multimodal_odm = mm_odm_sub_proc,
                         multimodal_metadata_fp = multimodal_metadata_fp)
 
-    # vi. write the positive control pairs
+    # vi. write the positive control pairs (at the level of the paper-dataset)
     if (paper %in% c("frangieh", "papalexi", "schraivogel")) {
-      # grouped pairs
+      # write the positive control df's into the gene modality directories
       grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
       gene_modality <- mm_odm_sub_proc |> get_modality("gene")
-
+      
       grna_feature_df <- grna_assignment_modality |> ondisc::get_feature_covariates()
       targets <- intersect(grna_feature_df |> dplyr::pull(target),
                            gene_modality |> ondisc::get_feature_ids())
       pc_pairs <- data.frame(grna_group = targets, response_id = targets)
-      saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/pos_control_pairs_grouped.rds"))
+      saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_grouped.rds"))
 
       # ungrouped pairs
       ungroup_map <- data.frame(grna_id = row.names(grna_feature_df),
                                 grna_group = grna_feature_df$target)
       ungroup_pc_pairs <- dplyr::left_join(ungroup_map, pc_pairs, by = "grna_group") |>
         na.omit() |> dplyr::select(grna_id, response_id)
-      saveRDS(ungroup_pc_pairs, file = paste0(paper_dir, dataset, "/pos_control_pairs_single.rds"))
+      saveRDS(ungroup_pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_single.rds"))
+    }
+    
+    # finally, do the papalexi protein data
+    if (paper == "papalexi") {
+      grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
+      protein_modality <- mm_odm_sub_proc |> get_modality("protein")
+      x <- grna_assignment_modality |>
+        get_feature_covariates() |>
+        filter(!is.na(known_protein_effect),
+               n_nonzero > 0)
+      pos_control_ungroup <- data.frame(grna_group = row.names(x),
+                                        response_id = x$known_protein_effect)
+      pos_control_group <- x |>
+        select(target, known_protein_effect) |>
+        distinct() |>
+        rename("grna_group" = "target", "response_id" = "known_protein_effect")
+      row.names(pos_control_group) <- NULL
+      
+      saveRDS(pos_control_group,
+              file = paste0(paper_dir, dataset, "/protein/pos_control_pairs_grouped.rds"))
+      saveRDS(pos_control_ungroup,
+              file = paste0(paper_dir, dataset, "/protein/pos_control_pairs_single.rds"))
     }
   }
 }

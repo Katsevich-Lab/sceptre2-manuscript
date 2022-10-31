@@ -21,9 +21,23 @@ sceptre_res_no_cov <- readRDS(paste0(result_dir,
                                      "undercover_grna_analysis/sceptre_debug_no_cov.rds"))
 funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
 
-# 3. sceptre debug
+# 3. Fisher exact
+fisher_exact_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/fisher_exact_1.rds"))
+
+# 4. Seurat DE
+seurat_res <- readRDS(paste0(result_dir,
+                             "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  dplyr::select(-clock_time, -max_ram) |>
+  filter(method == "seurat_de")
+
+# 5. sceptre debug
 sceptre_debug <- readRDS(paste0(result_dir,
                                     "undercover_grna_analysis/sceptre_debug.rds"))
+
+# 6. positive control results (ungrouped)
+pc_res_singleton <- readRDS(paste0(result_dir,
+                                   "positive_control_analysis/pc_results_singleton.rds")) |>
+  rename("grna_id" = "grna_group")
 
 source(funct_script)
 ```
@@ -36,17 +50,21 @@ replace_slash_w_underscore <- function(df) {
                                 x = dataset))
 }
 
-
 sceptre_res_cov <- sceptre_res_cov |>
-  replace_slash_w_underscore() |>
-  mutate(covariates = factor("yes"))
+  mutate(method = factor("sceptre (covariates)"))
 
 sceptre_res_no_cov <- sceptre_res_no_cov |>
-  replace_slash_w_underscore() |>
-  mutate(covariates = factor("no"))
+  mutate(method = factor("sceptre (no covariates)"))
 
-sceptre_res <- rbind(sceptre_res_cov, sceptre_res_no_cov)
-rm(sceptre_res_cov, sceptre_res_no_cov)
+undercover_res <- rbind(sceptre_res_cov,
+                        sceptre_res_no_cov,
+                        seurat_res,
+                        fisher_exact_res) |>
+  replace_slash_w_underscore()
+
+pc_res_singleton <- pc_res_singleton |>
+  replace_slash_w_underscore() |>
+  update_dataset_names()
 
 ks_stat_categories <- list(good = c(0, 1e-2),
                            adequate = c(1e-2, 5e-2),
@@ -54,13 +72,17 @@ ks_stat_categories <- list(good = c(0, 1e-2),
                            poor = c(0.1, 1))
 ```
 
-I study plot the SCEPTRE results with and without covariates.
+# SCEPTRE without covariates: Papalexi data
 
-```{r}
-sceptre_res |>
+I applied SCEPTRE to the data, including only log-transformed library size as a covariate. (Hence, the remaining covariates, including batch, biological replicate, percent mitochondrial reads, etc., were excluded). Below, I plot the results on the Papalexi data. I include four methods: (i) SCEPTRE with covariates, (ii) SCEPTRE without covariates, (iii) Fisher exact test, and (iv) Seurat DE. I exclude NT8 from this plot, as NT8 appears to be an outlier: it is expressed in many fewer cells than the other NT gRNAs.
+
+We see that Fisher's exact test appears to exhibit the best calibration, followed closely by SCEPTRE (with covariates). SCEPTRE (without covariates) and Seurat DE lag behind. This is an interesting (and in my opinion exciting) result for two reasons. First, it reveals that the main limitation of Seurat DE on the Papalexi data is lack of confounder adjustment. Second, it is the first empirical evidence that I have seen of "implicit confounder adjustment:" including confounders in a permutation test improves type-I error control of the test (assuming the underlying model is reasonably well-specified). Note that I have included biological replicate but not lane as a covariate. Gene's propensity score analysis indicates that lane likely confounds gRNA presence/absence as well. Therefore, in subsequent analyses, we should include lane as a covariate alongside biological replicate.
+
+```{r, message = FALSE, echo = FALSE, fig.height = 8, fig.width = 8, fig.align = "center"}
+undercover_res |>
   filter(dataset == "papalexi_eccite_screen_gene",
          undercover_grna != "NTg8") |>
-  ggplot(mapping = aes(y = p_value, col = covariates)) +
+  ggplot(mapping = aes(y = p_value, col = method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
    geom_abline(col = "darkred") +
    stat_qq_band() +
@@ -74,11 +96,23 @@ sceptre_res |>
          panel.background = element_blank())
 ```
 
+Why is Fisher's exact test calibrated despite the fact that it does not adjust for confounders? Fisher's exact test is underpowered on the Papalexi data, making its calibration challenging to assess. Below, I plot the number of discoveries that each method makes on the (ungrouped) positive control Papalexi data. (Note: SCEPTRE here refers to SCEPTRE with covariates.) Fisher's exact test makes only about 70\% the number of discoveries that SCEPTRE and Seurat DE make. Thus, Fisher's exact test is underpowered to pick up on the "signal" injected into the negative control data by the confounders.
 
 ```{r}
-sceptre_res |>
+pc_res_singleton |>
+  filter(dataset == "papalexi_eccite_screen_gene") |>
+  compute_n_bonf_rejected() |>
+  make_n_rejected_pairs_plot(y_max = NULL,
+                             scales = "free",
+                             log_trans = FALSE)
+```
+
+I next plot the results on the Papalexi protein data. The results are similar to the gene expression results. SCEPTRE (with covariates) exhibits very good calibration. The other methods (including SCEPTRE without covariates and Fisher exact test), by contrast, exhibit inflation. This likely is because there is confounding and SCEPTRE is the only method that adjusts for confounding. I do not believe that Gene included the Papalexi protein data in his propensity score analysis. It would be good to do a propensity score analysis of the protein data to confirm the presence of confounding.
+
+```{r, message = FALSE, echo = FALSE, fig.height = 6, fig.width = 6, fig.align = "center"}
+undercover_res |>
   filter(dataset == "papalexi_eccite_screen_protein") |>
-  ggplot(mapping = aes(y = p_value, col = covariates)) +
+  ggplot(mapping = aes(y = p_value, col = method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
    geom_abline(col = "darkred") +
    stat_qq_band() +
@@ -91,6 +125,24 @@ sceptre_res |>
          panel.grid.minor = element_blank(),
          panel.background = element_blank())
 ```
+
+Finally, I assess power on the Papalexi protein data.
+
+```{r}
+library(ondisc)
+protein_odm <- lowmoi:::load_dataset_modality("papalexi/eccite_screen/protein")
+grna_odm <- lowmoi:::load_dataset_modality("papalexi/eccite_screen/grna_assignment")
+
+grna_odm |>
+  get_feature_covariates() |>
+  filter(!is.na(known_protein_effect))
+  
+gene_odm <- lowmoi:::load_dataset_modality("papalexi/eccite_screen/gene")
+grna_dataset_name <- get_grna_dataset_name(dataset_name, grna_modality)
+grna_odm <- load_dataset_modality(grna_dataset_name)
+```
+
+
 
 # Nonparametric density fitting
 
