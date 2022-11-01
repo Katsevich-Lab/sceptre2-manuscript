@@ -1,7 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-data_method_pairs = ["frangieh/co_culture/gene": ["sceptre"],
-                     "frangieh/control/gene": ["sceptre"],
-                     "frangieh/ifn_gamma/gene": ["sceptre"],
+data_method_pairs = ["frangieh/ifn_gamma/gene": ["sceptre"],
                      "papalexi/eccite_screen/gene": ["sceptre"],
                      "papalexi/eccite_screen/protein": ["sceptre"]
                      ]
@@ -58,5 +56,5 @@ data_method_queue_matrix = [
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1:arg2=value2:arg3=value3")
 optional_args = [
-"output_amount=2:B=400000" // sceptre
+"output_amount=1:B=300000:sn_approx=FALSE" // sceptre
 ]

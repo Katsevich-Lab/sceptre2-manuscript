@@ -253,7 +253,7 @@ undercover_res_kde |>
          panel.background = element_blank())
 ```
 
-Next, I plot the results on the Papalexi gene data. Somewhat surprisingly, SCEPTRE (KDE) performs the worst.
+Next, I plot the results on the Papalexi gene data. Surprisingly, SCEPTRE (KDE) performs the worst.
 
 ```{r}
 undercover_res_kde |>
