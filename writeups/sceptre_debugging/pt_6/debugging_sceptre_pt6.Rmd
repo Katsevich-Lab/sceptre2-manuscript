@@ -30,17 +30,30 @@ seurat_res <- readRDS(paste0(result_dir,
   dplyr::select(-clock_time, -max_ram) |>
   filter(method == "seurat_de")
 
-# 5. sceptre debug
-sceptre_debug <- readRDS(paste0(result_dir,
-                                    "undercover_grna_analysis/sceptre_debug.rds"))
-
-# 6. positive control results (ungrouped)
+# 5. positive control results (ungrouped)
 pc_res_singleton <- readRDS(paste0(result_dir,
                                    "positive_control_analysis/pc_results_singleton.rds")) |>
   rename("grna_id" = "grna_group")
 
+# 6. NB regression
+nb_reg_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  dplyr::select(-clock_time, -max_ram) |>
+  dplyr::filter(method %in% c("nb_regression"))
+
+# 7. sceptre KDE results
+sceptre_debug_ke <- readRDS(paste0(result_dir,
+                                   "undercover_grna_analysis/sceptre_debug_kde.rds"))
 source(funct_script)
+
+# 8. sample size df
+sample_size_df <- readRDS(paste0(result_dir, "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
+  dplyr::mutate(dataset = dataset_concat,
+                dataset_concat = NULL, paper = NULL, modality = NULL) |>
+  dplyr::rename(grna_group = target, response_id = feature_id) |>
+  filter(grna_group == "non-targeting")
 ```
+
+
 
 ```{r, message=FALSE, error=FALSE, warning=FALSE, echo=FALSE}
 replace_slash_w_underscore <- function(df) {
@@ -59,17 +72,53 @@ sceptre_res_no_cov <- sceptre_res_no_cov |>
 undercover_res <- rbind(sceptre_res_cov,
                         sceptre_res_no_cov,
                         seurat_res,
-                        fisher_exact_res) |>
+                        fisher_exact_res,
+                        nb_reg_res) |>
   replace_slash_w_underscore()
 
 pc_res_singleton <- pc_res_singleton |>
   replace_slash_w_underscore() |>
   update_dataset_names()
 
+undercover_res_kde <- rbind(
+  sceptre_res_cov |> mutate(method = factor("sceptre (sn)")),
+  sceptre_debug_ke |> mutate(method = factor("sceptre (kde)")),
+  seurat_res,
+  fisher_exact_res
+) |> replace_slash_w_underscore() |>
+  update_dataset_names() |>
+  combine_schraivogel_enhancer_screens()
+
+sample_size_df <- sample_size_df |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens()
+
 ks_stat_categories <- list(good = c(0, 1e-2),
                            adequate = c(1e-2, 5e-2),
                            subpar = c(5e-2, 0.1),
                            poor = c(0.1, 1))
+```
+
+
+```{r}
+ntc_effective_samp_size <- sample_size_df |>
+  filter(grna_group == "non-targeting") |>
+  group_by(response_id, dataset) |>
+  summarize(effective_samp_size = sum(n_nonzero_cells))
+
+sample_size_df <- left_join(x = sample_size_df,
+                            y = ntc_effective_samp_size,
+                            by = c("response_id", "dataset")) |>
+  mutate(n_nonzero_treatment = n_nonzero_cells,
+         n_nonzero_control = effective_samp_size - n_nonzero_cells) |>
+  select(response_id,
+         undercover_grna = grna_id,
+         n_nonzero_treatment,
+         n_nonzero_control,
+         dataset)
+
+undercover_res <- left_join(undercover_res, sample_size_df, c("response_id", "undercover_grna", "dataset"))
+undercover_res_kde <- left_join(undercover_res_kde, sample_size_df, c("response_id", "undercover_grna", "dataset"))
 ```
 
 # SCEPTRE without covariates: Papalexi data
@@ -78,10 +127,11 @@ I applied SCEPTRE to the data, including only log-transformed library size as a 
 
 We see that Fisher's exact test appears to exhibit the best calibration, followed closely by SCEPTRE (with covariates). SCEPTRE (without covariates) and Seurat DE lag behind. This is an interesting (and in my opinion exciting) result for two reasons. First, it reveals that the main limitation of Seurat DE on the Papalexi data is lack of confounder adjustment. Second, it is the first empirical evidence that I have seen of "implicit confounder adjustment:" including confounders in a permutation test improves type-I error control of the test (assuming the underlying model is reasonably well-specified). Note that I have included biological replicate but not lane as a covariate. Gene's propensity score analysis indicates that lane likely confounds gRNA presence/absence as well. Therefore, in subsequent analyses, we should include lane as a covariate alongside biological replicate.
 
-```{r, message = FALSE, echo = FALSE, fig.height = 8, fig.width = 8, fig.align = "center"}
+```{r, message = FALSE, echo = FALSE, fig.height = 6, fig.width = 6, fig.align = "center"}
 undercover_res |>
   filter(dataset == "papalexi_eccite_screen_gene",
-         undercover_grna != "NTg8") |>
+         undercover_grna != "NTg8",
+         n_nonzero_treatment >= 20, n_nonzero_control >= 150) |>
   ggplot(mapping = aes(y = p_value, col = method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
    geom_abline(col = "darkred") +
@@ -98,9 +148,10 @@ undercover_res |>
 
 Why is Fisher's exact test calibrated despite the fact that it does not adjust for confounders? Fisher's exact test is underpowered on the Papalexi data, making its calibration challenging to assess. Below, I plot the number of discoveries that each method makes on the (ungrouped) positive control Papalexi data. (Note: SCEPTRE here refers to SCEPTRE with covariates.) Fisher's exact test makes only about 70\% the number of discoveries that SCEPTRE and Seurat DE make. Thus, Fisher's exact test is underpowered to pick up on the "signal" injected into the negative control data by the confounders.
 
-```{r}
+```{r, message = FALSE, echo = FALSE, warning = FALSE, fig.height = 5, fig.width = 5, fig.align = "center"}
 pc_res_singleton |>
-  filter(dataset == "papalexi_eccite_screen_gene") |>
+  filter(dataset == "papalexi_eccite_screen_gene",
+         !(method %in% c("liscovitch_method", "weissman_method"))) |>
   compute_n_bonf_rejected() |>
   make_n_rejected_pairs_plot(y_max = NULL,
                              scales = "free",
@@ -126,66 +177,140 @@ undercover_res |>
          panel.background = element_blank())
 ```
 
-Finally, I assess power on the Papalexi protein data.
+We also should assess the power of the methods on the Papalexi protein data. I will do this in a subsequent iteration of generating the results.
 
-```{r}
-library(ondisc)
-protein_odm <- lowmoi:::load_dataset_modality("papalexi/eccite_screen/protein")
-grna_odm <- lowmoi:::load_dataset_modality("papalexi/eccite_screen/grna_assignment")
+# SCEPTRE without covariates: Frangieh data
 
-grna_odm |>
-  get_feature_covariates() |>
-  filter(!is.na(known_protein_effect))
-  
-gene_odm <- lowmoi:::load_dataset_modality("papalexi/eccite_screen/gene")
-grna_dataset_name <- get_grna_dataset_name(dataset_name, grna_modality)
-grna_odm <- load_dataset_modality(grna_dataset_name)
+I also applied SCEPTRE without covariates (except for log-transformed library size) on the Frangieh data. The results are below.
+
+```{r, message = FALSE, echo = FALSE, fig.height = 15, fig.width = 6, fig.align = "center"}
+undercover_res |>
+  filter(dataset %in% c("frangieh_co_culture_gene",
+                         "frangieh_control_gene",
+                         "frangieh_ifn_gamma_gene")) |>
+    update_dataset_names() |>
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+  facet_grid(dataset ~ .) +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
 ```
 
+We see that SCEPTRE (with covariates) and SCEPTRE (without covariates) are similar. I plot the same results, this time filtering for pairs with number of treatment ceklls > 30.
 
+```{r, message = FALSE, echo = FALSE, fig.height = 15, fig.width = 6, fig.align = "center"}
+undercover_res |>
+  filter(dataset %in% c("frangieh_co_culture_gene",
+                         "frangieh_control_gene",
+                         "frangieh_ifn_gamma_gene"),
+         n_nonzero_treatment >= 30) |>
+    update_dataset_names() |>
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+  facet_grid(dataset ~ .) +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
 
 # Nonparametric density fitting
 
-Can we obtain accurate p-values by instead fitting a nonparametric density to the null distribution? If so, how many resamples do we need?
+The skew-normal fit clearly is unsatisfactory for many of the pairs that we are testing across datasets. I instead use a Gaussian KDE to fit the null distribution of resampled test statistics. I applied SCEPTRE (with covariates) to the data, using both KDE and a skew-normal to fit the null distribution of test statistics. First, I plot the results on the Frangieh data. We see that SCEPTRE (with KDE) performs better than the other methods (aside from Fisher exact).
 
 ```{r}
-x <- sceptre_debug |>
-  filter(dataset == "papalexi/eccite_screen/gene") |>
-  sample_n(8) |>
-  select(response_id, undercover_grna, p_value, ks_stat, p_value_emp)
+undercover_res_kde |>
+  filter(dataset %in% c("frangieh_co_culture_gene",
+                         "frangieh_control_gene",
+                         "frangieh_ifn_gamma_gene"),
+         n_nonzero_treatment >= 30) |>
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+  facet_grid(dataset ~ .) +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
 
-f <- function(x, z_null, bw) {
-  l_p <- mean(pnorm(x, z_null, bw))
-  2 * min(l_p, 1 - l_p)
-}
+Next, I plot the results on the Papalexi gene data. Somewhat surprisingly, SCEPTRE (KDE) performs the worst.
 
-i <- 1
-response_id <- x[i, "response_id"] |> as.character()
-undercover_grna <- x[i, "undercover_grna"] |> as.character()
-sceptre_args <- lowmoi:::get_sceptre_function_args_for_pair(
-  response_id = response_id, undercover_grna = undercover_grna,
-  dataset_name = "papalexi/eccite_screen/gene", output_amount = 3, B = 100000)
+```{r}
+undercover_res_kde |>
+  filter(dataset == "papalexi_eccite_screen_gene",
+         undercover_grna != "NTg8") |>
+    update_dataset_names() |>
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+  facet_grid(dataset ~ .) +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+
+Why is this the case? 
+
+```{r}
+problem_pairs <- undercover_res_kde |>
+  filter(dataset == "papalexi_eccite_screen_gene",
+         method == "sceptre (kde)",
+         p_value < 1e-7)
+```
+
+
+```{r}
+ex_pair <- problem_pairs |>
+  slice(8)
+response_id <- ex_pair$response_id |> as.character()
+undercover_grna <- ex_pair$undercover_grna |> as.character()
+
+sceptre_args <- lowmoi::get_sceptre_function_args_for_pair(
+  response_id = response_id,
+  undercover_grna = undercover_grna,
+  dataset_name = "papalexi/eccite_screen/gene",
+  output_amount = 3,
+  B = 500000)
 
 out <- do.call(what = sceptre2::run_sceptre_low_moi, args = sceptre_args)
-z_null <- out |>
-  select(starts_with("z_null_")) |>
-  as.numeric()
+z_null <- out |> select(starts_with("z_null")) |> as.numeric()
 z_star <- out$z_value
+out <- out |> select(-starts_with("z_"))
 hist(z_null, breaks = 50)
-abline(v = z_star, col = "blue")
-n_samp <- 10000
-z_null_samp <- sample(z_null, replace = FALSE, size = n_samp)
-bw <- bw.SJ(x = z_null_samp)
-
-p_kde <- f(z_star, z_null_samp, bw)
-p_emp <- sceptre2:::compute_empirical_p_value(z_star, z_null, "both")
-p_sn <- sceptre2:::compute_skew_normal_p_value(dp = sceptre2:::fit_skew_normal(z_null_samp)$dp,
-                                               z_star = z_star, side = "both")
-
-p_kde
-p_emp
-p_sn
-
-p_emp/p_kde
-p_emp/p_sn
+abline(v = z_star)
+emp_p <- out$p_value_emp
+z_null_samp <- sample(z_null, replace = FALSE, size = 10000)
+kde_p <- sceptre2:::compute_kde_p_value(z_null = z_null_samp,
+                                        z_star = z_star,
+                                        side = "both")
+sn_p <- sceptre2:::compute_skew_normal_p_value(dp = sceptre2:::fit_skew_normal(z_null_samp)$dp,
+                                               z_star = z_star,
+                                               side = "both")
 ```
+

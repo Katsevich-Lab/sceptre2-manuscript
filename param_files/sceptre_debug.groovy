@@ -3,11 +3,7 @@ data_method_pairs = ["frangieh/co_culture/gene": ["sceptre"],
                      "frangieh/control/gene": ["sceptre"],
                      "frangieh/ifn_gamma/gene": ["sceptre"],
                      "papalexi/eccite_screen/gene": ["sceptre"],
-                     "papalexi/eccite_screen/protein": ["sceptre"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["sceptre"],
-                     "schraivogel/ground_truth_perturbseq/gene": ["sceptre"],
-                     "schraivogel/ground_truth_tapseq/gene": ["sceptre"]
+                     "papalexi/eccite_screen/protein": ["sceptre"]
                      ]
 
 
@@ -28,13 +24,13 @@ col_names = ["sceptre"]
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[5], // frangieh/co_culture/gene
-[5], // frangieh/control/gene
-[5], // frangieh/ifn_gamma/gene
+[10], // frangieh/co_culture/gene
+[10], // frangieh/control/gene
+[10], // frangieh/ifn_gamma/gene
 [1], // liscovitch/experiment_big/chromatin
 [1], // liscovitch/experiment_small/chromatin
-[5], // papalexi/eccite_screen/gene
-[5], // papalexi/eccite_screen/protein
+[10], // papalexi/eccite_screen/gene
+[10], // papalexi/eccite_screen/protein
 [5], // schraivogel/enhancer_screen_chr11/gene
 [5], // schraivogel/enhancer_screen_chr8/gene
 [5], // schraivogel/ground_truth_perturbseq/gene
@@ -62,5 +58,5 @@ data_method_queue_matrix = [
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1:arg2=value2:arg3=value3")
 optional_args = [
-"output_amount=1" // sceptre
+"output_amount=2:B=400000" // sceptre
 ]
