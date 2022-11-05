@@ -1,5 +1,5 @@
 ---
-title: 'Debugging sceptre 5: Attempting to understanding the Schraivogel data'
+title: 'Debugging sceptre 5: Attempting to unravel the Schraivogel data'
 author: "Tim"
 date: "2022-10-24"
 output: html_document
@@ -28,6 +28,12 @@ mw_mim <- readRDS(paste0(result_dir, "undercover_grna_analysis/mw_mimosca_1.rds"
 mw_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
   filter(method == "seurat_de") |>
   select(-clock_time, -max_ram)
+
+# 5. MIMOSCA
+mimosca_res <- readRDS(paste0(result_dir,
+                              "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  select(-clock_time, -max_ram) |>
+  filter(method == "mimosca")
 
 # source functions
 funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
@@ -93,7 +99,7 @@ The Perturb-seq results are presented in the top row, and the TAP-seq datasets a
 
 ## Builing the null distribution by sharing information across genes
 
-Recall that MIMOSCA is decently calibrated (at least in the tail) on the Perturb-seq and TAP-seq data. One possible explanation is that MIMOSCA builds its null distribution by sharing information across genes. (Specifically, for a given gRNA, MIMOSCA fits elastic net regressions of all genes onto the gRNA; then, MIMOSCA permutes the gRNA assignments and fits additional elastic net regressions by regressing the genes onto the permuted gRNA assignments. MIMOSCA uses as its null distribution the elastic net coefficients obtained from the regressions of the genes onto the permuted gRNA assignments.) I evaluated a version of the Mann-Whitney test in which I generated the null distribution by sharing information across genes in a way that is similar to MIMOSCA. The results are plotted below. The horizontal black line indicates the minimum possible p-value (based on the number of permutations; B = 50).
+Recall that MIMOSCA is decently calibrated (at least in the tail) on the Perturb-seq and TAP-seq data. One possible explanation for this is that MIMOSCA builds its null distribution by sharing information across genes. (Specifically, for a given gRNA, MIMOSCA fits elastic net regressions of all genes onto the gRNA; then, MIMOSCA permutes the gRNA assignments and fits additional elastic net regressions by regressing the genes onto the permuted gRNA assignments. MIMOSCA uses as its null distribution the elastic net coefficients obtained from the regressions of the genes onto the permuted gRNA assignments.) I evaluated a version of the Mann-Whitney test in which I generated the null distribution by sharing information across genes in a way that is similar to MIMOSCA. The results are plotted below. The horizontal black line indicates the minimum possible p-value (based on the number of permutations; B = 50).
 
 ```{r, message = FALSE, echo = FALSE, fig.height = 10, fig.width = 10, fig.align = "center"}
 min_p_df <- mw_mim |>
@@ -141,3 +147,16 @@ to_plot |>
 ```
 
 The cause of miscalibration on the Perturb-seq data remains illusive.
+
+Finally, I study the range of the p-values outputted by MIMOSCA.
+
+```{r}
+mimosca_res |>
+  group_by(dataset) |>
+  summarize(min_p_val = min(p_value),
+            max_p_val = max(p_value))
+
+mimosca_res |> nrow()
+```
+
+This is clear evidence of pathological behavior. For example, the maximum p-value that MIMOSCA outputted on the Frangieh IFN-gamma data is 0.044. Moreover, of the > 4 million hypotheses that we tested across 12 datasets, the maximum p-value that MIMOSCA outputted is 0.52. (This number, of course, should be about 1.) Given MIMOSCA's unusual behavior and apparent inability to output p-values that are greater than about 0.5, making extensive comparisons to MIMOSCA may not be worthwhile.

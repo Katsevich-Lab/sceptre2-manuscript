@@ -1,0 +1,506 @@
+---
+title: "Debugging `sceptre` part 7"
+author: "Tim"
+date: "2022-11-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this writeup I examine the following:
+
+1.  How does sample size vary across datasets?
+
+2.  How does the "exact" version of SCEPTRE (i.e., the version of SCEPTRE that returns an "exact" p-value based on B = 300,000 resamples) perform on the Frangieh IFN-gamma, Papalexi gene, and Papalexi protein data?
+
+A question that I seek to answer is whether SCEPTRE exhibits CAMP, or "Confounder Adjustment via Marginal Permutations" (previously known as implicit confounder adjustment).
+
+# Sample size
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(katlabutils)
+library(tidyverse)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+replace_slash_w_underscore <- function(df) {
+  df |> dplyr::mutate(dataset = gsub(pattern = "/",
+                                replacement = "_",
+                                fixed = TRUE,
+                                x = dataset))
+}
+
+funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
+source(funct_script)
+
+sample_size_df <- readRDS(paste0(result_dir,
+                                    "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
+  dplyr::mutate(dataset = dataset_concat,
+                dataset_concat = NULL, paper = NULL, modality = NULL) |>
+  dplyr::rename(grna_group = target, response_id = feature_id) |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens() |>
+  filter(dataset %in% c("frangieh_co_culture_gene",
+                        "frangieh_control_gene",
+                        "frangieh_ifn_gamma_gene",
+                        "papalexi_eccite_screen_gene",
+                        "schraivogel_enhancer_screen",
+                        "schraivogel_ground_truth_perturbseq_gene",
+                        "schraivogel_ground_truth_tapseq_gene"))
+paper <- factor(x = sample_size_df$dataset,
+       levels = c("frangieh_co_culture_gene",
+                  "frangieh_control_gene",
+                  "frangieh_ifn_gamma_gene",
+                  "papalexi_eccite_screen_gene",
+                  "schraivogel_ground_truth_perturbseq_gene",
+                  "schraivogel_enhancer_screen",
+                  "schraivogel_ground_truth_tapseq_gene"),
+       labels = c(rep("Frangieh", 3), "Papalexi", rep("Schraivogel", 3)))
+sample_size_df$paper <- paper
+sample_size_df$dataset_rename <- stringr::str_to_title(gsub(pattern = "_", replacement = " ", x = sample_size_df$dataset)) |> factor()
+
+sample_size_df_nt <- sample_size_df |>
+  filter(grna_group == "non-targeting")
+sample_size_df_t <- sample_size_df |>
+  filter(grna_group != "non-targeting")
+
+ntc_effective_samp_size <- sample_size_df_nt |>
+  group_by(response_id, dataset) |>
+  summarize(effective_samp_size = sum(n_nonzero_cells))
+
+sample_size_df_nt <- left_join(x = sample_size_df_nt,
+                            y = ntc_effective_samp_size,
+                            by = c("response_id", "dataset")) |>
+  mutate(n_nonzero_treatment = n_nonzero_cells,
+         n_nonzero_control = effective_samp_size - n_nonzero_cells) |>
+  rename("undercover_grna" = "grna_id")
+```
+
+Sample size has emerged as an important quantity in low MOI (and even in high MOI). Here, I study issues related to sample size in a more precise and in-depth way than I have previously.
+
+### Definitions of relevant quantities
+
+I begin by defining several quantities -- `n_nonzero_treatment`, `n_nonzero_control`, and `effective_sample_size` -- on the negative control data. Let a dataset be given. Let $d$ be the number of NTCs, let $p$ be the number of genes, and let $n$ be the number of cells in the dataset. Let $X \in \mathbb{R}^{n \times p}$ be the cell-by-gene expression matrix. Next, for $k \in \{1, …, d\},$ let $n_k$ be the number of cells containing NTC $k$ (where the NTCs are arbitrarily indexed). Also, let $X^{1} \in \mathbb{R}^{n_1 \times p}$ be the submatrix of $X$ consisting of the cells that received NT 1 (and similarly for $X^2, \dots, X^d$). For a given NTC $k$ and gene $j$, let \$\$\\texttt{n_nonzero_treatment}\_{kj}\$\$ be the number of cells containing NTC $k$ in which gene $j$ has nonzero expression, i.e.
+
+$$ \texttt{n_nonzero_treatment}_{jk} = \sum_{i=1}^{n_k} \mathbb{I}(X^k_{i,j} \geq 1).$$
+
+Next, let $\texttt{n_nonzero_control}_{kj}$ be the number of NT-containg cells *excluding* NTC $k$ (i.e., the cells containing NTCs in the set $[d] \setminus \{k\}$) with nonzero expression, i.e.,
+
+$$
+\texttt{n_nonzero_control}_{jk} = \sum_{k' \neq k} \texttt{n_nonzero_treatment}_{k'j}
+$$
+
+Finally, let `effective_sample_size` be the sum of `n_nonzero_treatment` and `n_nonzero_control`. On the negative control data, `effective_sample_size` is a function of the gene only:
+
+$$
+ \texttt{effective_sample_size}_j = \sum_{k = 1}^d \texttt{n_nonzero_treatment}_{jk}
+$$
+
+I study how `effective_sample_size`, `n_nonzero_treatment`, and `n_nonzero_control` relate to one another.
+
+### Empirical relationship between `effective_sample_size`, `n_nonzero_treatment`, and `n_nonzero_control`
+
+First, I plot `n_nonzero_treatment` against `effective_sample_size`, faceting by dataset. In other words, I plot
+
+$$
+\{ (\texttt{n_nonzero_treatment}_{jk}, \texttt{effective_sample_size}_{j})\}_{j,k} 
+$$
+
+for each dataset.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 8, fig.width = 8, message=FALSE, warning=FALSE}
+sample_size_df_nt |>
+  group_by(dataset) |>
+  sample_n(10000, replace = TRUE) |>
+  ggplot(mapping = aes(effective_samp_size, n_nonzero_treatment)) +
+  geom_point(alpha = 0.7, cex = 0.7) +
+  facet_wrap(dataset_rename ~ ., scales = "free", labeller = label_wrap_gen(35)) +
+  theme_bw() +
+  xlab("Effective sample size") +
+  ylab("N nonzero treatment")
+```
+
+Clearly, `n_nonzero_treatment` and `effective_sample_size` are correlated. This makes sense: for a given gene, if expression is high in cells with a given NTC, then expression likely is high in cells with the remaining NTCs. (Put differently, expression levels are correlated across NTCs: highly expressed genes tend to be highly expressed across NTCs, and similarly for lowly expressed genes.)
+
+Next, I plot `n_nonzero_control` against `effective_sample_size`, i.e.
+
+\$\$\\{(\\texttt{n_nonzero_control}\_{jk}, \\texttt{effective_sample_size}\_{j})\\}\_{j,k}\$\$
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 8, fig.width = 8, message=FALSE, warning=FALSE}
+sample_size_df_nt |>
+  group_by(dataset) |>
+  sample_n(10000, replace = TRUE) |>
+  ggplot(mapping = aes(effective_samp_size, n_nonzero_control)) +
+  geom_point(alpha = 0.7, cex = 0.7) +
+  facet_wrap(dataset ~ ., scales = "free", labeller = label_wrap_gen(35)) +
+  theme_bw() +
+  xlab("Effective sample size") +
+  ylab("N nonzero control")
+```
+
+Clearly, `n_nonzero_control` and `effective_sample_size` are basically the same variable. Again, this makes sense: for a given gRNA, `n_nonzero_control` is equal to `effective_sample_size` minus the number of cells with nonzero expression containing that gRNA. Finally, I plot `n_nonzero_treatment` against `n_nonzero_control`.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 8, fig.width = 8, message=FALSE, warning=FALSE}
+sample_size_df_nt |>
+  group_by(dataset) |>
+  sample_n(10000, replace = TRUE) |>
+  ggplot(mapping = aes(n_nonzero_treatment, n_nonzero_control)) +
+  geom_point(alpha = 0.7, cex = 0.7) +
+  facet_wrap(dataset ~ ., scales = "free", labeller = label_wrap_gen(35)) +
+  theme_bw() +
+  xlab("Effective sample size") +
+  ylab("N nonzero control")
+```
+
+Again, these variables are correlated (but certainly not perfectly) for the same reason that `n_nonzero_treatment` and `effective_sample_size` are correlated.
+
+I conclude on the basis of this analysis that, while `effective_sample_size` is a useful single-number summary of sample size, it is meaningful to look at both at `n_nonzero_treatment` and `n_nonzero_control` when examining sample size-related issues.
+
+### Comparison across datasets
+
+Here, I make some comparisons related to sample size across datasets. First, I make a barplot of the number of NTCs per dataset.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 7, fig.width = 5, message=FALSE, warning=FALSE}
+n_ntc_df <- sample_size_df_nt |>
+  select(undercover_grna, dataset_rename, paper) |>
+  distinct() |>
+  group_by(dataset_rename) |>
+  summarize(count = n(), paper = paper[1])
+
+n_ntc_df |>
+  ggplot(mapping = aes(x = dataset_rename, y = count, fill = paper)) +
+  geom_bar(stat = "identity", col = "black") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  ylab("N NTCs") + xlab("Dataset")
+```
+
+The Frangieh data contain the greatest number of NTCs, followed by the Schraivogel data and then the Papalexi data. Next, I plot the average number of nonzero cells per NTC (i.e., `n_nonzero_treatment`) across datasets.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 7, fig.width = 5, message=FALSE, warning=FALSE}
+sample_size_df_nt |>
+  group_by(dataset) |>
+  sample_n(10000, replace = TRUE) |>
+  ggplot(mapping = aes(y = n_nonzero_treatment + 1, x = dataset_rename, fill = paper)) +
+  geom_violin() +
+  geom_boxplot() +
+  scale_y_log10() +
+  ylab("N nonzero treatment") +
+  xlab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+I print the median `n_nonzero_treatment` value for each dataset below.
+
+```{r}
+sample_size_df_nt |>
+  group_by(dataset) |>
+  summarize(m = median(n_nonzero_treatment))
+```
+
+The Frangieh data have the smallest number nonzero cells per NTC (median under 10). The Papalexi data are indermediate (median about 30), and the Schraivogel data have the greatest number of cells per NTC (median 37 on perturb-seq data; even greater median on other datasets). Finally, I plot the `effective_sample_size` per dataset.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 7, fig.width = 5, message=FALSE, warning=FALSE}
+sample_size_df_nt |>
+  group_by(dataset) |>
+  sample_n(10000, replace = TRUE) |>
+  ggplot(mapping = aes(y = effective_samp_size + 1, x = dataset_rename, fill = paper)) +
+  geom_violin() +
+  geom_boxplot() +
+  scale_y_log10() +
+  ylab("Effective sample size") +
+  xlab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+I print the per-dataset median effective sample size below.
+
+```{r}
+sample_size_df_nt |>
+  group_by(dataset) |>
+  summarize(m = median(effective_samp_size))
+```
+
+We see that the effective sample sizes are in a similar range on the Frangieh and Papalexi datasets (while the effective sample sizes on the Schraivogel datasets are larger). The Frangieh data have fewer nonzero cells per NTC but many more NTCs than the Papalexi data, causing the effective sample size to be roughly equal across the Frangieh and Papalexi data.
+
+Now, I examine the number of nonzero cells per targeting gRNA (grouped and ungrouped) across datasets.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 7, fig.width = 5, message=FALSE, warning=FALSE}
+sample_size_df_t |>
+  group_by(dataset) |>
+  sample_n(10000, replace = TRUE) |>
+  ggplot(mapping = aes(x = dataset_rename,
+                       y = n_nonzero_cells + 1,
+                       fill = paper)) +
+  geom_violin() +
+  geom_boxplot() +
+  scale_y_log10() +
+  ylab("N nonzero cells per targeting gRNA (ungrouped)") +
+  xlab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+```{r}
+sample_size_df_t |>
+  group_by(dataset) |>
+  summarize(median_nonzero = median(n_nonzero_cells))
+```
+
+Next, I plot the number of nonzero cells per gRNA group:
+
+```{r}
+grouped_ss_df <- sample_size_df_t |>
+  group_by(dataset, grna_group, response_id) |>
+  summarize(s = sum(n_nonzero_cells))
+
+grouped_ss_df$dataset_rename <- stringr::str_to_title(gsub(pattern = "_",
+                                                            replacement = " ",
+                                                            x = grouped_ss_df$dataset))
+paper <- factor(x = grouped_ss_df$dataset,
+       levels = c("frangieh_co_culture_gene",
+                  "frangieh_control_gene",
+                  "frangieh_ifn_gamma_gene",
+                  "papalexi_eccite_screen_gene",
+                  "schraivogel_ground_truth_perturbseq_gene",
+                  "schraivogel_enhancer_screen",
+                  "schraivogel_ground_truth_tapseq_gene"),
+       labels = c(rep("Frangieh", 3), "Papalexi", rep("Schraivogel", 3)))
+grouped_ss_df$paper <- paper
+
+grouped_ss_df |>
+  group_by(dataset) |>
+  sample_n(10000, replace = TRUE) |>
+  ggplot(mapping = aes(x = dataset_rename,
+                       y = s + 1,
+                       fill = paper)) +
+  geom_violin() +
+  geom_boxplot() +
+  scale_y_log10() +
+  ylab("N nonzero cells per targeting gRNA (ungrouped)") +
+  xlab("") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+```{r}
+grouped_ss_df 
+```
+
+# Number of hypotheses
+
+First, I plot the number of genes per dataset (after applying mild QC of filtering out genes expressed in fewer than 0.005 of cells).
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+n_gene_df <- sample_size_df_nt |>
+  select(response_id, dataset_rename, paper) |>
+  distinct() |>
+  group_by(dataset_rename) |>
+  summarize(count = n(), paper = paper[1])
+
+n_pair_df <- n_gene_df |>
+  mutate(n_pairs = count * n_ntc_df$count) |>
+  select(-count)
+
+n_gene_df |>
+  ggplot(mapping = aes(x = dataset_rename, y = count, fill = paper)) +
+  geom_bar(stat = "identity", col = "black") +
+  theme_bw() +
+  xlab("Dataset") +
+  ylab("N genes") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+All datasets have roughly the same number of genes (about 15,000) except for the TAP-seq and enhancer screen datasets (which of course have fewer genes). Next, I plot the number of pairs across datasets.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+n_pair_df |>
+  ggplot(mapping = aes(x = dataset_rename, y = n_pairs, fill = paper)) +
+  geom_bar(stat = "identity", col = "black") +
+  theme_bw() +
+  xlab("Dataset") +
+  ylab("N genes") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+The Frangieh data of course contain more pairs because they contain more NT gRNAs.
+
+# Exact SCEPTRE
+
+I applied the exact version of SCEPTRE (with covariates and using B = 300,000 permutations) to the Papalexi data and Frangieh data.
+
+```{r, echo = FALSE}
+rm(list = ls())
+library(katlabutils)
+library(tidyverse)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+replace_slash_w_underscore <- function(df) {
+  df |> dplyr::mutate(dataset = gsub(pattern = "/",
+                                replacement = "_",
+                                fixed = TRUE,
+                                x = dataset))
+}
+
+funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
+source(funct_script)
+
+# 1. sceptre big b
+sceptre_big_B <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_debug_bigB_frang_papa.rds")) |>
+  mutate(method = "sceptre (exact)") |>
+  replace_slash_w_underscore()
+
+# 2. sceptre (with covariates)
+sceptre_res_cov <- readRDS(paste0(result_dir,
+                                  "undercover_grna_analysis/undercover_result_grp_size_1_sceptre.rds")) |>
+  select(-clock_time, -max_ram) |>
+  mutate(method = "sceptre (sn)")
+
+# 3. sceptre (without covariates)
+sceptre_res_no_cov <- readRDS(paste0(result_dir,
+                                     "undercover_grna_analysis/sceptre_debug_no_cov.rds")) |>
+  mutate(method = "sceptre (without cov)")
+
+# 4. NB regression
+nb_reg_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  dplyr::select(-clock_time, -max_ram) |>
+  dplyr::filter(method %in% c("nb_regression"))
+
+res <- rbind(sceptre_big_B, 
+             sceptre_res_cov,
+             nb_reg_res) |>
+  replace_slash_w_underscore() |>
+  update_dataset_names()
+
+# sample sizes
+sample_size_df <- readRDS(paste0(result_dir,
+                                 "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
+  dplyr::mutate(dataset = dataset_concat,
+                dataset_concat = NULL, paper = NULL, modality = NULL) |>
+  dplyr::rename(grna_group = target, response_id = feature_id) |>
+  filter(grna_group == "non-targeting") |>
+  group_by(response_id, dataset) |>
+  summarize(effective_samp_size = sum(n_nonzero_cells)) |>
+  replace_slash_w_underscore()
+
+# append sample size info to res
+res <- left_join(res, sample_size_df, by = c("response_id", "dataset"))
+```
+
+First, I plot the SCEPTRE exact results on the Frangieh data, comparing to the skew-normal version of SCEPTRE (with covariates) and NB regression.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+res |>
+  filter(dataset == "frangieh_ifn_gamma_gene") |>
+  ggplot(aes(y = p_value, 
+         col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+
+SCEPTRE (exact) exhibits good calibration, enabling us to conclude that a permutation test works on the Frangieh data. The other methods (NB regression and SCEPTRE (SN)) are not as well calibrated, likely because asymptotics have not yet kicked in. Next, I plot the results on the Papalexi gene expression data, first on an untransformed scale.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+res |>
+  filter(dataset == "papalexi_eccite_screen_gene") |>
+  ggplot(aes(y = p_value, 
+         col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_reverse() +
+   scale_y_reverse() +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+
+Clearly, in the bulk of the distribution, SCEPTRE (exact) is doing the best, followed by NB regression and then by SCEPTRE (SN). I now plot the same results on a transformed scale.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+res |>
+  filter(dataset == "papalexi_eccite_screen_gene") |>
+  ggplot(aes(y = p_value, 
+         col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+
+We see that on the transformed scale, SCEPTRE (exact) performs the worst (beyond about 0.001), while NB regression is the best! What is going on here? In particular, why is SCEPTRE (exact) performing worse than SCEPTRE (SN) in the tail? Below, I plot the SCEPTRE (exact) p-values against the SCEPTRE (SN) p-values on a transformed scale.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+comparison_df <- sceptre_big_B |>
+  select(-method) |>
+  rename("p_value_exact" = "p_value") |>
+  left_join(y = sceptre_res_cov,
+            by = c("response_id", "undercover_grna", "dataset")) |>
+  rename("p_value_sn" = "p_value")
+
+comparison_df |>
+  sample_n(size = 100000) |>
+  mutate(exact_smaller = p_value_exact < p_value_sn) |>
+  filter(dataset == "papalexi_eccite_screen_gene") |>
+  ggplot(mapping = aes(x = p_value_exact, y = p_value_sn, col = exact_smaller)) +
+  geom_point(alpha = 0.7, cex = 0.7) +
+  geom_abline(slope = 1, intercept = 0, col = "darkred") +
+  theme_bw() +
+  scale_x_reverse() +
+  scale_y_reverse() +
+  #scale_x_continuous(trans = revlog_trans(10)) +
+  #scale_y_continuous(trans = revlog_trans(10)) +
+  xlab("p-value (exact)") +
+  ylab("p-value (SN)") +
+  labs(col = "p (exact) < p (SN)") +
+  theme(legend.position = "bottom") +
+  geom_vline(xintercept = 2e-2, col = "darkred") +
+  geom_hline(yintercept = 3e-2, col = "darkred")
+```
+
+The SCEPTRE (SN) p-values are in broad agreement with the SCEPTRE (exact) p-values; however, the scatterplot has an obvious "appendage" below the diagonal. The pairs in this "appendage" have much smaller SCEPTRE (exact) p-values than SCEPTRE (SN) p-values. Why does this appendage appear? And are the pairs in this appendage "qualitatively different" (in some way) than the other pairs? I plot the points in the appendage below and pick a few to investigate.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+comparison_df |>
+  filter(p_value_sn >= 3e-2, p_value_exact <= 2e-2) |>
+  ggplot(mapping = aes(x = p_value_exact, y = p_value_sn)) +
+  geom_point(alpha = 0.7, cex = 0.7) +
+  geom_abline(slope = 1, intercept = 0, col = "darkred") +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  xlab("p-value (exact)") +
+  ylab("p-value (SN)") +
+  labs(col = "p (exact) < p (SN)") +
+  theme(legend.position = "bottom") +
+  geom_vline(xintercept = 2e-2, col = "darkred") +
+  geom_hline(yintercept = 3e-2, col = "darkred")
+```
+
+We also can compare SCEPTRE (SN) to NB regression to see how they differ (as they should produce similar answers).
+
+```{r}
+
+```
