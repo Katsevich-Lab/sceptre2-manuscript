@@ -1,16 +1,17 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-/*
-data_method_pairs_indiv = ["frangieh/co_culture/gene": ["schraivogel_method", "mimosca"],
-                           "frangieh/control/gene": ["schraivogel_method", "mimosca"],
-                           "frangieh/ifn_gamma/gene": ["schraivogel_method", "mimosca"],
-                           "papalexi/eccite_screen/gene": ["schraivogel_method", "mimosca"],
-                           "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "mimosca"],
-                           "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "mimosca"],
-                           "schraivogel/ground_truth_perturbseq/gene": ["schraivogel_method", "mimosca"],
-                           "schraivogel/ground_truth_tapseq/gene": ["schraivogel_method", "mimosca"]
-                          ]
-*/
 
+data_method_pairs_grouped = ["frangieh/co_culture/gene": ["sceptre"],
+                             "frangieh/control/gene": ["sceptre"],
+                             "frangieh/ifn_gamma/gene": ["sceptre"],
+                             "papalexi/eccite_screen/gene": ["sceptre"],
+                             "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
+                             "schraivogel/enhancer_screen_chr8/gene": ["sceptre"],
+                             "schraivogel/ground_truth_perturbseq/gene": ["sceptre"],
+                             "schraivogel/ground_truth_tapseq/gene": ["sceptre"],
+                             "papalexi/eccite_screen/protein": ["sceptre"]
+                            ]
+
+/*
 data_method_pairs_indiv = []
 data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method", "weissman_method", "fisher_exact", "sceptre"],
                              "frangieh/control/gene": ["seurat_de", "liscovitch_method", "weissman_method", "fisher_exact", "sceptre"],
@@ -21,6 +22,7 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                              "schraivogel/ground_truth_perturbseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "fisher_exact", "sceptre"],
                              "schraivogel/ground_truth_tapseq/gene": ["seurat_de", "liscovitch_method", "weissman_method", "fisher_exact", "sceptre"]
                             ]
+*/
 
 row_names = ["frangieh/co_culture/gene",
              "frangieh/control/gene",
@@ -79,6 +81,7 @@ row_names = ["frangieh/co_culture/gene",
  // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, nb_regression, fisher_exact, sceptre
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1;arg2=value2;arg3=value3")
+/*
 optional_args = [
 "", // schraivogel_method
 "", // seurat_de
@@ -88,4 +91,16 @@ optional_args = [
 "progress=FALSE", // nb_regression
 "progress=FALSE", // fisher_exact
 "output_amount=1" // sceptre
+]
+*/
+
+optional_args = [
+"", // schraivogel_method
+"", // seurat_de
+"", // liscovitch_method
+"", // mimosca
+"", // weissman_method
+"", // nb_regression
+"", // fisher_exact
+"sn_approx=FALSE:B=300000" // sceptre
 ]

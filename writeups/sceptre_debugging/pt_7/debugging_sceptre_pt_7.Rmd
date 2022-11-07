@@ -376,6 +376,8 @@ rm(sample_size_df_nt, nb_reg_res)
 # append sample size info to res
 res <- left_join(res, sample_size_df_nt_select,
                  by = c("response_id", "dataset", "undercover_grna"))
+res <- res |>
+  combine_schraivogel_enhancer_screens()
 ```
 
 First, I plot the SCEPTRE exact results on the Frangieh data, comparing to (i) the skew-normal version of SCEPTRE (with covariates), (ii) NB regression, and (iii) SCEPTRE (SN). I plot the results twice: once without QC (top) and once with mild QC (bottom). ("Mild QC" entails filtering for pairs with at least 7 treatment cells with nonzero expression and 30 control cells with nonzero expression. The exact thresholds that I selected are somewhat arbitrary and can be fine-tuned later, if necessary.)
@@ -566,3 +568,27 @@ comparison_df |>
 Nearly all of these points (99.6%) have zero treatment cells with expression. We thus have an (at least proximate) explanation for the discrepancy between SCEPTRE (exact) and NB regression. When no treatment cell contains nonzero gene expression, SCEPTRE (exact) and NB regression both fail. SCEPTRE (exact) fails in a liberal direction, producing inflated p-values. NB regression, by contrast, fails in a conservative direction, yielding p-values equal to one. We likely will filter out such pairs as part of QC. Thus, on the pairs that we will subject to analysis, NB regression and SCEPTRE (exact) coincide fairly closely. (And in fact, SCEPTRE (exact) exhibits slightly better calibration on the QC'ed pairs, likely due to greater robustness to model misspecification.)
 
 The results in this writeup are encouraging. After applying very mild QC, SCEPTRE emerges as the best method on both the Papalexi and Frangieh data. This is due to CAMP.
+
+# Schraivogel Enhancer screen data
+
+```{r}
+x <- res |>
+  filter(dataset == "schraivogel_enhancer_screen")
+
+x |> filter(n_nonzero_treatment >= 7,
+            n_nonzero_control >= 30) |>
+  ggplot(aes(y = p_value, 
+         col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  ggtitle("QC")
+```
