@@ -13,9 +13,9 @@ In this writeup I examine the following:
 
 1.  How does sample size vary across datasets?
 
-2.  How does the "exact" version of SCEPTRE (i.e., the version of SCEPTRE that returns an "exact" p-value based on B = 300,000 resamples) perform on the Frangieh IFN-gamma, Papalexi gene, and Papalexi protein data?
+2.  How does the "exact" version of SCEPTRE (i.e., the version of SCEPTRE that returns an "exact" p-value based on B = 300,000 resamples) perform on the Frangieh IFN-gamma and Papalexi gene data?
 
-A question that I seek to answer is whether SCEPTRE exhibits CAMP, or "Confounder Adjustment via Marginal Permutations" (previously known as implicit confounder adjustment).
+A question that I seek to answer is whether SCEPTRE exhibits CAMP, or "Confounder Adjustment via Marginal Permutations" (previously known as "implicit confounder adjustment").
 
 # Sample size
 
@@ -178,7 +178,7 @@ n_ntc_df |>
 
 The Frangieh data contain the greatest number of NTCs, followed by the Schraivogel data and then the Papalexi data. Next, I plot the average number of nonzero cells per NTC (i.e., `n_nonzero_treatment`) across datasets.
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 7, fig.width = 5, message=FALSE, warning=FALSE}
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
 sample_size_df_nt |>
   group_by(dataset) |>
   sample_n(10000, replace = TRUE) |>
@@ -202,7 +202,7 @@ sample_size_df_nt |>
 
 The Frangieh data have the smallest number nonzero cells per NTC (median under 10). The Papalexi data are indermediate (median about 30), and the Schraivogel data have the greatest number of cells per NTC (median 37 on perturb-seq data; even greater median on other datasets). Finally, I plot the `effective_sample_size` per dataset.
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 7, fig.width = 5, message=FALSE, warning=FALSE}
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
 sample_size_df_nt |>
   group_by(dataset) |>
   sample_n(10000, replace = TRUE) |>
@@ -228,7 +228,7 @@ We see that the effective sample sizes are in a similar range on the Frangieh an
 
 Now, I examine the number of nonzero cells per targeting gRNA (grouped and ungrouped) across datasets.
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 7, fig.width = 5, message=FALSE, warning=FALSE}
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
 sample_size_df_t |>
   group_by(dataset) |>
   sample_n(10000, replace = TRUE) |>
@@ -252,7 +252,7 @@ sample_size_df_t |>
 
 Next, I plot the number of nonzero cells per gRNA group:
 
-```{r}
+```{r, echo = FALSE}
 grouped_ss_df <- sample_size_df_t |>
   group_by(dataset, grna_group, response_id) |>
   summarize(s = sum(n_nonzero_cells))
@@ -284,10 +284,6 @@ grouped_ss_df |>
   xlab("") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-```
-
-```{r}
-grouped_ss_df 
 ```
 
 # Number of hypotheses
@@ -333,9 +329,8 @@ The Frangieh data of course contain more pairs because they contain more NT gRNA
 I applied the exact version of SCEPTRE (with covariates and using B = 300,000 permutations) to the Papalexi data and Frangieh data.
 
 ```{r, echo = FALSE}
-rm(list = ls())
-library(katlabutils)
-library(tidyverse)
+library(katlabutils) 
+library(tidyverse) 
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 
 replace_slash_w_underscore <- function(df) {
@@ -345,13 +340,13 @@ replace_slash_w_underscore <- function(df) {
                                 x = dataset))
 }
 
-funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
-source(funct_script)
+funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R") 
+source(funct_script) 
 
 # 1. sceptre big b
 sceptre_big_B <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_debug_bigB_frang_papa.rds")) |>
   mutate(method = "sceptre (exact)") |>
-  replace_slash_w_underscore()
+  replace_slash_w_underscore() 
 
 # 2. sceptre (with covariates)
 sceptre_res_cov <- readRDS(paste0(result_dir,
@@ -359,41 +354,53 @@ sceptre_res_cov <- readRDS(paste0(result_dir,
   select(-clock_time, -max_ram) |>
   mutate(method = "sceptre (sn)")
 
-# 3. sceptre (without covariates)
-sceptre_res_no_cov <- readRDS(paste0(result_dir,
-                                     "undercover_grna_analysis/sceptre_debug_no_cov.rds")) |>
-  mutate(method = "sceptre (without cov)")
-
-# 4. NB regression
+# 3. NB regression, seurat de
 nb_reg_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
   dplyr::select(-clock_time, -max_ram) |>
-  dplyr::filter(method %in% c("nb_regression"))
+  dplyr::filter(method %in% c("nb_regression", "seurat_de"))
 
-res <- rbind(sceptre_big_B, 
-             sceptre_res_cov,
-             nb_reg_res) |>
+res <- rbind(sceptre_big_B,
+             nb_reg_res,
+             sceptre_res_cov) |>
   replace_slash_w_underscore() |>
   update_dataset_names()
 
-# sample sizes
-sample_size_df <- readRDS(paste0(result_dir,
-                                 "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
-  dplyr::mutate(dataset = dataset_concat,
-                dataset_concat = NULL, paper = NULL, modality = NULL) |>
-  dplyr::rename(grna_group = target, response_id = feature_id) |>
-  filter(grna_group == "non-targeting") |>
-  group_by(response_id, dataset) |>
-  summarize(effective_samp_size = sum(n_nonzero_cells)) |>
-  replace_slash_w_underscore()
+sample_size_df_nt_select <- sample_size_df_nt |> select(response_id,
+                                                        undercover_grna,
+                                                        dataset,
+                                                        n_nonzero_treatment,
+                                                        n_nonzero_control,
+                                                        effective_samp_size)
+rm(sample_size_df_nt, nb_reg_res)
 
 # append sample size info to res
-res <- left_join(res, sample_size_df, by = c("response_id", "dataset"))
+res <- left_join(res, sample_size_df_nt_select,
+                 by = c("response_id", "dataset", "undercover_grna"))
 ```
 
-First, I plot the SCEPTRE exact results on the Frangieh data, comparing to the skew-normal version of SCEPTRE (with covariates) and NB regression.
+First, I plot the SCEPTRE exact results on the Frangieh data, comparing to (i) the skew-normal version of SCEPTRE (with covariates), (ii) NB regression, and (iii) SCEPTRE (SN). I plot the results twice: once without QC (top) and once with mild QC (bottom). ("Mild QC" entails filtering for pairs with at least 7 treatment cells with nonzero expression and 30 control cells with nonzero expression. The exact thresholds that I selected are somewhat arbitrary and can be fine-tuned later, if necessary.)
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
-res |>
+```{r, echo = FALSE, fig.align = "center", fig.height = 12, fig.width = 5, message=FALSE, warning=FALSE}
+p_qc <- res |>
+  filter(dataset == "frangieh_ifn_gamma_gene",
+         n_nonzero_treatment >= 7,
+         n_nonzero_control >= 30) |>
+  ggplot(aes(y = p_value, 
+         col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  ggtitle("QC") 
+
+p_no_qc <- res |>
   filter(dataset == "frangieh_ifn_gamma_gene") |>
   ggplot(aes(y = p_value, 
          col = Method)) +
@@ -407,33 +414,38 @@ res |>
    theme(legend.position = "bottom",
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
-         panel.background = element_blank())
+         panel.background = element_blank()) +
+  ggtitle("No QC")
+
+p <- cowplot::plot_grid(p_no_qc, p_qc, ncol = 1, labels = c("a", "b"))
+p
 ```
 
-SCEPTRE (exact) exhibits good calibration, enabling us to conclude that a permutation test works on the Frangieh data. The other methods (NB regression and SCEPTRE (SN)) are not as well calibrated, likely because asymptotics have not yet kicked in. Next, I plot the results on the Papalexi gene expression data, first on an untransformed scale.
+SCEPTRE (exact) exhibits good calibration regardless of whether we apply QC. SCEPTRE (SN) and Seurat DE exhibit similar performance on the QC'ed and non-QC'ed data. Furthermore, these methods both perform better on the QC'ed data than on the non-QC'ed data, likely because the CLT-based approximation that these methods employ is better on the QC'ed data. Finally, NB regression does not seem to improve much (or at all) as we apply more stringent QC. This might be due to model misspecification for some fraction of hypotheses tested. The interaction between QC level and method performance is fairly striking (and perhaps expected, given the extent to which these methods rely on the CLT).
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
-res |>
-  filter(dataset == "papalexi_eccite_screen_gene") |>
+Next, I create the same set of plots for the Papalexi data. I plot SCEPTRE (exact), SCEPTRE (SN), Seurat DE, and NB regression. The top plot shows the results on the un-QC'ed data, and the bottom plot shows the results on the QC'ed data (where, again, QC entails filtering for pairs with \>7 treatment cells with nonzero expression and \>30 control cells with nonzero expression).
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 12, fig.width = 5, message=FALSE, warning=FALSE}
+p_qc <- res |>
+  filter(dataset == "papalexi_eccite_screen_gene",
+         n_nonzero_treatment >= 7,
+         n_nonzero_control >= 30) |>
   ggplot(aes(y = p_value, 
          col = Method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
    geom_abline(col = "darkred") +
    stat_qq_band() +
    theme_bw() +
-   scale_x_reverse() +
-   scale_y_reverse() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
    labs(x = "Expected quantile", y = "Observed quantile") +
    theme(legend.position = "bottom",
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
-         panel.background = element_blank())
-```
+         panel.background = element_blank()) +
+  ggtitle("QC") 
 
-Clearly, in the bulk of the distribution, SCEPTRE (exact) is doing the best, followed by NB regression and then by SCEPTRE (SN). I now plot the same results on a transformed scale.
-
-```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
-res |>
+p_no_qc <- res |>
   filter(dataset == "papalexi_eccite_screen_gene") |>
   ggplot(aes(y = p_value, 
          col = Method)) +
@@ -447,45 +459,50 @@ res |>
    theme(legend.position = "bottom",
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
-         panel.background = element_blank())
+         panel.background = element_blank()) +
+  ggtitle("No QC")
+
+p <- cowplot::plot_grid(p_no_qc, p_qc, ncol = 1, labels = c("a", "b"))
+p
 ```
 
-We see that on the transformed scale, SCEPTRE (exact) performs the worst (beyond about 0.001), while NB regression is the best! What is going on here? In particular, why is SCEPTRE (exact) performing worse than SCEPTRE (SN) in the tail? Below, I plot the SCEPTRE (exact) p-values against the SCEPTRE (SN) p-values on a transformed scale.
+I compute the fraction of negative control pairs removed after applying QC. Note that the fraction of pairs filtered on the negative control data should be be much greater than that on the rest of the data, as the negative control data have one fewer NT in the control group and only a single gRNA in the undercover group. (In other words, the sample sizes are generally smaller on the negative control data than on the rest of the data.)
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
-comparison_df <- sceptre_big_B |>
-  select(-method) |>
-  rename("p_value_exact" = "p_value") |>
-  left_join(y = sceptre_res_cov,
-            by = c("response_id", "undercover_grna", "dataset")) |>
-  rename("p_value_sn" = "p_value")
-
-comparison_df |>
-  sample_n(size = 100000) |>
-  mutate(exact_smaller = p_value_exact < p_value_sn) |>
-  filter(dataset == "papalexi_eccite_screen_gene") |>
-  ggplot(mapping = aes(x = p_value_exact, y = p_value_sn, col = exact_smaller)) +
-  geom_point(alpha = 0.7, cex = 0.7) +
-  geom_abline(slope = 1, intercept = 0, col = "darkred") +
-  theme_bw() +
-  scale_x_reverse() +
-  scale_y_reverse() +
-  #scale_x_continuous(trans = revlog_trans(10)) +
-  #scale_y_continuous(trans = revlog_trans(10)) +
-  xlab("p-value (exact)") +
-  ylab("p-value (SN)") +
-  labs(col = "p (exact) < p (SN)") +
-  theme(legend.position = "bottom") +
-  geom_vline(xintercept = 2e-2, col = "darkred") +
-  geom_hline(yintercept = 3e-2, col = "darkred")
+```{r}
+ res |>
+   filter(dataset %in% c("frangieh_co_culture_gene",
+                         "papalexi_eccite_screen_gene")) |>
+   group_by(dataset) |>
+   summarize(frac_removed =  1 - mean(n_nonzero_treatment >= 7 & n_nonzero_control >= 30)) 
 ```
 
-The SCEPTRE (SN) p-values are in broad agreement with the SCEPTRE (exact) p-values; however, the scatterplot has an obvious "appendage" below the diagonal. The pairs in this "appendage" have much smaller SCEPTRE (exact) p-values than SCEPTRE (SN) p-values. Why does this appendage appear? And are the pairs in this appendage "qualitatively different" (in some way) than the other pairs? I plot the points in the appendage below and pick a few to investigate.
+Interestingly, SCEPTRE (exact) is miscalibrated on the un-QCed data but is excellently calibrated on the QC'ed data. I conjecture that SCEPTRE (exact) is miscalibrated on the un-QC'ed data for the following reason: some of the pairs are confounded, and the sample size is too small for CAMP to have kicked in. On the QC'ed data, meanwhile, CAMP has kicked in, enabling SCEPTRE to return a well-calibrated p-value for the confounded pairs. In fact, on the QC'ed data, SCEPTRE (exact) exhibits the best calibration of all the methods and is even better than NB regression. This possibly is because NB regression is less robust than SCEPTRE to GLM model misspecification.
+
+Two questions arise: first, why is SCEPTRE (SN) better calibrated than SCEPTRE (exact) on the non-QC'ed data? And second, why is NB regression better calibrated than SCEPTRE on the non-QC'ed data? I attempt to address the first question here. Below, I plot the SCEPTRE (exact) p-values against the SCEPTRE (SN) p-values on a transformed scale.
 
 ```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+x <- res |>
+  select(response_id,
+         p_value,
+         undercover_grna,
+         dataset,
+         method,
+         n_nonzero_treatment,
+         n_nonzero_control) |>
+  filter(method %in% c("sceptre (exact)", "sceptre (sn)"),
+         dataset == "papalexi_eccite_screen_gene") 
+comparison_df <- left_join(x |>
+                             filter(method == "sceptre (exact)") |>
+                             rename("p_value_exact" = "p_value"),
+                           x |>
+                             filter(method == "sceptre (sn)") |>
+                             rename("p_value_sn" = "p_value") |>
+                             select(p_value_sn, response_id, undercover_grna),
+                           by = c("response_id", "undercover_grna")) |>
+  mutate(pass_qc = (n_nonzero_treatment >= 7) & (n_nonzero_control >= 100))
+
 comparison_df |>
-  filter(p_value_sn >= 3e-2, p_value_exact <= 2e-2) |>
-  ggplot(mapping = aes(x = p_value_exact, y = p_value_sn)) +
+  ggplot(mapping = aes(x = p_value_exact, y = p_value_sn, col = pass_qc)) +
   geom_point(alpha = 0.7, cex = 0.7) +
   geom_abline(slope = 1, intercept = 0, col = "darkred") +
   theme_bw() +
@@ -493,14 +510,59 @@ comparison_df |>
   scale_y_continuous(trans = revlog_trans(10)) +
   xlab("p-value (exact)") +
   ylab("p-value (SN)") +
-  labs(col = "p (exact) < p (SN)") +
+  labs(col = "Retained after QC") +
   theme(legend.position = "bottom") +
   geom_vline(xintercept = 2e-2, col = "darkred") +
   geom_hline(yintercept = 3e-2, col = "darkred")
 ```
 
-We also can compare SCEPTRE (SN) to NB regression to see how they differ (as they should produce similar answers).
+The SCEPTRE (SN) p-values are in broad agreement with the SCEPTRE (exact) p-values; however, the scatterplot has an obvious "appendage" below the diagonal. The pairs in this "appendage" have much smaller SCEPTRE (exact) p-values than SCEPTRE (SN) p-values. Nearly all the pairs in this appendage are filtered out by QC. Below, I create a similar plot to compare the SCEPTRE p-values to the negative binomial p-values.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 5, message=FALSE, warning=FALSE}
+x <- res |>
+  select(response_id,
+         p_value,
+         undercover_grna,
+         dataset,
+         method,
+         n_nonzero_treatment,
+         n_nonzero_control) |>
+  filter(method %in% c("sceptre (exact)", "nb_regression"),
+         dataset == "papalexi_eccite_screen_gene") 
+comparison_df <- left_join(x |>
+                             filter(method == "sceptre (exact)") |>
+                             rename("p_value_exact" = "p_value"),
+                           x |>
+                             filter(method == "nb_regression") |>
+                             rename("p_value_nb" = "p_value") |>
+                             select(p_value_nb, response_id, undercover_grna),
+                           by = c("response_id", "undercover_grna")) |>
+  mutate(pass_qc = (n_nonzero_treatment >= 10) & (n_nonzero_control >= 100))
+
+comparison_df |>
+  ggplot(mapping = aes(x = p_value_exact, y = p_value_nb, col = pass_qc)) +
+  geom_point(alpha = 0.7, cex = 0.7) +
+  geom_abline(slope = 1, intercept = 0, col = "darkred") +
+  theme_bw() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  xlab("p-value (SCEPTRE exact)") +
+  ylab("p-value (NB regression)") +
+  labs(col = "Retained after QC") +
+  geom_vline(xintercept = 0.5, col = "darkred") +
+  theme(legend.position = "bottom")
+```
+
+These results are even more striking than the results comparing SCEPTRE (exact) to SCEPTRE (SN). There exists a set of pairs for which the NB regression p-value is about 1 and the SCEPTRE (exact) p-value is in the interval (0, 1). (These are the points at the bottom of the plot.) We see that very few of these pairs pass QC. What is the deal with these pairs? I filter for pairs with NB p-values greater than 0.99 and SCEPTRE (exact) p-values less than 0.5. (This is the row of points at the bottom of the plot to the right of the vertical black line.)
 
 ```{r}
-
+comparison_df |>
+  filter(p_value_nb > 0.99,
+         p_value_exact < 0.5) |>
+  summarize(m = mean(n_nonzero_treatment == 0)) |>
+  pull() * 100
 ```
+
+Nearly all of these points (99.6%) have zero treatment cells with expression. We thus have an (at least proximate) explanation for the discrepancy between SCEPTRE (exact) and NB regression. When no treatment cell contains nonzero gene expression, SCEPTRE (exact) and NB regression both fail. SCEPTRE (exact) fails in a liberal direction, producing inflated p-values. NB regression, by contrast, fails in a conservative direction, yielding p-values equal to one. We likely will filter out such pairs as part of QC. Thus, on the pairs that we will subject to analysis, NB regression and SCEPTRE (exact) coincide fairly closely. (And in fact, SCEPTRE (exact) exhibits slightly better calibration on the QC'ed pairs, likely due to greater robustness to model misspecification.)
+
+The results in this writeup are encouraging. After applying very mild QC, SCEPTRE emerges as the best method on both the Papalexi and Frangieh data. This is due to CAMP.
