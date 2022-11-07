@@ -1,5 +1,5 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-
+data_method_pairs_indiv = []
 data_method_pairs_grouped = ["frangieh/co_culture/gene": ["sceptre"],
                              "frangieh/control/gene": ["sceptre"],
                              "frangieh/ifn_gamma/gene": ["sceptre"],
