@@ -51,7 +51,6 @@ sceptre_formula_objs_protein <- list(frangieh = ~ log(response_n_umis) + phase +
                                        papalexi = ~ log(response_n_umis))
 }
 
-
 # 2) loop over datasets, loading all modalities
 for (paper in papers) {
   paper_dir <- paste0(sceptre2_data_dir, paper, "/")
@@ -146,23 +145,47 @@ for (paper in papers) {
     save_multimodal_odm(multimodal_odm = mm_odm_sub_proc,
                         multimodal_metadata_fp = multimodal_metadata_fp)
 
+    
     # vi. write the positive control pairs (at the level of the paper-dataset)
-    if (paper %in% c("frangieh", "papalexi", "schraivogel")) {
-      # write the positive control df's into the gene modality directories
-      grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
-      gene_modality <- mm_odm_sub_proc |> get_modality("gene")
-      
-      grna_feature_df <- grna_assignment_modality |> ondisc::get_feature_covariates()
+    grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
+    gene_modality <- mm_odm_sub_proc |> get_modality("gene")
+    grna_feature_df <- grna_assignment_modality |>
+      ondisc::get_feature_covariates() |>
+      dplyr::filter(n_nonzero >= 10) # require each individual gRNA to have at least 10 expressed cells
+    
+    if (paper %in% c("frangieh", "papalexi")) {
+      # grouped pairs
       targets <- intersect(grna_feature_df |> dplyr::pull(target),
                            gene_modality |> ondisc::get_feature_ids())
       pc_pairs <- data.frame(grna_group = targets, response_id = targets)
-      saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_grouped.rds"))
-
+     
       # ungrouped pairs
       ungroup_map <- data.frame(grna_id = row.names(grna_feature_df),
                                 grna_group = grna_feature_df$target)
       ungroup_pc_pairs <- dplyr::left_join(ungroup_map, pc_pairs, by = "grna_group") |>
-        na.omit() |> dplyr::select(grna_id, response_id)
+        na.omit() |>
+        dplyr::select(grna_id, response_id)
+      saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_grouped.rds"))
+      saveRDS(ungroup_pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_single.rds"))
+    }
+    
+    if (paper == "schraivogel") {
+      targets <- intersect(grna_feature_df |> dplyr::pull(known_effect),
+                           gene_modality |> ondisc::get_feature_ids())
+      ungroup_pairs_all <- grna_feature_df |>
+        dplyr::filter(known_effect %in% targets)
+      
+      # first, grouped pairs
+      pc_pairs <- ungroup_pairs_all |>
+        dplyr::select(grna_group = target, response_id = known_effect) |>
+        dplyr::distinct() |>
+        na.omit()
+      rownames(pc_pairs) <- NULL
+      
+      # next, ungrouped pairs
+      ungroup_pc_pairs <- data.frame(grna_id = row.names(ungroup_pairs_all),
+                                     response_id = ungroup_pairs_all$known_effect)
+      saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_grouped.rds"))
       saveRDS(ungroup_pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_single.rds"))
     }
     
