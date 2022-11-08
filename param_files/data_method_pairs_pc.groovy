@@ -6,8 +6,6 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["sceptre"],
                              "papalexi/eccite_screen/gene": ["sceptre"],
                              "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
                              "schraivogel/enhancer_screen_chr8/gene": ["sceptre"],
-                             "schraivogel/ground_truth_perturbseq/gene": ["sceptre"],
-                             "schraivogel/ground_truth_tapseq/gene": ["sceptre"],
                              "papalexi/eccite_screen/protein": ["sceptre"]
                             ]
 
