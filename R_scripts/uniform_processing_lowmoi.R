@@ -172,14 +172,14 @@ for (paper in papers) {
       protein_modality <- mm_odm_sub_proc |> get_modality("protein")
       x <- grna_assignment_modality |>
         get_feature_covariates() |>
-        filter(!is.na(known_protein_effect),
+        dplyr::filter(!is.na(known_protein_effect),
                n_nonzero > 0)
       pos_control_ungroup <- data.frame(grna_group = row.names(x),
                                         response_id = x$known_protein_effect)
       pos_control_group <- x |>
-        select(target, known_protein_effect) |>
-        distinct() |>
-        rename("grna_group" = "target", "response_id" = "known_protein_effect")
+        dplyr::select(target, known_protein_effect) |>
+        dplyr::distinct() |>
+        dplyr::rename("grna_group" = "target", "response_id" = "known_protein_effect")
       row.names(pos_control_group) <- NULL
       
       saveRDS(pos_control_group,
