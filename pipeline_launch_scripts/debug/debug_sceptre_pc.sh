@@ -6,4 +6,3 @@ nextflow run pc-grna-pipeline -r main \
  --grna_modality "assignment" \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"/results/positive_control_analysis" \
  --result_file_name "pc_results_sceptre_exact.rds" \
- --trial "true"
