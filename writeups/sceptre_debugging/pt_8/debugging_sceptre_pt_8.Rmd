@@ -11,12 +11,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This is the eight installment of the debugging `sceptre` series. I explore two questions:
 
-1. What does the calibration of SCEPTRE (exact) look like on the Schraivogel enhancer screen data (with and without QC)?
-2. What do the SCEPTRE (exact) results look like on the positive control data?
+1. What do the SCEPTRE (exact) results look like on the positive control data?
+2. What does the calibration of SCEPTRE (exact) look like on the Schraivogel enhancer screen data (with and without QC)?
 
 In both cases I compare SCEPTRE (exact) to competitors.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 library(katlabutils)
 library(tidyverse)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
@@ -31,18 +31,30 @@ replace_slash_w_underscore <- function(df) {
 funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
 source(funct_script)
 
-# 1. positive control results (sceptre exact)
-pc_res_sceptre_exact <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results_sceptre_exact.rds")) |>
-  mutate(method = "sceptre (exact)")
+# 1. positive control results
+pc_res <- readRDS(paste0(result_dir,
+                         "positive_control_analysis/pc_results.rds"))
 
-# 2. positive control results (other methods)
-pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results.rds")) |>
-  mutate(method = forcats::fct_recode(method, "sceptre (sn)" = "sceptre"))
-pc_res_comb <- rbind(pc_res, pc_res_sceptre_exact) |>
+# 2. Schraivogel enhancer screen (SCEPTRE exact)
+schraiv_sceptre_exact <- readRDS(paste0(result_dir,
+                                 "undercover_grna_analysis/sceptre_debug_bigB_schraiv.rds")) |>
+  mutate(method = "sceptre (exact)") |>
+  replace_slash_w_underscore()
+
+# 3. Schraivogel enhancer screen results
+schraiv_other <- readRDS(paste0(result_dir,
+                                "undercover_grna_analysis/undercover_result_grp_size_1.rds")) |>
+  select(-clock_time, -max_ram) |>
   replace_slash_w_underscore() |>
-  combine_schraivogel_enhancer_screens() |>
-  update_dataset_names()
+  filter(dataset %in% c("schraivogel_enhancer_screen_chr11_gene",
+                        "schraivogel_enhancer_screen_chr8_gene"))
 
+# 4. Fisher exact
+fisher_exact <- readRDS(paste0(result_dir,
+                                "undercover_grna_analysis/fisher_exact_1.rds")) |>
+  filter(dataset == "schraivogel/ground_truth_perturbseq/gene")
+
+# 5. sample size df
 sample_size_df <- readRDS(paste0(result_dir,
                                     "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
   dplyr::mutate(dataset = dataset_concat,
@@ -50,8 +62,7 @@ sample_size_df <- readRDS(paste0(result_dir,
   dplyr::rename(grna_group = target, response_id = feature_id) |>
   dplyr::filter(dataset %in% c("schraivogel/enhancer_screen_chr11/gene",
                                "schraivogel/enhancer_screen_chr8/gene")) |>
-  replace_slash_w_underscore() |>
-  combine_schraivogel_enhancer_screens()
+  replace_slash_w_underscore()
 
 sample_size_df_nt <- sample_size_df |>
   filter(grna_group == "non-targeting")
@@ -70,21 +81,59 @@ sample_size_df_nt <- left_join(x = sample_size_df_nt,
   rename("undercover_grna" = "grna_id")
 ```
 
+## Positive control results
+
+I plot the positive control results of SCEPTRE (exact) alongside those of several competitors.
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE, fig.align = "center"}
+x <- pc_res |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens() |>
+  update_dataset_names() |>
+  filter(method %in% c("fisher_exact",
+                       "seurat_de",
+                       "weissman_method",
+                       "sceptre"),
+         dataset %in% c("papalexi_eccite_screen_protein",
+                        "schraivogel_enhancer_screen",
+                        "papalexi_eccite_screen_gene",
+                        "frangieh_co_culture_gene",
+                        "frangieh_control_gene",
+                        "frangieh_ifn_gamma_gene"))
+
+x |>
+  compute_n_bonf_rejected() |>
+  make_n_rejected_pairs_plot(log_trans = FALSE, scales = "free")
+```
+
+SCEPTRE (exact) is by far the most powerful method on the Frangieh data. In fact, SCEPTRE (exact) exhibits greater power than Seurat DE, despite the fact the SCEPTRE (exact) is much better calibrated than Seurat DE. Weissman method, which is conservative on the negative control data, is even less powerful than Seurat DE. Fisher exact comes in last place, making (for example) only about 75% of the discoveries as SCEPTRE on the Control data.
+
+Next, on the Papalexi data, SCEPTRE (exact) and Seurat DE exhibit similar power, although Seurat DE does make one more discovery than SCEPTRE. Weissman method, which is grossly inflated, makes the greatest number of discoveries. Somewhat surprisingly, Fisher exact and SCEPTRE (exact) make the same number of discoveries. (I had expected Fisher exact to be underpowered, as Fisher exact is calibrated on the Papalexi data despite the fact that it does not adjust for confounders.) Next, all methods yield very small p-values on the Papalexi protein data:
+
+```{r}
+x |> 
+  filter(dataset == "papalexi_eccite_screen_protein")
+```
+
+Finally, SCEPTRE (exact) and Seurat DE are equally powerful on the Schraivogel enhancer screen data, followed by Fisher exact and then by Weissman method. An interesting avenue would be to explore the calibration and power of SCEPTRE (exact) *without* covariates on the Frangieh and (especially) Papalexi data.
+
 ## Schraivogel enhancer screen data
 
-What is the distribution of the number of treatment cells with nonzero expression on the negative control data?
+Next, I examine the Schraivogel enhancer screen data. First, I make a histogram of the number of nonzero cells per gRNA: 
 
-```{r, echo = FALSE, fig.align = "center", fig.height = 8, fig.width = 8, message=FALSE, warning=FALSE}
+```{r, echo = FALSE, fig.align = "center", fig.height = 4, fig.width = 5, message=FALSE, warning=FALSE}
 sample_size_df_nt |>
   ggplot(mapping = aes(x = n_nonzero_treatment)) +
   geom_histogram(bins = 15, fill = "white", col = "black") +
   theme_bw()
 ```
 
-Only a handful of pairs (34) have zero treatment cells with nonzero expression. 
+Expression levels of course are greater on the Schraivogel enhancer screen data than on the Papalexi and Frangieh data. Only a handful of negative control pairs (34) have zero treatment cells with nonzero expression.
 
 ```{r}
-sum(sample_size_df_nt$n_nonzero_treatment == 0)
+sample_size_df_nt |>
+  filter(n_nonzero_treatment == 0) |>
+  nrow()
 ```
 
 Meanwhile, about 95% of pairs pass the (somewhat arbitrary) QC threshold have having at least seven treatment cells with nonzero expression and 30 control cells with nonzero expression.
@@ -97,15 +146,75 @@ n_total <- sample_size_df_nt |> nrow()
 n_pass_qc/n_total
 ```
 
-## Schraivogel enhancer screen data
+Thus, issues related to sample size likely are less pressing on the Schraivogel enhancer screen data than on the Papalexi and Frangieh data.
 
-## Positive control results
+Next, I plot the results of five methods on the Schraivogel enhancer screen negative control data: SCEPTRE (exact), Schraivogel method, Seurat DE, Weissman method, and NB regression. I filter for pairs with >= 7 nonzero treatment cells >= 30 nonzero control cells.
 
-```{r}
-n_bonf_reject <- compute_n_bonf_rejected(pc_res_comb)
-p <- make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject,
-                                y_max = NULL,
-                                scales = "free",
-                                log_trans = FALSE)
+```{r, echo=FALSE, fig.align = "center", fig.height = 6, fig.width = 7, message=FALSE, warning=FALSE}
+to_plot <- rbind(schraiv_sceptre_exact, schraiv_other) |>
+  left_join(y = sample_size_df_nt, by = c("response_id", "undercover_grna", "dataset")) |>
+  update_dataset_names()
+
+p <- to_plot |>
+  filter(method %in% c("sceptre (exact)",
+                       "schraivogel_method",
+                       "seurat_de",
+                       "weissman_method",
+                       "liscovitch_method"),
+         n_nonzero_treatment >= 7,
+         n_nonzero_control >= 30) |>
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+   stat_qq_points(ymin = 1e-8, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
 p
 ```
+
+Liscovitch method clearly is the worst. The other methods are fairly similar. SCEPTRE (exact) exhibits good calibration up until about 1e-03, at which point SCEPTRE (exact) becomes mildly inflated. I plot the results of SCEPTRE (exact) only, faceting by gRNA.
+
+```{r, echo=FALSE, fig.align = "center", fig.height = 16, fig.width = 8, message=FALSE, warning=FALSE}
+# facet the plot by gRNA
+to_plot |>
+  filter(method == "sceptre (exact)") |>
+  ggplot(mapping = aes(y = p_value)) +
+  facet_wrap(undercover_grna ~ ., ncol = 4) +
+  stat_qq_points(ymin = 1e-8, size = 0.8) +
+     stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+
+The most inflated gRNA is non-targeting-00022. Interestingly, non-targeting-00022 also poses the greatest difficulty on the Schraivogel perturb-seq dataset. I plot the results of Fisher exact test on the pertub-seq data below, faceting by gRNA.
+
+```{r, echo=FALSE, fig.align = "center", fig.height = 16, fig.width = 8, message=FALSE, warning=FALSE}
+fisher_exact |>
+  mutate() |>
+  ggplot(mapping = aes(y = p_value)) +
+  facet_wrap(undercover_grna ~ ., ncol = 4) +
+  stat_qq_points(ymin = 1e-8, size = 0.8) +
+     stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank())
+```
+
+Perhaps this is evidence of off-targeting effects among some gRNAs? At any rate, removing non-targeting-00022 does not change the calibration of the methods too much (not plotted).
