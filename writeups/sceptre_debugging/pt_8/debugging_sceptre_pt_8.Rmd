@@ -1,0 +1,94 @@
+---
+title: 'Debugging `sceptre` 8: Schraivogel enhancer screen data and positive controls'
+author: "Tim"
+date: "2022-11-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is the eight installment of the debugging `sceptre` series. I explore two questions:
+
+1. What does the calibration of SCEPTRE (exact) look like on the Schraivogel enhancer screen data (with and without QC)?
+2. What do the SCEPTRE (exact) results look like on the positive control data?
+
+In both cases I compare SCEPTRE (exact) to competitors.
+
+## Schraivogel enhancer screen data
+
+```{r, echo = FALSE}
+library(katlabutils)
+library(tidyverse)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+replace_slash_w_underscore <- function(df) {
+  df |> dplyr::mutate(dataset = gsub(pattern = "/",
+                                replacement = "_",
+                                fixed = TRUE,
+                                x = dataset))
+}
+
+funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/writeups/undercover_results_eda/analyze_undercover_results_plot_functs.R")
+source(funct_script)
+
+# 1. positive control results (sceptre exact)
+
+
+# 2. positive control results (other methods)
+
+
+sample_size_df <- readRDS(paste0(result_dir,
+                                    "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
+  dplyr::mutate(dataset = dataset_concat,
+                dataset_concat = NULL, paper = NULL, modality = NULL) |>
+  dplyr::rename(grna_group = target, response_id = feature_id) |>
+  dplyr::filter(dataset %in% c("schraivogel/enhancer_screen_chr11/gene",
+                               "schraivogel/enhancer_screen_chr8/gene")) |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens()
+
+sample_size_df_nt <- sample_size_df |>
+  filter(grna_group == "non-targeting")
+sample_size_df_t <- sample_size_df |>
+  filter(grna_group != "non-targeting")
+
+ntc_effective_samp_size <- sample_size_df_nt |>
+  group_by(response_id, dataset) |>
+  summarize(effective_samp_size = sum(n_nonzero_cells))
+
+sample_size_df_nt <- left_join(x = sample_size_df_nt,
+                            y = ntc_effective_samp_size,
+                            by = c("response_id", "dataset")) |>
+  mutate(n_nonzero_treatment = n_nonzero_cells,
+         n_nonzero_control = effective_samp_size - n_nonzero_cells) |>
+  rename("undercover_grna" = "grna_id")
+```
+
+What is the distribution of the number of treatment cells with nonzero expression on the negative control data?
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 8, fig.width = 8, message=FALSE, warning=FALSE}
+sample_size_df_nt |>
+  ggplot(mapping = aes(x = n_nonzero_treatment)) +
+  geom_histogram(bins = 15, fill = "white", col = "black") +
+  theme_bw()
+```
+
+
+Only a handful of pairs (34) have zero treatment cells with nonzero expression. 
+
+```{r}
+sum(sample_size_df_nt$n_nonzero_treatment == 0)
+```
+
+Meanwhile, about 95% of pairs pass the (somewhat arbitrary) QC threshold have having at least seven treatment cells with nonzero expression and 30 control cells with nonzero expression.
+
+```{r}
+n_pass_qc <- sample_size_df_nt |>
+  filter(n_nonzero_treatment >= 7, n_nonzero_control >= 30) |>
+  nrow()
+n_total <- sample_size_df_nt |> nrow()
+n_pass_qc/n_total
+```
+
