@@ -1,7 +1,6 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-data_method_pairs = ["frangieh/ifn_gamma/gene": ["sceptre"],
-                     "papalexi/eccite_screen/gene": ["sceptre"],
-                     "papalexi/eccite_screen/protein": ["sceptre"]
+data_method_pairs = ["schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["sceptre"]
                      ]
 
 
