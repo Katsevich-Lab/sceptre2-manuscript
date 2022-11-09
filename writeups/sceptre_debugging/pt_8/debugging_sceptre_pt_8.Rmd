@@ -16,8 +16,6 @@ This is the eight installment of the debugging `sceptre` series. I explore two q
 
 In both cases I compare SCEPTRE (exact) to competitors.
 
-## Schraivogel enhancer screen data
-
 ```{r, echo = FALSE}
 library(katlabutils)
 library(tidyverse)
@@ -34,10 +32,16 @@ funct_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/
 source(funct_script)
 
 # 1. positive control results (sceptre exact)
-
+pc_res_sceptre_exact <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results_sceptre_exact.rds")) |>
+  mutate(method = "sceptre (exact)")
 
 # 2. positive control results (other methods)
-
+pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results.rds")) |>
+  mutate(method = forcats::fct_recode(method, "sceptre (sn)" = "sceptre"))
+pc_res_comb <- rbind(pc_res, pc_res_sceptre_exact) |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens() |>
+  update_dataset_names()
 
 sample_size_df <- readRDS(paste0(result_dir,
                                     "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
@@ -66,6 +70,8 @@ sample_size_df_nt <- left_join(x = sample_size_df_nt,
   rename("undercover_grna" = "grna_id")
 ```
 
+## Schraivogel enhancer screen data
+
 What is the distribution of the number of treatment cells with nonzero expression on the negative control data?
 
 ```{r, echo = FALSE, fig.align = "center", fig.height = 8, fig.width = 8, message=FALSE, warning=FALSE}
@@ -74,7 +80,6 @@ sample_size_df_nt |>
   geom_histogram(bins = 15, fill = "white", col = "black") +
   theme_bw()
 ```
-
 
 Only a handful of pairs (34) have zero treatment cells with nonzero expression. 
 
@@ -92,3 +97,15 @@ n_total <- sample_size_df_nt |> nrow()
 n_pass_qc/n_total
 ```
 
+## Schraivogel enhancer screen data
+
+## Positive control results
+
+```{r}
+n_bonf_reject <- compute_n_bonf_rejected(pc_res_comb)
+p <- make_n_rejected_pairs_plot(n_rejected_df = n_bonf_reject,
+                                y_max = NULL,
+                                scales = "free",
+                                log_trans = FALSE)
+p
+```
