@@ -54,5 +54,5 @@ data_method_queue_matrix = [
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1:arg2=value2:arg3=value3")
 optional_args = [
-"output_amount=1:B=300000:sn_approx=FALSE:with_covariates=FALSE" // sceptre
+"output_amount=1:B=300000:with_covariates=FALSE" // sceptre
 ]
