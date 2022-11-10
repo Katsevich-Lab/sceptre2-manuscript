@@ -131,7 +131,8 @@ fisher_exact_res_plot |>
    theme_bw() +
    scale_x_reverse() +
    scale_y_reverse() +
-   labs(x = "Expected quantile", y = "Observed quantile") +
+   labs(x = "Expected quantile",
+        y = "Observed quantile") +
    theme(legend.position = "bottom",
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),

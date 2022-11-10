@@ -148,7 +148,7 @@ n_pass_qc/n_total
 
 Thus, issues related to sample size likely are less pressing on the Schraivogel enhancer screen data than on the Papalexi and Frangieh data.
 
-Next, I plot the results of five methods on the Schraivogel enhancer screen negative control data: SCEPTRE (exact), Schraivogel method, Seurat DE, Weissman method, and NB regression. I filter for pairs with >= 7 nonzero treatment cells >= 30 nonzero control cells.
+Next, I plot the results of five methods on the Schraivogel enhancer screen negative control data: SCEPTRE (exact), Schraivogel method, Seurat DE, Weissman method, and NB regression. I filter for pairs with >= 10 nonzero treatment cells >= 30 nonzero control cells.
 
 ```{r, echo=FALSE, fig.align = "center", fig.height = 6, fig.width = 7, message=FALSE, warning=FALSE}
 to_plot <- rbind(schraiv_sceptre_exact, schraiv_other) |>
@@ -218,3 +218,70 @@ fisher_exact |>
 ```
 
 Perhaps this is evidence of off-targeting effects among some gRNAs? At any rate, removing non-targeting-00022 does not change the calibration of the methods too much (not plotted).
+
+# SCEPTRE (exact) power analysis
+
+I investigate the connection between sample size and the power of SCEPTRE (exact). First, I plot p-value vs. N treatment (i.e., the number of cells in the "treatment" group with nonzero expression) on the positive control data. We see that as N treatment gets smaller, the p-values generally get larger (as expected). Operationally defining a "highly significant" p-value as $5 \cdot 10^{-6}$ (which is the minumum p-value that SCEPTRE (exact) can output), we see that the minimum value of N treatment required to produce a high significant p-value on the Frangieh data is roughly 10. (There is, however, an exception: on the Frangieh Control data, a pair with only six treatment cells with nonzero expression yielded a highly significant p-value). We observe smilar trends on the Schraivogel enhancer screen data (although I note that SCEPTRE is midly inflated on this dataset).
+
+A reasonable QC criterion is therefore to filter for pairs that contain at least 10 treatment cells with nonzero expression. 
+
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+datasets_to_study <- c("papalexi_eccite_screen_protein",
+                 "schraivogel_enhancer_screen",
+                 "papalexi_eccite_screen_gene",
+                 "frangieh_co_culture_gene",
+                 "frangieh_control_gene",
+                 "frangieh_ifn_gamma_gene")
+
+# 1. positive control results
+pc_res <- readRDS(paste0(result_dir,
+                         "positive_control_analysis/pc_results.rds")) |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens() |>
+  update_dataset_names() |>
+  filter(method == "sceptre",
+         dataset %in% datasets_to_study)
+
+# 2. sample size
+sample_size_df <- readRDS(paste0(result_dir,
+                                    "dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
+  dplyr::mutate(dataset = dataset_concat,
+                dataset_concat = NULL, paper = NULL, modality = NULL) |>
+  dplyr::rename(grna_group = target, response_id = feature_id) |>
+  replace_slash_w_underscore() |>
+  combine_schraivogel_enhancer_screens()
+
+control_sample_size_df <- sample_size_df |>
+  filter(grna_group == "non-targeting") |>
+  group_by(response_id, dataset) |>
+  summarize(n_control = sum(n_nonzero_cells))
+
+to_join <- sample_size_df |>
+  filter(dataset %in% datasets_to_study,
+         grna_group %in% pc_res$grna_group,
+         response_id %in% pc_res$response_id) |>
+  group_by(grna_group, response_id,
+           dataset) |>
+  summarize(n_treatment = sum(n_nonzero_cells)) |>
+  select(response_id, grna_group, n_treatment, dataset)
+
+pc_res_w_ss <- left_join(x = pc_res,
+                         y = to_join,
+                         by = c("grna_group", "response_id", "dataset")) |>
+  left_join(y = control_sample_size_df, by = c("response_id", "dataset"))
+```
+
+```{r, echo = FALSE,  fig.align = "center", fig.height = 5, fig.width = 10}
+pc_res_w_ss |>
+  ggplot(mapping = aes(x = n_treatment, y = p_value)) +
+  facet_wrap(dataset_rename_w_pairs ~ ., scales = "free_y") +
+  geom_point() +
+  geom_vline(xintercept = 10, col = "darkred") +
+  scale_x_log10() +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  geom_hline(yintercept = 1e-5, col = "darkblue") +
+  theme_bw() +
+  xlab("N treatment") +
+  ylab("p-value")
+```

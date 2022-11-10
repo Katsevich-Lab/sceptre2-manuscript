@@ -371,8 +371,7 @@ fisher_exact_res <- readRDS(paste0(result_dir,
 res <- rbind(sceptre_big_B,
              nb_reg_res,
              sceptre_res_cov,
-             sceptre_res_no_cov,
-             fisher_exact_res) |>
+             sceptre_res_no_cov) |>
   replace_slash_w_underscore() |>
   update_dataset_names()
 
@@ -389,13 +388,14 @@ res <- left_join(res, sample_size_df_nt_select,
                  by = c("response_id", "dataset", "undercover_grna"))
 ```
 
-First, I plot the SCEPTRE exact results on the Frangieh data, comparing to (i) the skew-normal version of SCEPTRE (with covariates), (ii) NB regression, and (iii) SCEPTRE (SN). I plot the results twice: once without QC (top) and once with mild QC (bottom). ("Mild QC" entails filtering for pairs with at least 7 treatment cells with nonzero expression and 30 control cells with nonzero expression. The exact thresholds that I selected are somewhat arbitrary and can be fine-tuned later, if necessary.)
+First, I plot the SCEPTRE exact results on the Frangieh data, comparing to (i) the skew-normal version of SCEPTRE (with covariates), (ii) NB regression, and (iii) SCEPTRE (SN). I plot the results twice: once without QC (top) and once with mild QC (bottom). ("Mild QC" entails filtering for pairs with at least 10 treatment cells with nonzero expression and 30 control cells with nonzero expression. See the next writeup (Writeup 8) for a justification of these thresholds.
 
 ```{r, echo = FALSE, fig.align = "center", fig.height = 12, fig.width = 5, message=FALSE, warning=FALSE}
+n_nonzero_treatment_thresh <- 10
+
 p_qc <- res |>
   filter(dataset == "frangieh_ifn_gamma_gene",
-         n_nonzero_treatment >= 7,
-         n_nonzero_control >= 30) |>
+         n_nonzero_treatment >= n_nonzero_treatment_thresh) |>
   ggplot(aes(y = p_value, 
          col = Method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -439,7 +439,7 @@ Next, I create the same set of plots for the Papalexi data. I plot SCEPTRE (exac
 ```{r, echo = FALSE, fig.align = "center", fig.height = 12, fig.width = 5, message=FALSE, warning=FALSE}
 p_qc <- res |>
   filter(dataset == "papalexi_eccite_screen_gene",
-         n_nonzero_treatment >= 7,
+         n_nonzero_treatment >= n_nonzero_treatment_thresh,
          n_nonzero_control >= 30) |>
   ggplot(aes(y = p_value, 
          col = Method)) +
@@ -584,7 +584,7 @@ The results in this writeup are encouraging. After applying very mild QC, SCEPTR
 x <- res |>
   filter(dataset == "schraivogel_enhancer_screen")
 
-x |> filter(n_nonzero_treatment >= 7,
+x |> filter(n_nonzero_treatment >= n_nonzero_treatment_thresh,
             n_nonzero_control >= 30) |>
   ggplot(aes(y = p_value, 
          col = Method)) +
