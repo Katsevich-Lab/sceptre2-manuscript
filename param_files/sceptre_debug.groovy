@@ -1,8 +1,7 @@
 // FIRST, define the dataset-method pairs to analyze in a map
-data_method_pairs = ["schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["sceptre"]
+data_method_pairs = ["papalexi/eccite_screen/gene": ["sceptre"],
+                     "frangieh/ifn_gamma/gene": ["sceptre"]
                      ]
-
 
 // FIRST, define the row and column names of the below matrices and vectors
 row_names = ["frangieh/co_culture/gene",
@@ -55,5 +54,5 @@ data_method_queue_matrix = [
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1:arg2=value2:arg3=value3")
 optional_args = [
-"output_amount=1:B=300000:sn_approx=FALSE" // sceptre
+"output_amount=1:B=300000:sn_approx=FALSE:with_covariates=FALSE" // sceptre
 ]
