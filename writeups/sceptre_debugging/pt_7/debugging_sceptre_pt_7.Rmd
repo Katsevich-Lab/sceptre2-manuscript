@@ -345,7 +345,12 @@ source(funct_script)
 
 # 1. sceptre big b
 sceptre_big_B <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_debug_bigB_frang_papa.rds")) |>
-  mutate(method = "sceptre (exact)") |>
+  mutate(method = "sceptre (exact cov)") |>
+  replace_slash_w_underscore()
+
+# 1.5 sceptre big b without covariates
+sceptre_big_B_no_cov <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_debug_bigB_frang_papa_nocov.rds")) |>
+  mutate(method = "sceptre (exact no cov)") |>
   replace_slash_w_underscore()
 
 # 2. sceptre (with covariates)
@@ -364,11 +369,8 @@ nb_reg_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_re
   dplyr::select(-clock_time, -max_ram) |>
   dplyr::filter(method %in% c("nb_regression", "seurat_de"))
 
-# 5. Fisher exact
-fisher_exact_res <- readRDS(paste0(result_dir,
-                                   "undercover_grna_analysis/fisher_exact_1.rds"))
-
 res <- rbind(sceptre_big_B,
+             sceptre_big_B_no_cov,
              nb_reg_res,
              sceptre_res_cov,
              sceptre_res_no_cov) |>
@@ -388,14 +390,17 @@ res <- left_join(res, sample_size_df_nt_select,
                  by = c("response_id", "dataset", "undercover_grna"))
 ```
 
-First, I plot the SCEPTRE exact results on the Frangieh data, comparing to (i) the skew-normal version of SCEPTRE (with covariates), (ii) NB regression, and (iii) SCEPTRE (SN). I plot the results twice: once without QC (top) and once with mild QC (bottom). ("Mild QC" entails filtering for pairs with at least 10 treatment cells with nonzero expression and 30 control cells with nonzero expression. See the next writeup (Writeup 8) for a justification of these thresholds.
+First, I plot the SCEPTRE exact results on the Frangieh data, comparing to (i) the skew-normal version of SCEPTRE (with covariates), (ii) NB regression, and (iii) SCEPTRE (SN). I plot the results twice: once without QC (top) and once with mild QC (bottom). ("Mild QC" entails filtering for pairs with at least 10 treatment cells with nonzero expression and 10 control cells with nonzero expression. See the next writeup (Writeup 8) for a justification of these thresholds.
 
 ```{r, echo = FALSE, fig.align = "center", fig.height = 12, fig.width = 5, message=FALSE, warning=FALSE}
 n_nonzero_treatment_thresh <- 10
+n_nonzero_control_thresh <- 10
 
 p_qc <- res |>
   filter(dataset == "frangieh_ifn_gamma_gene",
-         n_nonzero_treatment >= n_nonzero_treatment_thresh) |>
+         method != "sceptre (exact no cov)",
+         n_nonzero_treatment >= n_nonzero_treatment_thresh,
+         n_nonzero_control >= n_nonzero_control_thresh) |>
   ggplot(aes(y = p_value, 
          col = Method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -409,10 +414,12 @@ p_qc <- res |>
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank()) +
+  guides(color=guide_legend(nrow=2, byrow=TRUE)) +
   ggtitle("QC")
 
 p_no_qc <- res |>
-  filter(dataset == "frangieh_ifn_gamma_gene") |>
+  filter(dataset == "frangieh_ifn_gamma_gene",
+         method != "sceptre (exact no cov)") |>
   ggplot(aes(y = p_value, 
          col = Method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -425,7 +432,8 @@ p_no_qc <- res |>
    theme(legend.position = "bottom",
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
-         panel.background = element_blank()) +
+         panel.background = element_blank()) + 
+  guides(color=guide_legend(nrow=2, byrow=TRUE)) +
   ggtitle("No QC")
 
 p <- cowplot::plot_grid(p_no_qc, p_qc, ncol = 1, labels = c("a", "b"))
@@ -439,8 +447,9 @@ Next, I create the same set of plots for the Papalexi data. I plot SCEPTRE (exac
 ```{r, echo = FALSE, fig.align = "center", fig.height = 12, fig.width = 5, message=FALSE, warning=FALSE}
 p_qc <- res |>
   filter(dataset == "papalexi_eccite_screen_gene",
+         method != "sceptre (exact no cov)",
          n_nonzero_treatment >= n_nonzero_treatment_thresh,
-         n_nonzero_control >= 30) |>
+         n_nonzero_control >= n_nonzero_control_thresh) |>
   ggplot(aes(y = p_value, 
          col = Method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -454,10 +463,12 @@ p_qc <- res |>
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank()) +
+  guides(color=guide_legend(nrow=2, byrow=TRUE)) +
   ggtitle("QC")
 
 p_no_qc <- res |>
-  filter(dataset == "papalexi_eccite_screen_gene") |>
+  filter(dataset == "papalexi_eccite_screen_gene",
+         method != "sceptre (exact no cov)") |>
   ggplot(aes(y = p_value, 
          col = Method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -471,6 +482,7 @@ p_no_qc <- res |>
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank()) +
+  guides(color=guide_legend(nrow=2, byrow=TRUE)) +
   ggtitle("No QC")
 
 p <- cowplot::plot_grid(p_no_qc, p_qc, ncol = 1, labels = c("a", "b"))
@@ -484,7 +496,7 @@ I compute the fraction of negative control pairs removed after applying QC. Note
    filter(dataset %in% c("frangieh_co_culture_gene",
                          "papalexi_eccite_screen_gene")) |>
    group_by(dataset) |>
-   summarize(frac_removed =  1 - mean(n_nonzero_treatment >= 7 & n_nonzero_control >= 30)) 
+   summarize(frac_removed =  1 - mean(n_nonzero_treatment >= n_nonzero_treatment_thresh & n_nonzero_control >= n_nonzero_control_thresh)) 
 ```
 
 Interestingly, SCEPTRE (exact) is miscalibrated on the un-QCed data but is excellently calibrated on the QC'ed data. I conjecture that SCEPTRE (exact) is miscalibrated on the un-QC'ed data for the following reason: some of the pairs are confounded, and the sample size is too small for CAMP to have kicked in. On the QC'ed data, meanwhile, CAMP has kicked in, enabling SCEPTRE to return a well-calibrated p-value for the confounded pairs. In fact, on the QC'ed data, SCEPTRE (exact) exhibits the best calibration of all the methods and is even better than NB regression. This possibly is because NB regression is less robust than SCEPTRE to GLM model misspecification.
@@ -500,17 +512,17 @@ x <- res |>
          method,
          n_nonzero_treatment,
          n_nonzero_control) |>
-  filter(method %in% c("sceptre (exact)", "sceptre (sn)"),
+  filter(method %in% c("sceptre (exact cov)", "sceptre (sn cov)"),
          dataset == "papalexi_eccite_screen_gene") 
 comparison_df <- left_join(x |>
-                             filter(method == "sceptre (exact)") |>
+                             filter(method == "sceptre (exact cov)") |>
                              rename("p_value_exact" = "p_value"),
                            x |>
-                             filter(method == "sceptre (sn)") |>
+                             filter(method == "sceptre (sn cov)") |>
                              rename("p_value_sn" = "p_value") |>
                              select(p_value_sn, response_id, undercover_grna),
                            by = c("response_id", "undercover_grna")) |>
-  mutate(pass_qc = (n_nonzero_treatment >= 7) & (n_nonzero_control >= 100))
+  mutate(pass_qc = (n_nonzero_treatment >= n_nonzero_treatment_thresh) & (n_nonzero_control >= n_nonzero_control_thresh))
 
 comparison_df |>
   ggplot(mapping = aes(x = p_value_exact, y = p_value_sn, col = pass_qc)) +
@@ -523,6 +535,7 @@ comparison_df |>
   ylab("p-value (SN)") +
   labs(col = "Retained after QC") +
   theme(legend.position = "bottom") +
+  guides(color=guide_legend(nrow=2, byrow=TRUE)) +
   geom_vline(xintercept = 2e-2, col = "darkred") +
   geom_hline(yintercept = 3e-2, col = "darkred")
 ```
@@ -538,17 +551,17 @@ x <- res |>
          method,
          n_nonzero_treatment,
          n_nonzero_control) |>
-  filter(method %in% c("sceptre (exact)", "nb_regression"),
+  filter(method %in% c("sceptre (exact cov)", "nb_regression"),
          dataset == "papalexi_eccite_screen_gene") 
 comparison_df <- left_join(x |>
-                             filter(method == "sceptre (exact)") |>
+                             filter(method == "sceptre (exact cov)") |>
                              rename("p_value_exact" = "p_value"),
                            x |>
                              filter(method == "nb_regression") |>
                              rename("p_value_nb" = "p_value") |>
                              select(p_value_nb, response_id, undercover_grna),
                            by = c("response_id", "undercover_grna")) |>
-  mutate(pass_qc = (n_nonzero_treatment >= 10) & (n_nonzero_control >= 100))
+  mutate(pass_qc = (n_nonzero_treatment >= n_nonzero_treatment_thresh) & (n_nonzero_control >= n_nonzero_control_thresh))
 
 comparison_df |>
   ggplot(mapping = aes(x = p_value_exact, y = p_value_nb, col = pass_qc)) +
@@ -561,7 +574,8 @@ comparison_df |>
   ylab("p-value (NB regression)") +
   labs(col = "Retained after QC") +
   geom_vline(xintercept = 0.5, col = "darkred") +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  guides(color=guide_legend(nrow=2, byrow=TRUE))
 ```
 
 These results are even more striking than the results comparing SCEPTRE (exact) to SCEPTRE (SN). There exists a set of pairs for which the NB regression p-value is about 1 and the SCEPTRE (exact) p-value is in the interval (0, 1). (These are the points at the bottom of the plot.) We see that very few of these pairs pass QC. What is the deal with these pairs? I filter for pairs with NB p-values greater than 0.99 and SCEPTRE (exact) p-values less than 0.5. (This is the row of points at the bottom of the plot to the right of the vertical black line.)
@@ -574,18 +588,21 @@ comparison_df |>
   pull() * 100
 ```
 
-Nearly all of these points (99.6%) have zero treatment cells with expression. We thus have an (at least proximate) explanation for the discrepancy between SCEPTRE (exact) and NB regression. When no treatment cell contains nonzero gene expression, SCEPTRE (exact) and NB regression both fail. SCEPTRE (exact) fails in a liberal direction, producing inflated p-values. NB regression, by contrast, fails in a conservative direction, yielding p-values equal to one. We likely will filter out such pairs as part of QC. Thus, on the pairs that we will subject to analysis, NB regression and SCEPTRE (exact) coincide fairly closely. (And in fact, SCEPTRE (exact) exhibits slightly better calibration on the QC'ed pairs, likely due to greater robustness to model misspecification.)
+Nearly all of these points (99.6%) have zero treatment cells with expression. We thus have an (at least proximate) explanation for the discrepancy between SCEPTRE (exact) and NB regression. When no treatment cell contains nonzero gene expression, SCEPTRE (exact) and NB regression both fail. SCEPTRE (exact) fails in a liberal direction, producing inflated p-values. NB regression, by contrast, fails in a conservative direction, yielding p-values equal to one. We likely will filter out such pairs as part of QC. Thus, on the pairs that we will subject to analysis, NB regression and SCEPTRE (exact) coincide fairly closely. (And in fact, SCEPTRE (exact) exhibits slightly better calibration on the QC'ed pairs, likely due to greater robustness to model misspecification.) The results are encouraging. After applying very mild QC, SCEPTRE emerges as the best method on both the Papalexi and Frangieh data. This is due to CAMP.
 
-The results in this writeup are encouraging. After applying very mild QC, SCEPTRE emerges as the best method on both the Papalexi and Frangieh data. This is due to CAMP.
+# Comparing the four versions of SCEPTRE
 
-# Schraivogel Enhancer screen data
+Here, I plot the four versions of SCEPTRE (with covariates vs. without covariates, skew-normal vs. exact) on the Papalexi and Frangieh data. I apply the mild QC used above. First, I examine the Frangieh IFN-gamma data.
 
-```{r}
-x <- res |>
-  filter(dataset == "schraivogel_enhancer_screen")
-
-x |> filter(n_nonzero_treatment >= n_nonzero_treatment_thresh,
-            n_nonzero_control >= 30) |>
+```{r, echo = FALSE, fig.align = "center", fig.height = 6, fig.width = 6, message=FALSE, warning=FALSE}
+p_qc <- res |>
+  filter(dataset == "frangieh_ifn_gamma_gene",
+         method %in% c("sceptre (exact no cov)",
+                      "sceptre (exact cov)",
+                      "sceptre (sn no cov)",
+                      "sceptre (sn cov)"),
+         n_nonzero_treatment >= n_nonzero_treatment_thresh,
+         n_nonzero_control >= n_nonzero_control_thresh) |>
   ggplot(aes(y = p_value, 
          col = Method)) +
    stat_qq_points(ymin = 1e-9, size = 0.8) +
@@ -599,5 +616,70 @@ x |> filter(n_nonzero_treatment >= n_nonzero_treatment_thresh,
          panel.grid.major = element_blank(),
          panel.grid.minor = element_blank(),
          panel.background = element_blank()) +
+  guides(color=guide_legend(nrow=2, byrow=TRUE)) +
   ggtitle("QC")
+
+p_qc
 ```
+
+Including or excluding covariates does not seem to have much of an effect (at least on type-I error control). The skew-normal approximation, by contrast, leads to inflation. Next, I examine the Papalexi gene expression data.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 6, fig.width = 6, message=FALSE, warning=FALSE}
+p_qc <- res |>
+  filter(dataset == "papalexi_eccite_screen_gene",
+         method %in% c("sceptre (exact no cov)",
+                      "sceptre (exact cov)",
+                      "sceptre (sn no cov)",
+                      "sceptre (sn cov)"),
+         n_nonzero_treatment >= n_nonzero_treatment_thresh,
+         n_nonzero_control >= n_nonzero_control_thresh) |>
+  ggplot(aes(y = p_value, 
+         col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_continuous(trans = revlog_trans(10)) +
+   scale_y_continuous(trans = revlog_trans(10)) +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  guides(color=guide_legend(nrow=2, byrow=TRUE)) +
+  ggtitle("QC")
+
+p_qc
+```
+
+The results are fascinating: SCEPTRE (skew-normal and without covariates) performs the worst; SCEPTRE (exact and without covariates) performs second worst; next, SCEPTRE (skew-normal and with covariates) performs second best; finally, SCEPTRE (exact and with covariates) performs best. This result provides clear evidence that the skew-normal fit and confounding both pose challenges to calibration, with confounding being the more serious problem. I plot the results above on an untransformed scale.
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 6, fig.width = 6, message=FALSE, warning=FALSE}
+p_qc <- res |>
+  filter(dataset == "papalexi_eccite_screen_gene",
+         method %in% c("sceptre (exact no cov)",
+                      "sceptre (exact cov)",
+                      "sceptre (sn no cov)",
+                      "sceptre (sn cov)"),
+         n_nonzero_treatment >= n_nonzero_treatment_thresh,
+         n_nonzero_control >= n_nonzero_control_thresh) |>
+  ggplot(aes(y = p_value, 
+         col = Method)) +
+   stat_qq_points(ymin = 1e-9, size = 0.8) +
+   geom_abline(col = "darkred") +
+   stat_qq_band() +
+   theme_bw() +
+   scale_x_reverse() +
+   scale_y_reverse() +
+   labs(x = "Expected quantile", y = "Observed quantile") +
+   theme(legend.position = "bottom",
+         panel.grid.major = element_blank(),
+         panel.grid.minor = element_blank(),
+         panel.background = element_blank()) +
+  guides(color=guide_legend(nrow=2, byrow=TRUE)) +
+  ggtitle("QC")
+
+p_qc
+```
+
+In the bulk the skew-normal fit causes more problems than confounding does.

@@ -219,12 +219,11 @@ fisher_exact |>
 
 Perhaps this is evidence of off-targeting effects among some gRNAs? At any rate, removing non-targeting-00022 does not change the calibration of the methods too much (not plotted).
 
-# SCEPTRE (exact) power analysis
+# SCEPTRE (exact) power vs. sample size analysis
 
 I investigate the connection between sample size and the power of SCEPTRE (exact). First, I plot p-value vs. N treatment (i.e., the number of cells in the "treatment" group with nonzero expression) on the positive control data. We see that as N treatment gets smaller, the p-values generally get larger (as expected). Operationally defining a "highly significant" p-value as $5 \cdot 10^{-6}$ (which is the minumum p-value that SCEPTRE (exact) can output), we see that the minimum value of N treatment required to produce a high significant p-value on the Frangieh data is roughly 10. (There is, however, an exception: on the Frangieh Control data, a pair with only six treatment cells with nonzero expression yielded a highly significant p-value). We observe smilar trends on the Schraivogel enhancer screen data (although I note that SCEPTRE is midly inflated on this dataset).
 
 A reasonable QC criterion is therefore to filter for pairs that contain at least 10 treatment cells with nonzero expression. 
-
 
 ```{r, echo = FALSE, warning=FALSE, message=FALSE}
 datasets_to_study <- c("papalexi_eccite_screen_protein",
@@ -272,11 +271,11 @@ pc_res_w_ss <- left_join(x = pc_res,
   left_join(y = control_sample_size_df, by = c("response_id", "dataset"))
 ```
 
-```{r, echo = FALSE,  fig.align = "center", fig.height = 5, fig.width = 10}
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 10}
 pc_res_w_ss |>
   ggplot(mapping = aes(x = n_treatment, y = p_value)) +
   facet_wrap(dataset_rename_w_pairs ~ ., scales = "free_y") +
-  geom_point() +
+  geom_point(cex = 0.8) +
   geom_vline(xintercept = 10, col = "darkred") +
   scale_x_log10() +
   scale_y_continuous(trans = revlog_trans(10)) +
@@ -285,3 +284,25 @@ pc_res_w_ss |>
   xlab("N treatment") +
   ylab("p-value")
 ```
+
+Next, I plot p-value against the number of control cells with nonzero expression. I color points according to whether the number of treatment cells for that pair (with nonzero expression) exceeds the threshold of 10 (selected above).
+
+```{r, echo = FALSE, fig.align = "center", fig.height = 5, fig.width = 10}
+pc_res_w_ss |>
+  mutate(n_treatment_big = n_treatment >= 10) |>
+  ggplot(mapping = aes(x = n_control, y = p_value, col = n_treatment_big)) +
+  facet_wrap(dataset_rename_w_pairs ~ ., scales = "free_y") +
+  geom_point(cex = 0.8) +
+  scale_x_log10() +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  geom_hline(yintercept = 1e-5, col = "darkblue") +
+  theme_bw() +
+  geom_vline(xintercept = 700) +
+  xlab("N control") +
+  ylab("p-value")
+```
+
+We see that only pairs with sufficiently many nonzero control cells (> 700, give or take) reject at a highly significant level. Furthermore, as N nonzero control is highly correlated with N nonzero treatment (see previous writeup), pairs with more than 700 nonzero control cells generally have more than 10 nonzero treatment cells. (The converse also holds.) Given that power likely is driven by N nonzero treatment rather than N nonzero control (as N nonzero treatment typically is much smaller than N nonzero control), I do not see much point in adding a metric based on N nonzero control to the QC criteria. To avoid pathological corner cases, however, it might be a good idea to require that N nonzero control exceed 10 (say).
+
+In conclusion, I propose the following pairwise QC criterion: keep pairs that have at least 10 treatment cells with nonzero expression and 10 control cells with nonzero expression; throw out all others. This pairwise criterion optionally can be applied in conjunction with gene-wise, gRNA-wise, and cell-wise QC. For example, gene-wise and gRNA-wise QC can be applied to remove aberrant genes and gRNAs. In our project we perform minimal gene-wise and gRNA-wise QC, filtering for genes expressed in at least 0.005 of cells and gRNAs expressed in at least 10 cells. Furthermore, we inherit the cell-wise QC carried out by the original authors.
+
