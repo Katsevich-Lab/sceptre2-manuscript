@@ -7,6 +7,11 @@
 #   - Java version 8 or higher
 #   - Nextflow version 21.10.6 or higher
 
+
+#######################################
+# PART 1: SETUP
+#######################################
+
 # 1. install required Python packages
 bash install_python_packages.sh
 
@@ -31,3 +36,13 @@ Rscript ../R_scripts/uniform_processing_lowmoi.R
 
 # 8. run the high MOI uniform processing step
 Rscript ../R_scripts/uniform_processing_highmoi.R
+
+#######################################
+# PART 2: RESULTS GENERATION
+#######################################
+# 9. Undercover results for group size = 1, all methods and datasets
+
+
+#######################################
+# PART 3: MAKING FIGURES
+#######################################

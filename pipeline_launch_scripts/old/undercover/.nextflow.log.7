@@ -1,0 +1,53 @@
+Jul-12 13:37:44.622 [main] DEBUG nextflow.cli.Launcher - $> nextflow run /Users/timbarry/research_code/undercover-grna-pipeline/main.nf --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/data_method_test.groovy --result_dir /Users/timbarry/research_offsite/projects/sceptre2/results/undercover_grna_analysis --result_file_name result_test.rds --grna_modality assignment --group_size 1 --is_group_size_frac false --partition_count 1 --is_partition_count_frac false --machine_name local --time 07121337 --max_retries 2
+Jul-12 13:37:44.746 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.04.3
+Jul-12 13:37:44.764 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Jul-12 13:37:44.764 [main] DEBUG nextflow.config.ConfigBuilder - Found config base: /Users/timbarry/research_code/undercover-grna-pipeline/nextflow.config
+Jul-12 13:37:44.766 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Jul-12 13:37:44.766 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/research_code/undercover-grna-pipeline/nextflow.config
+Jul-12 13:37:44.796 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Jul-12 13:37:45.551 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Jul-12 13:37:45.590 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=1 by probing script field
+Jul-12 13:37:45.610 [main] INFO  nextflow.cli.CmdRun - Launching `/Users/timbarry/research_code/undercover-grna-pipeline/main.nf` [mighty_engelbart] DSL1 - revision: 9802402b0e
+Jul-12 13:37:45.624 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins; core-plugins: nf-amazon@1.7.2,nf-azure@0.13.2,nf-console@1.0.3,nf-ga4gh@1.0.3,nf-google@1.1.4,nf-sqldb@0.4.0,nf-tower@1.4.0
+Jul-12 13:37:45.626 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jul-12 13:37:45.637 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jul-12 13:37:45.638 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jul-12 13:37:45.643 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jul-12 13:37:45.653 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jul-12 13:37:45.714 [main] DEBUG nextflow.Session - Session uuid: 5e232892-6782-449c-a883-780991ccd7ed
+Jul-12 13:37:45.714 [main] DEBUG nextflow.Session - Run name: mighty_engelbart
+Jul-12 13:37:45.714 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jul-12 13:37:45.758 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.04.3 build 5703
+  Created: 18-05-2022 19:22 UTC (15:22 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.10 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 94444@vpn-users-016-103.wharton.private.upenn.edu [10.150.16.103]
+  CPUs: 8 - Mem: 16 GB (1.8 GB) - Swap: 2 GB (1.7 GB)
+Jul-12 13:37:45.776 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Jul-12 13:37:45.793 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jul-12 13:37:45.805 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jul-12 13:37:45.857 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jul-12 13:37:45.870 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Jul-12 13:37:45.971 [main] DEBUG nextflow.Session - Session start invoked
+Jul-12 13:37:46.596 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jul-12 13:37:46.607 [main] DEBUG nextflow.Session - Session aborted -- Cause: /Users/timbarry/research_code/sceptre2-manuscript/param_files/data_method_test.groovy (/Users/timbarry/research_code/sceptre2-manuscript/param_files/data_method_test.groovy)
+Jul-12 13:37:46.618 [main] ERROR nextflow.cli.Launcher - /Users/timbarry/research_code/sceptre2-manuscript/param_files/data_method_test.groovy (/Users/timbarry/research_code/sceptre2-manuscript/param_files/data_method_test.groovy)
+java.io.FileNotFoundException: /Users/timbarry/research_code/sceptre2-manuscript/param_files/data_method_test.groovy (/Users/timbarry/research_code/sceptre2-manuscript/param_files/data_method_test.groovy)
+	at groovy.lang.GroovyCodeSource.<init>(GroovyCodeSource.java:108)
+	at groovy.lang.GroovyShell.evaluate(GroovyShell.java:470)
+	at groovy.lang.Script.evaluate(Script.java:237)
+	at groovy.lang.Script$evaluate.callCurrent(Unknown Source)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallCurrent(CallSiteArray.java:51)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:171)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:185)
+	at Script_eb243d1c.runScript(Script_eb243d1c:11)
+	at nextflow.script.BaseScript.runDsl1(BaseScript.groovy:164)
+	at nextflow.script.BaseScript.run(BaseScript.groovy:217)
+	at nextflow.script.ScriptParser.runScript(ScriptParser.groovy:220)
+	at nextflow.script.ScriptRunner.run(ScriptRunner.groovy:212)
+	at nextflow.script.ScriptRunner.execute(ScriptRunner.groovy:120)
+	at nextflow.cli.CmdRun.run(CmdRun.groovy:337)
+	at nextflow.cli.Launcher.run(Launcher.groovy:480)
+	at nextflow.cli.Launcher.main(Launcher.groovy:639)

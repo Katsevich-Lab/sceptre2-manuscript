@@ -1,0 +1,72 @@
+Jul-12 14:21:43.657 [main] DEBUG nextflow.cli.Launcher - $> nextflow run /Users/timbarry/research_code/undercover-grna-pipeline/main.nf --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/data_method_pair_test.groovy --result_dir /Users/timbarry/research_offsite/projects/sceptre2/results/undercover_grna_analysis --result_file_name result_test.rds --grna_modality assignment --group_size 3 --is_group_size_frac false --partition_count 1 --is_partition_count_frac false --machine_name local --time 07121421 --max_retries 2
+Jul-12 14:21:43.784 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.04.3
+Jul-12 14:21:43.804 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Jul-12 14:21:43.804 [main] DEBUG nextflow.config.ConfigBuilder - Found config base: /Users/timbarry/research_code/undercover-grna-pipeline/nextflow.config
+Jul-12 14:21:43.806 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Jul-12 14:21:43.806 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/research_code/undercover-grna-pipeline/nextflow.config
+Jul-12 14:21:43.835 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Jul-12 14:21:44.559 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Jul-12 14:21:44.603 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=1 by probing script field
+Jul-12 14:21:44.622 [main] INFO  nextflow.cli.CmdRun - Launching `/Users/timbarry/research_code/undercover-grna-pipeline/main.nf` [wise_kalman] DSL1 - revision: b4fb443739
+Jul-12 14:21:44.636 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins; core-plugins: nf-amazon@1.7.2,nf-azure@0.13.2,nf-console@1.0.3,nf-ga4gh@1.0.3,nf-google@1.1.4,nf-sqldb@0.4.0,nf-tower@1.4.0
+Jul-12 14:21:44.638 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Jul-12 14:21:44.650 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Jul-12 14:21:44.651 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Jul-12 14:21:44.655 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Jul-12 14:21:44.668 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Jul-12 14:21:44.733 [main] DEBUG nextflow.Session - Session uuid: 0e12c234-ba79-4bff-ad50-c1fd06b06875
+Jul-12 14:21:44.733 [main] DEBUG nextflow.Session - Run name: wise_kalman
+Jul-12 14:21:44.734 [main] DEBUG nextflow.Session - Executor pool size: 8
+Jul-12 14:21:44.751 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.04.3 build 5703
+  Created: 18-05-2022 19:22 UTC (15:22 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.10 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 96325@vpn-users-016-103.wharton.private.upenn.edu [10.150.16.103]
+  CPUs: 8 - Mem: 16 GB (952.3 MB) - Swap: 1 GB (785.8 MB)
+Jul-12 14:21:44.769 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Jul-12 14:21:44.787 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Jul-12 14:21:44.800 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Jul-12 14:21:44.842 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Jul-12 14:21:44.856 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Jul-12 14:21:44.936 [main] DEBUG nextflow.Session - Session start invoked
+Jul-12 14:21:45.500 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Jul-12 14:21:45.641 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-12 14:21:45.641 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-12 14:21:45.646 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Jul-12 14:21:45.651 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Jul-12 14:21:45.816 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Jul-12 14:21:45.816 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Jul-12 14:21:45.826 [main] DEBUG nextflow.Session - Workflow process names [dsl1]: run_method, obtain_dataset_ntc_tuples
+Jul-12 14:21:45.827 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Jul-12 14:21:45.827 [main] DEBUG nextflow.Session - Session await
+Jul-12 14:21:45.919 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-12 14:21:45.924 [Task submitter] INFO  nextflow.Session - [6e/30918f] Submitted process > obtain_dataset_ntc_tuples
+Jul-12 14:21:50.136 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: obtain_dataset_ntc_tuples; status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/6e/30918fef17f52ec6e727b32b2e952f]
+Jul-12 14:21:50.185 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-12 14:21:50.186 [Task submitter] INFO  nextflow.Session - [7d/7d93f9] Submitted process > run_method (schraivogel/ground_truth_tapseq/gene+nb_regression+non-targeting-00010,non-targeting-00018,non-targeting-00023)
+Jul-12 14:21:50.193 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-12 14:21:50.194 [Task submitter] INFO  nextflow.Session - [1a/6cf12e] Submitted process > run_method (schraivogel/ground_truth_tapseq/gene+mimosca+non-targeting-00010,non-targeting-00018,non-targeting-00023)
+Jul-12 14:21:50.199 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-12 14:21:50.200 [Task submitter] INFO  nextflow.Session - [a0/6e9107] Submitted process > run_method (schraivogel/ground_truth_tapseq/gene+permutation_test+non-targeting-00010,non-targeting-00018,non-targeting-00023)
+Jul-12 14:21:50.205 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-12 14:21:50.205 [Task submitter] INFO  nextflow.Session - [3f/51f268] Submitted process > run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method+non-targeting-00010,non-targeting-00018,non-targeting-00023)
+Jul-12 14:21:50.211 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-12 14:21:50.211 [Task submitter] INFO  nextflow.Session - [74/39625c] Submitted process > run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method+non-targeting-00010,non-targeting-00018,non-targeting-00023)
+Jul-12 14:21:50.217 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-12 14:21:50.217 [Task submitter] INFO  nextflow.Session - [58/062690] Submitted process > run_method (schraivogel/ground_truth_tapseq/gene+seurat_de+non-targeting-00010,non-targeting-00018,non-targeting-00023)
+Jul-12 14:21:50.222 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Jul-12 14:21:50.223 [Task submitter] INFO  nextflow.Session - [99/bc557b] Submitted process > run_method (schraivogel/ground_truth_tapseq/gene+weissman_method+non-targeting-00010,non-targeting-00018,non-targeting-00023)
+Jul-12 14:21:50.262 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 8; name: run_method (schraivogel/ground_truth_tapseq/gene+nb_regression+non-targeting-00010,non-targeting-00018,non-targeting-00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/7d/7d93f9a3dc36902d3e53f0dabc723a]
+Jul-12 14:21:50.268 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5; name: run_method (schraivogel/ground_truth_tapseq/gene+mimosca+non-targeting-00010,non-targeting-00018,non-targeting-00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/1a/6cf12ec79c5171c168dc5b4f97dcf6]
+Jul-12 14:21:50.272 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 7; name: run_method (schraivogel/ground_truth_tapseq/gene+permutation_test+non-targeting-00010,non-targeting-00018,non-targeting-00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/a0/6e9107e69a8ae5ee46aec324d39dea]
+Jul-12 14:21:50.277 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: run_method (schraivogel/ground_truth_tapseq/gene+liscovitch_method+non-targeting-00010,non-targeting-00018,non-targeting-00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/3f/51f268fbdac58ec770bfc0da5af2e5]
+Jul-12 14:21:50.379 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 2; name: run_method (schraivogel/ground_truth_tapseq/gene+schraivogel_method+non-targeting-00010,non-targeting-00018,non-targeting-00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/74/39625cf4c2615ce7a409d0f79c3be8]
+Jul-12 14:21:50.381 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 3; name: run_method (schraivogel/ground_truth_tapseq/gene+seurat_de+non-targeting-00010,non-targeting-00018,non-targeting-00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/58/06269090e3594edd73479eb506bec1]
+Jul-12 14:21:50.384 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 6; name: run_method (schraivogel/ground_truth_tapseq/gene+weissman_method+non-targeting-00010,non-targeting-00018,non-targeting-00023); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/99/bc557b38d25e2d58f2ac816339b293]
+Jul-12 14:21:50.386 [main] DEBUG nextflow.Session - Session await > all process finished
+Jul-12 14:21:50.491 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Jul-12 14:21:50.499 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=8; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=4.7s; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=7; peakCpus=7; peakMemory=0; ]
+Jul-12 14:21:50.597 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Jul-12 14:21:50.613 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

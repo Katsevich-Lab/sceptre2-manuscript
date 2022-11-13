@@ -1,0 +1,92 @@
+Nov-08 18:00:08.405 [main] DEBUG nextflow.cli.Launcher - $> nextflow run pc-grna-pipeline -r main --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/data_method_pairs_pc.groovy --grna_modality assignment --result_dir /Users/timbarry/research_offsite/projects/sceptre2//results/positive_control_analysis --result_file_name pc_results_sceptre_exact.rds --trial true
+Nov-08 18:00:08.530 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.04.3
+Nov-08 18:00:09.321 [main] DEBUG nextflow.scm.AssetManager - Listing projects in folder: /Users/timbarry/.nextflow/assets
+Nov-08 18:00:09.330 [main] DEBUG nextflow.scm.AssetManager - Project manifest does not exist: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/nextflow.config (No such file or directory)
+Nov-08 18:00:09.333 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Nov-08 18:00:09.346 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Nov-08 18:00:10.233 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Nov-08 18:00:10.234 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Nov-08 18:00:10.244 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Nov-08 18:00:10.311 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 by global default
+Nov-08 18:00:10.312 [main] INFO  nextflow.cli.CmdRun - Launching `https://github.com/Katsevich-Lab/pc-grna-pipeline` [boring_blackwell] DSL2 - revision: 3b32510807 [main]
+Nov-08 18:00:10.327 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins; core-plugins: nf-amazon@1.7.2,nf-azure@0.13.2,nf-console@1.0.3,nf-ga4gh@1.0.3,nf-google@1.1.4,nf-sqldb@0.4.0,nf-tower@1.4.0
+Nov-08 18:00:10.329 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Nov-08 18:00:10.341 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Nov-08 18:00:10.342 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Nov-08 18:00:10.347 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Nov-08 18:00:10.359 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Nov-08 18:00:10.423 [main] DEBUG nextflow.Session - Session uuid: 8356e617-c36d-487a-bfc7-2ea91142de21
+Nov-08 18:00:10.423 [main] DEBUG nextflow.Session - Run name: boring_blackwell
+Nov-08 18:00:10.424 [main] DEBUG nextflow.Session - Executor pool size: 8
+Nov-08 18:00:10.439 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.04.3 build 5703
+  Created: 18-05-2022 19:22 UTC (15:22 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.10 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 12997@tims-mbp-2021.wifi.local.cmu.edu [172.26.29.17]
+  CPUs: 8 - Mem: 16 GB (1.7 GB) - Swap: 1 GB (818.8 MB)
+Nov-08 18:00:10.453 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Nov-08 18:00:10.476 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Nov-08 18:00:10.489 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Nov-08 18:00:10.546 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Nov-08 18:00:10.558 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Nov-08 18:00:10.641 [main] DEBUG nextflow.Session - Session start invoked
+Nov-08 18:00:11.477 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Nov-08 18:00:11.632 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Nov-08 18:00:11.632 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Nov-08 18:00:11.638 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Nov-08 18:00:11.643 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Nov-08 18:00:11.821 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Nov-08 18:00:11.821 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Nov-08 18:00:11.842 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Nov-08 18:00:11.843 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Nov-08 18:00:11.847 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: combine_results, run_method, obtain_pc_pairs
+Nov-08 18:00:11.848 [main] DEBUG nextflow.Session - Ignite dataflow network (5)
+Nov-08 18:00:11.849 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > obtain_pc_pairs
+Nov-08 18:00:11.850 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > run_method
+Nov-08 18:00:11.850 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > combine_results
+Nov-08 18:00:11.850 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Nov-08 18:00:11.851 [main] DEBUG nextflow.Session - Session await
+Nov-08 18:00:11.936 [Actor Thread 6] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/bin/get_pc_pairs.R
+Nov-08 18:00:12.008 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:00:12.016 [Task submitter] INFO  nextflow.Session - [fc/1f2ca2] Submitted process > obtain_pc_pairs
+Nov-08 18:00:12.311 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: obtain_pc_pairs; status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/fc/1f2ca20d9f3d58bc91b92d13fd37b3]
+Nov-08 18:00:12.366 [Actor Thread 7] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/bin/run_method.R
+Nov-08 18:00:12.376 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:00:12.376 [Task submitter] INFO  nextflow.Session - [98/438e05] Submitted process > run_method (schraivogel/ground_truth_tapseq/gene+sceptre)
+Nov-08 18:00:21.987 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9; name: run_method (schraivogel/ground_truth_tapseq/gene+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/98/438e0570c4d2c964a5b84d95921b34]
+Nov-08 18:00:21.990 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:00:21.991 [Task submitter] INFO  nextflow.Session - [20/c33cec] Submitted process > run_method (frangieh/co_culture/gene+sceptre)
+Nov-08 18:01:33.780 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 2; name: run_method (frangieh/co_culture/gene+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/20/c33cecb26338ad5121ce1a8d54d5c7]
+Nov-08 18:01:33.784 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:01:33.784 [Task submitter] INFO  nextflow.Session - [70/8b22f6] Submitted process > run_method (papalexi/eccite_screen/gene+sceptre)
+Nov-08 18:01:41.042 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5; name: run_method (papalexi/eccite_screen/gene+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/70/8b22f62cfee97efeedabcca9137e55]
+Nov-08 18:01:41.044 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:01:41.044 [Task submitter] INFO  nextflow.Session - [a0/f1b17c] Submitted process > run_method (schraivogel/enhancer_screen_chr8/gene+sceptre)
+Nov-08 18:01:55.508 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 7; name: run_method (schraivogel/enhancer_screen_chr8/gene+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/a0/f1b17c304e681a7eec40987ad543c9]
+Nov-08 18:01:55.513 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:01:55.514 [Task submitter] INFO  nextflow.Session - [de/e4efd3] Submitted process > run_method (schraivogel/enhancer_screen_chr11/gene+sceptre)
+Nov-08 18:02:08.339 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 6; name: run_method (schraivogel/enhancer_screen_chr11/gene+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/de/e4efd3bd8d81503a2a3a4715287cfc]
+Nov-08 18:02:08.342 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:02:08.343 [Task submitter] INFO  nextflow.Session - [49/22b3cd] Submitted process > run_method (frangieh/ifn_gamma/gene+sceptre)
+Nov-08 18:03:30.938 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: run_method (frangieh/ifn_gamma/gene+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/49/22b3cd5b217f8dfecfea2512fbb512]
+Nov-08 18:03:30.941 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:03:30.941 [Task submitter] INFO  nextflow.Session - [e5/16de22] Submitted process > run_method (schraivogel/ground_truth_perturbseq/gene+sceptre)
+Nov-08 18:03:44.689 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 8; name: run_method (schraivogel/ground_truth_perturbseq/gene+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/e5/16de222f67f2410a5274356f7f03ee]
+Nov-08 18:03:44.692 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:03:44.692 [Task submitter] INFO  nextflow.Session - [86/4c9e79] Submitted process > run_method (frangieh/control/gene+sceptre)
+Nov-08 18:04:37.350 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 3; name: run_method (frangieh/control/gene+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/86/4c9e79acd28fb97cf91210e29cb02a]
+Nov-08 18:04:37.353 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:04:37.353 [Task submitter] INFO  nextflow.Session - [10/2c398e] Submitted process > run_method (papalexi/eccite_screen/protein+sceptre)
+Nov-08 18:04:41.971 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 10; name: run_method (papalexi/eccite_screen/protein+sceptre); status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/10/2c398e5c217c4cfadbeba44a361f93]
+Nov-08 18:04:42.002 [Actor Thread 13] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/bin/collect_results.R
+Nov-08 18:04:42.008 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Nov-08 18:04:42.008 [Task submitter] INFO  nextflow.Session - [17/d400b5] Submitted process > combine_results
+Nov-08 18:04:42.810 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 11; name: combine_results; status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/17/d400b55cf8769a3bdb85d3adbf9d2f]
+Nov-08 18:04:42.831 [Task monitor] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=4; maxSize=4; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Nov-08 18:04:42.834 [main] DEBUG nextflow.Session - Session await > all process finished
+Nov-08 18:04:42.835 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Nov-08 18:04:42.845 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=11; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=4m 30s; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=1; peakCpus=1; peakMemory=10 GB; ]
+Nov-08 18:04:42.905 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Nov-08 18:04:42.922 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
