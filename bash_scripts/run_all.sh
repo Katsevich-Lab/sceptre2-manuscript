@@ -7,7 +7,6 @@
 #   - Java version 8 or higher
 #   - Nextflow version 21.10.6 or higher
 
-
 #######################################
 # PART 1: SETUP
 #######################################
@@ -41,6 +40,11 @@ Rscript ../R_scripts/uniform_processing_highmoi.R
 # PART 2: RESULTS GENERATION
 #######################################
 # 9. Undercover results for group size = 1, all methods and datasets
+qsub ../pipeline_launch_scripts/undercover/grp_size_1/grp_size_1.sh
+
+# 10. Undercover results for group size = 2, all methods and datasets
+
+# 11. Undercover results for group size = half, all methods and datasets
 
 
 #######################################

@@ -16,4 +16,5 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --is_partition_count_frac "true" \
  --time $curr_time \
  -profile standard \
- -with-trace
+ -with-trace \
+ -resume
