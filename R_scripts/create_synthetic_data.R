@@ -6,10 +6,10 @@ set.seed(4)
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
 # define hyperparameters
-N_GENES <- 10000
-N_GRNAS <- 35
-N_NTC_GRNAS <- 30
-N_CELLS <- 20000
+N_GENES <- 5000
+N_GRNAS <- 30
+N_NTC_GRNAS <- 25
+N_CELLS <- 10000
 
 # generate cell names, gene names, and grna names
 cell_barcodes <- paste0("cell-", seq(1, N_CELLS))
@@ -17,8 +17,8 @@ gene_ids <- paste0("gene-", seq(1, N_GENES))
 grna_ids <- c(paste0("NTC-", seq(1, N_NTC_GRNAS)), paste0("GENE-TARGET-", seq(1, N_GRNAS -  N_NTC_GRNAS)))
 
 # create gene expression matrix
-mus <- rgamma(n = N_GENES, shape = 1, rate = 2)
-thetas <- runif(n = N_GENES, min = 5, max = 30)
+mus <- rgamma(n = N_GENES, shape = 0.5, rate = 2)
+thetas <- runif(n = N_GENES, min = 1, max = 25)
 gene_expression_mat <- sapply(X = seq(1, N_GENES), FUN = function(i) {
   MASS::rnegbin(N_CELLS, mus[i], thetas[i])
 }) |> t()
@@ -42,11 +42,11 @@ colnames(grna_expression_mat) <- cell_barcodes
 
 # initialize ODM objects
 to_save_fp_gene <- paste0(sceptre2_dir, "data/simulated/experiment_1/gene/matrix.odm")
-create_ondisc_matrix_from_R_matrix(r_matrix = gene_expression_mat,
-                                   barcodes = colnames(gene_expression_mat),
-                                   features_df = data.frame(row.names(gene_expression_mat)),
-                                   odm_fp = to_save_fp_gene,
-                                   metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/gene/metadata_orig.rds"))
+gene_odm <- create_ondisc_matrix_from_R_matrix(r_matrix = gene_expression_mat,
+                                               barcodes = colnames(gene_expression_mat),
+                                               features_df = data.frame(row.names(gene_expression_mat)),
+                                               odm_fp = to_save_fp_gene,
+                                               metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/gene/metadata_orig.rds"))
 
 to_save_fp_grna <- paste0(sceptre2_dir, "data/simulated/experiment_1/grna_expression/matrix.odm")
 grna_odm <- create_ondisc_matrix_from_R_matrix(r_matrix = grna_expression_mat,
