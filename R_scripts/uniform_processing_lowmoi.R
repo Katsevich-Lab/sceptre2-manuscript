@@ -31,7 +31,6 @@ nb_regression_formula_objs_protein <- list(frangieh = "~ offset(log(n_umis)) + p
                                            papalexi = "~ offset(log(n_umis)) + bio_rep + phase + p_mito")
 
 # 1.iii) Set the sceptre formula objects
-if (TRUE) {
 sceptre_formula_objs <- list(frangieh = ~ log(response_n_umis) + log(response_n_nonzero) + phase + batch,
                              schraivogel = ~ log(response_n_umis) + log(response_n_nonzero) + batch,
                              papalexi = ~ log(response_n_umis) + log(response_n_nonzero) + bio_rep + phase + p_mito,
@@ -40,16 +39,6 @@ sceptre_formula_objs <- list(frangieh = ~ log(response_n_umis) + log(response_n_
 
 sceptre_formula_objs_protein <- list(frangieh = ~ log(response_n_umis) + phase + batch,
                                      papalexi = ~ log(response_n_umis) + bio_rep + phase + p_mito)
-} else {
-  sceptre_formula_objs <- list(frangieh = ~ log(response_n_umis),
-                               schraivogel = ~ log(response_n_umis),
-                               papalexi = ~ log(response_n_umis),
-                               liscovitch = ~ log(response_n_fragments),
-                               simulated = ~ log(response_n_umis))
-
-  sceptre_formula_objs_protein <- list(frangieh = ~ log(response_n_umis),
-                                       papalexi = ~ log(response_n_umis))
-}
 
 # 2) loop over datasets, loading all modalities
 for (paper in papers) {
