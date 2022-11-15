@@ -11,7 +11,7 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --result_file_name "undercover_result_grp_1.rds" \
  --grna_modality "assignment" \
  --group_size "1" \
- --is_group_size_frac "false" \
+ --is_group_size_frac "true" \
  --partition_count 1 \
  --is_partition_count_frac "false" \
  --time $curr_time \
