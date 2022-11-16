@@ -1,4 +1,3 @@
-/*
 data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "sceptre"],
                      "frangieh/control/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "sceptre"],
                      "frangieh/ifn_gamma/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "sceptre"],
@@ -7,17 +6,6 @@ data_method_pairs = ["frangieh/co_culture/gene": ["schraivogel_method", "seurat_
                      "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "sceptre"],
                      "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "sceptre"],
                      "simulated/experiment_1/gene": ["schraivogel_method", "seurat_de", "liscovitch_method", "mimosca", "weissman_method", "sceptre"]
-                     ]
-*/
-
-data_method_pairs = ["frangieh/co_culture/gene": ["sceptre"],
-                     "frangieh/control/gene": ["sceptre"],
-                     "frangieh/ifn_gamma/gene": ["sceptre"],
-                     "papalexi/eccite_screen/gene": ["sceptre"],
-                     "papalexi/eccite_screen/protein": ["sceptre"],
-                     "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
-                     "schraivogel/enhancer_screen_chr8/gene": ["sceptre"],
-                     "simulated/experiment_1/gene": ["sceptre"]
                      ]
 
 // FIRST, define the row and column names of the below matrices and vectors
@@ -38,14 +26,14 @@ col_names = ["schraivogel_method",
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[34, 13, 13, 35, 49, 10], // frangieh/co_culture/gene
-[23,  9, 45, 26, 34, 10], // frangieh/control/gene
-[36, 13, 13, 34, 53, 10], // frangieh/ifn_gamma/gene
-[18,  6,  6, 19, 22, 10], // papalexi/eccite_screen/gene
-[5,   5,  5,  5,  5, 10], // papalexi/eccite_screen/protein
-[6,  12, 12, 18,  6, 10], // schraivogel/enhancer_screen_chr11/gene
-[8,  14, 14, 21,  6, 10], // schraivogel/enhancer_screen_chr8/gene
-[28,  7,  7, 17, 19, 10] // simulated/experiment_1/gene
+[34, 13, 13, 35, 49, 5], // frangieh/co_culture/gene
+[23,  9, 45, 26, 34, 5], // frangieh/control/gene
+[36, 13, 13, 34, 53, 5], // frangieh/ifn_gamma/gene
+[18,  6,  6, 19, 22, 6], // papalexi/eccite_screen/gene
+[5,   5,  5,  5,  5, 4], // papalexi/eccite_screen/protein
+[6,  12, 12, 18,  6, 9], // schraivogel/enhancer_screen_chr11/gene
+[8,  14, 14, 21,  6, 9], // schraivogel/enhancer_screen_chr8/gene
+[28,  7,  7, 17, 19, 7] // simulated/experiment_1/gene
 ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre
 
