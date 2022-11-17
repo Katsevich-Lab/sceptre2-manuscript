@@ -36,14 +36,14 @@ data_method_ram_matrix = [
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
-["short.q", "short.q", "all.q"],   // frangieh/co_culture/gene
-["short.q", "short.q", "all.q"],   // frangieh/control/gene
-["short.q", "short.q", "all.q"],   // frangieh/ifn_gamma/gene
-["short.q", "short.q", "all.q"],   // papalexi/eccite_screen/gene
+["all.q",   "all.q",   "all.q"],   // frangieh/co_culture/gene
+["all.q",   "all.q",   "all.q"],   // frangieh/control/gene
+["all.q",   "all.q",   "all.q"],   // frangieh/ifn_gamma/gene
+["all.q",   "all.q",   "all.q"],   // papalexi/eccite_screen/gene
 ["short.q", "short.q", "short.q"], // papalexi/eccite_screen/protein
-["short.q", "short.q", "all.q"],   // schraivogel/enhancer_screen_chr11/gene
-["short.q", "short.q", "all.q"],   // schraivogel/enhancer_screen_chr8/gene
-["short.q", "short.q", "all.q"]    // simulated/experiment_1/gene
+["short.q", "short.q", "short.q"],   // schraivogel/enhancer_screen_chr11/gene
+["short.q", "short.q", "short.q"],   // schraivogel/enhancer_screen_chr8/gene
+["short.q", "short.q", "short.q"]    // simulated/experiment_1/gene
 ]
 // nb_regression_w_covariates, nb_regression_no_covariates, sceptre
 
