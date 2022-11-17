@@ -2,7 +2,6 @@
 export NXF_OPTS="-Xms500M -Xmx5G"
 source ~/.research_config
 nextflow pull https://github.com/Katsevich-Lab/undercover-grna-pipeline
-curr_time=$(date '+%m%d%H%M')
 
 # run pipeline
 nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
@@ -14,7 +13,6 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --is_group_size_frac "false" \
  --partition_count "1" \
  --is_partition_count_frac "true" \
- --time $curr_time \
  -profile standard \
  -with-trace \
  -resume
