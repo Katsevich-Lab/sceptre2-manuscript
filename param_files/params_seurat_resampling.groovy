@@ -12,7 +12,7 @@ data_method_ram_matrix = [
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
-["aws-ekatsevi.q"]    // frangieh/control/gene
+["all.q"]    // frangieh/control/gene
 ]
 // mann_whitney_perm
 
