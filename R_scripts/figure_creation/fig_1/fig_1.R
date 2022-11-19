@@ -75,12 +75,12 @@ make_figure_row <- function(dataset, name, print_legend) {
   p_row
 }
 
-r0 <- ggplot() + theme_minimal() + ggtitle("Undercover gRNA procedure") + theme(plot.title = element_text(hjust = 0.5, size=11))
-r1 <- make_figure_row("papalexi_eccite_screen_gene", "Papalexi", TRUE)
+r0 <- ggplot() + theme_minimal() + ggtitle("Undercover gRNA calibration assessment") + theme(plot.title = element_text(hjust = 0.5, size=11))
+r1 <- make_figure_row("papalexi_eccite_screen_gene", "Papalexi gene modality", TRUE)
 r2 <- make_figure_row("frangieh_ifn_gamma_gene", "Frangieh IFN-\u03B3", FALSE)
 
 fig <- plot_grid(r0, r1, r2, nrow = 3,
-                 labels = c("a", "b", "c"), rel_heights = c(0.3, 0.35, 0.35))
+                 labels = c("a", "b", "c"), rel_heights = c(0.26, 0.37, 0.37))
 
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_1/r_output.png")
-ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 8, dpi = 330)
+ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 7.5, dpi = 330)
