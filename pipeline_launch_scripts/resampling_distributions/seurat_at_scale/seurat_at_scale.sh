@@ -14,7 +14,7 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --partition_count "1" \
  --is_partition_count_frac "true" \
  --genes_to_subsample "2" \
- -profile standard \
+ -profile aws \
  -with-trace \
  -resume
 

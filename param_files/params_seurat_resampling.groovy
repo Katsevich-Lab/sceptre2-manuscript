@@ -1,18 +1,18 @@
-data_method_pairs = ["frangieh/ifn_gamma/gene": ["mann_whitney_perm"]]
+data_method_pairs = ["frangieh/control/gene": ["mann_whitney_perm"]]
 
 // FIRST, define the row and column names of the below matrices and vectors
-row_names = ["frangieh/ifn_gamma/gene"]
+row_names = ["frangieh/control/gene"]
 col_names = ["mann_whitney_perm"]
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[5] // frangieh/ifn_gamma/gene
+[5] // frangieh/control/gene
 ]
 // mann_whitney_perm
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
-["all.q"]    // frangieh/ifn_gamma/gene
+["all.q"]    // frangieh/control/gene
 ]
 // mann_whitney_perm
 
