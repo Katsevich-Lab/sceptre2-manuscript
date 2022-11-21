@@ -3,9 +3,13 @@ my_cols <- c("Weissman Method" = "purple3",
              "Mimosca" = "orange3",
              "Sceptre" = "firebrick3",
              "Liscovitch Method" = "darkslategray4",
-             "Seurat De" = "lightseagreen")
+             "Seurat De" = "lightseagreen",
+             "Seurat De (w/ strict QC)" = "dodgerblue4",
+             "Seurat De (w/o strict QC)" = "dodgerblue",
+             "NB Reg (w/ strict QC)" = "indianred4",
+             "NB Reg (w/o strict QC)" = "indianred1")
 
-my_theme <- theme_bw() + theme(axis.line = element_line(colour = "black"),
+my_theme <- theme_bw() + theme(axis.line = element_line(color = "black"),
                                panel.grid.major = element_blank(),
                                panel.grid.minor = element_blank(),
                                panel.border = element_blank(),

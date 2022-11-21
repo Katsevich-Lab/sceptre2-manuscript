@@ -8,8 +8,7 @@ shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manusc
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
-  filter(n_nonzero_treatment >= 10, n_nonzero_control >= 10) |>
-  mutate(p_value = ifelse(p_value <= 0, 1e-8, p_value))
+  filter(n_nonzero_treatment >= 10, n_nonzero_control >= 10)
 
 # The following plot (the letters are rows):
 # a) three empty columns for undercover schematic
@@ -21,9 +20,12 @@ undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercove
 # restricting attention to pairs with >= 10 treatment cells and > 10 control cells in all cases
 
 make_figure_row <- function(dataset, name, print_legend) {
+  my_methods <- c("Weissman Method", "Schraivogel Method", "Mimosca", "Liscovitch Method", "Seurat De")
+  my_values <- my_cols[names(my_cols) %in% my_methods]
+  
   df_sub <- undercover_res |>
     filter(dataset == !!dataset,
-           method != "sceptre")
+           Method %in% my_methods)
 
   p1 <- ggplot(data = df_sub, mapping = aes(y = p_value, col = Method)) +
     stat_qq_points(ymin = 1e-8, size = 0.55) +
@@ -32,7 +34,7 @@ make_figure_row <- function(dataset, name, print_legend) {
     scale_y_reverse() +
     labs(x = "Expected null p-value", y = "Observed p-value") +
     geom_abline(col = "black") +
-    scale_color_manual(values = my_cols[names(my_cols) != "Sceptre"]) +
+    scale_color_manual(values = my_values) +
     ggtitle(paste0("QQ-plot (", name, ")"))
   
   if (print_legend) {
@@ -57,7 +59,7 @@ make_figure_row <- function(dataset, name, print_legend) {
     scale_y_continuous(trans = revlog_trans(10)) +
     labs(x = "Expected null p-value", y = "Observed p-value") +
     geom_abline(col = "black") + my_theme_no_legend +
-    scale_color_manual(values = my_cols) +
+    scale_color_manual(values = my_values) +
     ggtitle("Transformed QQ-plot")
 
   bonf_reject_df <- compute_n_bonf_rejections(df_sub)
