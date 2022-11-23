@@ -11,21 +11,32 @@ library(katlabutils)
 library(cowplot)
 library(ondisc)
 
+# set colors (not loaded by)
+bio_rep_cols <- c("R1" = "darkred", "R2" = "darkblue", "R3" = "darkgreen")
+
+# load functions and data
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
-undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_1_processed.rds"))
+undercover_res <- readRDS(paste0(result_dir,
+                                 "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
+  filter(n_nonzero_treatment >= 10, n_nonzero_control >= 10)
+resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_resampling_at_scale_processed.rds")) |>
+  mutate(p_rat = p_emp/p_value)
 
 ##########
 # PANNEL a
 ##########
-pairs <- data.frame(undercover_grna = c("NO-SITE-706", "NO-SITE-706", "NO-SITE-706", "NO-SITE-706"),
-                    response_id = c("A1BG", "A1BG-AS1", "A4GALT", "AAAS"))
+pairs <- data.frame(undercover_grna = c("NO-SITE-836", "NO-SITE-599"),
+                    response_id = c("DNAL1", "ZNF615"),
+                    pair_id = paste0("Pair ", 1:2))
 
-B <- 1000
+B <- 2500
 pannel_a_list <- lapply(X = seq(1, nrow(pairs)), FUN = function(i) {
-  args_to_pass <- lowmoi::get_sceptre_function_args_for_pair(response_id = pairs$response_id[i],
-                                                             undercover_grna = pairs$undercover_grna[i],
+  response_id <- pairs$response_id[i]
+  undercover_grna <- pairs$undercover_grna[i]
+  args_to_pass <- lowmoi::get_sceptre_function_args_for_pair(response_id = response_id,
+                                                             undercover_grna = undercover_grna,
                                                              dataset_name = "frangieh/co_culture/gene",
                                                              output_amount = 2, B = B)
   response_odm <- args_to_pass$mm_odm |> ondisc::get_modality("response")
@@ -37,15 +48,21 @@ pannel_a_list <- lapply(X = seq(1, nrow(pairs)), FUN = function(i) {
                                    progress = TRUE,
                                    full_output = TRUE)
   z_null <- res |> select(matches("z_[0-9]+")) |> as.numeric()
+  ks_stat <- resampling_res |>
+    filter(response_id == !!response_id,
+           undercover_grna == !!undercover_grna) |> pull(ks_stat)
+  z_star <- resampling_res |>
+    filter(response_id == !!response_id,
+           undercover_grna == !!undercover_grna) |> pull(z_star)
+  
   interval <- c(-3.75, 3.75)
   z_grid <- seq(interval[1], interval[2], length.out = 1000)
+  lab <- paste0("Pair ", i, " (KS stat = ", round(ks_stat, 3), ")")
   density_df <- data.frame(z_grid = z_grid,
                            density = stats::dnorm(z_grid)) |>
-    mutate(pair = paste0("pair_", i),
-           ks_fit = paste0("Goodness of fit = ", round(res$ks_stat, 3)))
+    mutate(ks_fit = lab, z_star = z_star)
   histogram_df <- data.frame(z_null = z_null) |>
-    mutate(pair = paste0("pair_", i),
-           ks_fit = paste0("Goodness of fit = ", round(res$ks_stat, 3)))
+    mutate(ks_fit = lab, z_star)
   
   return(list(density_df = density_df, histogram_df = histogram_df))
 })
@@ -57,27 +74,78 @@ histogram_df <- lapply(pannel_a_list, function(l) l$histogram_df) |>
   bind_rows() |>
   mutate(ks_fit = factor(ks_fit))
 
-p_a <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density)),
+p_a <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density), fill = "Permutation distribution"),
                                  data = histogram_df,
-                                 boundary = 0, color = "black",
-                                 fill = "lightgray", bins = 15) +
-  facet_wrap(ks_fit ~ ., nrow = 2, scales = "free_y") +
+                                 boundary = 0, color = "black", bins = 20) +
+  facet_wrap(ks_fit ~ ., nrow = 1) +
   my_theme +
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank(),
-        axis.title.x = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.text.x = element_blank(),
-        strip.background = element_blank()) +
-  ylab("") +
+  theme(strip.background = element_blank(),
+        legend.title = element_blank(),
+        legend.position = c(0.29, 0.78),
+        legend.key.size = unit(0.35, 'cm'),
+        legend.margin = margin(t = -0.5, unit = 'cm'),
+        axis.title.y = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0))
+        ) +
+  ylab("Density") +
   scale_y_continuous(expand = expansion(mult = c(0.0, .01))) +
-  geom_line(aes(x = z_grid, y = density),
-            data = density_df, col = "darkred", lwd = 0.7) +
-  ggtitle("Empirical null distribution of MW statistic")
+  geom_line(aes(x = z_grid, y = density, col = "N(0,1) density"),
+            data = density_df, linewidth = 0.7) +
+  geom_segment(aes(x = z_star, xend = z_star, y = 0, yend = dnorm(0), col = "Original statistic"), data = density_df) +
+  ggtitle("Permutation distribution of MW statistic") +
+  xlab("Permuted MW statistic") +
+  scale_color_manual(values = c("N(0,1) density" = "darkred", "Original statistic" = "purple")) +
+  scale_fill_manual(values = c("Permutation distribution" = "lightgrey"))
+  
 
 ##########
 # PANNEL b
 ##########
+pairs_to_annotate <- right_join(x = resampling_res,
+                                y = pairs,
+                                by = c("undercover_grna", "response_id")) |> arrange(pair_id)
+
+p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzero_treatment >= 1),
+       mapping = aes(x = ks_stat, y = p_rat, col = log(n_nonzero_treatment + 1))) + 
+  geom_point(alpha = 0.7, size = 0.8) +
+  scale_y_log10() +
+  scale_x_log10() +
+  labs(y = expression(italic(p)[exact]/italic(p)[asymptotic]),
+       x = "KS statistic") +
+  geom_hline(yintercept = 1) +
+  my_theme +
+  theme(legend.position = c(0.1, 0.67),
+        legend.key.size = unit(0.35, 'cm'),
+        legend.title = element_blank(),
+        legend.margin=margin(t = -0.5, unit='cm')) +
+  scale_color_continuous(name = "Log(N treatment cells + 1)") +
+  ggtitle("Inflation of MW p-values") + 
+  annotate("text", x = 0.014, y = 9.5, label = "Log(N treatment cells with expression + 1)", size = 3) +
+  # annotate pair 1
+  geom_segment(aes(x = pairs_to_annotate[1,"ks_stat"],
+                   xend = pairs_to_annotate[1,"ks_stat"],
+                   yend = pairs_to_annotate[1,"p_rat"] + 0.13,
+                   y = pairs_to_annotate[1, "p_rat"] + 2),
+               col = "black",
+               arrow = arrow(length = unit(0.03, "npc")),
+               linewidth = 0.45) +
+  annotate(geom = "label",
+           x = pairs_to_annotate[1,"ks_stat"],
+           y = pairs_to_annotate[1, "p_rat"] + 2,
+           label = "Pair 1",
+           size = 3) +
+  # annotate pair 2
+  geom_segment(aes(x = pairs_to_annotate[2,"ks_stat"] - 0.1,
+                   xend = pairs_to_annotate[2,"ks_stat"] - 0.015,
+                   yend = pairs_to_annotate[2,"p_rat"],
+                   y = pairs_to_annotate[2, "p_rat"]),
+               col = "black",
+               arrow = arrow(length = unit(0.03, "npc")),
+               linewidth = 0.45) +
+  annotate(geom = "label",
+           x = pairs_to_annotate[2,"ks_stat"] - 0.14,
+           y = pairs_to_annotate[2, "p_rat"],
+           label = "Pair 2",
+           size = 3)
 
 ##########
 # PANNEL c
@@ -98,11 +166,12 @@ n_to_sample <- undercover_res_sub |>
   summarize(count = n()) |>
   pull(count) |> min()
 # downsample
+set.seed(1)
 to_plot_c <- undercover_res_sub |>
    group_by(Method) |>
    sample_n(n_to_sample)
 p_c <- ggplot(data = to_plot_c, mapping = aes(y = p_value, col = Method)) +
-  stat_qq_points(ymin = 1e-8, size = 0.55) +
+  stat_qq_points(ymin = 1e-8, size = 0.8) +
   stat_qq_band() +
   scale_x_continuous(trans = revlog_trans(10)) +
   scale_y_continuous(trans = revlog_trans(10)) +
@@ -110,11 +179,11 @@ p_c <- ggplot(data = to_plot_c, mapping = aes(y = p_value, col = Method)) +
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.7, 0.12),
+        legend.position = c(0.29, 0.75),
         legend.margin=margin(t = -0.5, unit='cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,
-    keyheight = 0.1,
+    keyheight = 0.15,
     default.unit = "inch")) +
   scale_color_manual(values = my_cols[names(my_cols) %in% my_labels]) +
   ggtitle("Frangieh IFN-\u03B3 negative control pairs")
@@ -148,7 +217,7 @@ prop_table <- cont_table |>
   as.data.frame() |>
   filter(grna_binary_vect == 1) |>
   select(-grna_binary_vect, freq = Freq, bio_rep = biorep_vect_nt) |>
-  mutate(bio_rep = fct_recode(bio_rep, "Rep 1" = "rep_1", "Rep 2" = "rep_2", "Rep 3" = "rep_3"))
+  mutate(bio_rep = fct_recode(bio_rep, "R1" = "rep_1", "R2" = "rep_2", "R3" = "rep_3"))
 
 # carry out a similar analysis for relative gene expression
 gene_exp_mat <- as.matrix(response_odm[[,nt_cells]])
@@ -161,60 +230,66 @@ gene_ids <- response_odm |>
   row.names()
 full_formula <- formula(expressions ~ bio_rep + offset(log(n_umis)))
 reduced_formula <-  formula(expressions ~ offset(log(n_umis)))
-lrt_p <- sapply(X = gene_ids, function(gene_id) {
-  print(paste0("Fitting model for ", gene_id))
-  expressions <- gene_exp_mat[gene_id,]
-  curr_cell_cov <- mutate(cell_cov, expressions = expressions)
-  # estimate the size
-  est_size <- lowmoi:::estimate_size(df = curr_cell_cov,
-                                     formula = full_formula)
-  # fit the NB regression models
-  full_nb_reg <- glm(formula = full_formula,
-                     family = MASS::negative.binomial(est_size),
-                     data = curr_cell_cov)
-  reduced_nb_reg <- glm(formula = reduced_formula,
-                        family = MASS::negative.binomial(est_size),
-                        data = curr_cell_cov)
-  fit <- anova(reduced_nb_reg, full_nb_reg, test = "LRT")
-  fit$`Pr(>Chi)`[2]
-}) # All LRTs are highly significant, indicating a strong association between (relative) gene expression and biological replicate. I will (somewhat arbitrarily) choose the second most highly expressed gene to plot.
-gene_to_plot <- gene_ids[2] 
+
+if (FALSE) {
+  lrt_p <- sapply(X = gene_ids, function(gene_id) {
+    print(paste0("Fitting model for ", gene_id))
+    expressions <- gene_exp_mat[gene_id,]
+    curr_cell_cov <- mutate(cell_cov, expressions = expressions)
+    # estimate the size
+    est_size <- lowmoi:::estimate_size(df = curr_cell_cov,
+                                       formula = full_formula)
+    # fit the NB regression models
+    full_nb_reg <- glm(formula = full_formula,
+                       family = MASS::negative.binomial(est_size),
+                       data = curr_cell_cov)
+    reduced_nb_reg <- glm(formula = reduced_formula,
+                          family = MASS::negative.binomial(est_size),
+                          data = curr_cell_cov)
+    fit <- anova(reduced_nb_reg, full_nb_reg, test = "LRT")
+    fit$`Pr(>Chi)`[2]
+  }) # All LRTs are highly significant, indicating a strong association between (relative) gene expression and biological replicate. I will (somewhat arbitrarily) choose the second most highly expressed gene to plot.
+}
+
+gene_to_plot <- gene_ids[2]
 rel_expression_df <- data.frame(rel_expression = 1000 * log(gene_exp_mat[gene_to_plot,]/cell_cov[,"n_umis"] + 1),
                                 bio_rep = cell_cov[,"bio_rep"]) |>
-  mutate(bio_rep = fct_recode(bio_rep, "Rep 1" = "rep_1", "Rep 2" = "rep_2", "Rep 3" = "rep_3"))
+  mutate(bio_rep = fct_recode(bio_rep, "R1" = "rep_1", "R2" = "rep_2", "R3" = "rep_3"))
 
 p_d1 <- ggplot(data = prop_table,
-               aes(x = bio_rep, y = freq)) +
-  geom_bar(stat = "identity", fill = "lightgray", col = "black") +
+               aes(x = bio_rep, y = freq, col = bio_rep)) +
+  geom_bar(stat = "identity", fill = "lightgray") +
   ylab("Frac. cells with perturbation") +
-  xlab("Biological replicate") +
-  my_theme +
+  xlab("Biological rep.") +
   scale_y_continuous(limits = c(0, NA),
                      expand = expansion(mult = c(0.01, 0.01))) +
-  theme(plot.title = element_text(hjust=1))
+  my_theme + theme(plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = 12, unit = "pt"),
+                   axis.title.y = element_text(margin = margin(t = 0, r = 9, b = 0, l = 0, unit = "pt")),
+                   legend.position = "none") +
+  scale_color_manual(values = bio_rep_cols)
 
 p_d2 <- ggplot(data = rel_expression_df,
-       aes(x = bio_rep, y = rel_expression)) +
-  geom_violin(fill = "lightgrey", col = "black") +
+       aes(x = bio_rep, y = rel_expression, col = bio_rep)) +
+  geom_violin(fill = "lightgrey") +
   geom_boxplot(outlier.shape = NA, coef = 0, fill = "lightgrey") +
   scale_y_continuous(limits = c(0, 50),
                      expand = expansion(mult = c(0.01, 0))) +
   ylab("Relative gene expression") +
-  xlab("Biological replicate") +
+  xlab("Biological rep.") +
   my_theme +
-  theme(plot.title = element_text(hjust=1))
+  theme(plot.title = element_text(hjust=1),
+        legend.position = "none") +
+  scale_color_manual(values = bio_rep_cols)
 
 p_d <- gridExtra::grid.arrange(p_d1, p_d2, nrow = 1,
-                               top = ggpubr::text_grob("Confounding (Papalexi gene modality)", size = 11))
-
-
-
+                               top = ggpubr::text_grob("Confounding (Papalexi gene modality)",
+                                                       size = 11, hjust = 0.395))
 ############
 # CREATE FIG
 ############
-fig <- cowplot::plot_grid(p_a, NULL,
+fig <- cowplot::plot_grid(p_a, p_b,
                           p_c, p_d,
-                          NULL, NULL, ncol = 2, labels = "auto", align = "h", axis = "l")
+                          NULL, NULL, ncol = 2, labels = "auto", align = "vh", axis = "l")
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                      "sceptre2-manuscript/R_scripts/figure_creation/fig_2/r_output.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png",
