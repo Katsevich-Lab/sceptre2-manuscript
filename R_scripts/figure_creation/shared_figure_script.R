@@ -7,7 +7,9 @@ my_cols <- c("Weissman Method" = "purple3",
              "Seurat De (w/ strict QC)" = "dodgerblue4",
              "Seurat De (w/o strict QC)" = "dodgerblue",
              "NB Reg (w/ strict QC)" = "indianred4",
-             "NB Reg (w/o strict QC)" = "indianred1")
+             "NB Reg (w/o strict QC)" = "indianred1",
+             "NB Reg (w/o covariates)" = "indianred4",
+             "NB Reg (w/ covariates)" = "indianred1")
 
 my_theme <- theme_bw() + theme(axis.line = element_line(color = "black"),
                                panel.grid.major = element_blank(),

@@ -13,6 +13,8 @@ library(ondisc)
 
 # set colors (not loaded by)
 bio_rep_cols <- c("R1" = "darkred", "R2" = "darkblue", "R3" = "darkgreen")
+bio_rep_fills <-  c("R1" = "lightcoral", "R2" = "cornflowerblue", "R3" = "palegreen3")
+dataset_cols <- c("frangieh_ifn_gamma" = "seagreen3", "papalexi_eccite_screen" = "royalblue1")
 
 # load functions and data
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
@@ -23,6 +25,8 @@ undercover_res <- readRDS(paste0(result_dir,
   filter(n_nonzero_treatment >= 10, n_nonzero_control >= 10)
 resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_resampling_at_scale_processed.rds")) |>
   mutate(p_rat = p_emp/p_value)
+fisher_exact_p <- readRDS(paste0(result_dir, "extra_analyses/papalexi_grna_confounding_tests.rds"))
+nb_gof_tests <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests.rds"))
 
 ##########
 # PANNEL a
@@ -134,7 +138,7 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
            label = "Pair 1",
            size = 3) +
   # annotate pair 2
-  geom_segment(aes(x = pairs_to_annotate[2,"ks_stat"] - 0.1,
+  geom_segment(aes(x = pairs_to_annotate[2,"ks_stat"] - 0.12,
                    xend = pairs_to_annotate[2,"ks_stat"] - 0.015,
                    yend = pairs_to_annotate[2,"p_rat"],
                    y = pairs_to_annotate[2, "p_rat"]),
@@ -204,11 +208,6 @@ biorep_vect <- response_odm |>
   get_cell_covariates() |>
   pull(bio_rep)
 biorep_vect_nt <- biorep_vect[nt_cells]
-fisher_exact_p <- sapply(unique_nt_grnas, function(unique_nt_grna) {
-  grna_binary_vect <- as.integer(unique_nt_grna == nt_grna_assignments)
-  cont_table <- as.matrix(table(biorep_vect_nt, grna_binary_vect))
-  fisher.test(x = cont_table)$p.value
-})
 my_nt_grna <- names(which.min(fisher_exact_p))
 grna_binary_vect <- as.integer(my_nt_grna == nt_grna_assignments)
 cont_table <- as.matrix(table(biorep_vect_nt, grna_binary_vect))
@@ -223,42 +222,20 @@ prop_table <- cont_table |>
 gene_exp_mat <- as.matrix(response_odm[[,nt_cells]])
 rownames(gene_exp_mat) <- get_feature_ids(response_odm)
 cell_cov <- (response_odm |> get_cell_covariates())[nt_cells,]
-gene_ids <- response_odm |>
+gene_to_plot <- response_odm |>
   get_feature_covariates() |>
   arrange(desc(mean_expression)) |>
-  slice(1:50) |>
+  slice(2) |>
   row.names()
 full_formula <- formula(expressions ~ bio_rep + offset(log(n_umis)))
 reduced_formula <-  formula(expressions ~ offset(log(n_umis)))
-
-if (FALSE) {
-  lrt_p <- sapply(X = gene_ids, function(gene_id) {
-    print(paste0("Fitting model for ", gene_id))
-    expressions <- gene_exp_mat[gene_id,]
-    curr_cell_cov <- mutate(cell_cov, expressions = expressions)
-    # estimate the size
-    est_size <- lowmoi:::estimate_size(df = curr_cell_cov,
-                                       formula = full_formula)
-    # fit the NB regression models
-    full_nb_reg <- glm(formula = full_formula,
-                       family = MASS::negative.binomial(est_size),
-                       data = curr_cell_cov)
-    reduced_nb_reg <- glm(formula = reduced_formula,
-                          family = MASS::negative.binomial(est_size),
-                          data = curr_cell_cov)
-    fit <- anova(reduced_nb_reg, full_nb_reg, test = "LRT")
-    fit$`Pr(>Chi)`[2]
-  }) # All LRTs are highly significant, indicating a strong association between (relative) gene expression and biological replicate. I will (somewhat arbitrarily) choose the second most highly expressed gene to plot.
-}
-
-gene_to_plot <- gene_ids[2]
 rel_expression_df <- data.frame(rel_expression = 1000 * log(gene_exp_mat[gene_to_plot,]/cell_cov[,"n_umis"] + 1),
                                 bio_rep = cell_cov[,"bio_rep"]) |>
   mutate(bio_rep = fct_recode(bio_rep, "R1" = "rep_1", "R2" = "rep_2", "R3" = "rep_3"))
 
 p_d1 <- ggplot(data = prop_table,
-               aes(x = bio_rep, y = freq, col = bio_rep)) +
-  geom_bar(stat = "identity", fill = "lightgray") +
+               aes(x = bio_rep, y = freq, col = bio_rep, fill = bio_rep)) +
+  geom_bar(stat = "identity") +
   ylab("Frac. cells with perturbation") +
   xlab("Biological rep.") +
   scale_y_continuous(limits = c(0, NA),
@@ -266,12 +243,13 @@ p_d1 <- ggplot(data = prop_table,
   my_theme + theme(plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = 12, unit = "pt"),
                    axis.title.y = element_text(margin = margin(t = 0, r = 9, b = 0, l = 0, unit = "pt")),
                    legend.position = "none") +
-  scale_color_manual(values = bio_rep_cols)
+  scale_color_manual(values = bio_rep_cols) +
+  scale_fill_manual(values = bio_rep_fills)
 
 p_d2 <- ggplot(data = rel_expression_df,
-       aes(x = bio_rep, y = rel_expression, col = bio_rep)) +
-  geom_violin(fill = "lightgrey") +
-  geom_boxplot(outlier.shape = NA, coef = 0, fill = "lightgrey") +
+       aes(x = bio_rep, y = rel_expression, col = bio_rep, fill = bio_rep)) +
+  geom_violin() +
+  geom_boxplot(outlier.shape = NA, coef = 0) +
   scale_y_continuous(limits = c(0, 50),
                      expand = expansion(mult = c(0.01, 0))) +
   ylab("Relative gene expression") +
@@ -279,17 +257,65 @@ p_d2 <- ggplot(data = rel_expression_df,
   my_theme +
   theme(plot.title = element_text(hjust=1),
         legend.position = "none") +
-  scale_color_manual(values = bio_rep_cols)
+  scale_color_manual(values = bio_rep_cols) +
+  scale_fill_manual(values = bio_rep_fills)
 
 p_d <- gridExtra::grid.arrange(p_d1, p_d2, nrow = 1,
                                top = ggpubr::text_grob("Confounding (Papalexi gene modality)",
                                                        size = 11, hjust = 0.395))
+###########
+# PANNEL E
+###########
+undercover_res_sub <- undercover_res |>
+  filter(method %in% c("seurat_de", "nb_regression_w_covariates", "nb_regression_no_covariates"),
+         dataset == "papalexi_eccite_screen_gene") |>
+  mutate(Method = fct_recode(Method,
+                             "NB Reg (w/ covariates)" = "Nb Regression W Covariates",
+                             "NB Reg (w/o covariates)" = "Nb Regression No Covariates"))
+my_labels <- c("NB Reg (w/o covariates)", "NB Reg (w/ covariates)", "Seurat De")
+p_e <- undercover_res_sub |>
+  ggplot(aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-8, size = 0.8) +
+  stat_qq_band() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black") +
+  my_theme +
+  theme(legend.title= element_blank(),
+        legend.position = c(0.27, 0.75),
+        legend.margin=margin(t = -0.5, unit='cm')) +
+  guides(color = guide_legend(
+    keywidth = 0.0,
+    keyheight = 0.15,
+    default.unit = "inch")) +
+  scale_color_manual(values = my_cols[names(my_cols) %in% my_labels]) +
+  ggtitle("Papalexi (gene) negative control pairs")
+
+##########
+# PANNEL F
+##########
+p_f <- ggplot(data = nb_gof_tests,
+              mapping = aes(x = p, fill = dataset)) +
+  geom_histogram(bins = 10, col = "black", alpha = 0.6) +
+  scale_y_log10(expand = expansion(mult = c(0.0, .01))) +
+  scale_x_continuous(expand = expansion(mult = c(0.0, .01))) +
+  my_theme +
+  xlab("Goodness of fit p") +
+  ylab("N genes") +
+  theme(legend.position = c(0.5, 0.89),
+        legend.title = element_blank()) +
+  scale_fill_manual(values = dataset_cols,
+                    labels = c("Frangieh IFN-\u03B3", "Papalexi (gene modality)")) +
+  ggtitle("NB regression goodness of fit p-values")
+  
+
 ############
 # CREATE FIG
 ############
 fig <- cowplot::plot_grid(p_a, p_b,
                           p_c, p_d,
-                          NULL, NULL, ncol = 2, labels = "auto", align = "vh", axis = "l")
+                          p_e, p_f, ncol = 2, labels = "auto", align = "vh", axis = "l")
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                      "sceptre2-manuscript/R_scripts/figure_creation/fig_2/r_output.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png",
