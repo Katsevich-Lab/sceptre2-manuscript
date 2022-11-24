@@ -110,4 +110,5 @@ mkdir -p $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene" \
  $sceptre2_dir"results/undercover_grna_analysis" \
  $sceptre2_dir"results/positive_control_analysis" \
  $sceptre2_dir"results/dataset_sample_sizes" \
- $sceptre2_dir"results/resampling_distributions"
+ $sceptre2_dir"results/resampling_distributions" \
+ $sceptre2_dir"results/extra_analyses"
