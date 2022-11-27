@@ -14,10 +14,14 @@ library(ondisc)
 # set colors (not loaded by)
 bio_rep_cols <- c("R1" = "darkred", "R2" = "darkblue", "R3" = "darkgreen")
 bio_rep_fills <-  c("R1" = "lightcoral", "R2" = "cornflowerblue", "R3" = "palegreen3")
-dataset_cols <- c("frangieh_ifn_gamma" = "seagreen3", "papalexi_eccite_screen" = "royalblue1")
+dataset_cols <- c("frangieh_co_culture_gene" = "purple",
+                  "frangieh_control_gene" = "royalblue1",
+                  "frangieh_ifn_gamma_gene" = "lightcoral",
+                  "papalexi_eccite_screen_gene" = "palegreen3")
 
 # load functions and data
-shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
+shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"),
+                            "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
@@ -26,7 +30,8 @@ undercover_res <- readRDS(paste0(result_dir,
 resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_resampling_at_scale_processed.rds")) |>
   mutate(p_rat = p_emp/p_value)
 fisher_exact_p <- readRDS(paste0(result_dir, "extra_analyses/papalexi_grna_confounding_tests.rds"))
-nb_gof_tests <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests.rds"))
+nb_gof_tests <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests.rds")) |>
+  mutate(theta = NULL)
 
 ##########
 # PANNEL a
@@ -183,7 +188,7 @@ p_c <- ggplot(data = to_plot_c, mapping = aes(y = p_value, col = Method)) +
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.29, 0.75),
+        legend.position = c(0.32, 0.75),
         legend.margin=margin(t = -0.5, unit='cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,
@@ -267,7 +272,7 @@ p_d <- gridExtra::grid.arrange(p_d1, p_d2, nrow = 1,
 # PANNEL E
 ###########
 undercover_res_sub <- undercover_res |>
-  filter(method %in% c("seurat_de", "nb_regression_w_covariates", "nb_regression_no_covariates"),
+  filter(method %in% c("nb_regression_w_covariates", "nb_regression_no_covariates"),
          dataset == "papalexi_eccite_screen_gene") |>
   mutate(Method = fct_recode(Method,
                              "NB Reg (w/ covariates)" = "Nb Regression W Covariates",
@@ -283,7 +288,7 @@ p_e <- undercover_res_sub |>
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.27, 0.75),
+        legend.position = c(0.32, 0.75),
         legend.margin=margin(t = -0.5, unit='cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,
@@ -295,20 +300,35 @@ p_e <- undercover_res_sub |>
 ##########
 # PANNEL F
 ##########
-p_f <- ggplot(data = nb_gof_tests,
-              mapping = aes(x = p, fill = dataset)) +
-  geom_histogram(bins = 10, col = "black", alpha = 0.6) +
-  scale_y_log10(expand = expansion(mult = c(0.0, .01))) +
-  scale_x_continuous(expand = expansion(mult = c(0.0, .01))) +
+n_to_samp <- nb_gof_tests |>
+  group_by(dataset) |>
+  summarize(count = n()) |>
+  pull(count) |> min()
+to_plot_f <- nb_gof_tests |>
+  group_by(dataset) |>
+  sample_n(n_to_samp)
+
+p_f <- to_plot_f |>
+  ggplot(aes(y = p, col = dataset)) +
+  stat_qq_points(ymin = 1e-8, size = 0.8) +
+  scale_x_reverse() +
+  scale_y_reverse() +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black") +
   my_theme +
-  xlab("Goodness of fit p") +
-  ylab("N genes") +
-  theme(legend.position = c(0.5, 0.89),
-        legend.title = element_blank()) +
-  scale_fill_manual(values = dataset_cols,
-                    labels = c("Frangieh IFN-\u03B3", "Papalexi (gene modality)")) +
-  ggtitle("NB regression goodness of fit p-values")
-  
+  theme(legend.position = c(0.7, 0.17),
+        legend.margin=margin(t = -0.5, unit='cm'),
+        legend.title= element_blank(),) +
+  guides(color = guide_legend(
+    keywidth = 0.0,
+    keyheight = 0.15,
+    default.unit = "inch")) +
+  ggtitle("NB regression model misspecification") +
+  scale_color_manual(values = dataset_cols,
+                     labels = c("Frangieh (co culture)",
+                                "Frangieh (control)",
+                                "Frangieh (Frangieh IFN-\u03B3)",
+                                "Papalexi (gene modality)"))
 
 ############
 # CREATE FIG

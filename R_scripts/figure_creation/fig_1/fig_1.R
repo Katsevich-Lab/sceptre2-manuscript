@@ -41,7 +41,7 @@ make_figure_row <- function(dataset, name, print_legend) {
     p1 <- p1 +
       my_theme +
       theme(legend.title= element_blank(),
-            legend.position = c(0.72, 0.17),
+            legend.position = c(0.72, 0.2),
             legend.text=element_text(size=9),
             legend.margin=margin(t = 0, unit='cm')) +
       guides(color = guide_legend(
@@ -62,18 +62,25 @@ make_figure_row <- function(dataset, name, print_legend) {
     scale_color_manual(values = my_values) +
     ggtitle("Transformed QQ-plot")
 
-  bonf_reject_df <- compute_n_bonf_rejections(df_sub)
+  bonf_reject_df <- compute_n_bonf_rejections(df_sub) |>
+  dplyr::mutate(n_reject = ifelse(n_reject == 0, 0.2, n_reject))
+  
   p3 <- bonf_reject_df |>
     ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
     ggplot2::geom_col(col = "black") +
-    scale_y_log10(expand = c(0, 0)) +
+    scale_y_continuous(trans=scales::pseudo_log_trans(base = 10, sigma = 0.2),
+                       expand = c(0,0),
+                       breaks = c(0, 1, 10, 100, 1000, 8000)) +
+    # scales::pseudo_log_trans() +
+    # scale_y_log10(expand = c(0, 0)) +
     ylab("N Bonferoni rejections") +
     xlab("Method") + my_theme_no_legend +
     theme(axis.text.x = element_blank()) +
     scale_fill_manual(values = my_cols) +
     ggtitle("N rejections")
 
-  p_row <- plot_grid(p1, p2, p3, nrow = 1, labels = NULL, align = "h", rel_widths = c(0.4, 0.4, 0.2))
+  p_row <- plot_grid(p1, p2, p3, nrow = 1, labels = NULL,
+                     align = "h", rel_widths = c(0.42, 0.42, 0.26))
   p_row
 }
 
@@ -82,7 +89,7 @@ r1 <- make_figure_row("papalexi_eccite_screen_gene", "Papalexi gene modality", T
 r2 <- make_figure_row("frangieh_ifn_gamma_gene", "Frangieh IFN-\u03B3", FALSE)
 
 fig <- plot_grid(r0, r1, r2, nrow = 3,
-                 labels = c("a", "b", "c"), rel_heights = c(0.26, 0.37, 0.37))
+                 labels = c("a", "b", "c"), rel_heights = c(0.3, 0.35, 0.35))
 
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_1/r_output.png")
-ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 7.5, dpi = 330)
+ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 6.75, dpi = 330)

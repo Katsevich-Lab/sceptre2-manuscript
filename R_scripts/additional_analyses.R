@@ -4,12 +4,14 @@ library(ondisc)
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 N_GENES <- 1000
-datasets <- c("frangieh/ifn_gamma",
-              "papalexi/eccite_screen")
 
 #########################################
 # GOODNESS OF FIT TESTS FOR NB REGRESSION
 #########################################
+datasets <- c("frangieh/ifn_gamma",
+              "frangieh/co_culture",
+              "frangieh/control",
+              "papalexi/eccite_screen")
 res <- lapply(X = datasets, FUN = function(dataset) {
   mm <- lowmoi::load_dataset_multimodal(paper_fp = dataset, offsite_dir = sceptre2_dir)
   response_odm <- mm |> get_modality("gene")
@@ -38,27 +40,42 @@ res <- lapply(X = datasets, FUN = function(dataset) {
   thetas <- sapply(gene_ids, FUN = function(gene_id) {
     print(gene_id)
     expression <- as.numeric(response_odm_ntc[[gene_id, samp_idxs]])
-    curr_data_matrix <- dplyr::mutate(cell_covariates_ntc_s1, expression = expression)
-    theta <- lowmoi:::estimate_size(df = curr_data_matrix,
-                                    formula = my_formula)
-    theta <- min(max(theta, 0.1), 1000)
+    if (mean(expression >= 3) >= 0.95) {
+      curr_data_matrix <- dplyr::mutate(cell_covariates_ntc_s1, expression = expression)
+      theta <- lowmoi:::estimate_size(df = curr_data_matrix,
+                                      formula = my_formula)
+      theta <- min(max(theta, 0.1), 1000) 
+    } else {
+      NA
+    }
   })
+  
   fit_ps <- sapply(gene_ids, FUN = function(gene_id) {
     print(gene_id)
     curr_theta <- thetas[[gene_id]]
-    expression <- as.numeric(response_odm_ntc[[gene_id, -samp_idxs]])
-    curr_data_matrix <- dplyr::mutate(cell_covariates_ntc_s2, expression = expression)
-    fit_nb <- glm(formula = my_formula,
-                  family = MASS::neg.bin(curr_theta),
-                  data = curr_data_matrix)
-    fit_p <- pchisq(fit_nb$deviance,
-                    df = fit_nb$df.residual,
-                    lower.tail = FALSE)
+    if (!is.na(curr_theta)) {
+      expression <- as.numeric(response_odm_ntc[[gene_id, -samp_idxs]])
+      curr_data_matrix <- dplyr::mutate(cell_covariates_ntc_s2, expression = expression)
+      fit_nb <- glm(formula = my_formula,
+                    family = MASS::neg.bin(curr_theta),
+                    data = curr_data_matrix)
+      fit_p <- pchisq(fit_nb$deviance,
+                      df = fit_nb$df.residual,
+                      lower.tail = FALSE)
+    } else {
+      fit_p <- NA
+    }
+    return(fit_p)
   })
-  data.frame(theta = thetas, p = fit_ps, dataset = dataset)
+  data.frame(theta = thetas, p = fit_ps,
+             dataset = dataset, response_id = gene_ids)
 }) |> data.table::rbindlist()
+
 res <- res |>
-  lowmoi:::replace_slash_w_underscore()
+  lowmoi:::replace_slash_w_underscore() |>
+  na.omit() |>
+  mutate(dataset = paste0(dataset, "_gene")) |>
+  as.data.frame()
 saveRDS(object = res,
         file = paste0(result_dir, "extra_analyses/goodness_of_fit_tests.rds"))
 

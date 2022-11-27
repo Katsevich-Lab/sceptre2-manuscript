@@ -1,7 +1,6 @@
 my_cols <- c("Weissman Method" = "purple3",
              "Schraivogel Method" = "dodgerblue3",
              "Mimosca" = "orange3",
-             "Sceptre" = "firebrick3",
              "Liscovitch Method" = "darkslategray4",
              "Seurat De" = "lightseagreen",
              "Seurat De (w/ strict QC)" = "dodgerblue4",
@@ -9,7 +8,10 @@ my_cols <- c("Weissman Method" = "purple3",
              "NB Reg (w/ strict QC)" = "indianred4",
              "NB Reg (w/o strict QC)" = "indianred1",
              "NB Reg (w/o covariates)" = "indianred4",
-             "NB Reg (w/ covariates)" = "indianred1")
+             "NB Reg (w/ covariates)" = "indianred1",
+             "NB Regression" = "dodgerblue3",
+             "SCEPTRE" = "firebrick3",
+             "SCEPTRE (w/o covariates)" = "orange3")
 
 my_theme <- theme_bw() + theme(axis.line = element_line(color = "black"),
                                panel.grid.major = element_blank(),
