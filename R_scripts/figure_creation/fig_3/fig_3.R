@@ -10,17 +10,15 @@ result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
                                  "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
   filter(n_nonzero_treatment >= 10, n_nonzero_control >= 10,
-         method %in% c("sceptre", "sceptre_no_covariates", "nb_regression_w_covariates", "seurat_de")) |>
+         method %in% c("sceptre", "seurat_de")) |>
   mutate(Method = fct_recode(Method,
-                             "SCEPTRE" = "Sceptre",
-                             "SCEPTRE (w/o covariates)" = "Sceptre No Covariates",
-                             "NB Regression" = "Nb Regression W Covariates"))
+                             "SCEPTRE" = "Sceptre"))
 
 ########################################################
 # PANNELS A-D: SCEPTRE vs. Seurat De on several datasets
 ########################################################
-my_values <- my_cols[names(my_cols) %in% c("Seurat De", "NB Regression", "SCEPTRE", "SCEPTRE (w/o covariates)")]
-get_plots_for_dataset <- function(df_sub, tit, print_legend) {
+my_values <- my_cols[names(my_cols) %in% c("Seurat De", "SCEPTRE")]
+get_plots_for_dataset <- function(df_sub, tit, print_legend, legend_position = c(0.45, 0.85)) {
 p_qq <- ggplot(data = df_sub, mapping = aes(y = p_value, col = Method)) +
     stat_qq_points(ymin = 1e-8, size = 0.85) +
     stat_qq_band() +
@@ -40,21 +38,24 @@ p_qq <- ggplot(data = df_sub, mapping = aes(y = p_value, col = Method)) +
     p_qq <- p_qq +
       my_theme +
       theme(legend.title= element_blank(),
-            legend.position = c(0.45, 0.85),
-            legend.text=element_text(size = 10),
+            legend.position = legend_position,
+            legend.text=element_text(size = 11),
             legend.margin=margin(t = 0, unit='cm')) +
       guides(color = guide_legend(
         keywidth = 0.0,
-        keyheight = 0.15,
+        keyheight = 0.2,
         default.unit="inch"))
   } else {
     p_qq <- p_qq + my_theme_no_legend
   }
   
-  n_bonf_rej <- df_sub |> compute_n_bonf_rejections()
+  n_bonf_rej <- df_sub |>
+    compute_n_bonf_rejections()
   max_reject <- max(n_bonf_rej$n_reject)
+  n_bonf_rej <- n_bonf_rej |>
+    mutate(n_reject = ifelse(n_reject == 0, max_reject/50, n_reject))
   
-  breaks_v <-  seq(1, max_reject, by = if (max_reject >= 7) 2 else 1)
+  breaks_v <-  seq(0, max_reject, by = if (max_reject >= 7) 2 else 1)
   p_bar <- n_bonf_rej |> ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
     ggplot2::geom_col(col = "black") +
     ylab("N Bonferoni rejections") +
@@ -77,12 +78,13 @@ papa_protein_plots <- get_plots_for_dataset(undercover_res |>
                                               filter(dataset == "papalexi_eccite_screen_protein",
                                                      method %in% c("sceptre", "seurat_de")),
                                             "Papalexi (protein) neg. controls",
-                                            print_legend = TRUE)
+                                            print_legend = FALSE)
 # 3.
 ifn_gama_plots <- get_plots_for_dataset(undercover_res |>
                                           filter(dataset == "frangieh_ifn_gamma_gene"),
                                         "Frangieh (IFN-\u03B3) neg. controls",
-                                        print_legend = FALSE)
+                                        print_legend = TRUE,
+                                        legend_position = c(0.25, 0.8))
 # 4.
 co_culture_plots <- get_plots_for_dataset(undercover_res |>
                                             filter(dataset == "frangieh_co_culture_gene",
@@ -103,9 +105,9 @@ enh_screen <- get_plots_for_dataset(undercover_res |>
                                     "Schraivogel neg. controls",
                                     print_legend = FALSE)
 
-fig <- cowplot::plot_grid(co_culture_plots$p_qq, co_culture_plots$p_bar,
+fig <- cowplot::plot_grid(ifn_gama_plots$p_qq, ifn_gama_plots$p_bar,
+                          co_culture_plots$p_qq, co_culture_plots$p_bar,
                           control_plots$p_qq, control_plots$p_bar,
-                          ifn_gama_plots$p_qq, ifn_gama_plots$p_bar,
                           papa_plots$p_qq, papa_plots$p_bar,
                           papa_protein_plots$p_qq, papa_protein_plots$p_bar,
                           enh_screen$p_qq, enh_screen$p_bar,
