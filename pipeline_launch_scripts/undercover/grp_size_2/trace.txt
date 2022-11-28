@@ -1,4 +1,0 @@
-task_id	name	status	exit	time	realtime
-1	obtain_dataset_ntc_tuples	COMPLETED	0	-	5s
-5	run_method (frangieh/co_culture/gene+mimosca)	FAILED	-	-	-
-7	run_method (frangieh/co_culture/gene+sceptre)	ABORTED	-	-	-
