@@ -1,7 +1,10 @@
 my_cols <- c("Weissman Method" = "purple3",
+             "Weissman Meth." = "purple3",
              "Schraivogel Method" = "dodgerblue3",
+             "Schraivogel Meth." = "dodgerblue3",
              "Mimosca" = "orange3",
              "Liscovitch Method" = "darkslategray4",
+             "Liscovitch Meth." = "darkslategray4",
              "Seurat De" = "lightseagreen",
              "Seurat De (w/ strict QC)" = "dodgerblue4",
              "Seurat De (w/o strict QC)" = "dodgerblue",
@@ -22,10 +25,18 @@ my_theme <- theme_bw() + theme(axis.line = element_line(color = "black"),
 my_theme_no_legend <- my_theme + theme(legend.position = "none")
 
 compute_n_bonf_rejections <- function(undercover_res, alpha = 0.1) {
-  out <- undercover_res |>
-    dplyr::group_by(dataset_rename, Method) |>
+  n_bonf_rej <- undercover_res |>
+    dplyr::group_by(dataset, method) |>
     dplyr::summarize(reject = (p_value < alpha/dplyr::n())) |>
     dplyr::summarize(n_reject = sum(reject)) |>
     dplyr::ungroup()
-  return(out)
+  
+  max_reject <- max(n_bonf_rej$n_reject)
+  n_bonf_rej <- n_bonf_rej |>
+    mutate(n_reject = ifelse(n_reject == 0, min(max_reject/50, 0.1), n_reject))
+  
+  return(n_bonf_rej)
 }
+
+N_NONZERO_TREATMENT_CUTOFF <- 7
+N_NONZERO_CONTROL_CUTOFF <- 7

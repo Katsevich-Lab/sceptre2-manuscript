@@ -9,7 +9,8 @@ source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
                                  "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
-  filter(n_nonzero_treatment >= 10, n_nonzero_control >= 10,
+  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF,
          method %in% c("sceptre", "seurat_de")) |>
   mutate(Method = fct_recode(Method,
                              "SCEPTRE" = "Sceptre"))
@@ -49,11 +50,8 @@ p_qq <- ggplot(data = df_sub, mapping = aes(y = p_value, col = Method)) +
     p_qq <- p_qq + my_theme_no_legend
   }
   
-  n_bonf_rej <- df_sub |>
-    compute_n_bonf_rejections()
+  n_bonf_rej <- df_sub |> compute_n_bonf_rejections()
   max_reject <- max(n_bonf_rej$n_reject)
-  n_bonf_rej <- n_bonf_rej |>
-    mutate(n_reject = ifelse(n_reject == 0, max_reject/50, n_reject))
   
   breaks_v <-  seq(0, max_reject, by = if (max_reject >= 7) 2 else 1)
   p_bar <- n_bonf_rej |> ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +

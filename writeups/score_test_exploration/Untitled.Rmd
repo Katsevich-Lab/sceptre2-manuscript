@@ -1,0 +1,38 @@
+---
+title: '`sceptre` methodology 1: comparing permutation test statistics'
+author: "Tim"
+date: "2022-11-29"
+output: html_document
+---
+
+Suppose we observe data $(z_1, y_1), \dots, (z_n, y_n)$, where $z_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. Consider the following model for $y$ given $x$:
+$$ \begin{cases} Y_i \sim \textrm{Pois}(\mu_i) \\ \log(\mu_i) = x_i^T \beta, \end{cases}$$ where $\beta = [\beta_1, \dots, \beta_p] \in \mathbb{R}^p$ is an unknown parameter. Suppose we obtain an estimate $\hat{\beta}$ for $\beta$ by fitting a Poisson GLM to the data. Let $$\exp(o_i) = \exp\left(x_i^T\hat{\beta}\right)$$ denote the $i$th fitted value of the model. Let $x = [x_1, \dots, x_n]^T$ be a *binary* vector that we seek to test for inclusion in the model via a score test. The standard (or "full") score can be computed using the `statmod` package in R.
+
+We consider a distilled version of the score test to accelerate computation (although the "full" score test already is reasonably fast). Consider the following model for $Y_i$:
+
+$$Y_i \sim \textrm{Pois}(\exp\left\{\gamma x_i + o_i \right\}),$$ where, under the null hypothesis, $\gamma = 0$. Because the observations for which $x_i = 0$ do not contribute to the log-likelihood (except as constants), we instead can consider the following mean-plus-offset model for $Y_i$:
+
+$$Y_i \sim \textrm{Pois}(\exp\left\{\delta + o_i \right\}) = \textrm{Pois}(\exp(\delta) \exp(o_i)),$$
+where we restrict attention to those observations for which $x_i = 1$. The density $f$ of $Y_i$ is $$f(y_i; \delta) =  \frac{\left[ e^{\delta + o_i}  \right]^{(y_i)} e ^{ - \left[ e^{\delta + o_i}  \right] }}{ y_i! } = \frac{ e^{y_i\delta} e^{y_i o_i}   }{ e^{\left[ e^{\delta + o_i} \right]} y_i! }.$$
+
+The likelihood is thus
+
+$$
+L(\delta; y = \frac{ \left( e^{ \delta \sum_{x_i=1} y_i} \right) \left(e^{\sum_{x_i=1} y_io_i} \right)}{e^{\sum_{x_i=1} e^{\delta + o_i}} \prod_{x_i=1} \left( y_i! \right)},
+$$
+The log-likelihood (up to a constant) is then
+
+$$ \mathcal{L}(\delta; y) = \delta \sum_{x_i=1} y_i -\sum_{x_i=1} e^{\delta + o_i} = \delta \sum_{x_i = 1}^n y_i - e^{\delta} \sum_{x_i=1} e^{o_i}.$$
+
+The gradient of $L$ (i.e., the score) is
+
+$$U(\delta) = \sum_{x_i = 1} y_i - e^{\delta} \sum_{x_i=1} e^{o_i}.$$
+
+Next, the expected negative second derivative of $L$ (i.e., the Fisher information) is
+
+$$I(\delta) = e^\delta \sum_{x_i=1} e^{o_i}.$$
+
+Thus, the score-based z-score for the null hypothesis is
+
+$$z_{\textrm{score}} = U(0)/\sqrt{I(0)} = \frac{ \sum_{x_i=0} y_i - \sum_{x_i=1} e^{o_i}}{\sqrt{\sum_{x_i = 0} e^{o_i}}} = \frac{\sum_{x_i=0} y_i - \sum_{x_i = 0} \hat{\mu}_i}{ \sqrt{ \sum_{x_i = o} \hat{\mu}_i}}$$
+

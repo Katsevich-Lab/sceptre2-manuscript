@@ -45,12 +45,11 @@ Rscript ../R_scripts/compute_dataset_sample_sizes.R
 # . Undercover results for group size = 1, all methods and datasets
 qsub ../pipeline_launch_scripts/undercover/grp_size_1/grp_size_1.sh
 
-
 # . Undercover results for group size = 2, all methods and datasets
 
 # . Undercover results for group size = half, all methods and datasets
 
-Rscript ../R_scripts/process_undercover_results.R
+Rscript ../R_scripts/process_results.R
 
 #######################################
 # PART 3: MAKING FIGURES

@@ -26,7 +26,8 @@ source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
                                  "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
-  filter(n_nonzero_treatment >= 10, n_nonzero_control >= 10)
+  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF)
 resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_resampling_at_scale_processed.rds")) |>
   mutate(p_rat = p_emp/p_value)
 fisher_exact_p <- readRDS(paste0(result_dir, "extra_analyses/papalexi_grna_confounding_tests.rds"))
