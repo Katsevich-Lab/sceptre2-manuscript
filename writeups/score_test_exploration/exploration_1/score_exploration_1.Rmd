@@ -68,14 +68,14 @@ Thus, to compute the above, it is sufficient to compute $L$, to square the terms
       outer_sum += inner_sum^2
     }
 
-This algorithm is easy to implement in C++. Meanwhile, computing the other pieces of the score statistic (i.e., $X^T \hat{W} X$ and $X^T \hat{W} \hat{M}(Y - \hat{\mu})$) is simple.
+This algorithm is easy to implement in C++. Meanwhile, computing the other pieces of the score statistic (i.e., $X^T \hat{W} X$ and $X^T \hat{W} \hat{M}(Y - \hat{\mu})$) is simple. A Cholesky decomposition (instead of a spectral decomposition) likely also would work. It is not clear whether the proposed procedure is as numerically stable as the QR decomposition procedure.
 
 ### **Strategy 2: Distilled score test**
 
-Next, I consider a distilled version of the score test. Let $\mu_i$ be the fitted value of the regression. We consider the following model for $Y$:
+Next, I consider a distilled version of the score test. Let $\hat{\mu_i}$ be the fitted value of the regression. We consider the following model for $Y$:
 
 $$
-Y_i \sim \textrm{Pois}(\exp\left\{\beta x_i + \log(\hat{\mu}_i) \right\})$$.
+Y_i \sim \textrm{Pois}(\exp\left\{\beta x_i + \log(\hat{\mu}_i) \right\}).$$
 
 Assuming that $x_i$ is binary, we can express this model as
 
@@ -130,4 +130,210 @@ The "full" score statistic, the distilled score statistic, and the sum over Pear
 
 Next, I run some simulations to compare the above statistics --- $S_\textrm{Pearson}$, $z_\textrm{dist}$, and $z_\textrm{score}$ --- on simulated data.
 
-### **Simulation 1: Uncorrelated covariataes**
+### **Simulation 1: Uncorrelated covariates**
+
+I generate simulated from a Poisson GLM with covariates $Z$ and response $Y$. I test for association between a new, binary vector $X$ and $Y$ (conditional on $Z$) using the three strategies discussed above. Importantly, the vector $X$ is marginally independentof the covariates $Z$. I generate $B = 2000$ datasets and compute $z_\textrm{score}$, $z_\textrm{distilled}$, and $S_\textrm{Pearson}$ on each of these datasets. Finally, I create of histogram of these statistics to visualize their distributions.
+
+The code to run the experiment is below.
+
+```{r, cache = TRUE}
+run_experiment <- function(fitted_means, n_rep, correlated) {
+  n <- 5000
+  beta_v <- c(1, 2, 1)
+  dat <- matrix(data = c(rep(1, n),
+                         x1 = rbinom(n, 1, 0.4),
+                         x2 = rnorm(n)),
+                ncol = 3)
+  lin_pred <- as.numeric(dat %*% beta_v)
+  mus <- exp(lin_pred)
+  
+  if (correlated) {
+    x_test <- sapply(binomial()$linkinv(dat[,3] - 0.1), function(curr_mu) rbinom(n = 1, size = 1, prob = curr_mu))
+  } else {
+    x_test <- rbinom(n = n, size = 1, prob = 0.5)
+  }
+  
+  out <- sapply(X = seq(1, n_rep), FUN = function(i) {
+    y <- sapply(mus, function(curr_mu) rpois(n = 1, lambda = curr_mu))
+    
+    # we do a good job of estimating the parameters via glm
+    fit <- glm(y ~ dat[,-1], family = poisson)
+    mu_hat <- fit$fitted.values
+    z_score_full <- statmod::glm.scoretest(fit = fit, x_test)
+    
+    # next, get the distilled z-score
+    y_1 <- y[x_test == 1]
+    mu_hat_1 <- if (fitted_means) mu_hat[x_test == 1] else mus[x_test == 1]
+    s_y <- sum(y_1)
+    s_mu_hat <- sum(mu_hat_1)
+    
+    # get the distilled z-score
+    z_score_distilled <- (s_y - s_mu_hat)/sqrt(s_mu_hat)
+    
+    # get the normalized pearson residual sum
+    pearson_resid <- (y_1 - mu_hat_1)/sqrt(mu_hat_1)
+    sum_pearson <- sum(pearson_resid)
+    norm_sum_pearson <- (1/sqrt(length(pearson_resid))) * sum_pearson
+
+    # get the gcm
+    r <- y_1 - mu_hat_1
+    gcm <- 1/sqrt(length(r)) * sum(r)/sd(r)
+    
+    c(z_score_distilled = z_score_distilled,
+      z_score_full = z_score_full,
+      norm_sum_pearson = norm_sum_pearson,
+      gcm = gcm)
+  }) |> t()  
+}
+
+out <- run_experiment(fitted_means = TRUE, n_rep = 2000, correlated = FALSE)
+x_grid <- seq(from = -3.5, to = 3.5, by = 0.01)
+y <- dnorm(x_grid)
+```
+
+Below is the distribution of $z_\textrm{score}$. We see it is N(0,1).
+
+```{r}
+x_grid <- seq(from = -3.5, to = 3.5, by = 0.01)
+y <- dnorm(x_grid)
+
+hist(out[,"z_score_full"], freq = FALSE, breaks = 20,
+     main = "Full z-score", xlab = "")
+lines(x = x_grid, y = y, col = "red")
+```
+
+Next, I plot $z_\textrm{dist}$. Its distribution is approximately N(0, 0.7).
+
+```{r}
+hist(out[,"z_score_distilled"], freq = FALSE, breaks = 20,
+     main = "Distilled z-score", xlab = "")
+lines(x = x_grid, y = y, col = "red")
+```
+
+Finally, I plot $S_\textrm{Pearson}$. The distribution of this statistic again is approximately N(0, 0.7).
+
+```{r}
+hist(out[,"norm_sum_pearson"], freq = FALSE, breaks = 20,
+     main = "S Pearson", xlab = "")
+lines(x = x_grid, y = y, col = "red")
+```
+
+Plotting $z_\textrm{dist}$ against $z_\textrm{score}$ , we see that the former is a constant multiple of the latter (with a proportionality constant of 1.38).
+
+```{r}
+plot(out[,"z_score_distilled"], out[,"z_score_full"], ylab = "Z distilled", xlab = "Z score")
+abline(a = 0, b = 1, col = "red")
+abline(h = 0)
+abline(v = 0)
+lm(out[,"z_score_full"] ~ out[,"z_score_distilled"])
+```
+
+Next, plotting $z_\textrm{dist}$ against $S_\textrm{Pearson}$, we see that the points form a cloud along the identity line y = x.
+
+```{r}
+plot(out[,"z_score_distilled"], out[,"norm_sum_pearson"], ylab = "Z distilled", xlab = "S Pearson")
+abline(a = 0, b = 1, col = "red")
+abline(h = 0)
+abline(v = 0)
+```
+
+### **Simulation 2: Correlated covariates**
+
+Next, I generate the vector $X$ in such a way that $X$ is marginally dependent on $Z$. (In other words, the problem is confounded.) I test for association between $X$ and $Y$ (conditional on $Z$) using the three methods above.
+
+```{r, cache = TRUE}
+out <- run_experiment(fitted_means = TRUE, n_rep = 2000, correlated = TRUE)
+x_grid <- seq(from = -3.5, to = 3.5, by = 0.01)
+y <- dnorm(x_grid)
+```
+
+I plot the distribution of $z_\textrm{score}$. Again, it is N(0,1).
+
+```{r}
+hist(out[,"z_score_full"], freq = FALSE, breaks = 20,
+     main = "Full z-score", xlab = "")
+lines(x = x_grid, y = y, col = "red")
+```
+
+Next, I plot $z_\textrm{dist}$. Its distribution has *changed* to about N(0, 0.5).
+
+```{r}
+hist(out[,"z_score_distilled"], freq = FALSE, breaks = 20,
+     main = "Distilled z-score", xlab = "")
+lines(x = x_grid, y = y, col = "red")
+```
+
+Finally, I plot $S_\textrm{Pearson}$. Again, its distribution has *changed* to approximately N(0, 0.5).
+
+```{r}
+hist(out[,"norm_sum_pearson"], freq = FALSE, breaks = 20,
+     main = "S Pearson", xlab = "")
+lines(x = x_grid, y = y, col = "red")
+```
+
+Plotting $z_\textrm{dist}$ against $z_\textrm{score}$, we see again that the former is a constant multiple of the latter. However, the proportionality constant has changed to about 2.
+
+```{r}
+plot(out[,"z_score_distilled"], out[,"z_score_full"], ylab = "Z distilled", xlab = "Z score")
+abline(a = 0, b = 1, col = "red")
+abline(h = 0)
+abline(v = 0)
+lm(out[,"z_score_full"] ~ out[,"z_score_distilled"])
+```
+
+Next, plotting $z_\textrm{dist}$ against $S_\textrm{Pearson}$, we see that the points again form a cloud along the identity line y = x.
+
+```{r}
+plot(out[,"z_score_distilled"], out[,"norm_sum_pearson"], ylab = "Z distilled", xlab = "S Pearson")
+abline(a = 0, b = 1, col = "red")
+abline(h = 0)
+abline(v = 0)
+```
+
+### **Why are** $z_\textrm{dist}$ and $S_\textrm{Pearson}$ not N(0,1)?
+
+We see clearly that the statistics $z_\textrm{dist}$ and $S_\textrm{Pearson}$ are not N(0,1). The full score statistic $z_\textrm{score}$, by contrast, is. Why is this the case? These statistics have essentially the same numerator (i.e., the raw residual). The difference between these statistics is that they normalize by different factors, and $z_\textrm{dist}$ and $S_\textrm{Pearson}$ normalize by the "wrong" factor. Recall the distilled score statistic
+
+$$z_{\textrm{dist}} = \frac{\sum_{x_i=1} y_i - \hat{\mu}_i}{\sqrt{\sum_{x_i = 1} \hat{\mu}_i}}.$$
+
+Next, consider the "theoretical" analogue of the distilled score statistic in which we replace $\hat{\mu}_i$ by $\mu_i$:
+
+$$z_\textrm{dist, theory} := \frac{\sum_{x_i=1} y_i - \mu_i}{\sqrt{\sum_{x_i = 1} \mu_i}}.$$
+
+It is clear that the "theoretical" distilled score statistic is $N(0,1)$. We have that
+
+$$
+\mathbb{E}(y_i - \mu_i) = 0,
+$$
+
+while
+
+$$
+\mathbb{V}(y_i - \mu_i) = \mathbb{V}(y_i) = \mu_i.
+$$
+
+Thus, $$\mathbb{E} \left\{\sum_{x_i = 1} y_i - \mu_i \right\} = 0,$$
+
+while
+
+$$\mathbb{V} \left\{ \sum_{x_i = 1} y_i - \mu_i\right\} = \sum_{x_i = 1} \mu_i^2.$$
+
+Hence, $z_\textrm{dist, theory}$ normalizes by the "correct" value of $\sqrt{\sum_{x_i = 1} \mu_i^2}$ to yield a $N(0,1)$ variate. I confirm through a quick simulation that $z_\textrm{dist, theory}$ has a N(0,1) distribution.
+
+```{r, cache = TRUE}
+out <- run_experiment(fitted_means = FALSE, n_rep = 2000, correlated = FALSE)
+x_grid <- seq(from = -3.5, to = 3.5, by = 0.01)
+y <- dnorm(x_grid)
+
+hist(out[,"z_score_distilled"], freq = FALSE, breaks = 20,
+     main = "Theoretical distilled z-score", xlab = "")
+lines(x = x_grid, y = y, col = "red")
+```
+
+In summary the problem with the distilled score statistic is that the variance of the sum of the raw residuals $\sum_{x_i=1} y_i - \hat{\mu}_i$ is not $\sqrt{\sum_{x_i = 1} \hat{\mu}_i}$ but rather $\sqrt{\sum_{x_i = 1} \hat{\mu}_i - X^T\hat{W}Z (Z^T \hat{W} Z)^{-1} Z^T\hat{W}X}$. Similar reasoning holds for the sum of the Pearson residuals statistic.
+
+# Conclusion and implications
+
+Contrary to what we anticipated, the "full" score statistic, the distilled score statistic, and the sum over Pearson residuals statistic are not the same. Moreover, these statistics differ in an important way: the "full" score statistic is N(0,1) regardless of whether $X$ and $Z$ are dependent; by contrast, the distilled score statistic and sum over Pearson residuals have different distributions depending on whether $X$ and $Z$ are dependent.
+
+A statistic is CAMP-friendly only if its distribution is invariant to the correlation structure between $X$ and \$Z\$. Thus, the "full" score statistic is CAMP-friendly. By contrast, the distilled score statistic and the sum over Pearson residuals are (at best) only approximately CAMP-friendly. Given that the variance of the distilled score statistic and sum over Pearson residuals decreases as $X$ and $Z$ become more correlated, I anticipate that using these statistics (instead of the "full" score statistic) leads to a loss of power. Additionally, the full score statistic (as far as I can tell) leverages all moments of the distribution, whereas the latter two statistics leverage only the first two moments of the distribution. This seems consistent with the loss in power hypothesis.
