@@ -1,0 +1,133 @@
+---
+title: '`sceptre` methodology 1'
+author: "Tim"
+date: "2022-11-29"
+output: html_document
+---
+
+# Part 1: A bit of theory
+
+Suppose we observe data $(z_1, y_1), \dots, (z_n, y_n)$, where $z_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. Consider the following GLM model for $y$ given $x$: $$ \begin{cases} Y_i \sim \textrm{Pois}(\mu_i) \\ \log(\mu_i) = x_i^T \beta, \end{cases}$$ where $\beta = [\beta_1, \dots, \beta_p] \in \mathbb{R}^p$ is an unknown parameter. Suppose we obtain an estimate $\hat{\beta}$ for $\beta$ by regressing $Y = [y_1, \dots, y_n]$ onto $Z = [z_1, \dots, z_n]$. Let $$\hat{\mu} = \exp\left(x_i^T\hat{\beta}\right)$$ denote the $i$th fitted value of the model. Also, let $$\mu_i = \exp\left(x_i^T \beta \right)$$ denote the $i$th *true* conditional mean of $y_i$ given $z_i$. Finally, let $x = [x_1, \dots, x_n]$ be a vector that we seek to test for inclusion in the model. More precisely, we seek to test the conditional independence hypothesis $H_0: x_i \perp y_i | z_i.$ We consider three strategies for testing this hypothesis. We compare and contrast these strategies.
+
+### **Strategy 1: Full score test**
+
+Arguably the most straightforward option to test the hypothesis is to run a GLM score test. The GLM score statistic is as follows:
+
+$$
+z_\textrm{score} = \frac{X^T \hat{W} \hat{M} (Y - \hat{\mu})}{\sqrt{X^T \hat{W} X - X^T\hat{W}Z (Z^T \hat{W} Z)^{-1} Z^T\hat{W}X}}.
+$$
+
+Here, $Y$ is the vector of responses, $\hat{\mu}$ is the vector of fitted means, and $Z$ is the original design matrix. Furthermore, letting $d\eta_i / d \mu_i$ denote the derivative of $\eta_i$ with respect to $\mu_i$, the matrix $M$ is defined by
+
+$$
+M = \textrm{diag} \left\{d \eta_i / d\mu_i \right\}_{i=1}^n.
+$$
+
+Meanwhile, $i$th weight is given by
+
+$$
+W_i = \frac{1}{V(\mu_i) (d \eta_i / d \mu_i)^2},
+$$
+
+and the weight matrix is
+
+$$
+W = \textrm{diag} \left\{ W_i \right\}_{i=1}^n. 
+$$
+
+For a Poisson GLM with log link, $V(\mu_i) = \mu_i.$ Additionally, $d\eta_i/d\mu_i = 1/\mu_i.$ Thus, $W_i = \mu_i$ and $M_i = 1/\mu_i$. It follows that the numerator of the full score statistic is$$
+ X^T(Y - \hat{\mu}) = \sum_{i=1}^n x_i (y_i - \hat{\mu}_i).
+$$
+
+Of course, when $X$ is binary, the above reduces to a sum over the raw residuals for which $x_i = 1$ i.e.
+
+$$\sum_{x_i = 1} y_i - \hat{\mu}_i.$$ Furthermore, the $X^T \hat{W} X$ term in the denominator is$$
+X^T \hat{W} X = \sum_{i=1}^n x_i^2 \hat{\mu}_i.
+$$
+
+Again, when $X$ is binary, this term reduces to a sum over the fitted means for which $x_i = 1$, i.e. $$\sum_{x_i = 1} \hat{\mu}_i.$$ The final $X^T\hat{W}Z (Z^T \hat{W} Z)^{-1} Z^T\hat{W}X$ term is harder to simplify, but I consider how to compute this term efficiently in the next section.
+
+### **Calculating the full score test on permuted data**
+
+To implement the score test within the context of a permutation test, we must compute the statistic $z_\textrm{score}$ repeatedly for different $X$s. This is not totally trivial: the matrix $\hat{W}Z(Z^T \hat{W} Z)^{-1} \hat{W}$ is a dense $n \times n$ matrix and thus takes up a lot of memory and is hard to compute. The standard strategy to compute $z_\textrm{score}$ is to rewrite $z_\textrm{score}$ in terms of a weighted least squares regression and carry out this regression via a QR decomposition. This is the approach used by `statmod`. As far as I can tell, this approach does not really leverage structure in $X$ (e.g., that $X$ can be sparse and binary).
+
+Here, I describe a simple, alternate approach to calculating $z_\textrm{score}$ that I think will be fast when $X$ is binary and sparse. First, note that the matrix $Z^T \hat{W} Z$ is a symmetric, $p \times p$ matrix. Thus, $Z^T \hat{W} Z$ can be spectrally decomposed as $U^T \Lambda U = Z^T \hat{W} Z,$ where $U$ is an orthonormal matrix and $\Lambda$ is a diagonal matrix of eigenvalues. The inverse of $Z^T \hat{W} Z$ is $(Z^T \hat{W} Z)^{-1} = U^T \Lambda^{-1} U = U^T \Lambda^{-1/2} \Lambda^{-1/2} U$. Thus,
+
+$$ X^T\hat{W}Z (Z^T \hat{W} Z)^{-1} Z^T\hat{W}X = X^T \hat{W}Z U^T \Lambda^{-1/2} \Lambda^{-1/2} UZ^T \hat{W} X.$$ Writing $L = \Lambda^{-1/2}UZ^T\hat{W}X \in \mathbb{R}^p,$ we see that
+
+$$ X^T \hat{W}Z U^T \Lambda^{-1/2} \Lambda^{-1/2} UZ^T \hat{W} X = L^TL = ||L||_2^2.$$
+
+Thus, to compute the above, it is sufficient to compute $L$, to square the terms of $L$, and then to sum these squared terms. Define the matrix $B$ by $B = \Lambda^{-1/2}UZ^T\hat{W} \in \mathbb{R}^{p \times n}.$ We need only compute $B$ once and then to share $B$ across all the $X$s. Moreover, computing $||L||^2$ is very simple when $X$ is binary. Let $I$ be the vector of indexes for which $X$ is 1. We can use the following algorithm to compute $||L||^2.$
+
+    outer_sum = 0
+    for (i in 1..p) {
+      inner_sum = 0
+      for (j in 1..length(I)) {
+        inner_sum += B[i, I[j]]
+      }
+      outer_sum += inner_sum^2
+    }
+
+This algorithm is easy to implement in C++. Meanwhile, computing the other pieces of the score statistic (i.e., $X^T \hat{W} X$ and $X^T \hat{W} \hat{M}(Y - \hat{\mu})$) is simple.
+
+### **Strategy 2: Distilled score test**
+
+Next, I consider a distilled version of the score test. Let $\mu_i$ be the fitted value of the regression. We consider the following model for $Y$:
+
+$$
+Y_i \sim \textrm{Pois}(\exp\left\{\beta x_i + \log(\hat{\mu}_i) \right\})$$.
+
+Assuming that $x_i$ is binary, we can express this model as
+
+$$
+Y_i \sim \textrm{Pois}(\exp\left\{\beta + \log(\hat{\mu}_i)\right\}$$
+
+for $i$ such that $x_i=1$. For simplicity index the points such that $x_i = 1$ by $i = 1, \dots, k$. The density $f$ of $Y_i$ is $$f(y_i; \beta) =  \frac{\left[ e^{\beta + \log(\hat{\mu}_i) }  \right]^{(y_i)} e ^{ - \left[ e^{\beta + \log(\hat{\mu_i})} \right]}}{ y_i! } = \frac{ e^{y_i\beta} e^{y_i \log(\hat{\mu}_i)}}{ e^{\left[e^{\beta + \log(\hat{\mu}_i)} \right]} y_i!}.$$
+
+The likelihood is thus
+
+$$
+L(\beta; y) = \frac{ \left( e^{ \beta \sum_{i=1}^k y_i} \right) \left(e^{\sum_{i=1}^k y_i \log(\hat{\mu}_i)} \right)}{e^{\sum_{i=1}^k e^{\beta + \log(\hat{\mu}_i)}} \prod_{i=1}^k \left( y_i! \right)}.
+$$ The log-likelihood (up to a constant) is then
+
+$$ \mathcal{L}(\beta; y) = \beta \sum_{x=1}^k y_i - \sum_{i=1}^k e^{\beta + \log(\hat{\mu}_i) } = \beta \sum_{i = 1}^k y_i - e^{\beta} \sum_{i=1}^k \log(\hat{\mu}_i).$$
+
+The gradient of $L$ (i.e., the score) is
+
+$$U(\beta) = \sum_{i = 1}^k y_i - e^{\beta} \sum_{i=1}^k \hat{\mu}_i.$$
+
+Next, the expected negative second derivative of $L$ (i.e., the Fisher information) is
+
+$$I(\beta) = e^\beta \sum_{i=1}^k \log(\hat{\mu}_i).$$
+
+Thus, the distilled score statistic is
+
+$$z_{\textrm{dist}} = U(0)/\sqrt{I(0)} = \frac{\sum_{i=1}^k y_i - \hat{\mu}_i}{\sqrt{\sum_{i = 1}^k \hat{\mu}_i}}.$$
+
+The distilled score statistic is *not* the same as the "full" score statistic. The difference is that the $X^T\hat{W}Z (Z^T \hat{W} Z)^{-1} Z^T\hat{W}X$ term of $z_\textrm{score}$ is missing from the denominator of $z_{\textrm{dist}}$.
+
+### **Strategy 3: Normalized sum over Pearson residuals**
+
+A third statistic to consider is the normalized sum over the Pearson residuals. The $i$th Pearson residual $r_i$ of the Poisson model is
+
+$$
+r_i = \frac{y_i - \hat{\mu}_i}{ \sqrt{\hat{\mu}_i}}.
+$$
+
+Consider the normalized sum of the Pearson residuals over the observations for which $x_i = 1$. Again, for convenience, index these observations by $1, \dots, k$. We define
+
+$$
+S_\textrm{Pearson} := \frac{1}{\sqrt{k}} \sum_{i=1}^k r_i = \frac{1}{\sqrt{k}} \sum_{i=1}^k \frac{ y_i - \hat{\mu}_i }{ \hat{\mu}_i }.
+$$
+
+The sum over the Pearson residuals $S_\textrm{Pearson}$ does not equal the distilled score statistic $z_\textrm{dist}$. The difference is that $S_\textrm{Pearson}$ normalizes the residuals and then sums them, while $z_\textrm{dist}$ sums the residuals and then normalizes them.
+
+### **Part 1 conclusion**
+
+The "full" score statistic, the distilled score statistic, and the sum over Pearson residuals are *not* the same. The distilled score statistic and sum over Pearson residuals require estimating the first two moments each. The full score statistic, by contrast, leverages the entire likelihood (as the test statistic is a sum over the scores normalized by the Fisher information). We likely can compute the full score statistic in a computationally efficient way via spectral decomposition and rewriting the statistic.
+
+# Part 2: Simulations
+
+Next, I run some simulations to compare the above statistics --- $S_\textrm{Pearson}$, $z_\textrm{dist}$, and $z_\textrm{score}$ --- on simulated data.
+
+### **Simulation 1: Uncorrelated covariataes**

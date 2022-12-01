@@ -13,7 +13,7 @@
 
 <meta name="date" content="2022-11-29" />
 
-<title>sceptre methodology 1: comparing permutation test statistics</title>
+<title>sceptre methodology 1</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -356,62 +356,207 @@ display: none;
 
 
 
-<h1 class="title toc-ignore"><code>sceptre</code> methodology 1:
-comparing permutation test statistics</h1>
+<h1 class="title toc-ignore"><code>sceptre</code> methodology 1</h1>
 <h4 class="author">Tim</h4>
 <h4 class="date">2022-11-29</h4>
 
 </div>
 
 
+<div id="part-1-a-bit-of-theory" class="section level1">
+<h1>Part 1: A bit of theory</h1>
 <p>Suppose we observe data <span class="math inline">\((z_1, y_1),
 \dots, (z_n, y_n)\)</span>, where <span class="math inline">\(z_i \in
 \mathbb{R}^p\)</span> and <span class="math inline">\(y_i \in
-\mathbb{R}\)</span>. Consider the following model for <span class="math inline">\(y\)</span> given <span class="math inline">\(x\)</span>: <span class="math display">\[
+\mathbb{R}\)</span>. Consider the following GLM model for <span class="math inline">\(y\)</span> given <span class="math inline">\(x\)</span>: <span class="math display">\[
 \begin{cases} Y_i \sim \textrm{Pois}(\mu_i) \\ \log(\mu_i) = x_i^T
 \beta, \end{cases}\]</span> where <span class="math inline">\(\beta =
 [\beta_1, \dots, \beta_p] \in \mathbb{R}^p\)</span> is an unknown
-parameter. Suppose we obtain an estimate <span class="math inline">\(\hat{\beta}\)</span> for <span class="math inline">\(\beta\)</span> by fitting a Poisson GLM to the
-data. Let <span class="math display">\[\exp(o_i) =
-\exp\left(x_i^T\hat{\beta}\right)\]</span> denote the <span class="math inline">\(i\)</span>th fitted value of the model. Let <span class="math inline">\(x = [x_1, \dots, x_n]^T\)</span> be a
-<em>binary</em> vector that we seek to test for inclusion in the model
-via a score test. The standard (or “full”) score can be computed using
-the <code>statmod</code> package in R.</p>
-<p>We consider a distilled version of the score test to accelerate
-computation (although the “full” score test already is reasonably fast).
-Consider the following model for <span class="math inline">\(Y_i\)</span>:</p>
-<p><span class="math display">\[Y_i \sim \textrm{Pois}(\exp\left\{\gamma
-x_i + o_i \right\}),\]</span> where, under the null hypothesis, <span class="math inline">\(\gamma = 0\)</span>. Because the observations for
-which <span class="math inline">\(x_i = 0\)</span> do not contribute to
-the log-likelihood (except as constants), we instead can consider the
-following mean-plus-offset model for <span class="math inline">\(Y_i\)</span>:</p>
-<p><span class="math display">\[Y_i \sim \textrm{Pois}(\exp\left\{\delta
-+ o_i \right\}) = \textrm{Pois}(\exp(\delta) \exp(o_i)),\]</span> where
-we restrict attention to those observations for which <span class="math inline">\(x_i = 1\)</span>. The density <span class="math inline">\(f\)</span> of <span class="math inline">\(Y_i\)</span> is <span class="math display">\[f(y_i; \delta) =  \frac{\left[ e^{\delta +
-o_i}  \right]^{(y_i)} e ^{ - \left[ e^{\delta + o_i}  \right] }}{ y_i! }
-= \frac{ e^{y_i\delta} e^{y_i o_i}   }{ e^{\left[ e^{\delta + o_i}
-\right]} y_i! }.\]</span></p>
+parameter. Suppose we obtain an estimate <span class="math inline">\(\hat{\beta}\)</span> for <span class="math inline">\(\beta\)</span> by regressing <span class="math inline">\(Y = [y_1, \dots, y_n]\)</span> onto <span class="math inline">\(Z = [z_1, \dots, z_n]\)</span>. Let <span class="math display">\[\hat{\mu} =
+\exp\left(x_i^T\hat{\beta}\right)\]</span> denote the <span class="math inline">\(i\)</span>th fitted value of the model. Also, let
+<span class="math display">\[\mu_i = \exp\left(x_i^T \beta
+\right)\]</span> denote the <span class="math inline">\(i\)</span>th
+<em>true</em> conditional mean of <span class="math inline">\(y_i\)</span> given <span class="math inline">\(z_i\)</span>. Finally, let <span class="math inline">\(x = [x_1, \dots, x_n]\)</span> be a vector that we
+seek to test for inclusion in the model. More precisely, we seek to test
+the conditional independence hypothesis <span class="math inline">\(H_0:
+x_i \perp y_i | z_i.\)</span> We consider three strategies for testing
+this hypothesis. We compare and contrast these strategies.</p>
+<div id="strategy-1-full-score-test" class="section level3">
+<h3><strong>Strategy 1: Full score test</strong></h3>
+<p>Arguably the most straightforward option to test the hypothesis is to
+run a GLM score test. The GLM score statistic is as follows:</p>
+<p><span class="math display">\[
+z_\textrm{score} = \frac{X^T \hat{W} \hat{M} (Y - \hat{\mu})}{\sqrt{X^T
+\hat{W} X - X^T\hat{W}Z (Z^T \hat{W} Z)^{-1} Z^T\hat{W}X}}.
+\]</span></p>
+<p>Here, <span class="math inline">\(Y\)</span> is the vector of
+responses, <span class="math inline">\(\hat{\mu}\)</span> is the vector
+of fitted means, and <span class="math inline">\(Z\)</span> is the
+original design matrix. Furthermore, letting <span class="math inline">\(d\eta_i / d \mu_i\)</span> denote the derivative
+of <span class="math inline">\(\eta_i\)</span> with respect to <span class="math inline">\(\mu_i\)</span>, the matrix <span class="math inline">\(M\)</span> is defined by</p>
+<p><span class="math display">\[
+M = \textrm{diag} \left\{d \eta_i / d\mu_i \right\}_{i=1}^n.
+\]</span></p>
+<p>Meanwhile, <span class="math inline">\(i\)</span>th weight is given
+by</p>
+<p><span class="math display">\[
+W_i = \frac{1}{V(\mu_i) (d \eta_i / d \mu_i)^2},
+\]</span></p>
+<p>and the weight matrix is</p>
+<p><span class="math display">\[
+W = \textrm{diag} \left\{ W_i \right\}_{i=1}^n.
+\]</span></p>
+<p>For a Poisson GLM with log link, <span class="math inline">\(V(\mu_i)
+= \mu_i.\)</span> Additionally, <span class="math inline">\(d\eta_i/d\mu_i = 1/\mu_i.\)</span> Thus, <span class="math inline">\(W_i = \mu_i\)</span> and <span class="math inline">\(M_i = 1/\mu_i\)</span>. It follows that the
+numerator of the full score statistic is<span class="math display">\[
+X^T(Y - \hat{\mu}) = \sum_{i=1}^n x_i (y_i - \hat{\mu}_i).
+\]</span></p>
+<p>Of course, when <span class="math inline">\(X\)</span> is binary, the
+above reduces to a sum over the raw residuals for which <span class="math inline">\(x_i = 1\)</span> i.e.</p>
+<p><span class="math display">\[\sum_{x_i = 1} y_i -
+\hat{\mu}_i.\]</span> Furthermore, the <span class="math inline">\(X^T
+\hat{W} X\)</span> term in the denominator is<span class="math display">\[
+X^T \hat{W} X = \sum_{i=1}^n x_i^2 \hat{\mu}_i.
+\]</span></p>
+<p>Again, when <span class="math inline">\(X\)</span> is binary, this
+term reduces to a sum over the fitted means for which <span class="math inline">\(x_i = 1\)</span>, i.e. <span class="math display">\[\sum_{x_i = 1} \hat{\mu}_i.\]</span> The final
+<span class="math inline">\(X^T\hat{W}Z (Z^T \hat{W} Z)^{-1}
+Z^T\hat{W}X\)</span> term is harder to simplify, but I consider how to
+compute this term efficiently in the next section.</p>
+</div>
+<div id="calculating-the-full-score-test-on-permuted-data" class="section level3">
+<h3><strong>Calculating the full score test on permuted
+data</strong></h3>
+<p>To implement the score test within the context of a permutation test,
+we must compute the statistic <span class="math inline">\(z_\textrm{score}\)</span> repeatedly for different
+<span class="math inline">\(X\)</span>s. This is not totally trivial:
+the matrix <span class="math inline">\(\hat{W}Z(Z^T \hat{W} Z)^{-1}
+\hat{W}\)</span> is a dense <span class="math inline">\(n \times
+n\)</span> matrix and thus takes up a lot of memory and is hard to
+compute. The standard strategy to compute <span class="math inline">\(z_\textrm{score}\)</span> is to rewrite <span class="math inline">\(z_\textrm{score}\)</span> in terms of a weighted
+least squares regression and carry out this regression via a QR
+decomposition. This is the approach used by <code>statmod</code>. As far
+as I can tell, this approach does not really leverage structure in <span class="math inline">\(X\)</span> (e.g., that <span class="math inline">\(X\)</span> can be sparse and binary).</p>
+<p>Here, I describe a simple, alternate approach to calculating <span class="math inline">\(z_\textrm{score}\)</span> that I think will be
+fast when <span class="math inline">\(X\)</span> is binary and sparse.
+First, note that the matrix <span class="math inline">\(Z^T \hat{W}
+Z\)</span> is a symmetric, <span class="math inline">\(p \times
+p\)</span> matrix. Thus, <span class="math inline">\(Z^T \hat{W}
+Z\)</span> can be spectrally decomposed as <span class="math inline">\(U^T \Lambda U = Z^T \hat{W} Z,\)</span> where
+<span class="math inline">\(U\)</span> is an orthonormal matrix and
+<span class="math inline">\(\Lambda\)</span> is a diagonal matrix of
+eigenvalues. The inverse of <span class="math inline">\(Z^T \hat{W}
+Z\)</span> is <span class="math inline">\((Z^T \hat{W} Z)^{-1} = U^T
+\Lambda^{-1} U = U^T \Lambda^{-1/2} \Lambda^{-1/2} U\)</span>. Thus,</p>
+<p><span class="math display">\[ X^T\hat{W}Z (Z^T \hat{W} Z)^{-1}
+Z^T\hat{W}X = X^T \hat{W}Z U^T \Lambda^{-1/2} \Lambda^{-1/2} UZ^T
+\hat{W} X.\]</span> Writing <span class="math inline">\(L =
+\Lambda^{-1/2}UZ^T\hat{W}X \in \mathbb{R}^p,\)</span> we see that</p>
+<p><span class="math display">\[ X^T \hat{W}Z U^T \Lambda^{-1/2}
+\Lambda^{-1/2} UZ^T \hat{W} X = L^TL = ||L||_2^2.\]</span></p>
+<p>Thus, to compute the above, it is sufficient to compute <span class="math inline">\(L\)</span>, to square the terms of <span class="math inline">\(L\)</span>, and then to sum these squared terms.
+Define the matrix <span class="math inline">\(B\)</span> by <span class="math inline">\(B = \Lambda^{-1/2}UZ^T\hat{W} \in \mathbb{R}^{p
+\times n}.\)</span> We need only compute <span class="math inline">\(B\)</span> once and then to share <span class="math inline">\(B\)</span> across all the <span class="math inline">\(X\)</span>s. Moreover, computing <span class="math inline">\(||L||^2\)</span> is very simple when <span class="math inline">\(X\)</span> is binary. Let <span class="math inline">\(I\)</span> be the vector of indexes for which
+<span class="math inline">\(X\)</span> is 1. We can use the following
+algorithm to compute <span class="math inline">\(||L||^2.\)</span></p>
+<pre><code>outer_sum = 0
+for (i in 1..p) {
+  inner_sum = 0
+  for (j in 1..length(I)) {
+    inner_sum += B[i, I[j]]
+  }
+  outer_sum += inner_sum^2
+}</code></pre>
+<p>This algorithm is easy to implement in C++. Meanwhile, computing the
+other pieces of the score statistic (i.e., <span class="math inline">\(X^T \hat{W} X\)</span> and <span class="math inline">\(X^T \hat{W} \hat{M}(Y - \hat{\mu})\)</span>) is
+simple.</p>
+</div>
+<div id="strategy-2-distilled-score-test" class="section level3">
+<h3><strong>Strategy 2: Distilled score test</strong></h3>
+<p>Next, I consider a distilled version of the score test. Let <span class="math inline">\(\mu_i\)</span> be the fitted value of the
+regression. We consider the following model for <span class="math inline">\(Y\)</span>:</p>
+<p><span class="math display">\[
+Y_i \sim \textrm{Pois}(\exp\left\{\beta x_i + \log(\hat{\mu}_i)
+\right\})\]</span>.</p>
+<p>Assuming that <span class="math inline">\(x_i\)</span> is binary, we
+can express this model as</p>
+<p><span class="math display">\[
+Y_i \sim \textrm{Pois}(\exp\left\{\beta +
+\log(\hat{\mu}_i)\right\}\]</span></p>
+<p>for <span class="math inline">\(i\)</span> such that <span class="math inline">\(x_i=1\)</span>. For simplicity index the points
+such that <span class="math inline">\(x_i = 1\)</span> by <span class="math inline">\(i = 1, \dots, k\)</span>. The density <span class="math inline">\(f\)</span> of <span class="math inline">\(Y_i\)</span> is <span class="math display">\[f(y_i; \beta) =  \frac{\left[ e^{\beta +
+\log(\hat{\mu}_i) }  \right]^{(y_i)} e ^{ - \left[ e^{\beta +
+\log(\hat{\mu_i})} \right]}}{ y_i! } = \frac{ e^{y_i\beta} e^{y_i
+\log(\hat{\mu}_i)}}{ e^{\left[e^{\beta + \log(\hat{\mu}_i)} \right]}
+y_i!}.\]</span></p>
 <p>The likelihood is thus</p>
 <p><span class="math display">\[
-L(\delta; y = \frac{ \left( e^{ \delta \sum_{x_i=1} y_i} \right)
-\left(e^{\sum_{x_i=1} y_io_i} \right)}{e^{\sum_{x_i=1} e^{\delta + o_i}}
-\prod_{x_i=1} \left( y_i! \right)},
+L(\beta; y) = \frac{ \left( e^{ \beta \sum_{i=1}^k y_i} \right)
+\left(e^{\sum_{i=1}^k y_i \log(\hat{\mu}_i)} \right)}{e^{\sum_{i=1}^k
+e^{\beta + \log(\hat{\mu}_i)}} \prod_{i=1}^k \left( y_i! \right)}.
 \]</span> The log-likelihood (up to a constant) is then</p>
-<p><span class="math display">\[ \mathcal{L}(\delta; y) = \delta
-\sum_{x_i=1} y_i -\sum_{x_i=1} e^{\delta + o_i} = \delta \sum_{x_i =
-1}^n y_i - e^{\delta} \sum_{x_i=1} e^{o_i}.\]</span></p>
+<p><span class="math display">\[ \mathcal{L}(\beta; y) = \beta
+\sum_{x=1}^k y_i - \sum_{i=1}^k e^{\beta + \log(\hat{\mu}_i) } = \beta
+\sum_{i = 1}^k y_i - e^{\beta} \sum_{i=1}^k
+\log(\hat{\mu}_i).\]</span></p>
 <p>The gradient of <span class="math inline">\(L\)</span> (i.e., the
 score) is</p>
-<p><span class="math display">\[U(\delta) = \sum_{x_i = 1} y_i -
-e^{\delta} \sum_{x_i=1} e^{o_i}.\]</span></p>
+<p><span class="math display">\[U(\beta) = \sum_{i = 1}^k y_i -
+e^{\beta} \sum_{i=1}^k \hat{\mu}_i.\]</span></p>
 <p>Next, the expected negative second derivative of <span class="math inline">\(L\)</span> (i.e., the Fisher information) is</p>
-<p><span class="math display">\[I(\delta) = e^\delta \sum_{x_i=1}
-e^{o_i}.\]</span></p>
-<p>Thus, the score-based z-score for the null hypothesis is</p>
-<p><span class="math display">\[z_{\textrm{score}} = U(0)/\sqrt{I(0)} =
-\frac{ \sum_{x_i=0} y_i - \sum_{x_i=1} e^{o_i}}{\sqrt{\sum_{x_i = 0}
-e^{o_i}}} = \frac{\sum_{x_i=0} y_i - \sum_{x_i = 0} \hat{\mu}_i}{ \sqrt{
-\sum_{x_i = o} \hat{\mu}_i}}\]</span></p>
+<p><span class="math display">\[I(\beta) = e^\beta \sum_{i=1}^k
+\log(\hat{\mu}_i).\]</span></p>
+<p>Thus, the distilled score statistic is</p>
+<p><span class="math display">\[z_{\textrm{dist}} = U(0)/\sqrt{I(0)} =
+\frac{\sum_{i=1}^k y_i - \hat{\mu}_i}{\sqrt{\sum_{i = 1}^k
+\hat{\mu}_i}}.\]</span></p>
+<p>The distilled score statistic is <em>not</em> the same as the “full”
+score statistic. The difference is that the <span class="math inline">\(X^T\hat{W}Z (Z^T \hat{W} Z)^{-1}
+Z^T\hat{W}X\)</span> term of <span class="math inline">\(z_\textrm{score}\)</span> is missing from the
+denominator of <span class="math inline">\(z_{\textrm{dist}}\)</span>.</p>
+</div>
+<div id="strategy-3-normalized-sum-over-pearson-residuals" class="section level3">
+<h3><strong>Strategy 3: Normalized sum over Pearson
+residuals</strong></h3>
+<p>A third statistic to consider is the normalized sum over the Pearson
+residuals. The <span class="math inline">\(i\)</span>th Pearson residual
+<span class="math inline">\(r_i\)</span> of the Poisson model is</p>
+<p><span class="math display">\[
+r_i = \frac{y_i - \hat{\mu}_i}{ \sqrt{\hat{\mu}_i}}.
+\]</span></p>
+<p>Consider the normalized sum of the Pearson residuals over the
+observations for which <span class="math inline">\(x_i = 1\)</span>.
+Again, for convenience, index these observations by <span class="math inline">\(1, \dots, k\)</span>. We define</p>
+<p><span class="math display">\[
+S_\textrm{Pearson} := \frac{1}{\sqrt{k}} \sum_{i=1}^k r_i =
+\frac{1}{\sqrt{k}} \sum_{i=1}^k \frac{ y_i - \hat{\mu}_i }{ \hat{\mu}_i
+}.
+\]</span></p>
+<p>The sum over the Pearson residuals <span class="math inline">\(S_\textrm{Pearson}\)</span> does not equal the
+distilled score statistic <span class="math inline">\(z_\textrm{dist}\)</span>. The difference is that
+<span class="math inline">\(S_\textrm{Pearson}\)</span> normalizes the
+residuals and then sums them, while <span class="math inline">\(z_\textrm{dist}\)</span> sums the residuals and
+then normalizes them.</p>
+</div>
+<div id="part-1-conclusion" class="section level3">
+<h3><strong>Part 1 conclusion</strong></h3>
+<p>The “full” score statistic, the distilled score statistic, and the
+sum over Pearson residuals are <em>not</em> the same. The distilled
+score statistic and sum over Pearson residuals require estimating the
+first two moments each. The full score statistic, by contrast, leverages
+the entire likelihood (as the test statistic is a sum over the scores
+normalized by the Fisher information). We likely can compute the full
+score statistic in a computationally efficient way via spectral
+decomposition and rewriting the statistic.</p>
+</div>
+</div>
+<div id="part-2-simulations" class="section level1">
+<h1>Part 2: Simulations</h1>
+<p>Next, I run some simulations to compare the above statistics — <span class="math inline">\(S_\textrm{Pearson}\)</span>, <span class="math inline">\(z_\textrm{dist}\)</span>, and <span class="math inline">\(z_\textrm{score}\)</span> — on simulated data.</p>
+<div id="simulation-1-uncorrelated-covariataes" class="section level3">
+<h3><strong>Simulation 1: Uncorrelated covariataes</strong></h3>
+</div>
+</div>
 
 
 
