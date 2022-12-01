@@ -146,3 +146,50 @@ abline(a = 0, b = 1, col = "red")
 # The distilled z-score seems to differ from the full z-score by a constant factor.
 # Meanwhile, the distilled 
 # At any rate, these three quantities are NOT the same. (And we of course have used the canonical link here.)
+
+
+###########################################
+# Pt 4: alternate score test implementation
+###########################################
+
+n <- 5000
+beta_v <- c(1, 2, 1)
+Z <- matrix(data = c(rep(1, n),
+                       x1 = rbinom(n, 1, 0.4),
+                       x2 = rnorm(n)),
+              ncol = 3)
+lin_pred <- as.numeric(Z %*% beta_v)
+mus <- exp(lin_pred)
+X <- as.matrix(rbinom(n = n, size = 1, prob = 0.5), ncol = 1)
+print(i)
+y <- sapply(mus, function(curr_mu) rpois(n = 1, lambda = curr_mu))
+fit <- glm(y ~ Z[,-1], family = poisson)
+
+# first, get P = Z^T W Z
+W <- fit$weights
+ZTW <- sapply(X = seq(1, length(W)), FUN = function(i) {
+  W[i] * Z[i,]
+})
+P <- ZTW %*% Z
+
+# next, spectral decomposition of P
+P_decomp <- eigen(P)
+u <- P_decomp$vectors
+Lambda <- diag(P_decomp$values)
+Lambda_minus_half <- diag(1/sqrt(P_decomp$values))
+# u %*% Lambda %*% t(u) -> check that this equals P
+# compute B
+B <- Lambda_minus_half %*% t(u) %*% ZTW
+# compute L
+L <- as.numeric(B %*% X)
+# get product
+denom_2 <- sum(L^2)
+# next, focus on the numerator
+M_y_muhat <- fit$residuals
+numerator <- sum(X * W * M_y_muhat)
+# finally, get the first part of the denominator
+denom_1 <- sum(X * W * X)
+# combine all
+numerator/(sqrt(denom_1 - denom_2))
+# compare to original score test
+statmod::glm.scoretest(fit, X)

@@ -332,6 +332,30 @@ lines(x = x_grid, y = y, col = "red")
 
 In summary the problem with the distilled score statistic is that the variance of the sum of the raw residuals $\sum_{x_i=1} y_i - \hat{\mu}_i$ is not $\sqrt{\sum_{x_i = 1} \hat{\mu}_i}$ but rather $\sqrt{\sum_{x_i = 1} \hat{\mu}_i - X^T\hat{W}Z (Z^T \hat{W} Z)^{-1} Z^T\hat{W}X}$. Similar reasoning holds for the sum of the Pearson residuals statistic.
 
+# Connections between the statistics
+
+I explore the connections between the three statistics considered above. First, recall that we can write
+
+$$
+X^T \hat{W} Z (Z^T \hat{W} Z)^{-1} Z^T \hat{W} X = ||L||^2_2
+$$
+
+where $L =\Lambda^{-1/2}UZ^T\hat{W}X$. It follows that $X^T \hat{W} Z (Z^T \hat{W} )^{-1} Z^T \hat{W} X \geq 0.$ Moreover, because $\hat{W}$ is a diagonal matrix with non-negative entries, it likewise follows that $X^T \hat{W} X \geq 0$. Thus,
+
+$$
+\sqrt{X^T \hat{W} X - X^T \hat{W} Z(Z^T \hat{W} Z)^{-1} Z^T \hat{W} X} \leq \sqrt{X^T \hat{W} X}.
+$$
+
+We conclude that
+
+$$
+|z_\textrm{score}| = \frac{|X^T \hat{W} \hat{M} (Y - \hat{\mu})|}{\sqrt{X^T \hat{W} X - X^T \hat{W} Z(Z^T \hat{W} Z)^{-1} Z^T \hat{W} X}} \geq \frac{|X^T \hat{W} \hat{M} (Y - \hat{\mu})|}{\sqrt{X^T \hat{W} X}} = |z_\textrm{dist}|.
+$$
+
+That is, the score statistic is almost surely larger than the distilled score statistic. Moreover, when $X$ is independent of $Y$ and $Z$, $L$ is small. By contrast, when $X$ is dependent on $Y$ and $Z$, $L$ is large. This suggests that, when there is correlation between $X$ and $Z$, $z_\textrm{dist}$ has relatively small variance; on the other hand, when $X$ and $Z$ are uncorrelated, $z_\textrm{dist}$ has relatively large variance. Hence, the p-value that one obtains via CAMP when using $z_\textrm{dist}$ might be deflated relative to the p-value that one would obtain using $z_\textrm{score}$. Thus, there is a potential for a boost in power by switching from $z_\textrm{dist}$/$S_\textrm{Pearson}$ to $z_\textrm{score}$. (Note that we might want to normalize the data by dividing by $\sqrt{n}$ to make this proof rigorous.)
+
+Next, $S_\textrm{Pearson}$ is equal in distribution (asymptotically) to $z_\textrm{dist}$ (but this still needs to be proven). The picture that is emerging therefore is as follows: $S_\textrm{Pearson}$ is asymptotically equivalent to $z_\textrm{dist}$, which in turn is a conservative approximation to $z_\textrm{score}$. An interesting question is whether a parallel result holds for deviance residuals and the likelihood ratio z-score. A possible advantage of $S_\textrm{Pearson}$ and $z_\textrm{dist}$ to $z_\textrm{score}$ is that $S_\textrm{Pearson}$ and $z_\textrm{dist}$ rely only on the first two moments; this implies that (i) $S_\textrm{Pearson}$ and $z_\textrm{dist}$ might be more robust and (ii) $S_\textrm{Pearson}$ and $z_\textrm{dist}$ might be more compatible with nonparametric regression methods.
+
 # Conclusion and implications
 
 Contrary to what we anticipated, the "full" score statistic, the distilled score statistic, and the sum over Pearson residuals statistic are not the same. Moreover, these statistics differ in an important way: the "full" score statistic is N(0,1) regardless of whether $X$ and $Z$ are dependent; by contrast, the distilled score statistic and sum over Pearson residuals have different distributions depending on whether $X$ and $Z$ are dependent.

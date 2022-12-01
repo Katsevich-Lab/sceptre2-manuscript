@@ -765,6 +765,49 @@ but rather <span class="math inline">\(\sqrt{\sum_{x_i = 1} \hat{\mu}_i
 reasoning holds for the sum of the Pearson residuals statistic.</p>
 </div>
 </div>
+<div id="connections-between-the-statistics" class="section level1">
+<h1>Connections between the statistics</h1>
+<p>I explore the connections between the three statistics considered
+above. First, recall that we can write</p>
+<p><span class="math display">\[
+X^T \hat{W} Z (Z^T \hat{W} Z)^{-1} Z^T \hat{W} X = ||L||^2_2
+\]</span></p>
+<p>where <span class="math inline">\(L
+=\Lambda^{-1/2}UZ^T\hat{W}X\)</span>. It follows that <span class="math inline">\(X^T \hat{W} Z (Z^T \hat{W} )^{-1} Z^T \hat{W} X
+\geq 0.\)</span> Moreover, because <span class="math inline">\(\hat{W}\)</span> is a diagonal matrix with
+non-negative entries, it likewise follows that <span class="math inline">\(X^T \hat{W} X \geq 0\)</span>. Thus,</p>
+<p><span class="math display">\[
+\sqrt{X^T \hat{W} X - X^T \hat{W} Z(Z^T \hat{W} Z)^{-1} Z^T \hat{W} X}
+\leq \sqrt{X^T \hat{W} X}.
+\]</span></p>
+<p>We conclude that</p>
+<p><span class="math display">\[
+|z_\textrm{score}| = \frac{|X^T \hat{W} \hat{M} (Y -
+\hat{\mu})|}{\sqrt{X^T \hat{W} X - X^T \hat{W} Z(Z^T \hat{W} Z)^{-1} Z^T
+\hat{W} X}} \geq \frac{|X^T \hat{W} \hat{M} (Y - \hat{\mu})|}{\sqrt{X^T
+\hat{W} X}} = |z_\textrm{dist}|.
+\]</span></p>
+<p>That is, the score statistic is almost surely larger than the
+distilled score statistic. Moreover, when <span class="math inline">\(X\)</span> is independent of <span class="math inline">\(Y\)</span> and <span class="math inline">\(Z\)</span>, <span class="math inline">\(L\)</span>
+is small. By contrast, when <span class="math inline">\(X\)</span> is
+dependent on <span class="math inline">\(Y\)</span> and <span class="math inline">\(Z\)</span>, <span class="math inline">\(L\)</span>
+is large. This suggests that, when there is correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Z\)</span>, <span class="math inline">\(z_\textrm{dist}\)</span> has relatively small
+variance; on the other hand, when <span class="math inline">\(X\)</span>
+and <span class="math inline">\(Z\)</span> are uncorrelated, <span class="math inline">\(z_\textrm{dist}\)</span> has relatively large
+variance. Hence, the p-value that one obtains via CAMP when using <span class="math inline">\(z_\textrm{dist}\)</span> might be deflated
+relative to the p-value that one would obtain using <span class="math inline">\(z_\textrm{score}\)</span>. Thus, there is a
+potential for a boost in power by switching from <span class="math inline">\(z_\textrm{dist}\)</span>/<span class="math inline">\(S_\textrm{Pearson}\)</span> to <span class="math inline">\(z_\textrm{score}\)</span>.</p>
+<p>Next, <span class="math inline">\(S_\textrm{Pearson}\)</span> is
+equal in distribution (asymptotically) to <span class="math inline">\(z_\textrm{dist}\)</span> (but this still needs to
+be proven). The picture that is emerging therefore is as follows: <span class="math inline">\(S_\textrm{Pearson}\)</span> is asymptotically
+equivalent to <span class="math inline">\(z_\textrm{dist}\)</span>,
+which in turn is a conservative approximation to <span class="math inline">\(z_\textrm{score}\)</span>. An interesting question
+is whether a parallel result holds for deviance residuals and the
+likelihood ratio z-score. A possible advantage of <span class="math inline">\(S_\textrm{Pearson}\)</span> and <span class="math inline">\(z_\textrm{dist}\)</span> to <span class="math inline">\(z_\textrm{score}\)</span> that <span class="math inline">\(S_\textrm{Pearson}\)</span> and <span class="math inline">\(z_\textrm{dist}\)</span> rely only on the first
+two moments; this implies that (i) <span class="math inline">\(S_\textrm{Pearson}\)</span> and <span class="math inline">\(z_\textrm{dist}\)</span> might be more robust and
+(ii) <span class="math inline">\(S_\textrm{Pearson}\)</span> and <span class="math inline">\(z_\textrm{dist}\)</span> might be more compatible
+with nonparametric regression methods.</p>
+</div>
 <div id="conclusion-and-implications" class="section level1">
 <h1>Conclusion and implications</h1>
 <p>Contrary to what we anticipated, the “full” score statistic, the
