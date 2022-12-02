@@ -1,0 +1,187 @@
+\documentclass[12pt]{article}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{graphicx} 
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[caption = false]{subfig}
+\usepackage{/Users/timbarry/Documents/optionFiles/mymacros}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newcommand{\infomat}{\bs{\mathcal{I}}}
+
+\begin{document}
+
+\section{Example: linear model}
+
+\textbf{Theorem 1} (Multivariate normality of linear model score statistics). Suppose we observe i.i.d.\ samples $(X_1,Y_1, Z_1), \dots, (X_n, Y_n, Z_n)$, where $X_i \in \R$, $Y_i \in \R$, and $Z_i = [Z_i^1, \dots, Z_i^{p-1}] \in \R^{p-1}$. Let $X = [X_1, \dots, X_n]^T$ and $Y = [Y_1, \dots, Y_n]^T$ denote the $X_i$s and $Y_i$s, respectively, assembled into vectors. Next, let $\bs{Z} = [(1, Z_1), \dots, (1, Z_n)] \in \R^{n \times p}$ denote the $Z_i$s assembled into a matrix (with an additional column of 1s added for the intercept term). Let $Q$ denote the marginal distribution of $X_i$ (assumed to be known). For $j \in \{1, \dots, B\}$ and $i \in \{1, \dots, n\}$, let $\tilde{X}^j_i \sim Q$ be i.i.d.\ draws from $Q$. \textcolor{blue}{(We should be able to weaken the i.i.d.\ assumption significantly.)} Denote $\tilde{X}^j = [\tilde{X}^j_1, \dots, \tilde{X}^j_n]^T.$ Assume that $\E(Z_i) = \E(X_i) = 0$ and that $\V(Z_i) = \V(X_i) = 1$ (otherwise, standardize these variables). Furthermore, suppose that $X_i$ and $Z_i$ have finite fourth moment, i.e.\ $\E(X_i^4) < \infty$ and $\E(Z_i^4) < \infty.$
+
+Next, assume that $Y$ is a linear model of $Z_i$:
+$$
+Y_i = \alpha_0 + \sum_{j=1}^{p-1} \alpha_i Z_i^j + \ep_i,
+$$
+where $\ep_1, \dots, \ep_n \sim N(0,1)$ and $\alpha = [\alpha_0, \alpha_1, \dots, \alpha_{p-1}] \in \R^{p}$ is a vector of unknown constants. Let $\hat{\alpha}$ be the MLE for $\alpha$ obtained from regressing $Y$ onto $\bs{Z}$. Let $\hat{r} = Y - Z\hat{\alpha}$ denote the vector of residuals. Let $T_0, T_1, \dots, T_B$ be the score statistics obtained from testing $X, \tilde{X}^1, \dots, \tilde{X}^B$ for inclusion in the model, i.e.
+
+$$ \begin{bmatrix} T_0 \\ T_1 \\ T_2 \\ \vdots \\ T_B \end{bmatrix} = \begin{bmatrix} (1/\sqrt{n}) X^T  \hat{r} / \sqrt{1 - (1/n)||\bs{Z}^T X||^2_P} \\ (1/\sqrt{n}) (\tilde{X}^1)^T \hat{r} \\ (1/\sqrt{n}) (\tilde{X}^2)^T \hat{r} \\ \vdots \\ (1/\sqrt{n}) (\tilde{X}^B)^T \hat{r} \end{bmatrix},$$
+where $||\bs{Z}^T X||_P^2 = X^T\bs{Z} (\bs{Z}^T \bs{Z})^{-1} \bs{Z}^TX.$ Then under the null hypothesis of $Y_i \indep X_i | Z_i$, the vector $T$ converges in distribution to the $B+1$-dimensional standard Gaussian, i.e. $$ T \xrightarrow{d} N_{B+1}(0, \bs{I}).$$
+\\ \\ \noindent
+\textbf{Remark}. The score statistic that corresponds to the observed treatment vector $T_0$ is normalized by a factor of $(1 - (1/n) || \bs{Z}^T X||^2_P)^{1/2}$, while the other score statistics are not. The $\tilde{X}^i$s are independent of $\bs{Z}$. Thus, $$ (1/n) ||\bs{Z}^T \tilde{X}^i||^2_P \xrightarrow{P} 0$$ for all $i \in \{1, \dots, B\}$. It follows that the normalized statistic
+$$\begin{bmatrix} T'_0 \\ T'_1 \\ \vdots \\ T'_B \end{bmatrix} = \begin{bmatrix} (1/\sqrt{n}) X^T  \hat{r} / \sqrt{1 - (1/n)||\bs{Z}^T X||^2_P} \\ (1/\sqrt{n}) (\tilde{X}^1)^T  \hat{r} / \sqrt{1 - (1/n)||\bs{Z}^T \tilde{X}^1||^2_P} \\ \vdots \\ (1/\sqrt{n}) (\tilde{X}^B)^T  \hat{r} / \sqrt{1 - (1/n)||\bs{Z}^T \tilde{X}^B||^2_P} \end{bmatrix}$$ is asymptotically equivalent to the unnormalized statistic proposed above. However, the normalized statistic requires many more matrix multiplications and is therefore less efficient to compute than the unnormalized statistic.
+
+The major assumption in the theorem is that the linear model holds; the other assumptions (e.g., the moment assumptions) are minor technical conditions that we would expect to hold in practice.
+\\ \\ \noindent
+\textbf{Proof}. 
+We proceed in three steps.
+\subsubsection*{Step 1: Deriving an expression for the score and information matrix.} Consider the following expanded model for $Y_i$:
+$$Y_i = \alpha_0 + \sum_{j=1}^{p-1} \alpha_i Z^j_i + \beta (X_i/\sqrt{n}) + \sum_{j=1}^B \gamma_j (\tilde{X}_i^j/\sqrt{n}),$$ where $\beta \in \R$ and $\gamma = [\gamma_1, \dots, \gamma_B] \in \R^B$ are constants. We have added the observed treatment $X$ and synthetic treatments $\tilde{X}^{1}, \dots, \tilde{X}^B$ to the model. We also have divided the $X_i$s and $\tilde{X}^j_i$s by $\sqrt{n}$ for normalization purposes. If the conditional independence hypothesis holds, then $\beta = \gamma = 0$. Let $\theta = [\alpha, \beta, \gamma]^T$ be the full vector of model parameters. Define the matrix $$\tilde{\bs{X}}_{\sqrt{n}} = \begin{bmatrix} (1/\sqrt{n})\tilde{X}^1, \dots, (1/\sqrt{n})\tilde{X}^B \end{bmatrix} .$$ Similarly, denote the vector $(1/\sqrt{n}) X$ by $X_{\sqrt{n}}.$ 
+
+Let $\bs{D}$ be the ``augmented'' design matrix formed by concatenating $\bs{Z}$, $X_{\sqrt{n}}$, and $\tilde{\bs{X}}_{\sqrt{n}}$
+$$ \bs{D} = \begin{bmatrix} \bs{Z} & X_{\sqrt{n}} & \tilde{\bs{X}}_{\sqrt{n}} \end{bmatrix}.$$
+
+Let $\mathcal{L}(\theta)$ denote the model log likelihood evaluated at $\theta$. The score $\nabla \mathcal{L}(\theta) = u(\theta)$ and Fisher information $-\E[\nabla^2 \mathcal{L}(\theta)] = \infomat(\theta) = \infomat$ of the model are as follows:
+$$
+\begin{cases}
+u(\theta) = -\bs{D}^T(Y - \bs{D}\theta) \\
+\infomat = \bs{D}^T \bs{D}.
+\end{cases} 
+$$
+
+We partition the score into subvectors:
+\begin{multline*}
+u(\theta) = \begin{bmatrix}
+\nabla_\alpha \mathcal{L}(\theta) \\
+\frac{\partial \mathcal{L}(\theta)}{\partial \beta} \\
+\nabla_\gamma \mathcal{L}(\theta) 
+\end{bmatrix} \\ = \begin{bmatrix} \bs{Z}^T \\ X_{\sqrt{n}}^T \\ \tilde{\bs{X}}_{\sqrt{n}}^T \end{bmatrix} \left(Y - [\bs{Z} \alpha + X_{\sqrt{n}} \beta + \tilde{\bs{X}}_{\sqrt{n}} \gamma] \right) \\ = 
+\begin{bmatrix} \bs{Z}^T [Y - (\bs{Z}\alpha + X_{\sqrt{n}}\beta + \tilde{\bs{X}}_{\sqrt{n}}\gamma)] \\
+(X_{\sqrt{n}})^T[Y - \bs{Z}\alpha + X_{\sqrt{n}}\beta + \tilde{\bs{X}}_{\sqrt{n}}\gamma)] \\
+(\tilde{\bs{X}}_{\sqrt{n}})^T[Y - \bs{Z}\alpha + X_{\sqrt{n}}\beta + \tilde{\bs{X}}_{\sqrt{n}}\gamma)] \end{bmatrix}.
+\end{multline*}
+
+We similarly partition the information matrix into submatrices:
+\begin{multline*}
+\infomat = [\bs{Z} \quad X_{\sqrt{n}} \quad \tilde{\bs{X}}_{\sqrt{n}}]^T [\bs{Z} \quad X_{\sqrt{n}} \quad \tilde{\bs{X}}_{\sqrt{n}}] \\ = \begin{bmatrix} \bs{Z}^T\bs{Z} &\bs{Z}^T X_{\sqrt{n}} & \bs{Z}^T\tilde{\bs{X}}_{\sqrt{n}} \\ 
+X_{\sqrt{n}}^T \bs{Z} & X_{\sqrt{n}}^T X_{\sqrt{n}} & X_{\sqrt{n}}^T \tilde{\bs{X}}_{\sqrt{n}} \\
+\tilde{\bs{X}}^T_{\sqrt{n}} \bs{Z} & \tilde{\bs{X}}^T_{\sqrt{n}}X_{\sqrt{n}} & \tilde{\bs{X}}^T_{\sqrt{n}} \tilde{\bs{X}}_{\sqrt{n}} \end{bmatrix}.
+\end{multline*}
+Define 
+\begin{multline*}
+\infomat_{11} = \bs{Z}^T \bs{Z}, \quad \infomat_{21} = \begin{bmatrix}  X_{\sqrt{n}}^T \bs{Z}_{\sqrt{n}} \\ \tilde{\bs{X}}^T_{\sqrt{n}} \bs{Z}_{\sqrt{n}} \end{bmatrix}, \quad \infomat_{12} = \infomat_{21}^T \\ \infomat_{22} = \begin{bmatrix}  X_{\sqrt{n}}^T X_{\sqrt{n}} &  X_{\sqrt{n}}^T \tilde{\bs{X}}_{\sqrt{n}} \\  \tilde{\bs{X}}^T_{\sqrt{n}} X_{\sqrt{n}} & \tilde{\bs{X}}^T_{\sqrt{n}} \tilde{\bs{X}}_{\sqrt{n}} \end{bmatrix}.
+\end{multline*}
+Let $\infomat_X = \infomat_{22} - \infomat_{21}\infomat^{-1}_{11} \infomat_{12}$. Also, let $\hat{\alpha}$ denote the MLE for $\alpha$ (obtained by an OLS regression of $Y$ onto $\bs{Z}$). Let $u_X(\theta)$ denote the pieces of the score corresponding to $\beta$ and $\gamma$, i.e.\ $$u_X(\theta) = \begin{bmatrix}
+\frac{\partial \mathcal{L}(\theta)}{\partial \beta} \\
+\nabla_\gamma \mathcal{L}(\theta) 
+\end{bmatrix}.$$ Our goal is to find the distribution of $u_X(\hat{\alpha}, 0, 0),$ i.e.\ the distribution of the score subvector under the null hypothesis after estimating the nuisance parameters. First, we see that
+$$ u_X(\hat{\alpha}, 0, 0) = \begin{bmatrix} X_{\sqrt{n}}^T [Y - \bs{Z}\hat{\alpha}] \\ \tilde{\bs{X}}_{\sqrt{n}}^T [ Y - \bs{Z}\hat{\alpha}] \end{bmatrix} = \begin{bmatrix} (X^T_{\sqrt{n}}) \hat{r} \\ (\tilde{\bs{X}}^T_{\sqrt{n}})\hat{r} \end{bmatrix}.$$
+Next, standard asymptotic results indicate that
+$$\infomat_X^{-1/2} u_X(\hat{\alpha}, 0, 0) \xrightarrow{d} N_{B+1}(0, \bs{I}).$$
+
+\subsubsection*{Step 2: Simplifying the expression for $\infomat_X$}
+
+Next, we simplify the expression for $\infomat_X = \infomat_{22} - \infomat_{21} \infomat_{11}^{-1} \infomat_{12}$. We begin by studying the matrix $\infomat_{11}^{-1}.$ We have that
+$$(1/n) \infomat_{11} = (1/n) \bs{Z}^T \bs{Z} \xrightarrow{P} \bs{\Sigma},$$ where $\bs{\Sigma} \in \R^{p \times p}$ is the correlation matrix of $Z$. By the continuous mapping theorem,
+$$n \left[\infomat^{-1}_{11}\right] =  n[\bs{Z}^T \bs{Z}]^{-1} \xrightarrow{P} \bs{\Sigma}^{-1},$$ where $\bs{P} := \bs{\Sigma}^{-1}$ is the precision matrix of $Z$. (This matrix exists if $\bs{\Sigma}$ is positive definite, which we assume to be the case.) Let $\hat{\bs{P}} = n(\bs{Z}^T \bs{Z})^{-1} $ denote the empirical precision matrix of $Z$. We then can write $\infomat_X$ as
+$$ \infomat_X = 
+\begin{bmatrix}
+X_{\sqrt{n}}^T X_{\sqrt{n}} & X_{\sqrt{n}}^T \tilde{\bs{X}}_{\sqrt{n}} \\ \tilde{\bs{X}}_{\sqrt{n}}^T X_{\sqrt{n}} & \tilde{\bs{X}}_{\sqrt{n}}^T \tilde{\bs{X}}_{\sqrt{n}} 
+\end{bmatrix} -
+\begin{bmatrix} (1/n) X_{\sqrt{n}}^T \bs{A} X_{\sqrt{n}} & (1/n) X_{\sqrt{n}}^T \bs{A} \tilde{\bs{X}}_{\sqrt{n}} \\ (1/n)\tilde{\bs{X}}_{\sqrt{n}}^T \bs{A}X_{\sqrt{n}} & (1/n)\tilde{\bs{X}}_{\sqrt{n}}^T\bs{A} \tilde{\bs{X}}_{{n}} \end{bmatrix},
+$$
+where $\bs{A} = \bs{Z}\hat{\bs{P}}\bs{Z}^T.$ We can compute the $n\times n$ matrix $\bs{A}$ elementwise:
+\begin{multline*}
+ \bs{Z}\hat{\bs{P}} \bs{Z}^T = \begin{bmatrix} z_1^T \hat{\bs{P}} Z_1 & Z_1 \hat{\bs{P}} Z_2 & Z_1^T \hat{\bs{P}} 
+ Z_3 & \dots & Z_1^T \hat{\bs{P}} Z_n \\ Z_2^T \hat{\bs{P}} Z_1 & Z_2 \hat{\bs{P}} Z_2 & Z_2^T \hat{\bs{P}} Z_3 & \dots & Z_2 \hat{\bs{P}} Z_n  \\ \vdots & \vdots & \vdots & \dots & \vdots \\ Z_n^T \hat{\bs{P}} Z_1 & Z_n^T \hat{\bs{P}} Z_2 & Z^T_n \hat{\bs{P}} Z_3 & \vdots & Z_n^T \hat{\bs{P}} Z_n \end{bmatrix} \\ =  \begin{bmatrix} \sum_{k = 1}^p \sum_{l=1}^p \hat{P}_{kl} z_1^k z_1^l & \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} z_1^k z_2^l & \dots & \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} z_1^k z_n^l \\ \sum_{k = 1}^p \sum_{l=1}^p \hat{P}_{kl} z_2^k z_1^l & \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} z_2^k z_2^l & \dots & \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} z_2^k z_n^l \\ \vdots & \vdots & \dots & \vdots \\ \sum_{k = 1}^p \sum_{l=1}^p \hat{P}_{kl} z_n^k z_1^l & \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} z_n^k z_2^l & \dots & \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} z_n^k z_n^l  \end{bmatrix}.
+\end{multline*}
+
+Note that $\bs{A}$ is symmetric. We frequently will consider bilinear forms and quadratic forms of $\bs{A}$. Specifically, for vectors $L = [L_1, \dots, L_n]^T \in \R^n$ and $M = [M_1, \dots, M_n]^T \in \R^n,$ the bilinear form $(1/n) (L/\sqrt{n})^T \bs{A} (M/\sqrt{n})$ is given by
+\begin{multline}\label{eqn:bilinear_form_decomp}
+\frac{1}{n} (L/\sqrt{n})^T \bs{A} (M/\sqrt{n}) = \frac{1}{n^2} \sum_{i=1}^n \sum_{j=1}^n A_{ij} L_i M_j \\ = \frac{1}{n^2} \sum_{i=1}^n \sum_{j=1}^n \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} z^k_i z^l_j L_i M_j \\ = \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} \left(\frac{1}{n} \sum_{i=1}^n z_i^k L_i \right) \left( \frac{1}{n} \sum_{i=1}^n z_i^l M_i \right).
+\end{multline}
+We see that the bilinear form of $\bs{A}$ decomposes into a sum of $p^2$ terms. Each term is the product of three pieces: the $(k,l)$th entry of the empirical precision matrix, the average over the $Z^k_i L_i$s, and the average over the $Z^l_i M_i$s. Meanwhile, the linear form $(1/n)(L/\sqrt{n})^T \bs{A}(L/\sqrt{n})$ is obtained by substituting $L_i$ for $M_i$ above:
+
+$$\frac{1}{n} (L/\sqrt{n})^T \bs{A} (L/\sqrt{n}) = \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} \left(\frac{1}{n} \sum_{i=1}^n z_i^k L_i \right) \left( \frac{1}{n} \sum_{i=1}^n z_i^l L_i \right).$$
+
+Finally, note that for given $k,l \in \{1, \dots, p\}$, $$ \hat{P}_{kl} \xrightarrow{P} P_{kl},$$ i.e.\ the empirical precision matrix converges to the theoretical precision matrix elementwise.
+
+\subsubsection*{Computing the limit of $\bs{\mathcal{I}}_X$}
+
+We now compute the limit in probability of the matrix $\infomat_X$. We proceed block-by-block.
+
+\textbf{Lower right block}. The lower right block $\textrm{LR}(\infomat_X)$ of $\infomat_X$ is $$ \textrm{LR}(\infomat_X) = (\tilde{\bs{X}}_{\sqrt{n}}^T)\tilde{\bs{X}}_{\sqrt{n}} - (1/n)\tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} \tilde{\bs{X}}_{\sqrt{n}} \in \R^{B \times B}.$$ Let $$\tilde{X}^r_{\sqrt{n}} = \frac{1}{\sqrt{n}} \left[ \tilde{X}^r_1, \dots, \tilde{X}^r_n \right]^T$$ denote the $r$th column of $\bs{\tilde{X}}_{\sqrt{n}}$; meanwhile, let 
+$$ \tilde{X}_{\sqrt{n}}^s = \frac{1}{\sqrt{n}} \left[\tilde{X}^r_1, \dots, \tilde{X}^r_n \right]$$ denote the $s$th column of $\tilde{\bs{X}}_{\sqrt{n}}$. By the decomposition (\ref{eqn:bilinear_form_decomp}), we have
+$$\left[ (1/n)\tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} \tilde{\bs{X}}_{\sqrt{n}} \right]_{r,s} =  \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} \left(\frac{1}{n} \sum_{i=1}^n z_i^k \tilde{X}^r_i \right) \left(\frac{1}{n} \sum_{i=1}^n z_i^l \tilde{X}^s_i \right).$$ Because $\tilde{X}^r_i$ is independent of $z^k_i$, we see
+$$ \E\left[ z_i^k \tilde{X}^r_i \right] = \E\left[ z_i^k \right] \E\left[ \tilde{X}^r_i \right] = 0.$$ We additionally can upper-bound the variance of $z_i^k \tilde{X}^r_i$:
+$$ \V\left[ z^k_i \tilde{X}^r_i \right] = \E\left[ (z_i^k)^2 (\tilde{X}_i^r)^2 \right] = \E\left[ (z_i^k)^2 \right] \E\left[ (\tilde{X}^r_i)^2 \right] = 1.$$ Finally, $z_{i_1}^k \tilde{X}_{i_1}^r$ and  $z_{i_2}^k \tilde{X}_{i_2}^r$ are independent and thus uncorrelated for $i_1 \neq i_2$. By WLLN,
+$$\frac{1}{n} \sum_{i=1}^n z_i^k \tilde{X}^r_i \xrightarrow{P} 0.$$ A similar argument shows that
+$$ \frac{1}{n} \sum_{i=1}^n z_i^l \tilde{X}^s_i \xrightarrow{P} 0.$$ Moreover,
+$\hat{P}_{kl} \xrightarrow{P} P_{kl}.$ Hence,
+$$ \left[ (1/n)\tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} \tilde{\bs{X}}_{\sqrt{n}} \right]_{r,s} \xrightarrow{P} \sum_{k=1}^p \sum_{l=1}^p P_{kl} \cdot 0 \cdot 0 = 0.$$ Because $r$ and $s$ were chosen arbitrarily,
+$$ (1/n) \tilde{\bs{X}}^T _{\sqrt{n}} \bs{A} \tilde{\bs{X}}_{\sqrt{n}} \xrightarrow{P} 0.$$
+Finally, it is easy to check that $\tilde{\bs{X}}^T_{\sqrt{n}}\tilde{\bs{X}}_{\sqrt{n}} \xrightarrow{P} \bs{I}.$ We conclude that the lower right block of $I_X$, $\textrm{LR}(\bs{I}_X)$, converges in probability to $\bs{I}$:
+$$\textrm{LR}(\bs{I}_X) = \tilde{\bs{X}}^T_{\sqrt{n}}\tilde{\bs{X}}_{\sqrt{n}} -  (1/n) \tilde{\bs{X}}^T _{\sqrt{n}} \bs{A} \tilde{\bs{X}}_{\sqrt{n}}  \xrightarrow{P} \bs{I}.$$
+
+\textbf{Lower left and upper right blocks}. The lower left block $\textrm{LL}(\infomat_X)$ of $\infomat_X$ is $$ \textrm{LL}(\infomat_X) = \tilde{\bs{X}}_{\sqrt{n}}^T X_{\sqrt{n}} -  (1/n) \tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}} \in \R^B.$$ Again, let $\tilde{X}^r_{\sqrt{n}}$ denote the $r$th column of $\tilde{\bs{X}}_{\sqrt{n}}.$ By the decomposition (\ref{eqn:bilinear_form_decomp}),
+$$
+\left[(1/n) \tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}}\right]_r  = \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} \left( \frac{1}{n} \sum_{i=1}^n \tilde{X}^r_i Z^k_i \right) \left(\frac{1}{n}\sum_{i=1}^n X_j Z^l_j \right).
+$$
+As we showed above, the first sum converges to $0$:
+$$ \frac{1}{n} \sum_{i=1}^n \tilde{X}^r_i Z_i^k \xrightarrow{P} 0.$$
+Consider now the second sum. The mean $\E(X_j Z^l_j)$ exists, as $|\E(X_j Z^l_j)| \leq \sqrt{\E[X_j^2] \E[(Z^l_j)^2]} = 1.$ Furthermore, $$\V\left[X_j (Z_j^l)\right] \leq \E\left[X_j^2 (Z_j^l)^2 \right] \leq \sqrt{\E[X_j^4] \E[(Z_j^l)^4]}.$$ Additionally, the terms in the sequence are independent and thus uncorrelated. Thus, by WLLN,
+$$ \frac{1}{n} \sum_{i=1}^n X_j Z^l_j \xrightarrow{P} \E\left[ X^2_j (Z_j^l)^2 \right].$$
+Finally, $\hat{P}_{kl} \xrightarrow{P} P_{kl}.$ Piecing these results together,
+$$
+\left[(1/n) \tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}}\right]_r  \xrightarrow{P} \sum_{k=1}^p \sum_{l=1}^p P_{kl} \cdot \E[X^2_j (Z^l_j)^2] \cdot 0 = 0.
+$$
+Because the elements of $(1/n) \tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}}$ are equal equal in distribution, $$(1/n) \tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}} \xrightarrow{P} 0.$$ Next, by the independence of $\tilde{\bs{X}}$ and $X$, is is clear that $$\tilde{\bs{X}}^T_{\sqrt{n}} X_{\sqrt{n}} \xrightarrow{P} 0.$$ Hence, the lower left block of $\infomat_X$ converges to the zero vector, i.e.
+$$\textrm{LL}(\infomat_X) = \tilde{\bs{X}}^T_{\sqrt{n}} X_{\sqrt{n}} - (1/n) \tilde{\bs{X}}^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}} \xrightarrow{P} 0.$$ The upper right block of $\infomat_X$, $\textrm{UR}(\infomat_X)$, is the transpose of the lower-left block. Thus, it too converges to the (transposed) zero vector: 
+$$\textrm{UR}(\infomat_X) = \textrm{LL}(\infomat_X)^T \xrightarrow{P} 0.$$
+
+\subsection*{Upper left block}
+
+The upper left block $\textrm{UL}(\infomat_X)$ of $\infomat_X$ is a scalar. 
+$$ \textrm{UL}(\infomat_X)  = X^T_{\sqrt{n}} X_{\sqrt{n}} - \frac{1}{n} X^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}}.$$
+By the decomposition (\ref{eqn:bilinear_form_decomp}),
+$$
+\frac{1}{n} X^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}} = \sum_{k=1}^p \sum_{l=1}^p \hat{P}_{kl} \left(\frac{1}{n} \sum_{i=1}^n z_i^k X_i \right) \left(\frac{1}{n} \sum_{j=1}^n z_j^l X_j \right).
+$$
+Arguing as above, by WLNN,
+$$ \left(\frac{1}{n} \sum_{i=1}^n z_i^k X_i \right) \left(\frac{1}{n} \sum_{j=1}^n z_j^l X_j \right) \xrightarrow{P} \left(\E(Z_i^k X_i)\right) \E((Z_i^l X_i)).$$ Next, because $\hat{P}_{kl} \xrightarrow{P} P_{kl},$ we see that
+$$ \frac{1}{n} X^T_{\sqrt{n}} \bs{A} X_{\sqrt{n}} \xrightarrow{P} \sum_{k=1}^p \sum_{l=1}^p P_{kl} \E(Z^k_i X_i) \E(Z^l_i X_i).$$ Let $\rho_x \in \R^p$ denote the vector
+$$\begin{bmatrix} \textrm{Cov}(X_i Z_i^1) \\ \textrm{Cov}(X_i Z_i^2) \\ \vdots \\ \textrm{Cov}(X_iZ_i^p) \end{bmatrix}.$$ We can express the limit (in probability) of $(1/n) X_{\sqrt{n}}^T \bs{A} X_{\sqrt{n}}$ as the following quadratic form:
+$$ \sum_{k=1}^p \sum_{l=1}^p P_{kl} \E(Z^k_i X_i) \E(Z^l_i X_i) = \rho_x^TP\rho_x = ||\rho_x||_P^2,$$ where $|| a ||^2_P = a^TPa$ denotes the weighted norm associated with matrix $P$.
+
+\subsection*{Putting the pieces together}
+
+Piecing together $\textrm{LR}(\infomat_X)$, $\textrm{LL}(\infomat_X)$, $\textrm{UR}(\infomat_X)$, and $\textrm{UL}(\infomat_X)$, we conclude that
+$$\infomat_X \xrightarrow{P} \textrm{diag}\{ ||\rho_x||^2_P, 1, \dots, 1\} := \infomat_\textrm{lim}.$$ By the continuous mapping theorem,
+$$\infomat_X^{-1/2} \xrightarrow{P} \textrm{diag}\left\{ \frac{1}{||\rho_x||_P}, 1, \dots, 1\right\} = \infomat^{-1/2}_\textrm{lim}.$$
+Furthermore, $\infomat_\textrm{lim}^{-1/2} \infomat^{1/2}_X \xrightarrow{P} \bs{I}.$
+Hence, by Slutsky's theorem,
+\begin{multline}\label{eqn:slutsky_1}
+\infomat_\textrm{lim}^{-1/2} \infomat^{1/2}_X \infomat_X^{-1/2} u_X(\hat{\alpha}, 0, 0) \\ = \infomat_\textrm{lim}^{-1/2} u_X(\hat{\alpha}, 0, 0) \xrightarrow{d} \bs{I} N_{B+1}(0, \bs{I}) = N_{B+1}(0, \bs{I}).
+\end{multline}
+But
+$$ \textrm{diag}\{1 - || \bs{Z} X_{\sqrt{n}} ||^2_P , 1, \dots, 1 \} \\ \xrightarrow{P} \infomat_\textrm{lim},$$ implying
+$$\textrm{diag}\left\{\frac{1}{\sqrt{1 - || \bs{Z}^T X_{\sqrt{n}} ||^2_{P}}}, 1, \dots, 1 \right\} \infomat_\textrm{lim}^{1/2} \xrightarrow{P} \bs{I}.$$
+Hence, applying Slutsky's theorem to (\ref{eqn:slutsky_1}),
+\begin{multline*}
+\textrm{diag}\left\{ \frac{1}{\sqrt{1 - || \bs{Z}^T X_{\sqrt{n}} ||^2_{P}}}, 1, \dots, 1 \right\} \infomat^{1/2}_\textrm{lim} \infomat_{\textrm{lim}}^{-1/2} u_X(\hat{\alpha}, 0, 0)  \\ \xrightarrow{P} \bs{I} N_{B+1}(0, \bs{I}) = N_{B+1}(0, \bs{I}).
+\end{multline*}
+We conclude that
+$$ \begin{bmatrix} T_0 \\ T_1 \\ T_2 \\ \vdots \\ T_B \end{bmatrix} = \begin{bmatrix} X^T_{\sqrt{n}} \hat{r} / \sqrt{1 - ||\bs{Z}^T X_{\sqrt{n}}||^2_P} \\ \left(\tilde{X}^1_{\sqrt{n}} \right)^T \hat{r} \\ \left(\tilde{X}^2_{\sqrt{n}} \right)^T \hat{r} \\ \vdots \\ \left(\tilde{X}^B_{\sqrt{n}} \right)^T \hat{r} \end{bmatrix} \xrightarrow{d} N_{B+1}(0, \bs{I}).$$
+
+\section{Connection between GLM score statistic and distilled score statistic}
+
+In progress
+
+%\begin{multline*}
+%z_\textrm{score} = \frac{X^T \hat{W} \hat{M} (Y - \hat{\mu})}{\sqrt{X^T \hat{W} X - X^T\hat{W}\bs{Z} (\bs{Z}^T \hat{W} \bs{Z})^{-1} \bs{Z}^T\hat{W}X}} \\ = \frac{X^T \hat{W} \hat{M} (Y - \hat{\mu})}{\sqrt{X^T(\hat{W} - \hat{W}\bs{Z} (\bs{Z}^T \hat{W} \bs{Z})^{-1} \bs{Z}^T\hat{W})X}}.
+%\end{multline*}
+
+
+
+\bibliographystyle{unsrt}
+\bibliography{/Users/timbarry/Documents/optionFiles/library.bib}
+
+\end{document}
