@@ -193,3 +193,4 @@ denom_1 <- sum(X * W * X)
 numerator/(sqrt(denom_1 - denom_2))
 # compare to original score test
 statmod::glm.scoretest(fit, X)
+
