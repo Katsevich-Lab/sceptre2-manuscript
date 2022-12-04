@@ -21,11 +21,11 @@ mimosca_formula_objs_protein <- list(frangieh = formula(~ n_umis + phase + batch
 
 
 # 1.ii) Set the NB regression formula objects
-nb_regression_formula_objs <- list(frangieh = "~ offset(log(n_umis)) + log(n_nonzero) + phase + batch",
-                                   schraivogel = "~ offset(log(n_umis)) + log(n_nonzero) + batch",
-                                   papalexi = "~ offset(log(n_umis)) + log(n_nonzero) + bio_rep + phase + p_mito",
-                                   liscovitch = "~ offset(log(n_fragments))",
-                                   simulated = "~ offset(log(n_umis)) + log(n_nonzero)")
+nb_regression_formula_objs <- list(frangieh = "~log(n_umis) + log(n_nonzero) + phase + batch",
+                                   schraivogel = "~ log(n_umis) + log(n_nonzero) + batch",
+                                   papalexi = "~ log(n_umis) + log(n_nonzero) + bio_rep + phase + p_mito",
+                                   liscovitch = "~ log(n_fragments)",
+                                   simulated = "~log(n_umis) + log(n_nonzero)")
 
 nb_regression_formula_objs_protein <- list(frangieh = "~ offset(log(n_umis)) + phase + batch",
                                            papalexi = "~ offset(log(n_umis)) + bio_rep + phase + p_mito")
