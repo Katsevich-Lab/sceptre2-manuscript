@@ -52,6 +52,6 @@ data_method_queue_matrix = [
 optional_args = [
 "", // nb_regression_w_covariates
 "", // nb_regression_no_covariates
-"output_amount=1:B=2500000", // sceptre
-"output_amount=1:B=2500000" // sceptre_no_covariates
+"B=2500000", // sceptre
+"B=2500000" // sceptre_no_covariates
 ]
