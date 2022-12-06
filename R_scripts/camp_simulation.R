@@ -1,6 +1,7 @@
 library(ondisc)
 library(sceptre2)
 library(microbenchmark)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/")
 
 ###########################
 # STEP 1: SET UP SIMULATION
@@ -49,20 +50,99 @@ mus_y <- as.numeric(fit_y_orig$fitted.values)
 fit_x <- glm(formula = orig_x ~ . + 0, family = binomial(), data = as.data.frame(Z))
 mus_x <- as.numeric(fit_x$fitted.values)
 
-############################
-# STEP 2: RUN GLM ON EXAMPLE
-############################
-generate_example_x_data <- function(mus_x) {
-  sapply(X = mus_x, FUN = function(mu_x) rbinom(n = 1, size = 1, prob = mu_x))
-}
-generate_example_y_data <- function(mus_y, n_sim) {
-  sapply(X = mus_y, FUN = function(mu_y) MASS::rnegbin(n = n_sim, mu = mu_y, theta = theta)) |> t()
+
+#################################
+# STEP 2: RUN SIMULATION FUNCTION
+#################################
+run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL) {
+  if (is.null(n_sim)) n_sim <- ncol(Y)
+  sapply(seq(1, n_sim), function(i) {
+    print(paste0("Running simulation ", i))
+    y <- Y[,i]
+    # regress the synthetic Y onto Z
+    fit <- glm(y ~ Z + 0,
+               family = MASS::negative.binomial(theta = theta_hypothesized))
+
+    # extract z-scores
+    z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
+                                                                    working_resid = fit$residuals,
+                                                                    w = fit$weights,
+                                                                    index_mat = idx_mat)
+    z_star <- z_scores[1]
+    z_null <- z_scores[-1]
+    z_star
+
+    # compute theoretical and empirical p-values
+    p_theory <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
+    p_camp <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
+
+    # finally, compute permutation
+    ts <- apply(X = idx_mat, MARGIN = 2, FUN = function(col) mean(y[col]))
+    t_star <- ts[1]
+    t_null <- ts[-1]
+    p_perm <- sceptre2:::compute_empirical_p_value(t_star, t_null, "both")
+
+    c(p_theory = p_theory, p_camp = p_camp, p_perm = p_perm)
+  }) |> t()
 }
 
-x <- generate_example_x_data(mus_x = mus_x)
-Y <- generate_example_y_data(mus_y = mus_y, n_sim = 5000)
+
+##############################################
+# STEP 3: GENERATE CORRELATED DATA AND RUN SIM
+##############################################
+n_sim <- 2000
+# y first
+Y <- sapply(X = mus_y, FUN = function(mu_y) MASS::rnegbin(n = n_sim, mu = mu_y, theta = theta)) |> t()
+
+# generate x so that x is correlated with z
+x <- sapply(X = mus_x, FUN = function(mu_x) rbinom(n = 1, size = 1, prob = mu_x))
+x_idx <- which(x == 1)
+B <- 100000
+x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x))) - 1L
+idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde)
+
+# run sim
+sim_res_correlated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
+                                     theta_hypothesized = theta)
+
+saveRDS(object = sim_res_correlated, file = paste0(result_dir, "correlated_sim_result.rds"))
+
+########################################
+# GENERATE UNCORRELATED DATA AND RUN SIM
+########################################
+# keep y from above
+# generate x fresh
+x <- rbinom(n = length(orig_x), size = 1, prob = mean(orig_x))
+x_idx <- which(x == 1)
+x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x))) - 1L
+idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde)
+
+# run sim
+sim_res_uncorrelated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z, theta_hypothesized = 5 * theta, n_sim = 100)
+
+
+
+#######
+#
+#######
+
+as.data.frame(sim_res_correlated) |>
+  tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
+                      names_to = "method", values_to = "p_value") |>
+  ggplot(mapping = aes(y = p_value, col = method)) +
+  stat_qq_points(ymin = 1e-8, size = 0.55) +
+  scale_x_reverse() +
+  scale_y_reverse() +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black")
+
+
+
+
+######################
+# ASSESS RUNNING TIME
+######################
 y <- Y[,1]
-
 # 1. regress y on Z
 glm_time <- microbenchmark(fit <- glm(y ~ Z + 0,
                                       family = MASS::negative.binomial(theta = theta)),
@@ -73,7 +153,7 @@ x_idx <- which(x == 1)
 B <- 100000
 random_idx_time <- microbenchmark(x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x))),
                                   times = 5, unit = "s") |> summary()
-idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde)
+idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde) - 1L
 
 
 # 3. get null z-scores
@@ -94,51 +174,3 @@ p_perm <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null,
 time_df <- data.frame(time = c(random_idx_time[["median"]], glm_time[["median"]], z_score_time[["median"]]),
                       operation = c("Generate permutation idxs", "Fit GLM", "Compute null statistics"))
 
-#######################################################
-# RUN SIMULATION 1: CONFOUNDING AND CORRECT MODEL SPEC.
-#######################################################
-n_umis <- exp(Z[,"lg_n_umis"])
-sim_1_res <- sapply(X = seq(1, n_sim), FUN = function(i) {
-  print(paste0("Running simulation ", i))
-  y <- Y[,i]
-  # regress the synthetic Y onto Z
-  fit <- glm(y ~ Z + 0,
-             family = MASS::negative.binomial(theta = theta))
-
-  # extract z-score
-  z_star <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
-                                                                working_resid = fit$residuals,
-                                                                w = fit$weights,
-                                                                index_mat = matrix(data = x_idx, ncol = 1))
-
-  # compute theoretical and empirical p-values
-  p_theory <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
-  p_perm <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
-
-  c(p_theory = p_theory, p_perm = p_perm, z_star = z_star)
-}) |> t()
-
-#######################################################################
-# RUN SIMULATION 2: NO CONFOUNDING BUT MODEL MISSPECIFIED (WRONG THETA)
-#######################################################################
-x <- rbinom(n = length(orig_x), size = 1, prob = mean(orig_x))
-x_idx <- which(x == 1)
-x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x)))
-
-sim_2_res <- sapply(X = seq(1, n_sim), FUN = function(i) {
-  print(paste0("Running simulation ", i))
-  y <- Y[,i]
-  # regress the synthetic Y onto Z
-  fit <- glm(y ~ Z + 0,
-             family = MASS::negative.binomial(theta = 5 * theta))
-
-  # extract z-score
-  z_star <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
-                                                                working_resid = fit$residuals,
-                                                                w = fit$weights,
-                                                                index_mat = matrix(data = x_idx, ncol = 1))
-
-  # compute theoretical and empirical p-values
-  p_theory <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
-  p_theory
-})
