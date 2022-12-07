@@ -54,43 +54,52 @@ mus_x <- as.numeric(fit_x$fitted.values)
 #################################
 # STEP 2: RUN SIMULATION FUNCTION
 #################################
-run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL) {
+run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL, return_null_dist = FALSE) {
+  resamp_dist <- list()
+  
   if (is.null(n_sim)) n_sim <- ncol(Y)
-  sapply(seq(1, n_sim), function(i) {
-    print(paste0("Running simulation ", i))
-    y <- Y[,i]
-    # regress the synthetic Y onto Z
-    fit <- glm(y ~ Z + 0,
-               family = MASS::negative.binomial(theta = theta_hypothesized))
-
-    # extract z-scores
-    z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
-                                                                    working_resid = fit$residuals,
-                                                                    w = fit$weights,
-                                                                    index_mat = idx_mat)
-    z_star <- z_scores[1]
-    z_null <- z_scores[-1]
-    z_star
-
-    # compute theoretical and empirical p-values
-    p_theory <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
-    p_camp <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
-
-    # finally, compute permutation
-    ts <- apply(X = idx_mat, MARGIN = 2, FUN = function(col) mean(y[col]))
-    t_star <- ts[1]
-    t_null <- ts[-1]
-    p_perm <- sceptre2:::compute_empirical_p_value(t_star, t_null, "both")
-
-    c(p_theory = p_theory, p_camp = p_camp, p_perm = p_perm)
-  }) |> t()
+    out_m <- matrix(nrow = n_sim, ncol = 3)
+    for (i in seq(1, n_sim)) {
+      print(paste0("Running simulation ", i))
+      y <- Y[,i]
+      # regress the synthetic Y onto Z
+      fit <- glm(y ~ Z + 0,
+                 family = MASS::negative.binomial(theta = theta_hypothesized))
+      
+      # extract z-scores
+      z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
+                                                                      working_resid = fit$residuals,
+                                                                      w = fit$weights,
+                                                                      index_mat = idx_mat)
+      z_star <- z_scores[1]
+      z_null <- z_scores[-1]
+      z_star
+      # compute theoretical and empirical p-values
+      p_theory <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
+      p_camp <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
+      # finally, compute permutation
+      ts <- apply(X = idx_mat, MARGIN = 2, FUN = function(col) mean(y[col]))
+      t_star <- ts[1]
+      t_null <- ts[-1]
+      p_perm <- sceptre2:::compute_empirical_p_value(t_star, t_null, "both")
+      out_m[i,] <- c(p_theory = p_theory, p_camp = p_camp, p_perm = p_perm)
+      if (i == 1) {
+        resamp_dist[["camp_null"]] <- z_null
+        resamp_dist[["camp_star"]] <- z_star
+        resamp_dist[["perm_null"]] <- ts
+        resamp_dist[["perm_star"]] <- t_star
+      }
+    }
+    colnames(out_m) <- c("p_theory", "p_camp", "p_perm")
+    return(list(out_m = out_m, resamp_dist = resamp_dist))
 }
 
 
 ##############################################
 # STEP 3: GENERATE CORRELATED DATA AND RUN SIM
 ##############################################
-n_sim <- 2000
+# n_sim <- 2000
+n_sim <- 10
 # y first
 Y <- sapply(X = mus_y, FUN = function(mu_y) MASS::rnegbin(n = n_sim, mu = mu_y, theta = theta)) |> t()
 
@@ -105,7 +114,8 @@ idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde)
 sim_res_correlated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
                                      theta_hypothesized = theta)
 
-saveRDS(object = sim_res_correlated, file = paste0(result_dir, "correlated_sim_result.rds"))
+saveRDS(object = sim_res_correlated,
+        file = paste0(result_dir, "correlated_sim_result.rds"))
 
 ########################################
 # GENERATE UNCORRELATED DATA AND RUN SIM
