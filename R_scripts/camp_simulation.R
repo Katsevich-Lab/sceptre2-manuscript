@@ -99,6 +99,7 @@ run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL, retu
 # STEP 3: GENERATE CORRELATED DATA AND RUN SIM
 ##############################################
 # n_sim <- 2000
+set.seed(3)
 n_sim <- 10
 # y first
 Y <- sapply(X = mus_y, FUN = function(mu_y) MASS::rnegbin(n = n_sim, mu = mu_y, theta = theta)) |> t()
@@ -112,7 +113,7 @@ idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde)
 
 # run sim
 sim_res_correlated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
-                                     theta_hypothesized = theta)
+                                     theta_hypothesized = theta, n_sim = 1)
 
 saveRDS(object = sim_res_correlated,
         file = paste0(result_dir, "correlated_sim_result.rds"))
