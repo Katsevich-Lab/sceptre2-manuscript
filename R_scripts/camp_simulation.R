@@ -138,17 +138,6 @@ saveRDS(object = sim_res_correlated,
 ########################################
 # GENERATE UNCORRELATED DATA AND RUN SIM
 ########################################
-run_permutation_simulation <- function(Y, idx_mat, n_sim = NULL) {
-  ps <- sapply(X = seq(1, n_sim), FUN = function(i) {
-    print(i)
-    y <- Y[,i]
-    ts <- sceptre2:::low_level_permutation_test(y = y, index_mat = idx_mat)
-    t_star <- ts[1]
-    t_null <- ts[-1]
-    sceptre2:::compute_empirical_p_value(z_star = t_star, z_null = t_null, "both")
-  })
-}
-
 # keep y from above
 # generate x fresh
 x <- rbinom(n = length(orig_x), size = 1, prob = mean(orig_x))
@@ -186,7 +175,7 @@ glm_time <- microbenchmark(fit <- glm(y ~ Z + 0,
 
 # 2. permute x B times
 x_idx <- which(x == 1)
-B <- 100000
+B <- 25000
 random_idx_time <- microbenchmark(x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x))),
                                   times = 5, unit = "s") |> summary()
 idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde) - 1L
