@@ -41,9 +41,9 @@ make_figure_row <- function(dataset, name, print_legend) {
   if (print_legend) {
     p1 <- p1 +
       my_theme +
-      theme(legend.title= element_blank(),
+      theme(legend.title = element_blank(),
             legend.position = c(0.72, 0.2),
-            legend.text=element_text(size=9),
+            legend.text=element_text(size = 9),
             legend.margin=margin(t = 0, unit='cm')) +
       guides(color = guide_legend(
         keywidth = 0.0,

@@ -40,7 +40,6 @@ nb_gof_tests <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests
 pairs <- data.frame(undercover_grna = c("NO-SITE-836", "NO-SITE-599"),
                     response_id = c("DNAL1", "ZNF615"),
                     pair_id = paste0("Pair ", 1:2))
-
 B <- 2500
 pannel_a_list <- lapply(X = seq(1, nrow(pairs)), FUN = function(i) {
   response_id <- pairs$response_id[i]

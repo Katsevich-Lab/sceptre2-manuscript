@@ -9,7 +9,8 @@ source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
   filter(n_nonzero_treatment >= 7, n_nonzero_control >= 7) |>
-  mutate(Method = fct_recode(Method, "SCEPTRE" = "Sceptre"))
+  mutate(Method = fct_recode(Method, "SCEPTRE" = "Sceptre"),
+         Method = fct_relevel(Method, "SCEPTRE", after = Inf))
 
 # The following plot (the letters are rows):
 # a) three empty columns for undercover schematic
@@ -20,7 +21,7 @@ undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercove
 # d) same as above, but with simulated OR Schraivogel enhancer screen
 # restricting attention to pairs with >= 10 treatment cells and > 10 control cells in all cases
 
-make_figure_row <- function(dataset, name, print_legend) {
+make_figure_row <- function(dataset, name, print_legend, legend_posit = "bottom") {
   my_methods <- c("Weissman Method", "Schraivogel Method", "Mimosca", "Liscovitch Method", "Seurat De", "SCEPTRE")
   my_values <- my_cols[names(my_cols) %in% my_methods]
   
@@ -39,7 +40,7 @@ make_figure_row <- function(dataset, name, print_legend) {
     ggtitle(paste0("QQ-plot (", name, ")")) +
     my_theme +
     theme(legend.title= element_blank(),
-          legend.position = "bottom",
+          legend.position = legend_posit,
           legend.text=element_text(size=9),
           legend.margin=margin(t = 0, unit='cm'))
   legend <- cowplot::get_legend(p1)
@@ -99,3 +100,9 @@ fig <- plot_grid(r7$p_row, r7$legend, nrow = 2,
                  labels = c("g", ""), rel_heights = c(0.86, 0.14))
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s3/r_output_3.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 2.75, dpi = 330)
+
+
+# figure for gene's grant proposal
+r1 <- make_figure_row("frangieh_ifn_gamma_gene", "Frangieh", TRUE, "right")
+gene_fig <- plot_grid(r1$p_row, r1$legend, rel_widths = c(0.83, 0.17))
+ggsave(filename = "~/Desktop/gene_proposal_fig.pdf", plot = gene_fig, device = "pdf", scale = 1.1, width = 8, height = 3)

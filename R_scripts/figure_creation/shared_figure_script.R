@@ -14,7 +14,8 @@ my_cols <- c("Weissman Method" = "purple3",
              "NB Reg (w/ covariates)" = "indianred1",
              "NB Regression" = "dodgerblue3",
              "SCEPTRE" = "firebrick3",
-             "SCEPTRE (w/o covariates)" = "orange3")
+             "SCEPTRE (w/o covariates)" = "orange3",
+             "Permutation test" = "darkslategray4")
 
 my_theme <- theme_bw() + theme(axis.line = element_line(color = "black"),
                                panel.grid.major = element_blank(),
@@ -27,8 +28,10 @@ my_theme_no_legend <- my_theme + theme(legend.position = "none")
 compute_n_bonf_rejections <- function(undercover_res, alpha = 0.1) {
   n_bonf_rej <- undercover_res |>
     dplyr::group_by(dataset, method) |>
-    dplyr::summarize(reject = (p_value < alpha/dplyr::n())) |>
-    dplyr::summarize(n_reject = sum(reject)) |>
+    dplyr::summarize(reject = (p_value < alpha/dplyr::n()),
+                     Method = Method[1]) |>
+    dplyr::summarize(n_reject = sum(reject),
+                     Method = Method[1]) |>
     dplyr::ungroup()
   
   max_reject <- max(n_bonf_rej$n_reject)

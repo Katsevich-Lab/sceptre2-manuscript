@@ -1,6 +1,8 @@
 library(ondisc)
 library(sceptre2)
 library(microbenchmark)
+library(ggplot2)
+library(katlabutils)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/")
 
 ###########################
@@ -32,53 +34,58 @@ Z <- model.matrix(object = formula(~ log(n_nonzero) + log(n_umis) + bio_rep + ph
 colnames(Z) <- c("intercept", "lg_n_nonzero", "lg_n_umis", "bio_rep_d1", "bio_rep_d2", "phase_d1", "phase_d2", "p_mito")
 
 # 4. select gene
-set.seed(3)
-ex_gene <- response_odm |>
-  get_feature_covariates() |>
-  dplyr::arrange(desc(mean_expression)) |>
-  dplyr::slice(1:100) |>
-  dplyr::sample_n(1) |>
-  row.names()
+ex_gene <- "CXCL10"
 orig_y <- as.numeric(response_odm[[ex_gene, idxs]])
 
 # 5. get the model for y | Z
 fit_y_orig <- MASS::glm.nb(formula = orig_y ~ . + 0, data = as.data.frame(Z))
+y_coef <- coef(fit_y_orig)
 theta <- fit_y_orig$theta
-mus_y <- as.numeric(fit_y_orig$fitted.values)
+mus_y <- exp(as.numeric(Z %*% y_coef))
 
 # 6. get the model for x | Z
+b <- binomial()
 fit_x <- glm(formula = orig_x ~ . + 0, family = binomial(), data = as.data.frame(Z))
-mus_x <- as.numeric(fit_x$fitted.values)
-
+x_coef <- coef(fit_x)
+mus_x <- b$linkinv(as.numeric(Z %*% x_coef))
 
 #################################
 # STEP 2: RUN SIMULATION FUNCTION
 #################################
-run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL, return_null_dist = FALSE) {
+run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL, return_null_dist = FALSE, approx = TRUE) {
   resamp_dist <- list()
-  
   if (is.null(n_sim)) n_sim <- ncol(Y)
-    out_m <- matrix(nrow = n_sim, ncol = 3)
+  
+  out_m <- matrix(nrow = n_sim, ncol = 3)
     for (i in seq(1, n_sim)) {
       print(paste0("Running simulation ", i))
       y <- Y[,i]
+      
       # regress the synthetic Y onto Z
       fit <- glm(y ~ Z + 0,
                  family = MASS::negative.binomial(theta = theta_hypothesized))
       
       # extract z-scores
-      z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
+      if (i == 1 || !approx) {
+        z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
+                                                                        working_resid = fit$residuals,
+                                                                        w = fit$weights,
+                                                                        index_mat = idx_mat)
+        z_star <- z_scores[1]
+        z_null <- z_scores[-1]
+      } else {
+        z_star <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
                                                                       working_resid = fit$residuals,
                                                                       w = fit$weights,
-                                                                      index_mat = idx_mat)
-      z_star <- z_scores[1]
-      z_null <- z_scores[-1]
-      z_star
+                                                                      index_mat = idx_mat[,1,drop = FALSE])
+      }
+
       # compute theoretical and empirical p-values
       p_theory <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
       p_camp <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
+      
       # finally, compute permutation
-      ts <- apply(X = idx_mat, MARGIN = 2, FUN = function(col) mean(y[col]))
+      ts <- sceptre2:::low_level_permutation_test(y = y, index_mat = idx_mat)
       t_star <- ts[1]
       t_null <- ts[-1]
       p_perm <- sceptre2:::compute_empirical_p_value(t_star, t_null, "both")
@@ -94,13 +101,11 @@ run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL, retu
     return(list(out_m = out_m, resamp_dist = resamp_dist))
 }
 
-
 ##############################################
 # STEP 3: GENERATE CORRELATED DATA AND RUN SIM
 ##############################################
-# n_sim <- 2000
+n_sim <- 2000
 set.seed(3)
-n_sim <- 10
 # y first
 Y <- sapply(X = mus_y, FUN = function(mu_y) MASS::rnegbin(n = n_sim, mu = mu_y, theta = theta)) |> t()
 
@@ -108,36 +113,16 @@ Y <- sapply(X = mus_y, FUN = function(mu_y) MASS::rnegbin(n = n_sim, mu = mu_y, 
 x <- sapply(X = mus_x, FUN = function(mu_x) rbinom(n = 1, size = 1, prob = mu_x))
 x_idx <- which(x == 1)
 B <- 100000
-x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x))) - 1L
-idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde)
+x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x)))
+idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde) - 1L
 
 # run sim
 sim_res_correlated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
-                                     theta_hypothesized = theta, n_sim = 1)
+                                     theta_hypothesized = theta, n_sim = 2000,
+                                     return_null_dist = TRUE, approx = FALSE)
 
-saveRDS(object = sim_res_correlated,
-        file = paste0(result_dir, "correlated_sim_result.rds"))
-
-########################################
-# GENERATE UNCORRELATED DATA AND RUN SIM
-########################################
-# keep y from above
-# generate x fresh
-x <- rbinom(n = length(orig_x), size = 1, prob = mean(orig_x))
-x_idx <- which(x == 1)
-x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x))) - 1L
-idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde)
-
-# run sim
-sim_res_uncorrelated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z, theta_hypothesized = 5 * theta, n_sim = 100)
-
-
-
-#######
-#
-#######
-
-as.data.frame(sim_res_correlated) |>
+# quick ggplot to check
+as.data.frame(sim_res_correlated$out_m) |>
   tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
                       names_to = "method", values_to = "p_value") |>
   ggplot(mapping = aes(y = p_value, col = method)) +
@@ -147,8 +132,48 @@ as.data.frame(sim_res_correlated) |>
   labs(x = "Expected null p-value", y = "Observed p-value") +
   geom_abline(col = "black")
 
+saveRDS(object = sim_res_correlated,
+        file = paste0(result_dir, "correlated_sim_result.rds"))
 
+########################################
+# GENERATE UNCORRELATED DATA AND RUN SIM
+########################################
+run_permutation_simulation <- function(Y, idx_mat, n_sim = NULL) {
+  ps <- sapply(X = seq(1, n_sim), FUN = function(i) {
+    print(i)
+    y <- Y[,i]
+    ts <- sceptre2:::low_level_permutation_test(y = y, index_mat = idx_mat)
+    t_star <- ts[1]
+    t_null <- ts[-1]
+    sceptre2:::compute_empirical_p_value(z_star = t_star, z_null = t_null, "both")
+  })
+}
 
+# keep y from above
+# generate x fresh
+x <- rbinom(n = length(orig_x), size = 1, prob = mean(orig_x))
+x_idx <- which(x == 1)
+x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x)))
+idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde) - 1L
+
+# run sim
+sim_res_uncorrelated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
+                                       theta_hypothesized = 5 * theta, n_sim = 2000,
+                                       return_null_dist = TRUE, approx = FALSE)
+
+# quick ggplot to check
+as.data.frame(sim_res_uncorrelated$out_m) |>
+  tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
+                      names_to = "method", values_to = "p_value") |>
+  ggplot(mapping = aes(y = p_value, col = method)) +
+  stat_qq_points(ymin = 1e-8, size = 0.55) +
+  scale_x_reverse() +
+  scale_y_reverse() +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black")
+
+saveRDS(object = sim_res_uncorrelated,
+        file = paste0(result_dir, "uncorrelated_sim_result.rds"))
 
 ######################
 # ASSESS RUNNING TIME
