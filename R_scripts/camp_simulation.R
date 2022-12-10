@@ -135,6 +135,24 @@ as.data.frame(sim_res_correlated$out_m) |>
 saveRDS(object = sim_res_correlated,
         file = paste0(result_dir, "correlated_sim_result.rds"))
 
+#######################################
+# CORRELATED AND MODEL MISSPECIFICATION
+#######################################
+sim_res_correlated_misspec <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
+                                             theta_hypothesized =  5 * theta, n_sim = 2000,
+                                             return_null_dist = TRUE, approx = FALSE)
+
+p <- as.data.frame(sim_res_correlated_misspec$out_m) |>
+  tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
+                      names_to = "method", values_to = "p_value") |>
+  ggplot(mapping = aes(y = p_value, col = method)) +
+  stat_qq_points(ymin = 1e-8, size = 0.55) +
+  scale_x_reverse() +
+  scale_y_reverse() +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black")
+ggsave(filename = "~/Desktop/camp.png", plot = p, device = "png", scale = 1, width = 4, height = 3, dpi = 330)
+
 ########################################
 # GENERATE UNCORRELATED DATA AND RUN SIM
 ########################################
@@ -163,6 +181,7 @@ as.data.frame(sim_res_uncorrelated$out_m) |>
 
 saveRDS(object = sim_res_uncorrelated,
         file = paste0(result_dir, "uncorrelated_sim_result.rds"))
+
 
 ######################
 # ASSESS RUNNING TIME

@@ -9,7 +9,8 @@ source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
                                  "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
-  filter(n_nonzero_treatment >= 10, n_nonzero_control >= 10,
+  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF,
          method %in% c("sceptre", "sceptre_no_covariates", "nb_regression_w_covariates")) |>
   mutate(Method = fct_recode(Method,
                              "SCEPTRE" = "Sceptre",
@@ -55,14 +56,16 @@ get_plots_for_dataset <- function(df_sub, tit, print_legend, legend_position = c
   n_bonf_rej <- n_bonf_rej |>
     mutate(n_reject = ifelse(n_reject == 0, max_reject/50, n_reject))
   
-  breaks_v <-  seq(0, max_reject, by = if (max_reject >= 7) 2 else 1)
-  p_bar <- n_bonf_rej |> ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
+  # breaks_v <-  seq(0, max_reject, by = if (max_reject >= 7) 2 else 1)
+  p_bar <- n_bonf_rej |>
+    ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
     ggplot2::geom_col(col = "black") +
     ylab("N Bonferoni rejections") +
     xlab("Method") + my_theme_no_legend +
     theme(axis.text.x = element_blank(),
           plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = 5.5, unit = "pt")) +
-    scale_y_continuous(breaks = breaks_v, expand = c(0, 0)) +
+    # scale_y_continuous(breaks = breaks_v, expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
     ggtitle("") +
     scale_fill_manual(values = my_values)
   
