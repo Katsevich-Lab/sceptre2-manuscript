@@ -77,5 +77,5 @@ optional_args = [
 "", // mimosca
 "", // weissman_method
 "", // nb_regression
-"output_amount=1:B=2500000" // sceptre
+"B=2500000" // sceptre
 ]
