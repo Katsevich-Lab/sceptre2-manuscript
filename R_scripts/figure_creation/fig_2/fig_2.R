@@ -12,12 +12,12 @@ library(cowplot)
 library(ondisc)
 
 # set colors (not loaded by)
-bio_rep_cols <- c("R1" = "darkred", "R2" = "darkblue", "R3" = "darkgreen")
-bio_rep_fills <-  c("R1" = "lightcoral", "R2" = "cornflowerblue", "R3" = "palegreen3")
-dataset_cols <- c("frangieh_co_culture_gene" = "purple",
-                  "frangieh_control_gene" = "royalblue1",
-                  "frangieh_ifn_gamma_gene" = "lightcoral",
-                  "papalexi_eccite_screen_gene" = "palegreen3")
+bio_rep_cols <- c("R1" = "firebrick3", "R2" = "navy", "R3" = "purple3")
+bio_rep_fills <-  c("R1" = "firebrick3", "R2" = "navy", "R3" = "purple3")
+dataset_cols <- c("frangieh_co_culture_gene" = "dodgerblue3",
+                  "frangieh_control_gene" = "purple3",
+                  "frangieh_ifn_gamma_gene" = "navy",
+                  "papalexi_eccite_screen_gene" = "firebrick3")
 
 # load functions and data
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"),
@@ -83,7 +83,8 @@ histogram_df <- lapply(pannel_a_list, function(l) l$histogram_df) |>
   bind_rows() |>
   mutate(ks_fit = factor(ks_fit))
 
-p_a <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density), fill = "Permutation distribution"),
+p_a <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density),
+                                     fill = "Permutation distribution"),
                                  data = histogram_df,
                                  boundary = 0, color = "black", bins = 20) +
   facet_wrap(ks_fit ~ ., nrow = 1) +
@@ -99,10 +100,9 @@ p_a <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density), fill =
   scale_y_continuous(expand = expansion(mult = c(0.0, .01))) +
   geom_line(aes(x = z_grid, y = density, col = "N(0,1) density"),
             data = density_df, linewidth = 0.7) +
-  geom_segment(aes(x = z_star, xend = z_star, y = 0, yend = dnorm(0), col = "Original statistic"), data = density_df) +
   ggtitle("Permutation distribution of MW statistic") +
   xlab("Permuted MW statistic") +
-  scale_color_manual(values = c("N(0,1) density" = "darkred", "Original statistic" = "purple")) +
+  scale_color_manual(values = c("N(0,1) density" = "purple3")) +
   scale_fill_manual(values = c("Permutation distribution" = "lightgrey"))
   
 
@@ -118,8 +118,10 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
   geom_point(alpha = 0.7, size = 0.8) +
   scale_y_log10() +
   scale_x_log10() +
-  labs(y = expression(italic(p)[exact]/italic(p)[asymptotic]),
-       x = "KS statistic") +
+  ylab(expression(italic(p)[ratio]*" = "*italic(p)[exact]/italic(p)[asymptotic])) +
+  # ylab(bquote(p[ratio] = p[exact] / p[asymptotic])) +
+  # paste0(expression(italic(p)[ratio]), " = ", expression(italic(p)[exact]/italic(p)[asymptotic]))) +
+  xlab("KS statistic") +
   geom_hline(yintercept = 1) +
   my_theme +
   theme(legend.position = c(0.1, 0.67),
@@ -127,7 +129,7 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
         legend.title = element_blank(),
         legend.margin=margin(t = -0.5, unit='cm')) +
   scale_color_continuous(name = "Log(N treatment cells + 1)") +
-  ggtitle("Inflation of MW p-values") + 
+  ggtitle("Inflation of MW p-values") +
   annotate("text", x = 0.014, y = 9.5, label = "Log(N treatment cells with expression + 1)", size = 3) +
   # annotate pair 1
   geom_segment(aes(x = pairs_to_annotate[1,"ks_stat"],
@@ -154,18 +156,19 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
            x = pairs_to_annotate[2,"ks_stat"] - 0.14,
            y = pairs_to_annotate[2, "p_rat"],
            label = "Pair 2",
-           size = 3)
+           size = 3) +
+  scale_color_gradient(low = "mediumpurple3",
+                       high = "navy")
 
 ##########
 # PANNEL c
 ##########
 # filter for seurat and NB reg (with cov) on Frangieh IFN gamma; add column for pass stringent QC
-my_labels <- c("Seurat De (w/ strict QC)", "Seurat De (w/o strict QC)", "NB Reg (w/ strict QC)", "NB Reg (w/o strict QC)")
+my_labels <- c("Seurat De (w/ strict QC)", "Seurat De (w/o strict QC)")
 undercover_res_sub <- undercover_res |>
-  filter(method %in% c("seurat_de", "nb_regression_w_covariates"),
+  filter(method %in% c("seurat_de"),
          dataset == "frangieh_ifn_gamma_gene") |>
-  mutate(pass_stringent_qc = (n_nonzero_treatment >= 30 & n_nonzero_control >= 30),
-         Method = fct_recode(Method, "NB Reg"= "Nb Regression W Covariates")) |>
+  mutate(pass_stringent_qc = (n_nonzero_treatment >= 30 & n_nonzero_control >= 30)) |>
   mutate(Method = paste0(Method, ifelse(pass_stringent_qc, " (w/ strict QC)", " (w/o strict QC)"))) |>
   mutate(Method = fct_relevel(Method,
                               my_labels))
@@ -188,12 +191,13 @@ p_c <- ggplot(data = to_plot_c, mapping = aes(y = p_value, col = Method)) +
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.32, 0.75),
+        legend.position = c(0.3, 0.75),
         legend.margin=margin(t = -0.5, unit='cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,
     keyheight = 0.15,
-    default.unit = "inch")) +
+    default.unit = "inch",
+    override.aes = list(size = 2.5))) +
   scale_color_manual(values = my_cols[names(my_cols) %in% my_labels]) +
   ggtitle("Frangieh IFN-\u03B3 negative control pairs")
 
@@ -240,7 +244,7 @@ rel_expression_df <- data.frame(rel_expression = 1000 * log(gene_exp_mat[gene_to
 
 p_d1 <- ggplot(data = prop_table,
                aes(x = bio_rep, y = freq, col = bio_rep, fill = bio_rep)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", alpha = 0.5) +
   ylab("Frac. cells with perturbation") +
   xlab("Biological rep.") +
   scale_y_continuous(limits = c(0, NA),
@@ -253,8 +257,8 @@ p_d1 <- ggplot(data = prop_table,
 
 p_d2 <- ggplot(data = rel_expression_df,
        aes(x = bio_rep, y = rel_expression, col = bio_rep, fill = bio_rep)) +
-  geom_violin() +
-  geom_boxplot(outlier.shape = NA, coef = 0) +
+  geom_violin(alpha = 0.5) +
+  geom_boxplot(outlier.shape = NA, coef = 0, fill = NA) +
   scale_y_continuous(limits = c(0, 50),
                      expand = expansion(mult = c(0.01, 0))) +
   ylab("Relative gene expression") +
@@ -273,11 +277,13 @@ p_d <- gridExtra::grid.arrange(p_d1, p_d2, nrow = 1,
 ###########
 undercover_res_sub <- undercover_res |>
   filter(method %in% c("nb_regression_w_covariates", "nb_regression_no_covariates"),
-         dataset == "papalexi_eccite_screen_gene") |>
+         dataset == "papalexi_eccite_screen_gene",
+         n_nonzero_treatment >= 30,
+         n_nonzero_control >= 30) |>
   mutate(Method = fct_recode(Method,
                              "NB Reg (w/ covariates)" = "Nb Regression W Covariates",
                              "NB Reg (w/o covariates)" = "Nb Regression No Covariates"))
-my_labels <- c("NB Reg (w/o covariates)", "NB Reg (w/ covariates)", "Seurat De")
+my_labels <- c("NB Reg (w/o covariates)", "NB Reg (w/ covariates)")
 p_e <- undercover_res_sub |>
   ggplot(aes(y = p_value, col = Method)) +
   stat_qq_points(ymin = 1e-8, size = 0.8) +
@@ -288,12 +294,13 @@ p_e <- undercover_res_sub |>
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.32, 0.75),
-        legend.margin=margin(t = -0.5, unit='cm')) +
+        legend.position = c(0.3, 0.75),
+        legend.margin=margin(t = -0.5, unit = 'cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,
     keyheight = 0.15,
-    default.unit = "inch")) +
+    default.unit = "inch",
+    override.aes = list(size = 2.5))) +
   scale_color_manual(values = my_cols[names(my_cols) %in% my_labels]) +
   ggtitle("Papalexi (gene) negative control pairs")
 
@@ -310,7 +317,7 @@ to_plot_f <- nb_gof_tests |>
 
 p_f <- to_plot_f |>
   ggplot(aes(y = p, col = dataset)) +
-  stat_qq_points(ymin = 1e-8, size = 0.8) +
+  stat_qq_points(ymin = 1e-8, size = 1) +
   scale_x_reverse() +
   scale_y_reverse() +
   labs(x = "Expected null p-value", y = "Observed p-value") +
@@ -322,14 +329,14 @@ p_f <- to_plot_f |>
   guides(color = guide_legend(
     keywidth = 0.0,
     keyheight = 0.15,
-    default.unit = "inch")) +
+    default.unit = "inch",
+    override.aes = list(size = 2.5))) +
   ggtitle("NB regression model misspecification") +
   scale_color_manual(values = dataset_cols,
                      labels = c("Frangieh (co culture)",
                                 "Frangieh (control)",
                                 "Frangieh (Frangieh IFN-\u03B3)",
                                 "Papalexi (gene modality)"))
-
 ############
 # CREATE FIG
 ############

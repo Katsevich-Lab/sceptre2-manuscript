@@ -23,8 +23,13 @@ saveRDS(object = resampling_res_processed, paste0(sceptre2_results_dir,
 # pc results
 rm(list = c("resampling_res", "resampling_res_processed"))
 pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results.rds"))
+# pc_res_sceptre <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_sceptre.rds"))
+# pc_res <- rbind(pc_res |> filter(method != "sceptre"), pc_res_sceptre)
+# saveRDS(pc_res, paste0(sceptre2_results_dir, "positive_control_analysis/pc_results.rds"))
+
 min_p <- pc_res |> filter(method == "sceptre", p_value > 0) |> pull(p_value) |> min()
 pc_res_processed <- process_pc_result(pc_res, sample_size_df) |>
   mutate(p_value = ifelse(p_value <= 0, min_p, p_value))
 saveRDS(object = pc_res_processed,
         file = paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_processed.rds"))
+

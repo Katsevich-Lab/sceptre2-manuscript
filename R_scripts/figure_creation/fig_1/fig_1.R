@@ -7,7 +7,8 @@ library(cowplot)
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
-undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
+undercover_res <- readRDS(paste0(result_dir,
+                                 "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
   filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF)
 
@@ -42,13 +43,14 @@ make_figure_row <- function(dataset, name, print_legend) {
     p1 <- p1 +
       my_theme +
       theme(legend.title = element_blank(),
-            legend.position = c(0.72, 0.2),
+            legend.position = c(0.71, 0.2),
             legend.text=element_text(size = 9),
             legend.margin=margin(t = 0, unit='cm')) +
       guides(color = guide_legend(
         keywidth = 0.0,
         keyheight = 0.1,
-        default.unit="inch"))
+        default.unit="inch",
+        override.aes = list(size = 2.5)))
   } else {
     p1 <- p1 + my_theme_no_legend
   }
@@ -84,12 +86,18 @@ make_figure_row <- function(dataset, name, print_legend) {
   p_row
 }
 
-r0 <- ggplot() + theme_minimal() + ggtitle("Undercover gRNA calibration assessment") + theme(plot.title = element_text(hjust = 0.5, size=11))
+r0 <- ggplot() +
+  theme_minimal() +
+  ggtitle("Undercover gRNA calibration assessment") +
+  theme(plot.title = element_text(hjust = 0.5, size=11))
 r1 <- make_figure_row("papalexi_eccite_screen_gene", "Papalexi gene modality", TRUE)
 r2 <- make_figure_row("frangieh_ifn_gamma_gene", "Frangieh IFN-\u03B3", FALSE)
 
 fig <- plot_grid(r0, r1, r2, nrow = 3,
-                 labels = c("a", "b", "c"), rel_heights = c(0.3, 0.35, 0.35))
+                 labels = c("a", "b", "c"),
+                 rel_heights = c(0.3, 0.35, 0.35))
 
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_1/r_output.png")
-ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 6.75, dpi = 330)
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_1/r_output.png")
+ggsave(filename = to_save_fp, plot = fig, device = "png",
+       scale = 1.1, width = 6.5, height = 6.75, dpi = 330)

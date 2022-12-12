@@ -14,7 +14,8 @@ undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercove
          n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF)
 n_false_rejections <- undercover_res |>
   compute_n_bonf_rejections() |>
-  rename("n_ntc_reject" = "n_reject")
+  rename("n_ntc_reject" = "n_reject") |>
+  select(-Method)
 
 #########
 # PANEL A
@@ -94,6 +95,7 @@ p_f <- make_n_rejected_plot_for_dataset(n_reject_df = n_reject_df, "schraivogel_
 
 fig_top <- plot_grid(p_a$p, p_c$p, p_e$p, p_b$p, p_d$p, p_f$p, nrow = 2, labels = c("a", "c", "e", "b", "d", "f"), align = "v")
 legend <- p_e$legend
+
 ############
 # PANELS g-h
 ############
