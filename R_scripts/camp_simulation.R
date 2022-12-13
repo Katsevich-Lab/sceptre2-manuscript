@@ -104,58 +104,33 @@ run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL, retu
 ##############################################
 # STEP 3: GENERATE CORRELATED DATA AND RUN SIM
 ##############################################
-n_sim <- 2000
+# n_sim <- 2000
+n_sim <- 5
 set.seed(3)
 # y first
 Y <- sapply(X = mus_y, FUN = function(mu_y) MASS::rnegbin(n = n_sim, mu = mu_y, theta = theta)) |> t()
 
-# generate x so that x is correlated with z
-x <- sapply(X = mus_x, FUN = function(mu_x) rbinom(n = 1, size = 1, prob = mu_x))
-x_idx <- which(x == 1)
+# keep x fixed
+x_idx <- which(orig_x == 1)
 B <- 100000
-x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x)))
+x_tilde <- replicate(n = B, expr = sample.int(n = length(orig_x), size = sum(orig_x)))
 idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde) - 1L
 
 # run sim
-sim_res_correlated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
-                                     theta_hypothesized = theta, n_sim = 2000,
-                                     return_null_dist = TRUE, approx = FALSE)
+sim_res_correlated_corret_model <- run_simulation(Y = Y, idx_mat = idx_mat,
+                                                  Z = Z, theta_hypothesized = theta,
+                                                  return_null_dist = TRUE, approx = FALSE)
 
-# quick ggplot to check
-as.data.frame(sim_res_correlated$out_m) |>
-  tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
-                      names_to = "method", values_to = "p_value") |>
-  ggplot(mapping = aes(y = p_value, col = method)) +
-  stat_qq_points(ymin = 1e-8, size = 0.55) +
-  scale_x_reverse() +
-  scale_y_reverse() +
-  labs(x = "Expected null p-value", y = "Observed p-value") +
-  geom_abline(col = "black")
-
-saveRDS(object = sim_res_correlated,
-        file = paste0(result_dir, "correlated_sim_result.rds"))
-
-#######################################
-# CORRELATED AND MODEL MISSPECIFICATION
-#######################################
+###################################################
+# STEP 4: CORRELATED AND MODEL MISSPECIFICATION SIM
+###################################################
 sim_res_correlated_misspec <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
-                                             theta_hypothesized =  5 * theta, n_sim = 2000,
+                                             theta_hypothesized =  5 * theta,
                                              return_null_dist = TRUE, approx = FALSE)
 
-p <- as.data.frame(sim_res_correlated_misspec$out_m) |>
-  tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
-                      names_to = "method", values_to = "p_value") |>
-  ggplot(mapping = aes(y = p_value, col = method)) +
-  stat_qq_points(ymin = 1e-8, size = 0.55) +
-  scale_x_reverse() +
-  scale_y_reverse() +
-  labs(x = "Expected null p-value", y = "Observed p-value") +
-  geom_abline(col = "black")
-ggsave(filename = "~/Desktop/camp.png", plot = p, device = "png", scale = 1, width = 4, height = 3, dpi = 330)
-
-########################################
-# GENERATE UNCORRELATED DATA AND RUN SIM
-########################################
+#########################################
+# STEP 6: UNCORRELATED, GLM INCORRECT SIM
+#########################################
 # keep y from above
 # generate x fresh
 x <- rbinom(n = length(orig_x), size = 1, prob = mean(orig_x))
@@ -164,57 +139,60 @@ x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x)))
 idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde) - 1L
 
 # run sim
-sim_res_uncorrelated <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
-                                       theta_hypothesized = 5 * theta, n_sim = 2000,
+sim_res_uncorrelated_misspec <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
+                                       theta_hypothesized = 5 * theta,
                                        return_null_dist = TRUE, approx = FALSE)
 
-# quick ggplot to check
-as.data.frame(sim_res_uncorrelated$out_m) |>
-  tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
-                      names_to = "method", values_to = "p_value") |>
-  ggplot(mapping = aes(y = p_value, col = method)) +
-  stat_qq_points(ymin = 1e-8, size = 0.55) +
-  scale_x_reverse() +
-  scale_y_reverse() +
-  labs(x = "Expected null p-value", y = "Observed p-value") +
-  geom_abline(col = "black")
+#######################################
+# STEP 7: UNCORRELATED, GLM CORRECT SIM
+#######################################
+# run sim
+sim_res_uncorrelated_correct_model <- run_simulation(Y = Y, idx_mat = idx_mat, Z = Z,
+                                                     theta_hypothesized = theta,
+                                                     return_null_dist = TRUE, approx = FALSE)
 
-saveRDS(object = sim_res_uncorrelated,
-        file = paste0(result_dir, "uncorrelated_sim_result.rds"))
+# save
+sim_res_all <- list(sim_res_correlated_corret_model = sim_res_correlated_corret_model,
+     sim_res_correlated_misspec = sim_res_correlated_misspec,
+     sim_res_uncorrelated_correct_model = sim_res_uncorrelated_correct_model,
+     sim_res_uncorrelated_misspec = sim_res_uncorrelated_misspec)
 
+saveRDS(object = sim_res_all,
+        file = paste0(result_dir, "simulation_study_res.rds"))
 
 ######################
 # ASSESS RUNNING TIME
 ######################
-y <- Y[,1]
-# 1. regress y on Z
-glm_time <- microbenchmark(fit <- glm(y ~ Z + 0,
-                                      family = MASS::negative.binomial(theta = theta)),
-                           times = 30, unit = "s") |> summary()
-
-# 2. permute x B times
-x_idx <- which(x == 1)
-B <- 25000
-random_idx_time <- microbenchmark(x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x))),
-                                  times = 5, unit = "s") |> summary()
-idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde) - 1L
-
-
-# 3. get null z-scores
-z_score_time <- microbenchmark(z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
-                                                                                               working_resid = fit$residuals,
-                                                                                               w = fit$weights,
-                                                                                               index_mat = idx_mat), times = 30, unit = "s") |> summary()
-z_star <- z_scores[1]
-z_null <- z_scores[-1]
-ks.test(z_scores, pnorm)
-hist(z_scores)
-abline(v = z_star)
-
-p_theoretical <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
-p_perm <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
-
-# put the times into a data frame
-time_df <- data.frame(time = c(random_idx_time[["median"]], glm_time[["median"]], z_score_time[["median"]]),
-                      operation = c("Generate permutation idxs", "Fit GLM", "Compute null statistics"))
-
+if (FALSE) {
+  y <- Y[,1]
+  # 1. regress y on Z
+  glm_time <- microbenchmark(fit <- glm(y ~ Z + 0,
+                                        family = MASS::negative.binomial(theta = theta)),
+                             times = 30, unit = "s") |> summary()
+  
+  # 2. permute x B times
+  x_idx <- which(x == 1)
+  B <- 25000
+  random_idx_time <- microbenchmark(x_tilde <- replicate(n = B, expr = sample.int(n = length(x), size = sum(x))),
+                                    times = 5, unit = "s") |> summary()
+  idx_mat <- cbind(matrix(x_idx, ncol = 1), x_tilde) - 1L
+  
+  
+  # 3. get null z-scores
+  z_score_time <- microbenchmark(z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
+                                                                                                 working_resid = fit$residuals,
+                                                                                                 w = fit$weights,
+                                                                                                 index_mat = idx_mat), times = 30, unit = "s") |> summary()
+  z_star <- z_scores[1]
+  z_null <- z_scores[-1]
+  ks.test(z_scores, pnorm)
+  hist(z_scores)
+  abline(v = z_star)
+  
+  p_theoretical <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
+  p_perm <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
+  
+  # put the times into a data frame
+  time_df <- data.frame(time = c(random_idx_time[["median"]], glm_time[["median"]], z_score_time[["median"]]),
+                        operation = c("Generate permutation idxs", "Fit GLM", "Compute null statistics"))
+}

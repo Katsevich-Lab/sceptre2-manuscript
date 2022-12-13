@@ -17,9 +17,9 @@ n_false_rejections <- undercover_res |>
   rename("n_ntc_reject" = "n_reject") |>
   select(-Method)
 
-#########
-# PANEL A
-#########
+##########
+# TOP HALF
+##########
 n_reject_df <- pc_res |>
   filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_control >= N_NONZERO_CONTROL_CUTOFF) |>
@@ -32,7 +32,14 @@ n_reject_df <- pc_res |>
                                       "SCEPTRE" = "Sceptre",
                                       "Liscovitch Meth." = "Liscovitch Method",
                                       "Schraivogel Meth." = "Schraivogel Method",
-                                      "Weissman Meth." = "Weissman Method")) |>
+                                      "Weissman Meth." = "Weissman Method"),
+         Method = forcats::fct_relevel(Method,
+                                       "SCEPTRE",
+                                       "Seurat De",
+                                       "Weissman Meth.",
+                                       "Mimosca",
+                                       "Liscovitch Meth.",
+                                       "Schraivogel Meth.")) |>
   left_join(n_false_rejections,
             by = c("dataset", "method")) |>
   filter(n_ntc_reject < 50)
@@ -51,7 +58,8 @@ make_n_rejected_plot_for_dataset <- function(n_reject_df, dataset, tit, y_text =
   }
   
   p_0 <- curr_n_reject_df |>
-    ggplot2::ggplot(ggplot2::aes(x = reorder(method, -n_pc_reject),
+    arrange(Method) |>
+    ggplot2::ggplot(ggplot2::aes(x = Method,
                                  y = n_pc_reject, fill = Method)) +
     ggplot2::geom_col(col = "black") +
     ylab("N discoveries") +
@@ -64,6 +72,7 @@ make_n_rejected_plot_for_dataset <- function(n_reject_df, dataset, tit, y_text =
       default.unit = "inch",
       nrow = 1)) +
     scale_fill_manual(values = my_cols) +
+    scale_color_manual(values = my_cols) +
     scale_y_continuous(breaks = integer_breaks(),
                        expand = c(0, 0))
   
@@ -72,7 +81,8 @@ make_n_rejected_plot_for_dataset <- function(n_reject_df, dataset, tit, y_text =
   p <- p_0 +
     my_theme_no_legend +
     theme(axis.text.x = element_blank(),
-          axis.title.x = element_blank()) +
+          axis.title.x = element_blank(),
+          axis.ticks.x = element_blank()) +
     ggtitle(tit)
   
   if (!y_text) {
@@ -86,7 +96,7 @@ make_n_rejected_plot_for_dataset <- function(n_reject_df, dataset, tit, y_text =
   return(list(p = p, legend = legend))
 }
 
-p_a <- make_n_rejected_plot_for_dataset(n_reject_df = n_reject_df, "frangieh_ifn_gamma_gene", "Frangieh (IFN-\u03B3)", y_text = TRUE, extra_space = TRUE)
+p_a <- make_n_rejected_plot_for_dataset(n_reject_df = n_reject_df, dataset = "frangieh_ifn_gamma_gene", tit = "Frangieh (IFN-\u03B3)", y_text = TRUE, extra_space = TRUE)
 p_b <- make_n_rejected_plot_for_dataset(n_reject_df = n_reject_df, "frangieh_control_gene", "Frangieh (control)", y_text = TRUE, extra_space = TRUE)
 p_c <- make_n_rejected_plot_for_dataset(n_reject_df = n_reject_df, "frangieh_co_culture_gene", "Frangieh (co culture)", extra_space = FALSE, y_text = FALSE)
 p_d <- make_n_rejected_plot_for_dataset(n_reject_df = n_reject_df, "papalexi_eccite_screen_gene", "Papalexi (gene)",  extra_space = FALSE, y_text = FALSE)
@@ -107,7 +117,7 @@ make_p_val_vs_sample_size_plot <- function(pc_res_sub, tit, print_legend) {
     annotate("rect", xmin = -Inf, xmax = N_NONZERO_TREATMENT_CUTOFF, ymin = 0, ymax = Inf, fill = "slategray1") +
     annotate("rect", xmin = N_NONZERO_TREATMENT_CUTOFF, xmax = Inf, ymin = 0, ymax = Inf, fill = "lightpink") +
     geom_hline(yintercept = reject_thresh, linetype = "dashed", col = "darkred") +
-    geom_point(alpha = 0.8, size = 0.95) +
+    geom_point(alpha = 0.85, size = 0.95) +
     scale_x_continuous(trans = scales::pseudo_log_trans(base = 10, sigma = 2),
                        breaks = c(0, 1, 10, 100), expand = c(0.02, 0)) +
     scale_y_continuous(trans = revlog_trans(10)) +
@@ -155,4 +165,4 @@ fig <- plot_grid(fig_top, legend, fig_bottom, nrow = 3, rel_heights = c(0.55, 0.
 
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                      "sceptre2-manuscript/R_scripts/figure_creation/fig_5/r_output.png")
-ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.0, width = 6.5, height = 6.5, dpi = 330)
+ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 6.5, dpi = 330)
