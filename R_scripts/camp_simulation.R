@@ -8,7 +8,6 @@ result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra
 ###########################
 # STEP 1: SET UP SIMULATION
 ###########################
-
 # 1. load Papalexi data
 response_odm <- lowmoi::load_dataset_modality("papalexi/eccite_screen/gene")
 grna_odm <- lowmoi::load_dataset_modality("papalexi/eccite_screen/grna_assignment")
@@ -104,8 +103,7 @@ run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL, retu
 ##############################################
 # STEP 3: GENERATE CORRELATED DATA AND RUN SIM
 ##############################################
-# n_sim <- 2000
-n_sim <- 5
+n_sim <- 2000
 set.seed(3)
 # y first
 Y <- sapply(X = mus_y, FUN = function(mu_y) MASS::rnegbin(n = n_sim, mu = mu_y, theta = theta)) |> t()
