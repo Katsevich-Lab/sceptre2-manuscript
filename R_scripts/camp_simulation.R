@@ -1,8 +1,5 @@
 library(ondisc)
 library(sceptre2)
-library(microbenchmark)
-library(ggplot2)
-library(katlabutils)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/")
 
 ###########################
