@@ -70,7 +70,7 @@ make_figure_row <- function(dataset, name, print_legend) {
   p3 <- bonf_reject_df |>
     ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
     ggplot2::geom_col(col = "black") +
-    scale_y_continuous(trans=scales::pseudo_log_trans(base = 10, sigma = 0.2),
+    scale_y_continuous(trans = scales::pseudo_log_trans(base = 10, sigma = 0.2),
                        expand = c(0,0),
                        breaks = c(0, 1, 10, 100, 1000, 8000)) +
     # scales::pseudo_log_trans() +
@@ -90,8 +90,8 @@ r0 <- ggplot() +
   theme_minimal() +
   ggtitle("Undercover gRNA calibration assessment") +
   theme(plot.title = element_text(hjust = 0.5, size=11))
-r1 <- make_figure_row("papalexi_eccite_screen_gene", "Papalexi gene modality", TRUE)
-r2 <- make_figure_row("frangieh_ifn_gamma_gene", "Frangieh IFN-\u03B3", FALSE)
+r1 <- make_figure_row(dataset = "papalexi_eccite_screen_gene", name = "Papalexi gene modality", print_legend = TRUE)
+r2 <- make_figure_row(dataset = "frangieh_ifn_gamma_gene", name = "Frangieh IFN-\u03B3", print_legend = FALSE)
 
 fig <- plot_grid(r0, r1, r2, nrow = 3,
                  labels = c("a", "b", "c"),

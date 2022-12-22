@@ -34,5 +34,6 @@ p2 <- ggplot(data = data.frame(p_value = gene_res),
 
 p_out <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, labels = "auto")
 
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s2/r_output.png")
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s2/fig_s2.png")
 ggsave(filename = to_save_fp, plot = p_out, device = "png", scale = 1.2, width = 6, height = 2.5, dpi = 330)

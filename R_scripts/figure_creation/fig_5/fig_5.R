@@ -60,17 +60,12 @@ make_n_rejected_plot_for_dataset <- function(n_reject_df, dataset, tit, y_text =
   p_0 <- curr_n_reject_df |>
     arrange(Method) |>
     ggplot2::ggplot(ggplot2::aes(x = Method,
-                                 y = n_pc_reject, fill = Method)) +
+                                 y = n_pc_reject,
+                                 fill = Method)) +
     ggplot2::geom_col(col = "black") +
     ylab("N discoveries") +
     xlab("Method") +
-    theme(legend.position = "bottom",
-          legend.title = element_blank()) +
-    guides(fill = guide_legend(
-      keywidth = 0.15,
-      keyheight = 0.15,
-      default.unit = "inch",
-      nrow = 1)) +
+    theme(legend.title = element_blank()) +
     scale_fill_manual(values = my_cols) +
     scale_color_manual(values = my_cols) +
     scale_y_continuous(breaks = integer_breaks(),
@@ -105,6 +100,7 @@ p_f <- make_n_rejected_plot_for_dataset(n_reject_df = n_reject_df, "schraivogel_
 
 fig_top <- plot_grid(p_a$p, p_c$p, p_e$p, p_b$p, p_d$p, p_f$p, nrow = 2, labels = c("a", "c", "e", "b", "d", "f"), align = "v")
 legend <- p_e$legend
+fig_top_2 <- plot_grid(fig_top, legend, ncol = 2, rel_widths = c(0.81, 0.19))
 
 ############
 # PANELS g-h
@@ -156,13 +152,14 @@ p_h <- make_p_val_vs_sample_size_plot(pc_res |>
                                          filter(dataset == "frangieh_control_gene", method == "sceptre"),
                                       "Frangieh (control) positive controls",
                                       print_legend = FALSE)
-
 fig_bottom <- plot_grid(p_g, p_h, nrow = 1, labels = c("g", "h"))
+
 ############
 # CREATE FIG
 ############
-fig <- plot_grid(fig_top, legend, fig_bottom, nrow = 3, rel_heights = c(0.55, 0.08, 0.4), align = "v", axis = "l")
+fig <- plot_grid(fig_top_2, fig_bottom, nrow = 2, rel_heights = c(0.6, 0.4), align = "v", axis = "l")
 
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_5/r_output.png")
-ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 6.5, dpi = 330)
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_5/fig_5.png")
+ggsave(filename = to_save_fp, plot = fig, device = "png",
+       scale = 1.1, width = 6.5, height = 6.25, dpi = 330)

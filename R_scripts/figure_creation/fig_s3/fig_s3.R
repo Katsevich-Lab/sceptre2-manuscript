@@ -6,93 +6,56 @@ library(cowplot)
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/")
-correlated_res <- readRDS(paste0(result_dir, "correlated_sim_result.rds"))
-uncorrelated_res <- readRDS(paste0(result_dir, "uncorrelated_sim_result.rds"))
+sim_res <- readRDS(paste0(result_dir, "simulation_study_res.rds"))
 
-p1 <- as.data.frame(correlated_res$out_m) |>
-  tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
-                      names_to = "Method", values_to = "p_value") |>
-  mutate(Method = fct_recode(Method, "NB Regression" = "p_theory",
-                             "SCEPTRE" = "p_camp",
-                             "Permutation test" = "p_perm")) |>
-  ggplot(mapping = aes(y = p_value, col = Method)) +
-  stat_qq_points(ymin = 1e-8, size = 0.55) +
-  scale_x_reverse() +
-  scale_y_reverse() +
-  labs(x = "Expected null p-value", y = "Observed p-value") +
-  geom_abline(col = "black") +
-  my_theme +
-  theme(legend.position = c(0.75, 0.17),
-        legend.title = element_blank()) +
-  guides(color = guide_legend(
-    keywidth = 0.0,
-    keyheight = 0.1,
-    default.unit="inch")) +
-  ggtitle("Treatment confounded,\nGLM specified correctly") +
-  scale_color_manual(values = my_cols)
-
-
-p2 <- as.data.frame(uncorrelated_res$out_m) |>
-  tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
-                      names_to = "Method", values_to = "p_value") |>
-  mutate(Method = fct_recode(Method, "NB Regression" = "p_theory",
-                             "SCEPTRE" = "p_camp",
-                             "Permutation test" = "p_perm")) |>
-  ggplot(mapping = aes(y = p_value, col = Method)) +
-  stat_qq_points(ymin = 1e-8, size = 0.55) +
-  scale_x_reverse() +
-  scale_y_reverse() +
-  labs(x = "Expected null p-value", y = "Observed p-value") +
-  geom_abline(col = "black") +
-  my_theme +
-  theme(legend.position = "none") +
-  ggtitle("Treatment unconfounded,\nGLM specified incorrectly") +
-  scale_color_manual(values = my_cols)
-
-z_grid <- seq(-4, 4, length.out = 1000)
-density_df <- data.frame(density = dnorm(z_grid),
-                         z_grid = z_grid)
-histogram_df <- data.frame(z_null = correlated_res$resamp_dist$camp_null)
-p3 <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density)),
-                          data = histogram_df,
-                          boundary = 0,
-                          fill = "grey85",
-                          color = "black",
-                          bins = 25) +
-  my_theme +
-  scale_y_continuous(expand = expansion(mult = c(0.0, .01))) +
-  geom_line(aes(x = z_grid, y = density, col = "N(0,1) density"),
-            data = density_df, linewidth = 0.7) +
-  scale_color_manual(values = c("N(0,1) density" = "purple")) +
-  xlab("z null") +
-  ylab("") +
-  theme(legend.position = c(0.8, 0.8),
-        legend.key.size = unit(0.35, 'cm'),
-        legend.title = element_blank(),
-        legend.margin=margin(t = -0.5, unit='cm')) +
-  ggtitle("SCEPTRE null z-scores") +
-  xlim(-4, 4)
+# p1: no problems (no confounding, correct model specification)
+make_qq_plot <- function(result_matrix, tit, w_legend = FALSE) {
+  p0 <- as.data.frame(result_matrix) |>
+    tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
+                        names_to = "Method", values_to = "p_value") |>
+    mutate(Method = fct_recode(Method, "NB Regression" = "p_theory",
+                               "SCEPTRE" = "p_camp",
+                               "Permutation test" = "p_perm")) |>
+    mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf)) |>
+    ggplot(mapping = aes(y = p_value, col = Method)) +
+    stat_qq_points(ymin = 1e-8, size = 0.9) +
+    scale_x_reverse() +
+    scale_y_reverse() +
+    labs(x = "Expected null p-value", y = "Observed p-value") +
+    geom_abline(col = "black") +
+    my_theme +
+    guides(color = guide_legend(
+      keywidth = 0.0,
+      keyheight = 0.2,
+      default.unit="inch",
+      override.aes = list(size = 2.5))) +
+    ggtitle(tit) +
+    scale_color_manual(values = my_cols)
   
+  if (w_legend) {
+    p <- p0 + theme(legend.position = c(0.75, 0.2),
+                    legend.title = element_blank())
+  } else {
+    p <- p0 + theme(legend.position = "none")
+  }
+  return(p)
+}
 
-histogram_df <- data.frame(z_null = uncorrelated_res$resamp_dist$camp_null)
-p4 <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density)),
-                                data = histogram_df,
-                                boundary = 0,
-                                fill = "grey85",
-                                color = "black",
-                                bins = 25) +
-  my_theme +
-  scale_y_continuous(expand = expansion(mult = c(0.0, .01))) +
-  geom_line(aes(x = z_grid, y = density),
-            data = density_df, linewidth = 0.7, col = "purple") +
-  xlab("z null") +
-  ylab("") +
-  ggtitle("SCEPTRE null z-scores") +
-  xlim(-6, 6)
+p_a <- make_qq_plot(result_matrix = sim_res$sim_res_uncorrelated_correct_model$out_m,
+                    tit = "Treatment unconfounded,\nGLM specified correctly", w_legend = TRUE)
 
-fig <- plot_grid(p1, p2, p3, p4, nrow = 2, rel_heights = c(0.55, 0.45),
-                 labels = c("a", "c", "b", "d"), byrow = TRUE)
+p_b <- make_qq_plot(result_matrix = sim_res$sim_res_uncorrelated_misspec$out_m,
+                    tit = "Treatment unconfounded,\nGLM specified incorrectly", w_legend = FALSE)
+
+p_c <- make_qq_plot(result_matrix = sim_res$sim_res_correlated_corret_model$out_m,
+                    tit = "Treatment confounded,\nGLM specified correctly", w_legend = FALSE)
+
+p_d <- make_qq_plot(result_matrix = sim_res$sim_res_correlated_misspec$out_m,
+                    tit = "Treatment confounded,\nGLM specified incorrectly", w_legend = FALSE)
+
+fig <- plot_grid(p_a, p_b, p_c, p_d, nrow = 2,
+                 labels = "auto")
 
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s3/fig_s3.pdf")
-ggsave(filename = to_save_fp, plot = fig, device = "pdf", scale = 1, width = 6.5, height = 5)
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s3/fig_s3.png")
+ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 5.5, dpi = 330)

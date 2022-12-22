@@ -344,6 +344,6 @@ fig <- cowplot::plot_grid(p_a, p_b,
                           p_c, p_d,
                           p_e, p_f, ncol = 2, labels = "auto", align = "vh", axis = "l")
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_2/r_output.png")
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_2/fig_2.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png",
        scale = 1.1, width = 6.5, height = 7, dpi = 330)

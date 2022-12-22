@@ -10,10 +10,10 @@ my_cols <- c("Weissman Method" = "purple3",
              "Seurat De (w/o strict QC)" = "dodgerblue",
              "NB Reg (w/o covariates)" = "darkgoldenrod3",
              "NB Reg (w/ covariates)" = "darkgoldenrod4",
-             "NB Regression" = "dodgerblue3",
+             "NB Regression" = "goldenrod3",
              "SCEPTRE" = "firebrick3",
-             "SCEPTRE (w/o covariates)" = "orange3",
-             "Permutation test" = "darkslategray4")
+             "SCEPTRE (w/o covariates)" = "dodgerblue",
+             "Permutation test" = "slategray4")
 
 my_theme <- theme_bw() + theme(axis.line = element_line(color = "black"),
                                panel.grid.major = element_blank(),

@@ -14,7 +14,8 @@ N_CELLS <- 10000
 # generate cell names, gene names, and grna names
 cell_barcodes <- paste0("cell-", seq(1, N_CELLS))
 gene_ids <- paste0("gene-", seq(1, N_GENES))
-grna_ids <- c(paste0("NTC-", seq(1, N_NTC_GRNAS)), paste0("GENE-TARGET-", seq(1, N_GRNAS -  N_NTC_GRNAS)))
+grna_ids <- c(paste0("NTC-", seq(1, N_NTC_GRNAS)),
+              paste0("GENE-TARGET-", seq(1, N_GRNAS -  N_NTC_GRNAS)))
 
 # create gene expression matrix
 mus <- rgamma(n = N_GENES, shape = 0.5, rate = 2)

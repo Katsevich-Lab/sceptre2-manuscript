@@ -104,25 +104,25 @@ r2 <- make_figure_row("frangieh_control_gene", "Frangieh control", FALSE)
 r3 <- make_figure_row("frangieh_co_culture_gene", "Frangieh co culture", TRUE)
 fig <- plot_grid(r1$p_row, r2$p_row, r3$p_row, r1$legend, nrow = 4,
                  labels = c("a", "b", "c"), rel_heights = c(0.3, 0.3, 0.3, 0.06))
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s1/r_output_1.png")
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s1/fig_s1_1.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 7.0, dpi = 330)
 
 # rows 4-6
-r4 <- make_figure_row("schraivogel_enhancer_screen", "Schraivogel", FALSE)
+r4 <- make_figure_row(dataset = "schraivogel_enhancer_screen", name = "Schraivogel", FALSE)
 r5 <- make_figure_row("papalexi_eccite_screen_gene", "Papalexi gene modality", FALSE)
 r6 <- make_figure_row("papalexi_eccite_screen_protein", "Papalexi protein modality", TRUE)
 fig <- plot_grid(r4$p_row, r5$p_row,
                  r6$p_row, r1$legend, nrow = 4,
                  labels = c("d", "e", "f"),
                  rel_heights = c(0.3, 0.3, 0.3, 0.06), align = "vh", axis = "l")
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s1/r_output_2.png")
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s1/fig_s1_2.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 7.0, dpi = 330)
 
 # row 7
 r7 <- make_figure_row("simulated_experiment_1_gene", "Simulated data", TRUE)
 fig <- plot_grid(r7$p_row, r7$legend, nrow = 2,
                  labels = c("g", ""), rel_heights = c(0.86, 0.14))
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s1/r_output_3.png")
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s1/fig_s1_3.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 2.75, dpi = 330)
 
 # figure for gene's grant proposal
