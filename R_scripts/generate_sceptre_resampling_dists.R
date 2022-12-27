@@ -56,38 +56,3 @@ to_save <- lapply(X = my_datasets, FUN = function(my_dataset) {
 
 # save
 saveRDS(object = to_save, file = paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists.rds"))
-
-# AN EXPLORATION OF USING 
-if (FALSE) {
-  library(evmix)
-  # load empirical distributions
-  to_save <- readRDS(paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists.rds"))
-  
-  # index of to_save to investigate
-  i <- sample(seq(1, nrow(to_save)), 1)
-  to_save[i, 1:4] # response, grna, effective sample size (i.e., N nonzero treatment cells, dataset)
-  
-  # investigate left tail or right tail
-  left_tail <- FALSE
-  z_null <- (if (left_tail) -1 else 1) * (to_save[i, 5:ncol(to_save_sub)] |> as.numeric())
-  
-  # SELECT CUTTOF; EXAMINE TAIL DIST
-  u <- 2.5
-  z_null_tail <- z_null[z_null > u]
-  max(z_null_tail)
-  # histogram
-  hist(z_null_tail, freq = FALSE)
-  # fit GDP via MLE
-  fit <- fgpd(x = z_null, u = u)
-  # plot fitted dist
-  x_grid <- seq(u, 6, length.out = 1000)
-  y_dens <- dgpd(x = xgrid, u = 2, sigmau = fit$mle[1], xi = fit$mle[2])
-  lines(x = x_grid, y = y_dens, pch = 19, cex = 0.4, col = "red")
-  # compare empirical (conditional) p-value to fitted p-value
-  z_star <- 3.75
-  emp_p <- mean(z_null > u) *  (1 - sceptre2:::compute_empirical_p_value(z_star, z_null_tail, side = "left"))
-  p_p <- mean(z_null > u) * (1 - pgpd(q = z_star, u = u, sigmau = fit$mle[1], xi = fit$mle[2]))
-  emp_p
-  p_p
-  emp_p/p_p
-}
