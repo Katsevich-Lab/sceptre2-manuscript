@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2022.1.4)  3 JAN 2023 19:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2022.1.4)  3 JAN 2023 19:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -381,17 +381,17 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_7.pdf, id=45, 578.16pt x 433.62pt>
+<figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_7.pdf, id=43, 578.16pt x 433.62pt>
 File: figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_7.pdf Graphic file (type pdf)
 <use figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_7.pdf>
 Package pdftex.def Info: figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_7.pdf  used on input line 85.
 (pdftex.def)             Requested size: 505.89pt x 379.41656pt.
-<figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_25.pdf, id=46, 578.16pt x 433.62pt>
+<figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_25.pdf, id=44, 578.16pt x 433.62pt>
 File: figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_25.pdf Graphic file (type pdf)
 <use figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_25.pdf>
 Package pdftex.def Info: figures/schraivogel_enhancer_screen_chr11_gene_eff_ss_25.pdf  used on input line 91.
 (pdftex.def)             Requested size: 505.89pt x 379.41656pt.
-<figures/papalexi_eccite_screen_gene_eff_ss_30.pdf, id=47, 578.16pt x 433.62pt>
+<figures/papalexi_eccite_screen_gene_eff_ss_30.pdf, id=45, 578.16pt x 433.62pt>
 File: figures/papalexi_eccite_screen_gene_eff_ss_30.pdf Graphic file (type pdf)
 <use figures/papalexi_eccite_screen_gene_eff_ss_30.pdf>
 Package pdftex.def Info: figures/papalexi_eccite_screen_gene_eff_ss_30.pdf  used on input line 97.
@@ -425,7 +425,7 @@ Here is how much of TeX's memory you used:
  1141 hyphenation exceptions out of 8191
  34i,11n,45p,1312b,325s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on low-moi-p-values-gene.pdf (5 pages, 300290 bytes).
+Output written on low-moi-p-values-gene.pdf (5 pages, 300655 bytes).
 PDF statistics:
  123 PDF objects out of 1000 (max. 8388607)
  98 compressed objects within 1 object stream
