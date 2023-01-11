@@ -39,12 +39,6 @@ y_coef <- coef(fit_y_orig)
 theta <- fit_y_orig$theta
 mus_y <- exp(as.numeric(Z %*% y_coef))
 
-# 6. get the model for x | Z
-b <- binomial()
-fit_x <- glm(formula = orig_x ~ . + 0, family = binomial(), data = as.data.frame(Z))
-x_coef <- coef(fit_x)
-mus_x <- b$linkinv(as.numeric(Z %*% x_coef))
-
 #################################
 # STEP 2: RUN SIMULATION FUNCTION
 #################################

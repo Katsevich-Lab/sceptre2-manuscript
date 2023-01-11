@@ -32,4 +32,3 @@ pc_res_processed <- process_pc_result(pc_res, sample_size_df) |>
   mutate(p_value = ifelse(p_value <= 0, min_p, p_value))
 saveRDS(object = pc_res_processed,
         file = paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_processed.rds"))
-
