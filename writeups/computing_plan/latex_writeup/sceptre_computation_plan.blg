@@ -1,0 +1,5 @@
+[0] Config.pm:302> INFO - This is Biber 2.11
+[0] Config.pm:305> INFO - Logfile is 'sceptre_computation_plan.blg'
+[24] biber-darwin:313> INFO - === Thu Jan 19, 2023, 19:10:54
+[139] Utils.pm:209> ERROR - Cannot find control file 'sceptre_computation_plan.bcf'! - Did latex run successfully on your .tex file before you ran biber?
+[139] Biber.pm:114> INFO - ERRORS: 1
