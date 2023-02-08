@@ -23,61 +23,66 @@ resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributio
 resampling_dists[1:5, 1:6]
 ```
 
+
 ```{r}
 
 q_list <- c(0.96)
 samples_list <- 5e5
-fitting_fun <- gpdAd
 
 for (i in 1:length(q_list)) {
-  for (j in 1:330) {
+  for (j in 1:1) {
     # extract percentile and no_samples
     q <- q_list[i]
     samples <- samples_list[j]
     # require to be in the low_moi_explore folder
     # make a directory given the number of percentile and the number of resamples
     working_dir <- getwd()
-    subDir <- sprintf("figures/power_exploration/%d_resamples_%.2f_percentile",  samples, q)
+    subDir <- sprintf("figures/power_exploration/tail_prob_%d_resamples_%.2f_percentile",  samples, q)
     dir.create(file.path(working_dir, subDir))
-    
+   
     # create gpd parameter matrix
-    gpd_param <- list(left = matrix(0, nrow = 5, ncol = nrow(resampling_dists)),
-                      right = matrix(0, nrow = 5, ncol = nrow(resampling_dists)))
-    
+    gpd_param <- list(left = matrix(0, nrow = 6, ncol = nrow(resampling_dists)),
+                      right = matrix(0, nrow = 6, ncol = nrow(resampling_dists)))
+   
     for (l in 1:nrow(resampling_dists)){
         # extract index of resampling distribution
         idx <- l
         z_null <- as.numeric(resampling_dists[idx,5:(4+samples)])
 
         plots <- list()
-        
+       
       for(tail in c("left", "right")){
           sign_flip <- if(tail == "right") 1 else -1
           z_null_pos <- sign_flip*z_null
           u_pos <- quantile(z_null_pos, q)
           u <- sign_flip*u_pos
-          
+         
           # extract the data
         trun_data <- z_null_pos[z_null_pos > u_pos]
         n <- sum(z_null_pos > u_pos)
-        
+       
         # method of moment
         xi_mom <- (1 - (mean(trun_data) - u_pos)^2/var(trun_data))/2
         sig_mom <- (mean(trun_data) - u_pos)*(1 - xi_mom)
-        
-        sim_data <- rgpd(1e6, loc = u_pos, scale = sig_mom, shape = xi_mom)
-        
-        # k-s test
-        test_ks <- ks.test(trun_data, sim_data)
-        
-  
+       
+        # first fit ks.test with estimated parameter; if there is Na, switch to simulation
+        test_ks <- ks.test(trun_data, "pgpd", u_pos, sig_mom, xi_mom)
+        print(is.nan(test_ks$p.value))
+        print(test_ks$p.value)
+        if(is.nan(test_ks$p.value)){
+          sim_data <- rgpd(1e6, loc = u_pos, scale = sig_mom, shape = xi_mom)
+          # k-s test
+          test_ks <- ks.test(trun_data, sim_data)
+        }
+       
+ 
           dgpd_density <- function(x) {
-              (1 - q) * dgpd(sign_flip*x, 
-                         loc = u_pos, 
-                         scale = sig_mom, 
+              (1 - q) * dgpd(sign_flip*x,
+                         loc = u_pos,
+                         scale = sig_mom,
                          shape = xi_mom)
           }
-  
+ 
           if(tail == "right"){
             x_min <- u
             x_max <- max(z_null)
@@ -85,117 +90,95 @@ for (i in 1:length(q_list)) {
             x_min <- min(z_null)
             x_max <- u
           }
-  
+ 
           hist_full <- tibble(z_null) %>%
-            ggplot(aes(x = z_null)) + 
+            ggplot(aes(x = z_null)) +
             geom_histogram(aes(y = ..density..), bins = 1000) +
             geom_vline(xintercept = u, linetype = "dashed", color = "red") +
-            stat_function(fun = dgpd_density, 
+            stat_function(fun = dgpd_density,
                           xlim = c(x_min, x_max),
                           color = "dodgerblue") +
-            labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) + 
+            labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) +
             theme(plot.title = element_text(hjust = 0.5))
-  
-          hist_tail <- hist_full + 
-            coord_cartesian(xlim = c(x_min, x_max), ylim = c(0, dgpd_density(u)*1.5)) + 
+
+          hist_tail <- hist_full +
+            coord_cartesian(xlim = c(x_min, x_max), ylim = c(0, dgpd_density(u)*1.5)) +
             theme(plot.title = element_blank())
-  
-          expected_quantiles_pos <- qgpd(p = (2*(1:n)-1)/(2*n), 
-              loc = u_pos, 
-              scale = sig_mom, 
+ 
+          expected_quantiles_pos <- qgpd(p = (2*(1:n)-1)/(2*n),
+              loc = u_pos,
+              scale = sig_mom,
               shape = xi_mom)
-  
-          expected_unif <- pgpd(q = sort(sign_flip*z_null_pos[z_null_pos > u_pos]), 
-              loc = u_pos, 
-              scale = sig_mom, 
+ 
+          expected_unif <- pgpd(q = sort(sign_flip*z_null_pos[z_null_pos > u_pos]),
+              loc = u_pos,
+              scale = sig_mom,
               shape = xi_mom)
-  
-          tibble(expected_unif) %>%
-            ggplot(aes(y = expected_unif)) +
-            stat_qq_points() +
-            stat_qq_band() +
-            geom_abline() 
-    
-  
-          hist(expected_unif)
-  
+ 
           qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
                  observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
             ggplot(aes(x = expected_quantile, y = observed_quantile)) +
             geom_line() +
             geom_abline(linetype = "dashed", color = "red")
-
-  
+         
+          # plot the tail probability
+          expected_extreme_quantile <- qgpd(p = 1 - seq(10**{-3.6}, 1e-1, by = 1e-4),
+              loc = u_pos,
+              scale = sig_mom,
+              shape = xi_mom)
+          expected_tail_prob <- 1 - as.vector(pgpd(q = expected_extreme_quantile,
+              loc = u_pos,
+              scale = sig_mom,
+              shape = xi_mom))
+          # compute the observer tail probability
+          observed_tail_prob <- 1 - ecdf(trun_data)(as.vector(expected_extreme_quantile))
+          # plot the tail probability
+          p_plot <- tibble(expected_tail_prob = as.vector(expected_tail_prob),
+                           observed_tail_prob = observed_tail_prob,
+                           observed_prob_ub = observed_tail_prob + 1.96*sqrt(observed_tail_prob*(1-observed_tail_prob)/n),
+                           observed_prob_lb = observed_tail_prob - 1.96*sqrt(observed_tail_prob*(1-observed_tail_prob)/n)) %>%
+            ggplot(aes(x = expected_tail_prob, y = observed_tail_prob)) +
+            geom_line() +
+            geom_ribbon(aes(ymin = observed_prob_lb, ymax = observed_prob_ub), alpha=0.0,
+                        linetype = "dashed", colour="blue")+
+            geom_abline(linetype = "dashed", color = "red") +
+            scale_x_continuous(trans = c("log10", "reverse")) +
+            scale_y_continuous(trans = c("log10", "reverse"))
+         
+          # store the plot
           plots[[tail]] <- plot_grid(hist_full,
                                      hist_tail,
                                      qq_plot,
+                                     p_plot,
                                      ncol = 1,
-                                     rel_heights = c(1,1,1.5),
+                                     rel_heights = c(1,1,1.5, 1.5),
                                      align = "v")
-          
+         
+          # compute the ratio p-value
+          ratio_pvalue <- max(expected_tail_prob / observed_tail_prob,
+                              observed_tail_prob / expected_tail_prob)
+          print(ratio_pvalue)
           # save the gpd parameters and gof statistics and p-value
           gpd_param[[which(names(gpd_param) == tail)]][1, l] <- u_pos
           gpd_param[[which(names(gpd_param) == tail)]][2, l] <- sig_mom
           gpd_param[[which(names(gpd_param) == tail)]][3, l] <- xi_mom
           gpd_param[[which(names(gpd_param) == tail)]][4, l] <- test_ks$statistic
           gpd_param[[which(names(gpd_param) == tail)]][5, l] <- test_ks$p.value
+          gpd_param[[which(names(gpd_param) == tail)]][6, l] <- ratio_pvalue
         }
 
         # plot
         final_plot <- plot_grid(plots[["left"]], plots[["right"]])
-    
+   
         # save the plot in specific folder
         save_plot(sprintf("%s/%d.pdf", file.path(working_dir, subDir), idx), final_plot)
         print(l)
     }
     # save the gpd parameter matrix and goodness of fit statistic and p-value
     write.csv(gpd_param, sprintf("%s/param.csv", file.path(working_dir, subDir)))
-    print(j)
   }
-  print(i)
 }
 
 # 1 1 163
 # 1 2 177
 # 1 2 198
-
-
-```
-
-```{r}
-idx <- 5
-q <- 0.8
-tail <- "left"
-fitting_fun <- gpdCvm
-samples_vals <- seq(1000, 100000, by = 1000)
-
-num_samples_vals <- length(samples_vals)
-stats_vals <- numeric(num_samples_vals)
-z_null_full <- as.numeric(resampling_dists[idx,5:(4+5e5)])
-for(index in 1:num_samples_vals){
-  samples <- samples_vals[index]
-  sign_flip <- if(tail == "right") 1 else -1
-  z_null_pos <- sign_flip*z_null_full[1:samples]
-  u_pos <- quantile(z_null_pos, q)
-  u <- sign_flip*u_pos
-  out <- tryCatch(fitting_fun(z_null_pos[z_null_pos > u_pos]), error = function(e)(NA))
-    
-  if(!is.na(out)){
-    stats_vals[index] <- sqrt(out$statistic/samples)
-  } else{
-    stats_vals[index] <- NA
-  }
-
-#  stats_vals[index] <- out$statistic
-}
-
-tibble(samples = samples_vals,
-       test_stat = stats_vals) %>%
-  ggplot(aes(x = samples, y = test_stat)) +
-  geom_point() 
-```
-
-Notes: 
-
-- The p-values from the GoF tests tend to be fairly small, presumably due to small deviations from GPD. It might be better to use test statistics rather than p-values. However, for example the CvM statistic itself is not normalized, in the sense that increasing the sample size will tend to increase the value of the statistic. To get all the test statistics "on the same scale", one can construct a "root-mean-square" CvM statistic. It looks like 0.01 is a decent threshold that separates the bumpy distributions from the non-bumpy ones. However, the separation is not great. There are cases when, by eye, it is quite clear that the distribution is bumpy, but the CvM statistic is not very large. There should be some other way to test whether a distribution is bumpy. 
-- The tail of the empirical distribution tends to be a bit longer than the tail of the fitted GPD, even in the absence of bumpy-ness.
