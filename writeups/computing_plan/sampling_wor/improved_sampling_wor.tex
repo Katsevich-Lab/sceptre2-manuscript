@@ -137,7 +137,9 @@ The undercover analysis differs from the discovery analysis in low MOI. In the u
 $$ \P( 1 \in A_i ) = \P(1 = A_i) = \dots = \P(N \in A_i ) = i/N.$$
 \end{itemize}
 
-We can use a length-M sequence $a_1 a_2 \dots a_M$ to generate WOR samples for gRNAs in the undercover analysis. For example, suppose that a given undercover gRNA is present in $k < M$ cells. To test this gRNA, we need to randomly assign a treatment to $k$ of the cells in $\{ 1, \dots, N \}$. 
+We can use a length-M sequence $a_1 a_2 \dots a_M$ to generate WOR samples for gRNAs in the undercover analysis. For example, suppose that a given undercover gRNA is present in $k < M$ cells. To test this gRNA, we need to randomly assign the treatment to $k$ of the cells in $\{ 1, \dots, N \}$. The set $A_k = \{a_1, \dots, a_k\}$ is a set of size $k$ such that each element of $\{1, \dots, N\}$ is equally likely to be in $A_k$. Thus, $A_k$ is a valid WOR sample for an undercover gRNA present in $k$ cells.
+
+The story is similar for marginal resampling in high MOI (both for undercover and discovery analyses). In this setting the total number of cells remains the same, while the number of treatment cells varies across gRNA. Thus, standard WOR sampling is sufficient for marginal resampling in high MOI. Table \ref{sampling_algo} summarizes which sampling algorithm to use in the different settings that we consider. We still need to figure out what sampling algorithm we will use for conditional resampling.
 
 \begin{table}
 \begin{tabular}{cccc}
@@ -161,7 +163,7 @@ We can use a length-M sequence $a_1 a_2 \dots a_M$ to generate WOR samples for g
 	High & Conditional & Undercover & ? \\ 
 	\hline 
 \end{tabular}
-	\caption{Resampling algorithms to use in different settings. The inductive WOR algorithm is used only in the following setting: low MOI, marginal resampling, discovery analysis. It is unclear what algorithm to use when resampling \textit{conditional} (as opposed to \textit{marginally}).}
+	\caption{Resampling algorithms to use in different settings. The inductive WOR algorithm is used only in the following setting: low MOI, marginal resampling, discovery analysis. It is unclear what algorithm to use when resampling \textit{conditional} (as opposed to \textit{marginally}).}	\label{sampling_algo}
 \end{table}
 
 \bibliographystyle{unsrt}
