@@ -1,0 +1,146 @@
+---
+title: "GPD Goodness of Fit for SCEPTRE Resampling Distributions"
+author: "Gene"
+date: "2022-12-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intro
+
+```{r, warning = FALSE, error = FALSE, message = FALSE}
+library(eva)
+library(tidyverse)
+library(katlabutils)
+library(cowplot)
+
+sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+# load empirical distributions
+resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists.rds"))
+resampling_dists[1:5, 1:6]
+```
+
+```{r}
+idx <- 50
+q <- 0.8
+samples <- 5e5
+fitting_fun <- gpdAd
+
+z_null <- as.numeric(resampling_dists[idx,5:(4+samples)])
+
+plots <- list()
+for(tail in c("left", "right")){
+  sign_flip <- if(tail == "right") 1 else -1
+  z_null_pos <- sign_flip*z_null
+  u_pos <- quantile(z_null_pos, q)
+  u <- sign_flip*u_pos
+  out <- fitting_fun(z_null_pos[z_null_pos > u_pos])
+  
+  n <- sum(z_null_pos > u_pos)
+  
+  dgpd_density <- function(x) {
+      (1 - q) * dgpd(sign_flip*x, 
+                     loc = u_pos, 
+                     scale = out$theta["Scale"], 
+                     shape = out$theta["Shape"])
+  }
+  
+  if(tail == "right"){
+    x_min <- u
+    x_max <- max(z_null)
+  } else{
+    x_min <- min(z_null)
+    x_max <- u
+  }
+  
+  hist_full <- tibble(z_null) %>%
+    ggplot(aes(x = z_null)) + 
+    geom_histogram(aes(y = ..density..), bins = 1000) +
+    geom_vline(xintercept = u, linetype = "dashed", color = "red") +
+    stat_function(fun = dgpd_density, 
+                  xlim = c(x_min, x_max),
+                  color = "dodgerblue") +
+    labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(out$statistic/n), out$p.value)) + 
+    theme(plot.title = element_text(hjust = 0.5))
+  
+  hist_tail <- hist_full + 
+    coord_cartesian(xlim = c(x_min, x_max), ylim = c(0, dgpd_density(u)*1.5)) + 
+    theme(plot.title = element_blank())
+  
+  expected_quantiles_pos <- qgpd(p = (2*(1:n)-1)/(2*n), 
+       loc = u_pos, 
+       scale = out$theta["Scale"], 
+       shape = out$theta["Shape"])
+  
+  expected_unif <- pgpd(q = sort(sign_flip*z_null_pos[z_null_pos > u_pos]), 
+       loc = u_pos, 
+       scale = out$theta["Scale"], 
+       shape = out$theta["Shape"])
+  
+  tibble(expected_unif) %>%
+    ggplot(aes(y = expected_unif)) +
+    stat_qq_points() +
+    stat_qq_band() +
+    geom_abline() 
+    
+  
+  hist(expected_unif)
+  
+  qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
+         observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
+    ggplot(aes(x = expected_quantile, y = observed_quantile)) +
+    geom_line() +
+    geom_abline(linetype = "dashed", color = "red")
+
+  
+  plots[[tail]] <- plot_grid(hist_full,
+                             hist_tail,
+                             qq_plot,
+                             ncol = 1,
+                             rel_heights = c(1,1,1.5),
+                             align = "v")
+}
+
+plot_grid(plots[["left"]], plots[["right"]])
+```
+
+```{r}
+idx <- 5
+q <- 0.8
+tail <- "left"
+fitting_fun <- gpdCvm
+samples_vals <- seq(1000, 100000, by = 1000)
+
+num_samples_vals <- length(samples_vals)
+stats_vals <- numeric(num_samples_vals)
+z_null_full <- as.numeric(resampling_dists[idx,5:(4+5e5)])
+for(index in 1:num_samples_vals){
+  samples <- samples_vals[index]
+  sign_flip <- if(tail == "right") 1 else -1
+  z_null_pos <- sign_flip*z_null_full[1:samples]
+  u_pos <- quantile(z_null_pos, q)
+  u <- sign_flip*u_pos
+  out <- tryCatch(fitting_fun(z_null_pos[z_null_pos > u_pos]), error = function(e)(NA))
+    
+  if(!is.na(out)){
+    stats_vals[index] <- sqrt(out$statistic/samples)
+  } else{
+    stats_vals[index] <- NA
+  }
+
+#  stats_vals[index] <- out$statistic
+}
+
+tibble(samples = samples_vals,
+       test_stat = stats_vals) %>%
+  ggplot(aes(x = samples, y = test_stat)) +
+  geom_point() 
+```
+
+Notes: 
+
+- The p-values from the GoF tests tend to be fairly small, presumably due to small deviations from GPD. It might be better to use test statistics rather than p-values. However, for example the CvM statistic itself is not normalized, in the sense that increasing the sample size will tend to increase the value of the statistic. To get all the test statistics "on the same scale", one can construct a "root-mean-square" CvM statistic. It looks like 0.01 is a decent threshold that separates the bumpy distributions from the non-bumpy ones. However, the separation is not great. There are cases when, by eye, it is quite clear that the distribution is bumpy, but the CvM statistic is not very large. There should be some other way to test whether a distribution is bumpy. 
+- The tail of the empirical distribution tends to be a bit longer than the tail of the fitted GPD, even in the absence of bumpy-ness.
