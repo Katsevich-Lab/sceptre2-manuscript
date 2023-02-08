@@ -13,12 +13,12 @@
 Tim B.
 
 \begin{center}
-\textbf{Inductive sampling without replacement}
+\textbf{Marginal sampling within \texttt{sceptre}}
 \end{center}
 
 \subsection*{Definition and motivation}
 
-I describe ``inductive sampling without replacement,'' a procedure for sharing without replacement (WOR) samples across gene-gRNA pairs containing the same number of negative control (NT) cells but different numbers of treatment cells. Inductive sampling WOR reduces the number of WOR samples that must drawn by a factor equal to the number of gRNAs in the dataset. On a more technical level inductive sampling WOR considerably reduces the number of database queries (specifically, gene expression vector loads) that must be issued when running SCEPTRE out-of-core. Inductive sampling WOR therefore could substantially reduce the compute associated with running SCEPTRE (on low MOI data with marginal resampling), both in memory and out-of-core.
+I describe ``inductive sampling without replacement,'' a procedure for sharing without replacement (WOR) samples across gene-gRNA pairs containing the same number of negative control (NT) cells but different numbers of treatment cells. Inductive sampling WOR reduces the number of WOR samples that must drawn by a factor equal to the number of gRNAs in the dataset. On a more technical level inductive sampling WOR considerably reduces the number of database queries (specifically, gene expression vector loads) that must be issued when running SCEPTRE out-of-core. Inductive sampling WOR therefore could reduce compute by several orders of magnitude.
 
 Let $N$ be the number of control cells. Label the control cells by $c_1, c_2, \dots, c_N$. Next, let $M$ be the number of treatment cells containing the the gRNA that infects the greatest number of cells. Label the treatment cells by $t_1, \dots, t_M$. We seek to construct a length-$M$ random sequence $a_1, a_2, \dots, a_M$ that satisfies the following properties:
 \begin{itemize}
@@ -126,11 +126,43 @@ Suppose we want to construct a sequence $a_1 a_2 \dots a_{m-1} a_m a_{m+1} \dots
 \end{algorithmic}
 \end{algorithm}
 
-\subsection*{A variant on inductive sampling without replacement}
+\subsection*{Sampling without replacement for the undercover analysis}
 
-I consider a variant on inductive sampling WOR, relevant to carrying out the undercover analysis in low MOI and the undercover/discovery analysis in high MOI. In these settings the \textit{total number} of cells stays the same, while the number of treatment cells and control cells changes. Let $c_1, \dots, c_{N-M}$ be the control cells and $t_1, \dots, t_M$ be the treatment cells. We seek to construct a sequence $a_1 a_2 \dots a_N$ such that $A_i = \{a_1, \dots, a_i\}$ is a valid WOR sample for $t_1, \dots, t_i$ and $c_1, \dots, c_{N-i}$. 
+The undercover analysis differs from the discovery analysis in low MOI. In the undercover analysis the total number of cells remains the same, while the number of treatment and control cells varies. Index the negative control cells by $\{1, \dots, N\}$. Denote the number of cells in the largest undercover group by $M$. We seek to construct a length-$M$ sequence of indices with the following property:
 
+\begin{itemize}
+\item[1.] $a_i \in \{1, \dots, N\}$ for all $a_i$. (Note: there is no restriction on the specific values that $a_i$ can take as a function of $i$; instead, $a_i$ can be any member of $ \{1, \dots, N \}$).
+\item[2.] $a_i \neq a_j$.
+\item[3.] Let $A_i = \{ a_1, \dots, a_i \}.$ Then
+$$ \P( 1 \in A_i ) = \P(1 = A_i) = \dots = \P(N \in A_i ) = i/N.$$
+\end{itemize}
 
+We can use a length-M sequence $a_1 a_2 \dots a_M$ to 
+
+\begin{table}
+\begin{tabular}{cccc}
+	\hline 
+	\textbf{MOI} & \textbf{Sampling mechanism} & \textbf{Analysis type} & \textbf{Sampling algorithm} \\ 
+	\hline 
+	Low & Marginal & Disovery &  Inductive WOR \\
+	\hline 
+	Low & Marginal & Undercover & Standard WOR \\ 
+	\hline 
+	Low & Conditional & Discovery &  ? \\ 
+	\hline 
+	Low & Conditional & Undercover & ? \\ 
+	\hline 
+	High & Marginal & Discovery & Standard WOR \\ 
+	\hline 
+	High & Marginal & Undercover & Standard WOR  \\ 
+	\hline 
+	High & Conditional & Discovery & ? \\ 
+	\hline 
+	High & Conditional & Undercover & ? \\ 
+	\hline 
+\end{tabular}
+	\caption{Resampling algorithms to use in different settings. The inductive WOR algorithm is used only in the following setting: low MOI, marginal resampling, discovery analysis. It is unclear what algorithm to use when resampling \textit{conditional} (as opposed to \textit{marginally}).}
+\end{table}
 
 \bibliographystyle{unsrt}
 \bibliography{/Users/timbarry/Documents/optionFiles/library.bib}
