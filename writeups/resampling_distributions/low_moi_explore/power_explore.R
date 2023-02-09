@@ -28,11 +28,11 @@ resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributio
 # k-s test using fitted distribution
 samples_list <- c(round(seq(5e4, 1e3, length.out = 10)))
 power_mat <- list()
-power_list <- list()
-for (i in 1:length(samples_list)){
+power_list_rest <- list()
+for (i in 7:length(samples_list)){
   no_resamp <- samples_list[i]
   q <- 0.96
-  for (r in 98:100) {
+  for (r in 1:100) {
     power_mat[[r]] <- matrix(0, nrow = 330, ncol = 10)
     for (l in 1:330){
       # set.seed
@@ -84,6 +84,6 @@ for (i in 1:length(samples_list)){
     }
     print(r)
   }
-  power_list[[i]] <- power_mat
+  power_list_rest[[i]] <- power_mat
 }
-write.csv(power_list, "power_list.csv")
+write.csv(power_list_rest, "power_list_rest.csv")
