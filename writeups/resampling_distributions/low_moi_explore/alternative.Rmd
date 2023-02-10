@@ -1,0 +1,278 @@
+---
+title: "GPD Goodness of Fit for SCEPTRE Resampling Distributions"
+author: "Gene"
+date: "2022-12-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intro
+
+```{r, warning = FALSE, error = FALSE, message = FALSE}
+library(eva)
+library(tidyverse)
+library(katlabutils)
+library(cowplot)
+
+sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+# load empirical distributions
+resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists.rds"))
+resampling_dists[1:5, 1:6]
+```
+
+# bounded support issue
+```{r}
+param <- read_csv("figures/power_exploration/ks_500000_resamples_0.96_percentile/param.csv", col_names = FALSE)
+param_mat <- matrix(0,5,660)
+for (i in 1:660) {
+  param_mat[,i] <- as.numeric(param[[i+1]][-1])
+}
+rownames(param_mat) <- c("location", "scale", "shape", "statistic", "p-value")
+# compute the upper bound of GPD distribution
+up_bd <- param_mat[1,] - param_mat[2,]/param_mat[3,]
+
+# how many of resampling distributions exceeding the upper bound
+u_max <- apply(as.matrix(resampling_dists[,(5:(4+5e5))]), 1, max)
+u_min <- apply(as.matrix(resampling_dists[,(5:(4+5e5))]), 1, min)
+
+# find the instances where gpd does not cover the whole resamples support
+which(up_bd[331:660] - u_max < 0)
+which(up_bd[1:330] + u_min < 0)
+```
+
+
+
+
+```{r}
+
+idx <- 2
+q <- 0.96
+samples <- 5e5
+a <- 3
+
+# proposal 1: cube the resampling statistic
+
+# extract percentile and no_samples
+z_null <- as.numeric(resampling_dists[idx,5:(4+samples)])
+plots <- list()
+for(tail in c("left", "right")){
+  sign_flip <- if(tail == "right") 1 else -1
+  z_null_pos <- (sign_flip*z_null)^a
+  u_pos <- quantile(z_null_pos, q)
+  u <- sign_flip*u_pos
+  
+  # extract the data
+  trun_data <- (z_null_pos[z_null_pos > u_pos])
+  n <- sum(z_null_pos > u_pos)
+  
+  # method of moment
+  xi_mom <- (1 - (mean(trun_data) - u_pos)^2/var(trun_data))/2
+  sig_mom <- (mean(trun_data) - u_pos)*(1 - xi_mom)
+  
+  # first fit ks.test with estimated parameter; if there is Na, switch to simulation
+  test_ks <- ks.test(trun_data, "pgpd", u_pos, sig_mom, xi_mom)
+  print(is.nan(test_ks$p.value))
+  print(test_ks$p.value)
+  if(is.nan(test_ks$p.value)){
+    sim_data <- rgpd(1e6, loc = u_pos, scale = sig_mom, shape = xi_mom)
+    # k-s test
+    test_ks <- ks.test(trun_data, sim_data)
+  }
+  
+  
+  dgpd_density <- function(x) {
+    (1 - q) * dgpd(sign_flip*x,
+                   loc = u_pos,
+                   scale = sig_mom,
+                   shape = xi_mom)
+  }
+  
+  if(tail == "right"){
+    x_min <- u
+    x_max <- max(z_null^a)
+  } else{
+    x_min <- min(z_null^a)
+    x_max <- u
+  }
+  
+  hist_full <- tibble(z_null^a) %>%
+    ggplot(aes(x = z_null^a)) +
+    geom_histogram(aes(y = ..density..), bins = 1000) +
+    geom_vline(xintercept = u, linetype = "dashed", color = "red") +
+    stat_function(fun = dgpd_density,
+                  xlim = c(x_min, x_max),
+                  color = "dodgerblue") +
+    coord_cartesian(xlim = c(-10, 10)) +
+    labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) +
+    theme(plot.title = element_text(hjust = 0.5))
+  
+  hist_tail <- hist_full +
+    coord_cartesian(xlim = c(x_min, x_max), ylim = c(0, dgpd_density(u)*1.5)) +
+    theme(plot.title = element_blank())
+  
+  expected_quantiles_pos <- qgpd(p = (2*(1:n)-1)/(2*n),
+                                 loc = u_pos,
+                                 scale = sig_mom,
+                                 shape = xi_mom)
+  
+  expected_unif <- pgpd(q = sort(sign_flip*z_null_pos[z_null_pos > u_pos]),
+                        loc = u_pos,
+                        scale = sig_mom,
+                        shape = xi_mom)
+  
+  qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
+                    observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
+    ggplot(aes(x = expected_quantile, y = observed_quantile)) +
+    geom_line() +
+    geom_abline(linetype = "dashed", color = "red")
+  
+  # plot the tail probability
+  observed_tail_prob <- (10:(0.1*n))/n
+  observed_extreme_quantile <- quantile(trun_data, 1 - observed_tail_prob)
+  gpd_tail_prob <- 1 - as.vector(pgpd(q = observed_extreme_quantile,
+                                      loc = u_pos,
+                                      scale = sig_mom,
+                                      shape = xi_mom))
+  # plot the tail probability
+  p_plot <- tibble(observed_tail_prob = as.vector(observed_tail_prob),
+                   gpd_tail_prob = gpd_tail_prob,
+                   observed_prob_ub = observed_tail_prob + 1.96*sqrt(observed_tail_prob*(1-observed_tail_prob)/n),
+                   observed_prob_lb = observed_tail_prob - 1.96*sqrt(observed_tail_prob*(1-observed_tail_prob)/n)) %>%
+    ggplot(aes(x = gpd_tail_prob, y = observed_tail_prob)) +
+    geom_line() +
+    geom_ribbon(aes(ymin = observed_prob_lb, ymax = observed_prob_ub), alpha=0.0,
+                linetype = "dashed", colour="blue")+
+    geom_abline(linetype = "dashed", color = "red") +
+    scale_x_continuous(trans = c("log10", "reverse")) +
+    scale_y_continuous(trans = c("log10", "reverse"))
+  
+  # store the plot
+  plots[[tail]] <- plot_grid(qq_plot,
+                             p_plot,
+                             ncol = 1,
+                             rel_heights = c(1.5, 1.5),
+                             align = "v")
+  
+  # compute the ratio p-value
+  ratio_pvalue <- max(gpd_tail_prob / observed_tail_prob,
+                      observed_tail_prob / gpd_tail_prob)
+}
+plots
+```
+
+
+```{r}
+
+# proposal 2: force gpd shape parameter to be zero
+
+# extract percentile and no_samples
+for(tail in c("left", "right")){
+  sign_flip <- if(tail == "right") 1 else -1
+  z_null_pos <- (sign_flip*z_null)
+  u_pos <- quantile(z_null_pos, q)
+  u <- sign_flip*u_pos
+  
+  # extract the data
+  trun_data <- (z_null_pos[z_null_pos > u_pos])
+  n <- sum(z_null_pos > u_pos)
+  
+  # method of moment
+  xi_mom <- (1 - (mean(trun_data) - u_pos)^2/var(trun_data))/2
+  sig_mom <- (mean(trun_data) - u_pos)*(1 - xi_mom)
+  if(xi_mom < 0){
+    xi_mom <- 0
+  }
+  
+  # first fit ks.test with estimated parameter; if there is Na, switch to simulation
+  test_ks <- ks.test(trun_data, "pgpd", u_pos, sig_mom, xi_mom)
+  print(is.nan(test_ks$p.value))
+  print(test_ks$p.value)
+  if(is.nan(test_ks$p.value)){
+    sim_data <- rgpd(1e6, loc = u_pos, scale = sig_mom, shape = xi_mom)
+    # k-s test
+    test_ks <- ks.test(trun_data, sim_data)
+  }
+  
+  
+  dgpd_density <- function(x) {
+    (1 - q) * dgpd(sign_flip*x,
+                   loc = u_pos,
+                   scale = sig_mom,
+                   shape = xi_mom)
+  }
+  
+  if(tail == "right"){
+    x_min <- u
+    x_max <- max(z_null)
+  } else{
+    x_min <- min(z_null)
+    x_max <- u
+  }
+  
+  hist_full <- tibble(z_null) %>%
+    ggplot(aes(x = z_null)) +
+    geom_histogram(aes(y = ..density..), bins = 1000) +
+    geom_vline(xintercept = u, linetype = "dashed", color = "red") +
+    stat_function(fun = dgpd_density,
+                  xlim = c(x_min, x_max),
+                  color = "dodgerblue") +
+    labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) +
+    theme(plot.title = element_text(hjust = 0.5))
+  
+  hist_tail <- hist_full +
+    coord_cartesian(xlim = c(x_min, x_max), ylim = c(0, dgpd_density(u)*1.5)) +
+    theme(plot.title = element_blank())
+  
+  expected_quantiles_pos <- qgpd(p = (2*(1:n)-1)/(2*n),
+                                 loc = u_pos,
+                                 scale = sig_mom,
+                                 shape = xi_mom)
+  
+  expected_unif <- pgpd(q = sort(sign_flip*z_null_pos[z_null_pos > u_pos]),
+                        loc = u_pos,
+                        scale = sig_mom,
+                        shape = xi_mom)
+  
+  qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
+                    observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
+    ggplot(aes(x = expected_quantile, y = observed_quantile)) +
+    geom_line() +
+    geom_abline(linetype = "dashed", color = "red")
+  
+  # plot the tail probability
+  observed_tail_prob <- (10:(0.1*n))/n
+  observed_extreme_quantile <- quantile(trun_data, 1 - observed_tail_prob)
+  gpd_tail_prob <- 1 - as.vector(pgpd(q = observed_extreme_quantile,
+                                      loc = u_pos,
+                                      scale = sig_mom,
+                                      shape = xi_mom))
+  # plot the tail probability
+  p_plot <- tibble(observed_tail_prob = as.vector(observed_tail_prob),
+                   gpd_tail_prob = gpd_tail_prob,
+                   observed_prob_ub = observed_tail_prob + 1.96*sqrt(observed_tail_prob*(1-observed_tail_prob)/n),
+                   observed_prob_lb = observed_tail_prob - 1.96*sqrt(observed_tail_prob*(1-observed_tail_prob)/n)) %>%
+    ggplot(aes(x = gpd_tail_prob, y = observed_tail_prob)) +
+    geom_line() +
+    geom_ribbon(aes(ymin = observed_prob_lb, ymax = observed_prob_ub), alpha=0.0,
+                linetype = "dashed", colour="blue")+
+    geom_abline(linetype = "dashed", color = "red") +
+    scale_x_continuous(trans = c("log10", "reverse")) +
+    scale_y_continuous(trans = c("log10", "reverse"))
+  
+  # store the plot
+  plots[[tail]] <- plot_grid(qq_plot,
+                             p_plot,
+                             ncol = 1,
+                             rel_heights = c(1.5, 1.5),
+                             align = "v")
+  
+  # compute the ratio p-value
+  ratio_pvalue <- max(gpd_tail_prob / observed_tail_prob,
+                      observed_tail_prob / gpd_tail_prob)
+}
+plots
+```
+
