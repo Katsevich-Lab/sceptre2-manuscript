@@ -187,19 +187,48 @@ save_plot(sprintf("%s/scale-shape.pdf", file.path(working_dir, subDir)), a)
 
 # plot shape against effective sample size
 eff_ss <- resampling_dists[,3]
-param$eff_ss <- as.character(rep(eff_ss, 2))
+param$eff_ss <- as.factor(rep(eff_ss, 2))
 
 ## Left tail (vary with effective sample size)
-left_boxplot <- ggplot(param[1:330,], aes(x = eff_ss, y = shape)) + 
+left_shape_boxplot <- ggplot(param[1:330,], aes(x = eff_ss, y = shape)) + 
   stat_boxplot(geom = "errorbar", # Error bars
                width = 0.25) +    # Bars width
-  geom_boxplot()
-save_plot(sprintf("%s/left_tail_shape-effss.pdf", file.path(working_dir, subDir)), left_boxplot)
+  geom_boxplot()+
+  xlab("left tail") +
+  labs(title="Shape versus effective sample size")+
+  theme()
+left_scale_boxplot <- ggplot(param[1:330,], aes(x = eff_ss, y = scale)) + 
+  stat_boxplot(geom = "errorbar", # Error bars
+               width = 0.25) +    # Bars width
+  geom_boxplot()+
+  xlab("left tail") +
+  labs(title="Scale versus effective sample size")+
+  theme()
 ## Right tail (does not vary much with effective sample size)
-right_boxplot <- ggplot(param[331:660,], aes(x = eff_ss, y = shape)) + 
+right_shape_boxplot <- ggplot(param[331:660,], aes(x = eff_ss, y = shape)) + 
   stat_boxplot(geom = "errorbar", # Error bars
                width = 0.25) +    # Bars width
-  geom_boxplot()
-save_plot(sprintf("%s/right_tail_shape-effss.pdf", file.path(working_dir, subDir)), right_boxplot)
+  geom_boxplot()+
+  xlab("right tail")
+right_scale_boxplot <- ggplot(param[331:660,], aes(x = eff_ss, y = scale)) + 
+  stat_boxplot(geom = "errorbar", # Error bars
+               width = 0.25) +    # Bars width
+  geom_boxplot()+
+  xlab("right tail")
+
+shape_plot <- plot_grid(left_shape_boxplot, 
+          right_shape_boxplot,
+          ncol = 1,
+          rel_heights = c(2,2),
+          align = "v")
+
+scale_plot <- plot_grid(left_scale_boxplot, 
+          right_scale_boxplot,
+          ncol = 1,
+          rel_heights = c(2,2),
+          align = "v")
+# save plot
+save_plot(sprintf("%s/shape-effss.pdf", file.path(working_dir, subDir)), shape_plot)
+save_plot(sprintf("%s/scale-effss.pdf", file.path(working_dir, subDir)), scale_plot)
 
 ```
