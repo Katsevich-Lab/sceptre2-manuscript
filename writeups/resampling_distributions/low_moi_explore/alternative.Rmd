@@ -23,6 +23,28 @@ resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributio
 resampling_dists[1:5, 1:6]
 ```
 
+# bounded support issue
+```{r}
+param <- read_csv("figures/power_exploration/ks_500000_resamples_0.96_percentile/param.csv", col_names = FALSE)
+param_mat <- matrix(0,5,660)
+for (i in 1:660) {
+  param_mat[,i] <- as.numeric(param[[i+1]][-1])
+}
+rownames(param_mat) <- c("location", "scale", "shape", "statistic", "p-value")
+# compute the upper bound of GPD distribution
+up_bd <- param_mat[1,] - param_mat[2,]/param_mat[3,]
+
+# how many of resampling distributions exceeding the upper bound
+u_max <- apply(as.matrix(resampling_dists[,(5:(4+5e5))]), 1, max)
+u_min <- apply(as.matrix(resampling_dists[,(5:(4+5e5))]), 1, min)
+
+# find the instances where gpd does not cover the whole resamples support
+which(up_bd[331:660] - u_max < 0)
+which(up_bd[1:330] + u_min < 0)
+```
+
+
+
 
 ```{r}
 
@@ -83,6 +105,7 @@ for(tail in c("left", "right")){
     stat_function(fun = dgpd_density,
                   xlim = c(x_min, x_max),
                   color = "dodgerblue") +
+    coord_cartesian(xlim = c(-10, 10)) +
     labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) +
     theme(plot.title = element_text(hjust = 0.5))
   
