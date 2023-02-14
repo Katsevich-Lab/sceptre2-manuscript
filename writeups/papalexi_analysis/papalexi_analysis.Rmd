@@ -1,0 +1,404 @@
+---
+title: "Papalexi Methods Confirmation"
+output: html_document
+date: '2023-02-07'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this document I will be perfmorming differential expression analysis on the Papalexi et al. paper in order to
+
++ A) Confirm that we are perfmorming differential expression analysis correctly
++ B) To determine which assay they are using for differential expression analysis
+
+I will mostly be copy-pasting their own vignette for Mixscape and adding my ownw analysis at the end
+
+```{r}
+# Load packages.
+library(Seurat)
+library(SeuratData)
+library(ggplot2)
+library(patchwork)
+library(scales)
+library(dplyr)
+library(reshape2)
+library(mixtools)
+library(stringr)
+```
+
+```{r}
+# Download dataset using SeuratData.
+InstallData(ds = "thp1.eccite")
+
+# Setup custom theme for plotting.
+custom_theme <- theme(
+  plot.title = element_text(size=16, hjust = 0.5),
+  legend.key.size = unit(0.7, "cm"),
+  legend.text = element_text(size = 14))
+
+# Load object.
+eccite <- LoadData(ds = "thp1.eccite")
+```
+These plots show that umap embedding of the cells is driven by technical effects such as batch and cell cycle. 
+```{r}
+
+# Normalize protein.
+eccite <- NormalizeData(
+  object = eccite,
+  assay = "ADT",
+  normalization.method = "CLR",
+  margin = 2)
+
+
+# Prepare RNA assay for dimensionality reduction:
+# Normalize data, find variable features and scale data.
+DefaultAssay(object = eccite) <- 'RNA'
+eccite <- NormalizeData(object = eccite) %>% FindVariableFeatures() %>% ScaleData()
+
+# Run Principle Component Analysis (PCA) to reduce the dimensionality of the data.
+eccite <- RunPCA(object = eccite)
+
+# Run Uniform Manifold Approximation and Projection (UMAP) to visualize clustering in 2-D.
+eccite <- RunUMAP(object = eccite, dims = 1:40)
+
+# Generate plots to check if clustering is driven by biological replicate ID,
+# cell cycle phase or target gene class.
+p1 <- DimPlot(
+  object = eccite,
+  group.by = 'replicate',
+  label = F,
+  pt.size = 0.2,
+  reduction = "umap", cols = "Dark2", repel = T) +
+  scale_color_brewer(palette = "Dark2") +
+  ggtitle("Biological Replicate") +
+  xlab("UMAP 1") +
+  ylab("UMAP 2") +
+  custom_theme
+
+p2 <- DimPlot(
+  object = eccite,
+  group.by = 'Phase',
+  label = F, pt.size = 0.2,
+  reduction = "umap", repel = T) +
+  ggtitle("Cell Cycle Phase") +
+  ylab("UMAP 2") +
+  xlab("UMAP 1") +
+  custom_theme
+
+p3 <- DimPlot(
+  object = eccite,
+  group.by = 'crispr',
+  pt.size = 0.2,
+  reduction = "umap",
+  split.by = "crispr",
+  ncol = 1,
+  cols = c("grey39","goldenrod3")) +
+  ggtitle("Perturbation Status") +
+  ylab("UMAP 2") +
+  xlab("UMAP 1") +
+  custom_theme
+
+# Visualize plots.
+((p1 / p2 + plot_layout(guides = 'auto')) | p3 )
+```
+
+They remove these technical effects and show that the umap clusters are not driven by technical effects.We also see a whole cluster of perturbed cells that are separate from the negative control cells. 
+```{r}
+
+# Calculate perturbation signature (PRTB).
+eccite<- CalcPerturbSig(
+  object = eccite,
+  assay = "RNA",
+  slot = "data",
+  gd.class ="gene",
+  nt.cell.class = "NT",
+  reduction = "pca",
+  ndims = 40,
+  num.neighbors = 20,
+  split.by = "replicate",
+  new.assay.name = "PRTB")
+
+# Prepare PRTB assay for dimensionality reduction:
+# Normalize data, find variable features and center data.
+DefaultAssay(object = eccite) <- 'PRTB'
+
+# Use variable features from RNA assay.
+VariableFeatures(object = eccite) <- VariableFeatures(object = eccite[["RNA"]])
+eccite <- ScaleData(object = eccite, do.scale = F, do.center = T)
+
+# Run PCA to reduce the dimensionality of the data.
+eccite <- RunPCA(object = eccite, reduction.key = 'prtbpca', reduction.name = 'prtbpca')
+
+# Run UMAP to visualize clustering in 2-D.
+eccite <- RunUMAP(
+  object = eccite,
+  dims = 1:40,
+  reduction = 'prtbpca',
+  reduction.key = 'prtbumap',
+  reduction.name = 'prtbumap')
+
+# Generate plots to check if clustering is driven by biological replicate ID,
+# cell cycle phase or target gene class.
+q1 <- DimPlot(
+  object = eccite,
+  group.by = 'replicate',
+  reduction = 'prtbumap',
+  pt.size = 0.2, cols = "Dark2", label = F, repel = T) +
+  scale_color_brewer(palette = "Dark2") +
+  ggtitle("Biological Replicate") +
+  ylab("UMAP 2") +
+  xlab("UMAP 1") +
+  custom_theme
+
+q2 <- DimPlot(
+  object = eccite,
+  group.by = 'Phase',
+  reduction = 'prtbumap',
+  pt.size = 0.2, label = F, repel = T) +
+  ggtitle("Cell Cycle Phase") +
+  ylab("UMAP 2") +
+  xlab("UMAP 1") +
+  custom_theme
+
+q3 <- DimPlot(
+  object = eccite,
+  group.by = 'crispr',
+  reduction = 'prtbumap',
+  split.by = "crispr",
+  ncol = 1,
+  pt.size = 0.2,
+  cols = c("grey39","goldenrod3")) +
+  ggtitle("Perturbation Status") +
+  ylab("UMAP 2") +
+  xlab("UMAP 1") +
+  custom_theme
+
+# Visualize plots.
+(q1 / q2 + plot_layout(guides = 'auto') | q3)
+
+```
+
+
+They now run mixscape to classify cells as perturbed or non perturbed
+```{r}
+# Run mixscape.
+eccite <- RunMixscape(
+  object = eccite,
+  assay = "PRTB",
+  slot = "scale.data",
+  labels = "gene",
+  nt.class.name = "NT",
+  min.de.genes = 5,
+  iter.num = 10,
+  de.assay = "RNA",
+  verbose = F,
+  prtb.type = "KO")
+
+# Calculate percentage of KO cells for all target gene classes.
+df <- prop.table(table(eccite$mixscape_class.global, eccite$NT),2)
+
+df2 <- reshape2::melt(df)
+df2$Var2 <- as.character(df2$Var2)
+test <- df2[which(df2$Var1 == "KO"),]
+test <- test[order(test$value, decreasing = T),]
+new.levels <- test$Var2
+df2$Var2 <- factor(df2$Var2, levels = new.levels )
+df2$Var1 <- factor(df2$Var1, levels = c("NT", "NP", "KO"))
+df2$gene <- sapply(as.character(df2$Var2), function(x) strsplit(x, split = "g")[[1]][1])
+df2$guide_number <- sapply(as.character(df2$Var2),
+                           function(x) strsplit(x, split = "g")[[1]][2])
+df3 <- df2[-c(which(df2$gene == "NT")),]
+
+p1 <- ggplot(df3, aes(x = guide_number, y = value*100, fill= Var1)) +
+  geom_bar(stat= "identity") +
+  theme_classic()+
+  scale_fill_manual(values = c("grey49", "grey79","coral1")) +
+  ylab("% of cells") +
+  xlab("sgRNA")
+
+p1 + theme(axis.text.x = element_text(size = 18, hjust = 1),
+           axis.text.y = element_text(size = 18),
+           axis.title = element_text(size = 16),
+           strip.text = element_text(size=16, face = "bold")) +
+  facet_wrap(vars(gene),ncol = 5, scales = "free") +
+  labs(fill = "mixscape class") +theme(legend.title = element_text(size = 14),
+                                       legend.text = element_text(size = 12))
+
+
+```
+
+This is the DE analysis they present on the eccite seq data
+
+```{r}
+# Run DE analysis and visualize results on a heatmap ordering cells by their posterior
+# probability values.
+eccite_copy  = eccite
+Idents(object = eccite) <- "gene"
+MixscapeHeatmap(object = eccite,
+                ident.1 = "NT",
+                ident.2 = "IFNGR2",
+                balanced = F,
+                assay = "RNA",
+                max.genes = 20, angle = 0,
+                group.by = "mixscape_class",
+                max.cells.group = 300,
+                size=6.5) + NoLegend() +theme(axis.text.y = element_text(size = 16))
+features = c('GBP5','WARS','GBP1','TAP1','CD74','IRF1','TMSB10','HLA-DRA','SERPING1','HLA-DRB1','FAM26F','B2M',
+'ETV7','SOCS1','PSME2','GBP4','PSMB9','IL18BP','HLA-DRB5','HLA-DQB1')
+
+```
+
+To see what happens when I use the PRTB assay instead, I will use a slighlty different version of the mixscape heatmap function. This function is the exact same as the MixscapeHeatmap function except it outputs a seurat object after perfoming differential expression analysis. The reason why I did thsi ws that I kept running into an error when running the original 'MixscapeHeatmap' function.
+```{r}
+# Run DE analysis and visualize results on a heatmap ordering cells by their posterior
+# probability values.
+#copy eccite object
+eccite2 = eccite
+DefaultAssay(object = eccite2) <- 'PRTB'
+#get data matrix
+counts = eccite2@assays$PRTB@data
+#get genes that are in plot above
+counts_genes = which(rownames(counts)%in%features)
+#filter matrix to get these genes
+counts = counts[counts_genes,]
+#save it in the new object
+eccite2@assays$PRTB@data = counts
+#set variable features to be these 20 genes
+VariableFeatures(eccite2) = rownames(counts)
+```
+
+Here is the altered mixscapeheatmap function which I call DummyMixscapeHeatmap
+```{r,include = F}
+DummyMixscapeHeatmap <- function(
+    object,
+    ident.1 = NULL,
+    ident.2 = NULL,
+    balanced = TRUE,
+    logfc.threshold = 0.25,
+    assay = "RNA",
+    max.genes = 100,
+    test.use ='wilcox',
+    max.cells.group = NULL,
+    order.by.prob = TRUE,
+    group.by = NULL,
+    mixscape.class = "mixscape_class",
+    prtb.type = "KO",
+    fc.name = "avg_log2FC",
+    pval.cutoff = 5e-2,
+    ...
+)
+{
+  if (!is.null(x = group.by)) {
+    message("The group.by parameter is being deprecated. Please use ",
+            "mixscape.class instead. Setting mixscape.class = ", group.by,
+            " and continuing.")
+    mixscape.class <- group.by
+  }
+  DefaultAssay(object = object) <- assay
+  if (is.numeric(x = max.genes)) {
+    all.markers <- FindMarkers(
+      object = object,
+      ident.1 = ident.1,
+      ident.2 = ident.2,
+      only.pos = FALSE,
+      logfc.threshold = logfc.threshold,
+      test.use = test.use
+    )
+    if (balanced) {
+      pos.markers <- all.markers[which(x = all.markers[,fc.name] > (logfc.threshold)), ]
+      neg.markers <- all.markers[which(x = all.markers[,fc.name] < (-logfc.threshold)), ]
+      if (length(x = rownames(x = subset(x = pos.markers, p_val < pval.cutoff))) < max.genes ) {
+        marker.list <- c(rownames(x = subset(x = pos.markers, p_val < pval.cutoff)))
+        if (length(x = rownames(x = subset(x = neg.markers, p_val < pval.cutoff))) < max.genes){
+          marker.list <- c(marker.list, rownames(x = subset(x = neg.markers, p_val < pval.cutoff)))
+        } else {
+          marker.list <- c(marker.list, rownames(x = subset(x = neg.markers, p_val < pval.cutoff))[1:max.genes])
+        }
+      } else {
+        marker.list <- c(rownames(x = subset(x = pos.markers, p_val < pval.cutoff))[1:max.genes])
+        if (length(x = rownames(x = subset(x = neg.markers, p_val < pval.cutoff))) < max.genes) {
+          marker.list <- c(marker.list, rownames(x = subset(x = neg.markers, p_val < pval.cutoff)))
+        } else {
+          marker.list <- c(marker.list, rownames(x = subset(x = neg.markers, p_val < pval.cutoff))[1:max.genes])
+        }
+      }
+    }
+    else {
+      pos.markers <- all.markers[which(x = all.markers[, fc.name] > (logfc.threshold)),]
+      if (length(x = rownames(x = subset(x = pos.markers, p_val < pval.cutoff))) < max.genes ){
+        marker.list <- c(rownames(x = subset(x = pos.markers, p_val < pval.cutoff)))
+      } else {
+        marker.list <- c(rownames(x = subset(x = pos.markers, p_val < pval.cutoff))[1:max.genes])
+      }
+    }
+    if (is.null(x = max.cells.group)) {
+      if (is.null(x = group.by)) {
+        sub2 <- subset(x = object, idents = c(ident.1, ident.2))
+      } else{
+        sub2 <- subset(x = object, idents = c(ident.1, ident.2))
+        Idents(object = sub2) <- group.by
+      }
+    }
+    else {
+      if (is.null(x = group.by)) {
+        sub2 <- subset(x = object, idents = c(ident.1, ident.2), downsample = max.cells.group)
+      } else {
+        sub <- subset(x = object, idents = c(ident.1, ident.2))
+        Idents(object = sub) <- group.by
+        sub2 <- subset(x = sub, downsample = max.cells.group)
+      }
+    }
+    sub2 <- ScaleData(object = sub2, features = marker.list, assay = assay)
+    print(dim(sub2))
+    print(sub2)
+    return(sub2)
+  }
+}
+
+
+```
+
+Now let's plot the heatmap when using the PRTB assay. We see that it is completely flipped. Not sure what exactly is going on there. 
+```{r}
+#perform
+Idents(object = eccite2) <- "gene"
+sub2 = DummyMixscapeHeatmap(object = eccite2,
+                ident.1 = "NT",
+                ident.2 = "IFNGR2",
+                balanced = F,
+                assay = "PRTB",
+                max.genes = 20, angle = 0,
+                group.by = "mixscape_class",
+                max.cells.group = 300,pval.cutoff = 1,
+                size=6.5) 
+print(DoHeatmap(sub2))
+```
+The next thing I wil do is check if I can recreate the pvalues in the paper. I was only able to find 3 exact pvalues and 1 inexact pvalue. These were 
+
++ PD-L1 protein differential expression between NT and BRD4 KO (p = 4.37e-28),CUL3 KO (2.81 e-11), and MYC KO(4.51e-7)
++ PD-L1 mrna differential expression between NT and CUL3 KO cells (1.6 fold change (0.68 log fold change), p<1e-11). 
+
+```{r}
+#get marker genes between BRD4 KO cells and NT cells for PDL1 protein
+BRD4 = FindMarkers(eccite_copy,ident.1 = 'BRD4 KO',ident.2 = 'NT',assay = 'ADT',logfc.threshold = -0.2,features = 'PDL1')
+#get marker genes between CUL3 KO cells and NT cells for PDL1 protein
+CUL3 = FindMarkers(eccite_copy,ident.1 = 'CUL3 KO',ident.2 = 'NT',assay = 'ADT',logfc.threshold = -0.2,features = 'PDL1')
+#get marker genes between MYC KO cells and NT cells for PDL1 protein
+MYC = FindMarkers(eccite_copy,ident.1 = 'MYC KO',ident.2 = 'NT',assay = 'ADT',logfc.threshold = -0.2,features = 'PDL1')
+#get marker genes between CUL3 KO cells and NT cells for PDL1 mrna
+CUL3_mrna = FindMarkers(eccite_copy,ident.1 = 'CUL3 KO',ident.2 = 'NT',assay = 'RNA',logfc.threshold = -0.2,features = 'CD274')
+
+View(BRD4)
+View(CUL3)
+View(MYC)
+View(CUL3_mrna)
+
+```
+The pvalues don't quite match so maybe they provided an adjusted pvalue. The p.adjust column looks like a bonferroni correct (n = 18649) and multiplying the pvalues generated by 18649 does not give the same pvalues.
+
+
+
+
+

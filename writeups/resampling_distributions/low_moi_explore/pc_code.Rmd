@@ -1,7 +1,7 @@
 ---
-title: "GPD Goodness of Fit for SCEPTRE Resampling Distributions"
-author: "Gene"
-date: "2022-12-24"
+title: "GPD Goodness of Fit for SCEPTRE PC Instances"
+author: "Ziang"
+date: "2023-02-14"
 output: html_document
 ---
 
@@ -16,10 +16,11 @@ library(eva)
 library(tidyverse)
 library(katlabutils)
 library(cowplot)
+library(scales)
 
-sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+sceptre2_pc_results_dir <- getwd()
 # load empirical distributions
-resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists.rds"))
+resampling_dists <- readRDS(paste0(sceptre2_pc_results_dir, "/sceptre_resampling_dists_pc.rds"))
 resampling_dists[1:5, 1:6]
 ```
 
@@ -38,7 +39,7 @@ for (i in 1:length(q_list)) {
     # require to be in the low_moi_explore folder
     # make a directory given the number of percentile and the number of resamples
     working_dir <- getwd()
-    subDir <- sprintf("figures/power_exploration/tail_prob_%d_resamples_%.2f_percentile",  samples, q)
+    subDir <- sprintf("figures/tail_prob_%d_resamples_%.2f_percentile",  samples, q)
     dir.create(file.path(working_dir, subDir))
     
     # create gpd parameter matrix
@@ -48,8 +49,8 @@ for (i in 1:length(q_list)) {
     for (l in 1:nrow(resampling_dists)){
       # extract index of resampling distribution
       idx <- l
-      z_null <- as.numeric(resampling_dists[idx,5:(4+samples)])
-      
+      z_null <- as.numeric(resampling_dists[idx,2:(1+samples)])
+      obs_stat <- as.numeric(resampling_dists[idx,1])
       plots <- list()
       
       for(tail in c("left", "right")){
@@ -85,32 +86,52 @@ for (i in 1:length(q_list)) {
         }
         
         if(tail == "right"){
+          lb_data <- u
+          ub_data <- max(z_null)
           x_min <- u
-          x_max <- max(z_null)
+          x_max <- max(sign_flip*(u_pos - sig_mom/xi_mom), obs_stat)
         } else{
-          x_min <- min(z_null)
+          lb_data <- min(z_null)
+          ub_data <- u
+          x_min <- min(sign_flip*(u_pos - sig_mom/xi_mom), obs_stat)
           x_max <- u
         }
         
-        hist_full <- tibble(z_null) %>%
-          ggplot(aes(x = z_null)) +
-          geom_histogram(aes(y = ..density..), bins = 1000) +
-          geom_vline(xintercept = u, linetype = "dashed", color = "red") +
-          stat_function(fun = dgpd_density,
-                        xlim = c(x_min, x_max),
-                        color = "dodgerblue")
         
-        hist_tail <- hist_full +
-          coord_cartesian(xlim = c(x_min, x_max), ylim = c(0, dgpd_density(u)*1.5)) +
-          theme(plot.title = element_blank()) +
-          labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) +
-          theme(plot.title = element_text(hjust = 0.5))
+        
+        if(xi_mom < 0){
+          hist_full <- tibble(z_null) %>%
+            ggplot(aes(x = z_null)) +
+            geom_histogram(aes(y = ..density..), bins = 1000) +
+            geom_vline(xintercept = u, linetype = "dashed", color = "red") +
+            geom_vline(xintercept = sign_flip*(u_pos - sig_mom/xi_mom), linetype = "dashed", color = "lightblue") +
+            # add observed test statistic
+            geom_vline(xintercept = obs_stat, linetype = "dashed", color = "purple") +
+            stat_function(fun = dgpd_density,
+                          xlim = c(lb_data, ub_data),
+                          color = "dodgerblue")
+        }else{
+          hist_full <- tibble(z_null) %>%
+            ggplot(aes(x = z_null)) +
+            geom_histogram(aes(y = ..density..), bins = 1000) +
+            geom_vline(xintercept = u, linetype = "dashed", color = "red") +
+            # add observed test statistic
+            geom_vline(xintercept = obs_stat, linetype = "dashed", color = "purple") +
+            stat_function(fun = dgpd_density,
+                          xlim = c(lb_data, ub_data),
+                          color = "dodgerblue")
+        }
+        
+          hist_tail <- hist_full +
+            coord_cartesian(xlim = c(x_min, x_max), ylim = c(0, dgpd_density(u)*1.5)) +
+            theme(plot.title = element_blank()) +
+            labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) +
+            theme(plot.title = element_text(hjust = 0.5))
         
         expected_quantiles_pos <- qgpd(p = (2*(1:n)-1)/(2*n),
                                        loc = u_pos,
                                        scale = sig_mom,
                                        shape = xi_mom)
-        
         expected_unif <- pgpd(q = sort(sign_flip*z_null_pos[z_null_pos > u_pos]),
                               loc = u_pos,
                               scale = sig_mom,
@@ -144,16 +165,17 @@ for (i in 1:length(q_list)) {
         
         # store the plot
         plots[[tail]] <- plot_grid(hist_tail,
-                                  qq_plot,
+                                   hist_full,
                                    p_plot,
                                    ncol = 1,
-                                   rel_heights = c(2,2,2.5, 2.5),
+                                   rel_heights = c(2, 2, 2),
                                    align = "v")
         
         # compute the ratio p-value
         ratio_pvalue <- max(gpd_tail_prob / observed_tail_prob,
                             observed_tail_prob / gpd_tail_prob, na.rm = TRUE)
         print(ratio_pvalue)
+        print(xi_mom)
         # save the gpd parameters and gof statistics and p-value
         gpd_param[[which(names(gpd_param) == tail)]][1, l] <- u_pos
         gpd_param[[which(names(gpd_param) == tail)]][2, l] <- sig_mom
@@ -232,3 +254,4 @@ save_plot(sprintf("%s/shape-effss.pdf", file.path(working_dir, subDir)), shape_p
 save_plot(sprintf("%s/scale-effss.pdf", file.path(working_dir, subDir)), scale_plot)
 
 ```
+
