@@ -80,15 +80,15 @@ for(tail in c("left", "right")){
        scale = out$theta["Scale"], 
        shape = out$theta["Shape"])
   
-  tibble(expected_unif) %>%
-    ggplot(aes(y = expected_unif)) +
-    stat_qq_points() +
-    stat_qq_band() +
-    geom_abline() 
-    
-  
-  hist(expected_unif)
-  
+  # tibble(expected_unif) %>%
+  #   ggplot(aes(y = expected_unif)) +
+  #   stat_qq_points() +
+  #   stat_qq_band() +
+  #   geom_abline() 
+  #   
+  # 
+  # hist(expected_unif)
+  # 
   qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
          observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
     ggplot(aes(x = expected_quantile, y = observed_quantile)) +
