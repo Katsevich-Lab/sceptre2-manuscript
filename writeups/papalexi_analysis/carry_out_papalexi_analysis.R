@@ -102,9 +102,11 @@ P_adj = as.numeric(P_adj)
 #perform BH procedure
 P_adj = p.adjust(P_adj,method = 'BH')
 
-#a
+#replace results matrix pvalues wioth adjusted pvalues
 protein_adjusted= cbind(P_adj,protein_result[,c(2,3)])
+#filter to just look at PDL1 pvalues
 protein_adjusted = protein_adjusted[which(protein_adjusted[,3] == 'PDL1')]
+#view
 View(protein_adjusted)
 
 #get pvalues from sceptre
