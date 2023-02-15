@@ -90,25 +90,3 @@ protein_result <- run_sceptre_low_moi(mm_odm,
 saveRDS(gene_result,'gene_result.rds')
 saveRDS(protein_result,'protein_result.rds')
 
-
-P = protein_result[,1]
-P = unlist(P)
-P = abs(P)
-P = as.numeric(P)
-P = p.adjust(P,method = 'BH')
-
-A = cbind(P,protein_result[,c(2,3)])
-A = A[which(A[,3] == 'PDL1')]
-View(A)
-
-B = gene_r
-
-
-P = gene_result[,1]
-P = unlist(P)
-P = abs(P)
-P = as.numeric(P)
-P = p.adjust(P,method = 'BH')
-P[14118]
-
-
