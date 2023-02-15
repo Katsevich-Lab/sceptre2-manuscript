@@ -86,7 +86,38 @@ protein_result <- run_sceptre_low_moi(mm_odm,
                                       return_dist = return_dist,
                                       screen_b = screen_b)
 
-
+#save as RDS files. this code moves it to the wrong folders though
 saveRDS(gene_result,'gene_result.rds')
 saveRDS(protein_result,'protein_result.rds')
+
+
+#get pvalues from sceptre
+P_adj = protein_result[,1]
+#unlist pvalues
+P_adj = unlist(P_adj)
+#some pvalues are negative so take absolute value
+P_adj = abs(P_adj)
+#make numeric 
+P_adj = as.numeric(P_adj)
+#perform BH procedure
+P_adj = p.adjust(P_adj,method = 'BH')
+
+#a
+protein_adjusted= cbind(P_adj,protein_result[,c(2,3)])
+protein_adjusted = protein_adjusted[which(protein_adjusted[,3] == 'PDL1')]
+View(protein_adjusted)
+
+#get pvalues from sceptre
+P_adj = gene_result[,1]
+#unlist pvalues
+P_adj = unlist(P_adj)
+#some pvalues are negative so take absolute value
+P_adj = abs(P_adj)
+#make numeric 
+P_adj = as.numeric(P_adj)
+#perform BH procedure
+P_adj = p.adjust(P_adj,method = 'BH')
+
+#get pvalue corresponding to PDL1
+P_adj[which(gene_result[,3] == 'CD274')]
 
