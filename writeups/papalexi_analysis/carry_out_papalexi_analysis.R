@@ -1,6 +1,11 @@
 library(ondisc)
 library(sceptre2)
-papalexi_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/papalexi/eccite_screen/")
+library(sceptre)
+
+#devtools::install_github('timothy-barry/ondisc')
+
+LOCAL_SCEPTRE2_DATA_DIR="/Users/kmason/data/projects/sceptre2/"
+papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
 
 # gene info
 gene_odm_fp <- paste0(papalexi_dir, "gene/matrix.odm")
@@ -35,15 +40,21 @@ screen_b <- 25000
 # randomly select gene-grna group pairs to analyze
 gene_grna_group_pairs <- expand.grid(response_id = mm_odm |>
                                        get_modality("gene") |>
-                                       get_feature_ids() |>
-                                       sample(10),
-                                     grna_group = c("BRD4", "IRF1"))
+                                       get_feature_ids(),
+                                     grna_group = c("CUL3"))
 
+grna_all = unique(mm_odm@modalities$grna_assignment@feature_covariates$target)[-c(3,4)]
 # select protein-grna group pairs to analyze
+#CD274 perturbed cells not present in sample
+# table(substr(mm_odm@modalities$grna_assignment@cell_covariates$assigned_grna,1,4))
 protein_grna_group_pairs <- expand.grid(response_id = mm_odm |>
                                           get_modality("protein") |>
                                           get_feature_ids(),
-                                        grna_group = c("BRD4", "IRF1"))
+                                        grna_group = c("IRF1","BRD4","CUL3","CMTM6","ATF2",
+                                                       "CAV1","CD86","ETV7","IFNGR1","IFNGR2","IRF7",
+                                                       "JAK2","MARCH8","MYC","NFKBIA","PDCD1LG2",
+                                                       "POU2F2","SMAD4","SPI1","STAT1","STAT2","STAT3",
+                                                       "STAT5A","TNFRSF14","UBE2L6"))
 
 # analyze the gene data
 gene_result <- run_sceptre_low_moi(mm_odm = mm_odm,
@@ -74,3 +85,19 @@ protein_result <- run_sceptre_low_moi(mm_odm,
                                       statistic  = statistic,
                                       return_dist = return_dist,
                                       screen_b = screen_b)
+
+
+P = protein_result[,1]
+P = unlist(P)
+P = abs(P)
+P = as.numeric(P)
+P = p.adjust(P,method = 'BH')
+
+A = cbind(P,protein_result[,c(2,3)])
+A = A[which(A[,3] == 'PDL1')]
+View(A)
+
+
+
+
+
