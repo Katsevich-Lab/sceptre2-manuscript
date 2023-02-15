@@ -91,7 +91,7 @@ to_save <- lapply(X = my_datasets, FUN = function(my_dataset) {
                                        B = 500000,
                                        max_b_per_batch = 500000,
                                        in_memory = TRUE,
-                                       statistic = "full",
+                                       statistic = "distilled",
                                        return_dist = TRUE)
   res |>
     mutate(dataset = factor(my_dataset)) |>
@@ -100,4 +100,5 @@ to_save <- lapply(X = my_datasets, FUN = function(my_dataset) {
 }) |> data.table::rbindlist()
 
 sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
-saveRDS(object = to_save, file = paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists_pc.rds"))
+saveRDS(object = to_save, file = paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists_pc_dist.rds"))
+
