@@ -104,8 +104,8 @@ protein_result <- run_sceptre_low_moi(mm_odm,
 #saveRDS(protein_result,'protein_result.rds')
 
 #save files, Using absolute path becasue not sure how to do it otherwise
-data.dir = '/Users/kmason/sceptre2-manuscript/writeups/papalexi_analysis/'
-saveRDS(gene_result,'gene_result_PDL1_mrna.rds')
+#data.dir = '/Users/kmason/sceptre2-manuscript/writeups/papalexi_analysis/'
+#saveRDS(gene_result,'gene_result_PDL1_mrna.rds')
 
 
 

@@ -252,7 +252,8 @@ combined_results_PDL1_norm
 #View(combined_results_PDL1_norm)
 ```
 
-If we use the normalized data, we see that while the positive controls are still the strongest signal in the data, the direction of over/under expression is now flipped. From this I have two possible conclusions. Therefore I reasonably certain that they used the un-normalized data to perform all DE analyses. This is because if they used the normalized data, all their results would contradict the known controls. it is possible that their implementation of neighborhood adjustment is wrong in the sense that they are subtracting in the wrong direction (a-b instead of b-a). However, even if this is the case, the pvalues are much larger which casts doubt to if they would still be significant after pvalue adjustment.
+If we use the normalized data, we see that while the positive controls are still the strongest signal in the data, the direction of over/under expression is now flipped. From this I have two possible conclusions. Therefore I reasonably certain that they used the un-normalized data to perform all DE analyses. This is because if they used the normalized data, all their results would contradict the known controls. it is possible that their implementation of neighborhood adjustment is wrong in the sense that they are subtracting in the wrong direction (a-b instead of b-a). However, even if this is the case, the pvalues are much larger which casts doubt to if they would still be significant after pvalue adjustment.\
+If they did not use the normalized data, this begs the question as to if their results are driven by technical factors rather than true biological signal.
 
 
 
