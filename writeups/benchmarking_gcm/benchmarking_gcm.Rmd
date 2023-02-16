@@ -1,6 +1,6 @@
 ---
 title: "Benchmarking GCM-based variants of SCEPTRE"
-output: html_document
+output: pdf_document
 date: '2022-08-02'
 ---
 
@@ -52,6 +52,7 @@ In this writeup, we benchmark the performance of three SCEPTRE variants on the G
 # Negative control results
 
 Let's look at the distributions of the NTC p-values for the three methods.
+
 ```{r, echo = FALSE, fig.width = 4.5, fig.height=4.5}
 results |> 
   filter(site_type == "NTC") |>
@@ -93,7 +94,9 @@ results |>
        title = "Enhancer-targeting perturbations") +
   theme_bw() +
   theme(axis.title.x = element_blank())
+```
 
+```{r, echo = FALSE, fig.width = 6, fig.height = 2.5}
 results |>
   filter(site_type == "selfTSS") |>
   mutate(p_value = pmax(p_value, .Machine$double.eps)) |>
@@ -111,6 +114,7 @@ GCM has smaller p-values for positive control perturbations, while the two CRT-b
 # Comparing the two CRT-based methods
 
 Let's see how the p-values from the two CRT-based methods compare with each other. 
+
 ```{r, echo = FALSE, fig.width = 7, fig.height = 2.5}
 results |> 
   filter(method %in% c("NB CRT", "GCM CRT")) |>
