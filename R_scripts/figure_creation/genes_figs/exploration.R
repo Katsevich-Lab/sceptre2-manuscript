@@ -383,12 +383,16 @@ pc_res |>
   filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_control >= N_NONZERO_CONTROL_CUTOFF, 
          dataset == "papalexi_eccite_screen_gene", 
-         Method %in% c("Sceptre")) |> 
-  arrange(p_value) |> 
-  filter(p_value < reject_thresh) |> 
-  select(response_id, p_value) |> 
-  mutate(survived_mixscape = response_id %in% ptrb_surviving_mixscape) |> 
-  rename(gene = response_id, `sceptre p-val` = p_value)
+         Method %in% c("SCEPTRE", "Seurat De")) |> 
+  select(response_id, p_value, Method) |> 
+  pivot_wider(names_from = Method, values_from = p_value) |>
+  filter(SCEPTRE < reject_thresh) |> 
+  arrange(SCEPTRE) |>
+  mutate(`Survived Mixscape` = response_id %in% ptrb_surviving_mixscape) |> 
+  rename(Gene = response_id, 
+         `Seurat De p-value` = `Seurat De`,
+         `SCEPTRE p-value` = `SCEPTRE`) |>
+  
 
 # Seurat DE results
 pc_res |>
