@@ -295,7 +295,7 @@ for (i in 1:length(q_list)) {
         
         # extract the data
         trun_data <- z_null_pos[z_null_pos > u_pos]
-        n <- sum(z_null_pos > u_pos)
+        n <- length(z_null)
         
         # method of moment
         mu <- mean(z_null)
@@ -340,25 +340,25 @@ for (i in 1:length(q_list)) {
           hist_tail <- hist_full +
             coord_cartesian(xlim = c(x_min, x_max), ylim = c(0, norm_density(as.numeric(u))*1.5)) +
             theme(plot.title = element_blank()) +
-            labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) +
+            labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic), test_ks$p.value)) +
             theme(plot.title = element_text(hjust = 0.5))
         
-        expected_quantiles_pos <- qnorm(p = (2*(1:n)-1)/(2*n),
-                                             mean = mu,
-                                             sd = sigma)
-        expected_unif <- pnorm(q = sort(sign_flip*z_null_pos[z_null_pos > u_pos]),
-                                    mean = mu,
-                                    sd = sigma)
-        
-        qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
-                          observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
-          ggplot(aes(x = expected_quantile, y = observed_quantile)) +
-          geom_line() +
-          geom_abline(linetype = "dashed", color = "red")
+        # expected_quantiles_pos <- qnorm(p = (2*(1:n)-1)/(2*n),
+        #                                      mean = mu,
+        #                                      sd = sigma)
+        # expected_unif <- pnorm(q = sort(sign_flip*z_null_pos[z_null_pos > u_pos]),
+        #                             mean = mu,
+        #                             sd = sigma)
+        # 
+        # qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
+        #                   observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
+        #   ggplot(aes(x = expected_quantile, y = observed_quantile)) +
+        #   geom_line() +
+        #   geom_abline(linetype = "dashed", color = "red")
         
         # plot the tail probability
         observed_tail_prob <- (10:(0.1*n))/n
-        observed_extreme_quantile <- quantile(trun_data, 1 - observed_tail_prob)
+        observed_extreme_quantile <- quantile(z_null, 1 - observed_tail_prob)
         gpd_tail_prob <- 1 - as.vector(pnorm(q = observed_extreme_quantile,
                                              mean = mu,
                                              sd = sigma))
@@ -506,7 +506,7 @@ for (i in 1:length(q_list)) {
         
         # extract the data
         trun_data <- z_null_pos[z_null_pos > u_pos]
-        n <- sum(z_null_pos > u_pos)
+        n <- length(z_null)
         
         # fit skew normal distribution
         out <- sn::selm(z_null ~ 1, family = "SN")
@@ -558,20 +558,20 @@ for (i in 1:length(q_list)) {
             labs(title = sprintf("Stat = %0.4f, p = %0.1e", sqrt(test_ks$statistic/n), test_ks$p.value)) +
             theme(plot.title = element_text(hjust = 0.5))
         
-        expected_quantiles_pos <- qsn(p = (2*(1:n)-1)/(2*n),
-                                           dp = out@param$dp)
-        expected_unif <- psn(x = sort(sign_flip*z_null_pos[z_null_pos > u_pos]),
-                                      dp = out@param$dp)
-        
-        qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
-                          observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
-          ggplot(aes(x = expected_quantile, y = observed_quantile)) +
-          geom_line() +
-          geom_abline(linetype = "dashed", color = "red")
+        # expected_quantiles_pos <- qsn(p = (2*(1:n)-1)/(2*n),
+        #                                    dp = out@param$dp)
+        # expected_unif <- psn(x = sort(sign_flip*z_null_pos[z_null_pos > u_pos]),
+        #                               dp = out@param$dp)
+        # 
+        # qq_plot <- tibble(expected_quantile = sort(sign_flip*expected_quantiles_pos),
+        #                   observed_quantile = sort(sign_flip*z_null_pos[z_null_pos > u_pos])) %>%
+        #   ggplot(aes(x = expected_quantile, y = observed_quantile)) +
+        #   geom_line() +
+        #   geom_abline(linetype = "dashed", color = "red")
         
         # plot the tail probability
         observed_tail_prob <- (10:(0.1*n))/n
-        observed_extreme_quantile <- quantile(trun_data, 1 - observed_tail_prob)
+        observed_extreme_quantile <- quantile(z_null, 1 - observed_tail_prob)
         gpd_tail_prob <- 1 - as.vector(psn(x = observed_extreme_quantile,
                                            dp = out@param$dp))
         # plot the tail probability
