@@ -4,7 +4,7 @@ library(sceptre)
 
 #devtools::install_github('timothy-barry/ondisc')
 
-LOCAL_SCEPTRE2_DATA_DIR="/Users/kmason/data/projects/sceptre2/"
+LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
 
 # gene info

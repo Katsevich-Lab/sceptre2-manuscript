@@ -1,0 +1,96 @@
+---
+title: "Papalexi Analysis Sceptre"
+output: pdf_document
+date: "2023-02-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(httr) 
+library(rlist)
+library(jsonlite)
+library(varhandle)
+library(stringi)
+```
+
+# Getting Results
+
+```{r}
+#using absolute paths to download results since files exist on github
+data.dir = '/Users/kmason/sceptre2-manuscript/writeups/papalexi_analysis/'
+gene_path = paste0(data.dir,'gene_result.rds')
+protein_path = paste0(data.dir,'protein_result.rds')
+gene_result = readRDS(gene_path)
+protein_result = readRDS(protein_path)
+```
+# Adjusting Pvalues
+
+```{r}
+#See which gene perturbations are associated with PDL1 protein expression
+
+#get pvalues from sceptre
+P_adj = protein_result[,1]
+#unlist pvalues
+P_adj = unlist(P_adj)
+#some pvalues are negative so take absolute value
+P_adj = abs(P_adj)
+#make numeric 
+P_adj = as.numeric(P_adj)
+#perform BH procedure
+P_adj = p.adjust(P_adj,method = 'BH')
+
+#replace results matrix pvalues with adjusted pvalues
+protein_adjusted= cbind(P_adj,protein_result[,c(2,3)])
+```
+# Papalexi et al Comparison
+
+## PDL1 Protein Results
+
+The authors state that they found 8 perturbations to be significantly associated with PDL1 protein expression. These 8 perturbations are BRD4,MYC,CUL3,IRF1,STAT1,IFNGR1,IFNGR2,and JAK2.
+
+```{r}
+#filter to just look at PDL1 pvalues
+protein_PDL1 = protein_adjusted[which(protein_adjusted[,3] == 'PDL1')]
+#get significant perturbations
+sig_genes = subset(protein_PDL1,P_adj < 0.05)$grna_group
+#unfactor
+sig_genes = unfactor(sig_genes)
+cat(paste0('Significant perturbations for the expression of PDL1 protein are:\n ',paste(sig_genes,collapse = ',')))
+```
+
+In addition to the 8 perturbations that papalexi et al found significant, SCEPTRE finds 4 more (CMTM6,CD86,PDCD1LG2,STAT3).
+
+```{r}
+
+
+```
+
+## Other Protein Results
+The authors state that "Importantly, perturbation of these eight genes did not result in appreciable shifts in CD86 or PD-L2 protein expression,suggesting that these regulatory effects are specific to PD-L1'. I will now check to see if this is true when using SCEPTRE.
+
+```{r}
+#filter to just look at PDL2 pvalues
+protein_PDL2 = protein_adjusted[which(protein_adjusted[,3] == 'PDL2')]
+#get significant perturbations
+sig_genes = subset(protein_PDL2,P_adj < 0.05)$grna_group
+#unfactor
+sig_genes = unfactor(sig_genes)
+cat(paste0('Significant perturbations for the expression of PDL2 protein are:\n ',paste(sig_genes,collapse = ',')))
+```
+
+
+```{r,tidy = T}
+#filter to just look at CD86 pvalues
+protein_CD86 = protein_adjusted[which(protein_adjusted[,3] == 'CD86')]
+#get significant perturbations
+sig_genes = subset(protein_CD86,P_adj < 0.05)$grna_group
+#unfactor
+sig_genes = unfactor(sig_genes)
+cat(paste0('Significant perturbations for the expression of CD86 protein are:\n ',paste(sig_genes,collapse = ',')))
+```
+
+We wee that 
