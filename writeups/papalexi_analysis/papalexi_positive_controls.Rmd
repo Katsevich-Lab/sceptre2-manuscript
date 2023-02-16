@@ -1,0 +1,63 @@
+---
+title: "Papalexi positive controls"
+output: pdf_document
+date: "2023-02-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Here we look at the SCEPTRE and Seurat DE p-values for the positive control pairs on the Papalexi (gene) data. These are of particular interest, because Mixscape labels many of the Papalexi perturbations as having no effect in any cells. Let's see whether some of these perturbations nevertheless show significant associations with the expressions of their target genes.
+
+```{r, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(kableExtra)
+
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+N_NONZERO_TREATMENT_CUTOFF <- 7
+N_NONZERO_CONTROL_CUTOFF <- 7
+
+pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results_processed.rds")) |>
+  mutate(Method = forcats::fct_recode(Method,
+                                      "SCEPTRE" = "Sceptre",
+                                      "Liscovitch" = "Liscovitch Method",
+                                      "Schraivogel" = "Schraivogel Method",
+                                      "Weissman" = "Weissman Method")) |>
+  mutate(dataset_rename = forcats::fct_recode(dataset_rename,
+                                              "Frangieh (Co Culture)" = "Frangieh Co Culture Gene",
+                                              "Frangieh (Control)" = "Frangieh Control Gene",
+                                              "Frangieh (IFN-\u03B3)" = "Frangieh Ifn Gamma Gene",
+                                              "Papalexi (Gene)" = "Papalexi Eccite Screen Gene",
+                                              "Papalexi (Protein)" = "Papalexi Eccite Screen Protein",
+                                              "Schraivogel" = "Schraivogel Enhancer Screen")) 
+
+# list of perturbations surviving Mixscape
+ptrb_surviving_mixscape <- c("SMAD4", "STAT2", "JAK2", 
+                             "STAT1", "IFNGR2", "IFNGR1", 
+                             "IRF1", "BRD4", "SPI1", 
+                             "CUL3", "MYC")
+
+# rejection threshold
+reject_thresh <- 1e-5
+
+# create the table of SCEPTRE and Seurat DE p-values
+pc_res |>
+  filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+         n_control >= N_NONZERO_CONTROL_CUTOFF, 
+         dataset == "papalexi_eccite_screen_gene", 
+         Method %in% c("SCEPTRE", "Seurat De")) |> 
+  select(response_id, p_value, Method) |> 
+  pivot_wider(names_from = Method, values_from = p_value) |>
+  filter(SCEPTRE < reject_thresh) |> 
+  arrange(SCEPTRE, `Seurat De`) |>
+  mutate(`Survived Mixscape` = response_id %in% ptrb_surviving_mixscape) |> 
+  rename(Gene = response_id, 
+         `Seurat De p-value` = `Seurat De`,
+         `SCEPTRE p-value` = `SCEPTRE`) |>
+  kable(booktabs = TRUE, linesep = "") |>
+  kable_styling(position = "center", latex_options = "hold_position")
+```
+
+We see that roughly half of the positive control perturbations passing the 1e-5 p-value threshold did not survive Mixscape, suggesting that Mixscape is too aggressive in labeling perturbations as having no effect.
