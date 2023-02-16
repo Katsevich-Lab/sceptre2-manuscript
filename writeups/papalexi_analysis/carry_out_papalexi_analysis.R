@@ -71,7 +71,7 @@ protein_grna_group_pairs <- expand.grid(response_id = mm_odm |>
 
 # analyze the gene data
 gene_result <- run_sceptre_low_moi(mm_odm = mm_odm,
-                                   response_grna_group_pairs = gene_grna_group_pairs,
+                                   response_grna_group_pairs = gene_grna_group_pairs_pdl1,
                                    form = gene_formula,
                                    response_modality_name = "gene",
                                    grna_modality_name = "grna_assignment",

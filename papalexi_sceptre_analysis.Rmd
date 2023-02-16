@@ -22,7 +22,7 @@ library(stringi)
 ```{r}
 #using absolute paths to download results since files exist on github
 data.dir = '/Users/kmason/sceptre2-manuscript/writeups/papalexi_analysis/'
-gene_path = paste0(data.dir,'gene_result.rds')
+gene_path = paste0(data.dir,'gene_result_PDL1_mrna.rds')
 protein_path = paste0(data.dir,'protein_result.rds')
 seurat_path = paste0(data.dir,'papalexi_results_seurat.rds')
 gene_result = readRDS(gene_path)
