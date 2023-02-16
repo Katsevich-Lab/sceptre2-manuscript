@@ -5,7 +5,7 @@ date: "2023-02-16"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
@@ -24,8 +24,10 @@ library(stringi)
 data.dir = '/Users/kmason/sceptre2-manuscript/writeups/papalexi_analysis/'
 gene_path = paste0(data.dir,'gene_result.rds')
 protein_path = paste0(data.dir,'protein_result.rds')
+seurat_path = paste0(data.dir,'papalexi_results_seurat.rds')
 gene_result = readRDS(gene_path)
 protein_result = readRDS(protein_path)
+seurat_result = readRDS(seurat_path)
 ```
 # Adjusting Pvalues
 
@@ -65,32 +67,132 @@ cat(paste0('Significant perturbations for the expression of PDL1 protein are:\n 
 In addition to the 8 perturbations that papalexi et al found significant, SCEPTRE finds 4 more (CMTM6,CD86,PDCD1LG2,STAT3).
 
 ```{r}
+#get sceptre results on PDL1 protein
+protein_PDL1_raw = protein_result[which(protein_result[,3] == 'PDL1'),c(1,2)]
+#get seurat results on PDL1 protein
+seurat_PDL1_raw = seurat_result[which(seurat_result$Target == 'PDL1'),c(1,2,6)]
+#remove perturbations that aren't in both analyses
+for(target in protein_PDL1_raw$grna_group){
+  if (target %in% seurat_PDL1_raw$PRTB == F){
+    seurat_PDL1_raw = rbind(seurat_PDL1_raw,c(NA,NA,target))
+  }
+}
+protein_PDL1_raw = subset(protein_PDL1_raw,grna_group %in% seurat_PDL1_raw$PRTB)
+#reorder rows of sceptre analysis
+protein_PDL1_raw = protein_PDL1_raw[match(seurat_PDL1_raw$PRTB,
+                                          protein_PDL1_raw$grna_group)]
+protein_PDL1_raw$grna_group = unfactor(protein_PDL1_raw$grna_group)
+#bind them 
+combined_results_PDL1 = data.frame(protein_PDL1_raw$p_value,
+                                   seurat_PDL1_raw$p_val,
+                                   seurat_PDL1_raw$avg_log2FC,
+                              protein_PDL1_raw$grna_group)
+colnames(combined_results_PDL1) = c("SCEPTRE Pvalues","Seurat Pvalues",
+                                    'Seurat Log Change',
+                                    "Perturbation")
 
+combined_results_PDL1 = combined_results_PDL1[
+  order(combined_results_PDL1$`SCEPTRE Pvalues`),]
 
+View(combined_results_PDL1)
 ```
 
 ## Other Protein Results
 The authors state that "Importantly, perturbation of these eight genes did not result in appreciable shifts in CD86 or PD-L2 protein expression,suggesting that these regulatory effects are specific to PD-L1'. I will now check to see if this is true when using SCEPTRE.
 
 ```{r}
-#filter to just look at PDL2 pvalues
-protein_PDL2 = protein_adjusted[which(protein_adjusted[,3] == 'PDL2')]
-#get significant perturbations
-sig_genes = subset(protein_PDL2,P_adj < 0.05)$grna_group
-#unfactor
-sig_genes = unfactor(sig_genes)
-cat(paste0('Significant perturbations for the expression of PDL2 protein are:\n ',paste(sig_genes,collapse = ',')))
+#get sceptre results on CD86 protein
+protein_CD86_raw = protein_result[which(protein_result[,3] == 'CD86'),c(1,2)]
+#get seurat results on CD86 protein
+seurat_CD86_raw = seurat_result[which(seurat_result$Target == 'CD86'),c(1,2,6)]
+#remove perturbations that aren't in both analyses
+for(target in protein_CD86_raw$grna_group){
+  if (target %in% seurat_CD86_raw$PRTB == F){
+    seurat_CD86_raw = rbind(seurat_CD86_raw,c(NA,NA,target))
+  }
+}
+protein_CD86_raw = subset(protein_CD86_raw,grna_group %in% seurat_CD86_raw$PRTB)
+#reorder rows of sceptre analysis
+protein_CD86_raw = protein_CD86_raw[match(seurat_CD86_raw$PRTB,
+                                          protein_CD86_raw$grna_group)]
+protein_CD86_raw$grna_group = unfactor(protein_CD86_raw$grna_group)
+#bind them 
+combined_results_CD86 = data.frame(protein_CD86_raw$p_value,
+                                   seurat_CD86_raw$p_val,
+                                   seurat_CD86_raw$avg_log2FC,
+                              protein_CD86_raw$grna_group)
+colnames(combined_results_CD86) = c("SCEPTRE Pvalues","Seurat Pvalues",
+                                    'Seurat Log Change',
+                                    "Perturbation")
+
+combined_results_CD86 = combined_results_CD86[
+  order(combined_results_CD86$`SCEPTRE Pvalues`),]
+View(combined_results_CD86)
+```
+It seems as though these regulatory effects are not specific to PDL1. This is also true when using seurat.
+
+```{r}
+#get sceptre results on PDL2 protein
+protein_PDL2_raw = protein_result[which(protein_result[,3] == 'PDL2'),c(1,2)]
+#get seurat results on PDL2 protein
+seurat_PDL2_raw = seurat_result[which(seurat_result$Target == 'PDL2'),c(1,2,6)]
+#remove perturbations that aren't in both analyses
+for(target in protein_PDL2_raw$grna_group){
+  if (target %in% seurat_PDL2_raw$PRTB == F){
+    seurat_PDL2_raw = rbind(seurat_PDL2_raw,c(NA,NA,target))
+  }
+}
+protein_PDL2_raw = subset(protein_PDL2_raw,grna_group %in% seurat_PDL2_raw$PRTB)
+#reorder rows of sceptre analysis
+protein_PDL2_raw = protein_PDL2_raw[match(seurat_PDL2_raw$PRTB,
+                                          protein_PDL2_raw$grna_group)]
+protein_PDL2_raw$grna_group = unfactor(protein_PDL2_raw$grna_group)
+#bind them 
+combined_results_PDL2 = data.frame(protein_PDL2_raw$p_value,
+                                   seurat_PDL2_raw$p_val,
+                                   seurat_PDL2_raw$avg_log2FC,
+                              protein_PDL2_raw$grna_group)
+colnames(combined_results_PDL2) = c("SCEPTRE Pvalues","Seurat Pvalues",
+                                    'Seurat Log Change',
+                                    "Perturbation")
+
+combined_results_PDL2 = combined_results_PDL2[
+  order(combined_results_PDL2$`SCEPTRE Pvalues`),]
+
+View(combined_results_PDL2)
+```
+
+# mRNA Results
+
+```{r}
+#get sceptre results on PDL1 protein
+gene_PDL1_raw = gene_result[which(gene_result$response_id == 'CD274'),c(1,2)]
+#get seurat results on PDL1 protein
+seurat_PDL1_raw = seurat_result[which(seurat_result$Target == 'PDL1'),c(1,2,6)]
+#remove perturbations that aren't in both analyses
+for(target in protein_PDL1_raw$grna_group){
+  if (target %in% seurat_PDL1_raw$PRTB == F){
+    seurat_PDL1_raw = rbind(seurat_PDL1_raw,c(NA,NA,target))
+  }
+}
+protein_PDL1_raw = subset(protein_PDL1_raw,grna_group %in% seurat_PDL1_raw$PRTB)
+#reorder rows of sceptre analysis
+protein_PDL1_raw = protein_PDL1_raw[match(seurat_PDL1_raw$PRTB,
+                                          protein_PDL1_raw$grna_group)]
+protein_PDL1_raw$grna_group = unfactor(protein_PDL1_raw$grna_group)
+#bind them 
+combined_results_PDL1 = data.frame(protein_PDL1_raw$p_value,
+                                   seurat_PDL1_raw$p_val,
+                                   seurat_PDL1_raw$avg_log2FC,
+                              protein_PDL1_raw$grna_group)
+colnames(combined_results_PDL1) = c("SCEPTRE Pvalues","Seurat Pvalues",
+                                    'Seurat Log Change',
+                                    "Perturbation")
+
+combined_results_PDL1 = combined_results_PDL1[
+  order(combined_results_PDL1$`SCEPTRE Pvalues`),]
+
+View(combined_results_PDL1)
 ```
 
 
-```{r,tidy = T}
-#filter to just look at CD86 pvalues
-protein_CD86 = protein_adjusted[which(protein_adjusted[,3] == 'CD86')]
-#get significant perturbations
-sig_genes = subset(protein_CD86,P_adj < 0.05)$grna_group
-#unfactor
-sig_genes = unfactor(sig_genes)
-cat(paste0('Significant perturbations for the expression of CD86 protein are:\n ',paste(sig_genes,collapse = ',')))
-```
-
-We wee that 

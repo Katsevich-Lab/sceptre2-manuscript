@@ -40,7 +40,7 @@ screen_b <- 25000
 # randomly select gene-grna group pairs to analyze
 gene_grna_group_pairs <- expand.grid(response_id = mm_odm |>
                                        get_modality("gene") |>
-                                       get_feature_ids(),
+                                       get_feature_ids('CD274'),
                                      grna_group = c("CUL3"))
 
 grna_all = unique(mm_odm@modalities$grna_assignment@feature_covariates$target)[-c(3,4)]
