@@ -98,6 +98,15 @@ length(which(right_gpd_ratio > right_sknorm_ratio))
 length(which(right_sknorm_ratio > right_gpd_ratio))
 
 
+
+# GoF comparison
+gpd_gof <- gpd_param$`p-value`
+sknorm_gof <- sknorm_param$`p-value`
+
+# no of significance in terms of gof test for left/right tail.
+length(which(gpd_gof[1:330] > sknorm_gof[1:330]))
+length(which(gpd_gof[331:660] > sknorm_gof[331:660]))
+
 ```
 
 
