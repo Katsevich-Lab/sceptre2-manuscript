@@ -16,11 +16,6 @@ library(katlabutils)
 library(cowplot)
 library(ggplot2)
 
-sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
-# load empirical distributions
-resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists.rds"))
-resampling_dists[1:5, 1:6]
-
 # should work under low_moi folder
 q <- 0.96
 samples <- 5e5
