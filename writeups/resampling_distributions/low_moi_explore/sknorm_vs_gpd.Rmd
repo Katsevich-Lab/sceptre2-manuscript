@@ -1,6 +1,8 @@
 ---
 title: "GPD vs Skew Normal"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -18,93 +20,114 @@ library(ggplot2)
 # should work under low_moi folder
 q <- 0.96
 samples <- 5e5
-working_dir <- getwd()
 
-# get the file path for gpd parameters
-subDir <- sprintf("figures/power_exploration/tail_prob_%d_resamples_%.2f_percentile",  samples, q)
-param <- read.csv(sprintf("%s/param.csv", file.path(working_dir, subDir)))
-gpd_param <- t(matrix(as.numeric(unlist(param[,-1])), nrow = 6, ncol = 660))
-gpd_param <- as.data.frame(gpd_param)
-colnames(gpd_param) <- c("location", "scale", "shape", "statistic", "p-value", "p-value ratio")
-p_value_ratio_gpd <- gpd_param$`p-value ratio`
+# get the file path for GPD and skew normal parameters
+subfld <- "figures/power_exploration"
+subDir_gpd <- sprintf("%s/tail_prob_%d_resamples_%.2f_percentile", subfld,  samples, q)
+subDir_sknorm <- sprintf("%s/sknorm_tail_prob_%d_resamples_%.2f_percentile", subfld, samples, q)
+param_gpd <- read_csv(sprintf("%s/param.csv", subDir_gpd))
+param_sknorm <- read_csv(sprintf("%s/param.csv", subDir_sknorm))
+gpd_param <- t(param_gpd[,-1])
+sknorm_param <- t(param_sknorm[,-1])
+
+
+# create the boxplot tibble
+param <- tibble(method = c(rep("GPD", 660), rep("Sknorm", 660)),
+                tail = rep(c(rep("left", 330), rep("right", 330)), 2),
+                GoF_statistic = c(gpd_param[, 4], sknorm_param[, 4]),
+                GoF_pvalue = c(gpd_param[, 5], sknorm_param[, 5]),
+                pvalue_ratio = c(gpd_param[, 6], sknorm_param[, 6]))
+
+# create the dotplot tibble
+param_comparison <- cbind(param[1:660, 2:5], param[661:1320, 3:5]) 
+colnames(param_comparison)[2:7] <- c("GPD_statistic", "GPD_pvalue", "GPD_pvalue_ratio",
+                                     "SKN_statistic", "SKN_pvalue", "SKN_pvalue_ratio")
+```
+
+
+## 1. p-value ratio
+```{r, warning = FALSE, error = FALSE, message = FALSE}
+dot_plot <- param_comparison |> 
+  filter(GPD_pvalue_ratio < 100 & SKN_pvalue_ratio < 100) |>
+  ggplot(aes_string(x = "GPD_pvalue_ratio", y = "SKN_pvalue_ratio")) +
+  facet_grid(tail ~.) +
+  geom_point() +
+  geom_abline(linetype = "dashed", color = "red") +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(title = "p-value ratio plot")
+
+hist_plot <- param |> 
+  filter(pvalue_ratio < 100) |>
+  ggplot(aes_string(x = "pvalue_ratio")) +
+  facet_grid(tail ~ method) +
+  scale_x_log10() +
+  geom_histogram() +
+  geom_vline(xintercept = 10, linetype = "dashed", color = "red")
+plot_grid(dot_plot,
+          hist_plot,
+          ncol = 2,
+          align = "v")
+
+```
+  
+## 2. GoF statistic
+
+
+```{r, warning = FALSE, error = FALSE, message = FALSE}
+dot_plot <- param_comparison |> 
+  ggplot(aes_string(x = "GPD_statistic", y = "SKN_statistic")) +
+  facet_grid(tail ~.) +
+  geom_point() +
+  scale_x_log10() +
+  scale_y_log10() +
+  geom_abline(linetype = "dashed", color = "red") +
+  labs(title = "ks statistic plot")
+
+hist_plot <- param |> 
+  ggplot(aes_string(x = "GoF_statistic")) +
+  facet_grid(tail ~ method) +
+  scale_x_log10() +
+  geom_histogram() +
+  geom_vline(xintercept = 0.02, linetype = "dashed", color = "red")
+
+plot_grid(dot_plot,
+          hist_plot,
+          ncol = 2,
+          align = "v")
+
+```
+
+
+## 3. p-value of GoF test
+```{r, warning = FALSE, error = FALSE, message = FALSE}
+
+dot_plot <- param_comparison |> 
+  ggplot(aes_string(x = "GPD_pvalue", y = "SKN_pvalue")) +
+  facet_grid(tail ~.) +
+  geom_point() +
+  scale_x_sqrt() +
+  scale_y_sqrt() +
+  geom_abline(linetype = "dashed", color = "red") +
+  labs(title = "ks p-value plot")
+
+hist_plot <- param |> 
+  ggplot(aes_string(x = "GoF_pvalue")) +
+  facet_grid(tail ~ method) +
+  geom_histogram() +
+  scale_x_log10() +
+  geom_vline(xintercept = 0.05, linetype = "dashed", color = "red")
+  
+plot_grid(dot_plot,
+          hist_plot,
+          ncol = 2,
+          align = "v")
 
 # check if the inf value corresponds to bumpy distribution
 # bumpy: 56, 143, 169, 175, 177, 185, 191, 198, 213, 236, 241, 243
 # nonbumpy: 327, 325, 324
 # both bumpy: 191
-sort(which(p_value_ratio_gpd == Inf), decreasing = TRUE)
 
-
-# get the file path for skew normal parameter
-subDir <- sprintf("figures/power_exploration/sknorm_tail_prob_%d_resamples_%.2f_percentile",  samples, q)
-param <- read.csv(sprintf("%s/param.csv", file.path(working_dir, subDir)))
-sknorm_param <- t(matrix(as.numeric(unlist(param[,-1])), nrow = 6, ncol = 660))
-sknorm_param <- as.data.frame(sknorm_param)
-colnames(sknorm_param) <- c("location", "scale", "shape", "statistic", "p-value", "p-value ratio")
-p_value_ratio_sknorm <- sknorm_param$`p-value ratio`
-
-# compare left tail case
-left_gpd_ratio <- p_value_ratio_gpd[1:330]
-left_sknorm_ratio <- p_value_ratio_sknorm[1:330]
-
-# leave the large value out 
-large_leftgpd_id <-  which(left_gpd_ratio > 100)
-large_leftsknorm_id <- which(left_sknorm_ratio > 100)
-large_left_id <- c(large_leftgpd_id, large_leftsknorm_id)
-
-# infinite value id
-Inf_left_id <- which(left_gpd_ratio == "Inf")
-
-# exclude the infinite value id and large value id
-excl_id <- c(Inf_left_id, large_left_id)
-left_comparison <- data.frame(left_gpd = left_gpd_ratio[-excl_id],
-                              left_sknorm = left_sknorm_ratio[-excl_id])
-
-left_comparison |>
-  ggplot(aes(x = left_gpd, y = left_sknorm)) +
-  geom_point() +
-  geom_abline(linetype = "dashed", color = "red")
-
-# no of gpd bigger than sknorm for left tail
-length(which(left_gpd_ratio > left_sknorm_ratio))
-length(which(left_sknorm_ratio > left_gpd_ratio))
-
-
-# compare right tail case
-right_gpd_ratio <- p_value_ratio_gpd[331:660]
-right_sknorm_ratio <- p_value_ratio_sknorm[331:660]
-
-# leave the large value out 
-large_rightgpd_id <-  which(right_gpd_ratio > 100)
-large_rightsknorm_id <- which(right_sknorm_ratio > 100)
-large_right_id <- c(large_rightgpd_id, large_rightsknorm_id)
-
-# infinite value id
-Inf_right_id <- which(right_gpd_ratio == "Inf")
-
-# exclude the infinite value id and large value id
-excl_id <- c(Inf_right_id, large_right_id)
-right_comparison <- data.frame(right_gpd = right_gpd_ratio[-excl_id],
-                               right_sknorm = right_sknorm_ratio[-excl_id])
-
-right_comparison |>
-  ggplot(aes(x = right_gpd, y = right_sknorm)) +
-  geom_point() +
-  geom_abline(linetype = "dashed", color = "red")
-
-# no of gpd bigger than sknorm for left tail
-length(which(right_gpd_ratio > right_sknorm_ratio))
-length(which(right_sknorm_ratio > right_gpd_ratio))
-
-
-
-# GoF comparison
-gpd_gof <- gpd_param$`p-value`
-sknorm_gof <- sknorm_param$`p-value`
-
-# no of significance in terms of gof test for left/right tail.
-length(which(gpd_gof[1:330] > sknorm_gof[1:330]))
-length(which(gpd_gof[331:660] > sknorm_gof[331:660]))
 
 ```
 
