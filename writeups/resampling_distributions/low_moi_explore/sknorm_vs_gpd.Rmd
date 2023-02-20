@@ -192,9 +192,25 @@ param |>
   mutate(`KS p-value` = num(`KS p-value`, notation = "sci"),
          `KS statistic` = num(`KS statistic`, notation = "sci"),
          Method = ifelse(Method == "Sknorm", "Skew-normal", Method)) |>
-  kable(booktabs = TRUE,
-        digits = 1) |>
+  kable(booktabs = TRUE, digits = 1) |>
   kable_styling(position = "center", latex_options = "hold_position")
 ```
 
 Based on the KS test, we find that GPD is a much better fit than skew-normal. Based on the approximation of tail probabilities, a more mixed picture emerges. The GPD tends to *underestimate* the tail probability (by median factors of 2.4 and 1.8 in the left and right tails, respectively). On the other hand, skew-normal tends to *overestimate* the tail probability (by median factors of 4.3 and 1.4 in the left and right tails, respectively).
+
+The following table summarizes the pros and cons of GPD and skew-normal:
+
+```{r, echo = FALSE}
+tribble(
+  ~Property,  ~Winner,
+  "Computation", "GPD",
+  "Goodness of fit", "GPD",
+  "Accommodates partially bumpy distributions", "GPD",
+  "Overall closeness of fitted and empirical p-values", "GPD",
+  "Conservative p-value estimation", "Skew-normal",
+  "Fit stability", "Skew-normal",
+  "Fewer tuning parameters", "Skew-normal"
+) |>
+  kable(booktabs = TRUE, linesep = "") |>
+  kable_styling(position = "center", latex_options = "hold_position")
+```
