@@ -207,6 +207,7 @@ tribble(
   "Goodness of fit", "GPD",
   "Accommodates partially bumpy distributions", "GPD",
   "Overall closeness of fitted and empirical p-values", "GPD",
+  "Has unbounded support", "Skew-normal",
   "Conservative p-value estimation", "Skew-normal",
   "Fit stability", "Skew-normal",
   "Fewer tuning parameters", "Skew-normal"
