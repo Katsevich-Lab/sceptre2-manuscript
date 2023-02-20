@@ -6,7 +6,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 
@@ -16,6 +16,7 @@ library(tidyverse)
 library(katlabutils)
 library(cowplot)
 library(ggplot2)
+library(kableExtra)
 
 # should work under low_moi folder
 q <- 0.96
@@ -173,5 +174,27 @@ plot_grid(dot_plot,
 
 ```
 
+## 5. Summary
 
+To summarize, let's take the median of each metric for both methods and both tails:
 
+```{r}
+param |> 
+  group_by(method, tail) |> 
+  summarise(across(everything(), median), .groups = "drop") |> 
+  arrange(tail) |>
+  rename(Method = method, 
+         Tail = tail, 
+         `KS statistic` = GoF_statistic,
+         `KS p-value` = GoF_pvalue,
+         `p-val overshoot factor` = fit_emp_ratio,
+         `p-val undershoot factor` = emp_fit_ratio) |>
+  mutate(`KS p-value` = num(`KS p-value`, notation = "sci"),
+         `KS statistic` = num(`KS statistic`, notation = "sci"),
+         Method = ifelse(Method == "Sknorm", "Skew-normal", Method)) |>
+  kable(booktabs = TRUE,
+        digits = 1) |>
+  kable_styling(position = "center", latex_options = "hold_position")
+```
+
+Based on the KS test, we find that GPD is a much better fit than skew-normal. Based on the approximation of tail probabilities, a more mixed picture emerges. The GPD tends to *underestimate* the tail probability (by median factors of 2.4 and 1.8 in the left and right tails, respectively). On the other hand, skew-normal tends to *overestimate* the tail probability (by median factors of 4.3 and 1.4 in the left and right tails, respectively).
