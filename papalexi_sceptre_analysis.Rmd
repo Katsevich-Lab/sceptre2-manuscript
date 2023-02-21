@@ -15,6 +15,7 @@ library(rlist)
 library(jsonlite)
 library(varhandle)
 library(stringi)
+library(kableExtra)
 ```
 
 # Getting Results From SCEPTRE Analysis
@@ -98,7 +99,10 @@ combined_results_PDL1 = combined_results_PDL1 [,c(4,1,2,3)]
 #order by pvalue
 combined_results_PDL1 = combined_results_PDL1[
   order(combined_results_PDL1$`SCEPTRE Pvalues`),]
-combined_results_PDL1
+
+
+results_table = kable(combined_results_PDL1,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
 #View(combined_results_PDL1)
 ```
 
@@ -135,7 +139,10 @@ combined_results_CD86 = combined_results_CD86[,c(4,1,2,3)]
 #order by pvalue
 combined_results_CD86 = combined_results_CD86[
   order(combined_results_CD86$`SCEPTRE Pvalues`),]
-combined_results_CD86
+
+
+results_table = kable(combined_results_CD86,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
 #View(combined_results_CD86)
 ```
 It seems as though these regulatory effects are not specific to PDL1. This is also true when using seurat. The positive controls for PDL1 (IRF1,IFNGR1,etc...) also seem to regulate expression of CD86.
@@ -172,7 +179,9 @@ combined_results_PDL2 = combined_results_PDL2[,c(4,1,2,3)]
 combined_results_PDL2 = combined_results_PDL2[
   order(combined_results_PDL2$`SCEPTRE Pvalues`),]
 
-combined_results_PDL2
+
+results_table = kable(combined_results_PDL2,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
 #View(combined_results_PDL2)
 ```
 For PDL2, the results are more or less in line with what paplexi reports. IRF1 seems to be the only gene that regulates PDL1 that also regulates PDL2.
@@ -212,7 +221,9 @@ combined_results_PDL1_raw = combined_results_PDL1_raw[,c(4,1,2,3)]
 combined_results_PDL1_raw = combined_results_PDL1_raw[
   order(combined_results_PDL1_raw$`SCEPTRE Pvalues`),]
 
-combined_results_PDL1_raw
+
+results_table = kable(combined_results_PDL1_raw,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
 #View(combined_results_PDL1_raw)
 ```
 We see that the positive controls indeed correspond to the strongest signals in the data. Interestingly, BRD4 perturbation does not affect gene expression of PDL1 while CUL3 does, consistent with the paper. 
@@ -248,7 +259,9 @@ combined_results_PDL1_norm = combined_results_PDL1_norm[,c(4,1,2,3)]
 combined_results_PDL1_norm = combined_results_PDL1_norm[
   order(combined_results_PDL1_norm$`SCEPTRE Pvalues`),]
 
-combined_results_PDL1_norm
+
+results_table = kable(combined_results_PDL1_norm,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
 #View(combined_results_PDL1_norm)
 ```
 

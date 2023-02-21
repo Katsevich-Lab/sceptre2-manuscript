@@ -1,0 +1,274 @@
+---
+title: "Papalexi Confounders"
+output: html_document
+date: "2023-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Goal
+The goal of this report is to identify which grna assignments may be confounded by biological replicate
+
+```{r}
+# Load packages.
+library(Seurat)
+library(SeuratData)
+library(ggplot2)
+library(patchwork)
+library(scales)
+library(dplyr)
+library(reshape2)
+library(mixtools)
+library(stringr)
+library(ondisc)
+library(sceptre2)
+library(sceptre)
+library(kableExtra)
+```
+
+
+```{r}
+LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
+
+# gene info
+gene_odm_fp <- paste0(papalexi_dir, "gene/matrix.odm")
+
+# grna info
+grna_odm_fp <- paste0(papalexi_dir, "grna_assignment/matrix.odm")
+
+# protein info
+protein_odm_fp <- paste0(papalexi_dir, "protein/matrix.odm")
+
+# mm odm metadata fp
+mm_metadata_fp <- paste0(papalexi_dir, "multimodal_metadata.rds")
+
+# construct mm odm
+mm_odm <- read_multimodal_odm(odm_fps = c(gene_odm_fp, grna_odm_fp,
+                                          protein_odm_fp),
+                              multimodal_metadata_fp = mm_metadata_fp)
+```
+
+
+```{r}
+# get perturbations for gene
+bio_rep = mm_odm@global_cell_covariates$bio_rep
+grna = stri_sub(mm_odm@modalities$grna_assignment@cell_covariates$assigned_grna,
+                1,-3)
+grna[grna == 'NTg'] = 'NT'
+
+#get unique targets
+targets = unique(grna)
+targets = targets[targets != 'NT']
+#initialize vector that will hold pvalues testing if there is an association
+#between bio_rep and grna assignment
+confounder = rep(NA,length(targets))
+names(confounder) = targets
+#initialize counter
+counter = 1
+#iterate over grna targets
+for(gene in targets){
+  #get cells which are either NT or gene KO 
+  cells = which(grna == gene | grna == 'NT')
+  #get grna assignments
+  A = grna[cells]
+  #get biological replicate
+  B = bio_rep[cells]
+  #get pvalue via fishers test
+  confounder[counter] = fisher.test(x = table(B,A))$p.value
+  #counter++
+  counter = counter + 1
+}
+#BH correction
+confounder = p.adjust(confounder,method = 'BH')
+#see which grna assignments differ by replicate
+confounder[which(confounder<0.05)]
+```
+
+
+We see that CUL3 and BRD4 are the main grnas that are affected by biological replicate. I will now perform seuratDE analysis, stratifying by biological replicate. Recall that seuratDE finds that CUL3 and BRD4 KO increase the expression of PDL1 protein and mrna. Do these results hold true if we stratify by replicate?
+
+# SeuratDE Analysis Stratifying by Replicate
+
+## Loading Data 
+```{r}
+# Download dataset using SeuratData.
+options(timeout = 1000)
+InstallData(ds = "thp1.eccite")
+
+# Setup custom theme for plotting.
+custom_theme <- theme(
+  plot.title = element_text(size=16, hjust = 0.5),
+  legend.key.size = unit(0.7, "cm"),
+  legend.text = element_text(size = 14))
+
+# Load object.
+eccite <- LoadData(ds = "thp1.eccite")
+```
+## Preprocessing 
+```{r}
+
+# Normalize protein.
+eccite <- NormalizeData(
+  object = eccite,
+  assay = "ADT",
+  normalization.method = "CLR",
+  margin = 2)
+
+
+# Prepare RNA assay for dimensionality reduction:
+# Normalize data, find variable features and scale data.
+DefaultAssay(object = eccite) <- 'RNA'
+eccite <- NormalizeData(object = eccite) %>%
+  FindVariableFeatures() %>%
+  ScaleData()
+
+# Run Principle Component Analysis (PCA) 
+eccite <- RunPCA(object = eccite)
+
+# Run Uniform Manifold Approximation and Projection (UMAP) 
+eccite <- RunUMAP(object = eccite, dims = 1:40)
+
+```
+
+## Removing Technical Effects 
+```{r}
+
+# Calculate perturbation signature (PRTB).
+eccite<- CalcPerturbSig(
+  object = eccite,
+  assay = "RNA",
+  slot = "data",
+  gd.class ="gene",
+  nt.cell.class = "NT",
+  reduction = "pca",
+  ndims = 40,
+  num.neighbors = 20,
+  split.by = "replicate",
+  new.assay.name = "PRTB")
+
+# Prepare PRTB assay for dimensionality reduction:
+# Normalize data, find variable features and center data.
+DefaultAssay(object = eccite) <- 'PRTB'
+
+# Use variable features from RNA assay.
+VariableFeatures(object = eccite) <- VariableFeatures(object = eccite[["RNA"]])
+eccite <- ScaleData(object = eccite, do.scale = F, do.center = T)
+
+# Run PCA to reduce the dimensionality of the data.
+eccite <- RunPCA(object = eccite, reduction.key = 'prtbpca',
+                 reduction.name = 'prtbpca')
+
+# Run UMAP to visualize clustering in 2-D.
+eccite <- RunUMAP(
+  object = eccite,
+  dims = 1:40,
+  reduction = 'prtbpca',
+  reduction.key = 'prtbumap',
+  reduction.name = 'prtbumap')
+
+```
+
+
+## Mixscape
+```{r}
+# Run mixscape.
+eccite <- RunMixscape(
+  object = eccite,
+  assay = "PRTB",
+  slot = "scale.data",
+  labels = "gene",
+  nt.class.name = "NT",
+  min.de.genes = 5,
+  iter.num = 10,
+  de.assay = "RNA",
+  verbose = F,
+  prtb.type = "KO")
+```
+
+
+```{r}
+#get seurat biological replicates
+bio_rep = eccite@meta.data$MULTI_classification.global
+#get number of replicates
+unique_bio_rep = unique(bio_rep)
+N_rep = length(unique_bio_rep)
+#initalize gene and pvalue matrix
+CUL3_effect = matrix(NA,N_rep,2)
+BRD4_effect = matrix(NA,N_rep,2)
+CUL3_effect_protein = matrix(NA,N_rep,2)
+BRD4_effect_protein = matrix(NA,N_rep,2)
+#name rownames and column names of matrix 
+colnames(CUL3_effect) = c("pvalue","effect size")
+rownames(CUL3_effect) = unique_bio_rep
+colnames(CUL3_effect_protein) = c("pvalue","effect size")
+rownames(CUL3_effect_protein) = unique_bio_rep
+#name rownames and column names of matrix 
+colnames(BRD4_effect) = c("pvalue","effect size")
+rownames(BRD4_effect) = unique_bio_rep
+colnames(BRD4_effect_protein) = c("pvalue","effect size")
+rownames(BRD4_effect_protein) = unique_bio_rep
+#save counter
+counter = 1
+#perform seuratDE over each replicate 
+for (val in unique_bio_rep){
+  #subset data
+  data_sub = subset(eccite,MULTI_classification.global == val)
+  #perform seuratDE
+  CUL3_mrna = FindMarkers(data_sub,ident.1 = "CUL3 KO",ident.2 = 'NT',
+                        features = 'CD274',assay = 'RNA',logfc.threshold = 0)
+  BRD4_mrna = FindMarkers(data_sub,ident.1 = "BRD4 KO",ident.2 = 'NT',
+                        features = 'CD274',assay = 'RNA',logfc.threshold = 0)
+  
+  CUL3_protein = FindMarkers(data_sub,ident.1 = "CUL3 KO",ident.2 = 'NT',
+                        features = 'PDL1',assay = 'ADT',logfc.threshold = 0)
+  BRD4_protein = FindMarkers(data_sub,ident.1 = "BRD4 KO",ident.2 = 'NT',
+                        features = 'PDL1',assay = 'ADT',logfc.threshold = 0)
+  #save results 
+  CUL3_effect[counter,] = c(CUL3_mrna$p_val,CUL3_mrna$avg_log2FC)
+  BRD4_effect[counter,] = c(BRD4_mrna$p_val,BRD4_mrna$avg_log2FC)
+  CUL3_effect_protein[counter,] = c(CUL3_protein$p_val,CUL3_protein$avg_log2FC)
+  BRD4_effect_protein[counter,] = c(BRD4_protein$p_val,BRD4_protein$avg_log2FC)
+  #counter++
+  counter = counter + 1
+  
+}
+```
+
+
+## CUL3 Results
+
+### PDL1 mRNA
+
+Recall that seurat reports a pvalue of 1e-11 and an effect size of 0.7. It seems as though the effect size estimate is accurate despite some deviations in replication 3. Additionally, all pvalues are significant.
+```{r}
+results_table = kable(CUL3_effect,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
+```
+
+### PDL1 Protein
+Recall that seurat reports a pvalue of 1e-11 and an effect size of 0.15. It seems as though the effect size estimate is accurate despite some deviations in replication 3. This again seems accurate despite all pvalues being significatnly greater than 1e-11. They are still significant however.
+```{r}
+results_table = kable(CUL3_effect_protein,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
+
+```
+
+
+## BRD4 Results
+
+### PDL1 mRNA
+Seurat reports a pvalue of 1e-5 and a log fold change of 0.39. I note that in replication 4, the change is actually insignificant and no pvalue is less than 1e-5. 
+```{r}
+results_table = kable(BRD4_effect,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
+```
+
+### PDL1 Protein
+Seurat reports a pvalue of 1e-29 and a log fold change of 0.22. The results are invariant to replication. 
+
+```{r}
+results_table = kable(BRD4_effect_protein,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
+```
