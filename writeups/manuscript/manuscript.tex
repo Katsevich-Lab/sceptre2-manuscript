@@ -1,0 +1,36 @@
+\documentclass{nature}
+\usepackage{graphicx}	
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{algorithm2e}
+\RestyleAlgo{ruled}
+\usepackage{bbm}
+\usepackage{geometry}
+\usepackage{afterpage}
+\usepackage{nonfloat}
+\usepackage{lipsum}
+\usepackage{nameref}
+\usepackage[colorlinks=true,citecolor=blue,linkcolor=blue]{hyperref}
+\newcommand\independent{\perp \!\!\! \perp}
+\usepackage{capt-of}
+
+\bibliographystyle{naturemag}
+
+\title{Robust differential expression testing for single-cell CRISPR screens}
+
+\author{Timothy Barry$^{1}$, Kathryn Roeder$^{1,2}$, and Eugene Katsevich$^{3}$}
+
+\begin{document}
+\maketitle
+\addtocounter{page}{-1}
+\thispagestyle{empty}
+
+% Figure s4
+\afterpage{
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig_1_gene.png}
+  \figcaption[Short caption text for the list of figures]{Insert caption here.}
+  \label{fig:camp_real_data}
+}
+
+\end{document}
