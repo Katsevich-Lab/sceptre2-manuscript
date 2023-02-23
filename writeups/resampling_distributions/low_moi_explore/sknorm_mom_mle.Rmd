@@ -31,19 +31,20 @@ mom_fit <- function(y){
     return(dp1)
 }
 
-# hybrid fit
-hybrid_fit <- function(y){
-  dp1 <- mom_fit(y)
-  logL1 <- sum(dsn(y, sum(dp1[1]), dp1[2], dp1[3], log=TRUE))
-  # Azzalini and Salehi (2020) strategy
-  sn.prelim <- st.prelimFit(y = y, SN=TRUE)
-  logL2 <- sn.prelim$logLik
-  if(logL2 > logL1) {dp <- sn.prelim$dp; type <- 2} else {dp <- dp1; type <-1}
-  return(dp)
+# mle fit
+mle_fit <- function(y){
+  out <- selm(y~1, method = "MLE")
+  return(out@param$dp)
 }
 
 # mle fit
-mle_fit <- function(y){
+mple_fit <- function(y){
+  out <- selm(y~1, method = "MPLE")
+  return(out@param$dp)
+}
+
+# AS fit
+as_fit <- function(y){
   # Azzalini and Salehi (2020) strategy
   sn.prelim <- st.prelimFit(y = y, SN=TRUE)
   logL2 <- sn.prelim$logLik
@@ -52,7 +53,7 @@ mle_fit <- function(y){
 }
 tail_list <- seq(0.9, 0.999, length.out = 500)
 no_sam <- round(seq(1e3, 1e6, length.out = 100))
-result <- data.frame(no_sam = rep(no_sam, 3),
+result <- data.frame(no_sam = rep(no_sam, 4),
                      acc = 0,
                      timing = 0, 
                      type = 0)
@@ -66,23 +67,32 @@ for (r in 1:100) {
   end_time <- Sys.time()
   timing <- as.numeric(end_time - start_time)
   result[r, 2:3] <- c(acc, timing)  
-  result[r, 4] <- "mom"
+  result[r, 4] <- "MoM"
 
-  # mle
+  # MLE
   start_time <- Sys.time()
   acc <- max(abs(psn(quantile(data, tail_list), dp = mle_fit(data)) - tail_list))
   end_time <- Sys.time()
   timing <- as.numeric(end_time - start_time)
   result[100 + r, 2:3] <- c(acc, timing) 
-  result[100 + r, 4] <- "mle"
+  result[100 + r, 4] <- "MLE"
   
-  # hybrid
+  # MPLE
   start_time <- Sys.time()
-  acc <- max(abs(psn(quantile(data, tail_list), dp = hybrid_fit(data)) - tail_list))
+  acc <- max(abs(psn(quantile(data, tail_list), dp = mple_fit(data)) - tail_list))
   end_time <- Sys.time()
   timing <- as.numeric(end_time - start_time)
   result[200 + r, 2:3] <- c(acc, timing) 
-  result[200 + r, 4] <- "hyd"
+  result[200 + r, 4] <- "MPLE"
+  
+  # AS
+  start_time <- Sys.time()
+  acc <- max(abs(psn(quantile(data, tail_list), dp = as_fit(data)) - tail_list))
+  end_time <- Sys.time()
+  timing <- as.numeric(end_time - start_time)
+  result[300 + r, 2:3] <- c(acc, timing) 
+  result[300 + r, 4] <- "AS"
+  
 }
 
 # plot for accuracy and timing
@@ -90,8 +100,8 @@ timing_plt <- result |>
   ggplot(aes_string(x = "no_sam", y = "timing", colour = "type")) +
   geom_line()
 
+
 acc_plt <- result |>
-  filter(type != "hyd") |>
   ggplot(aes_string(x = "no_sam", y = "acc", colour = "type")) +
   geom_line()
 
@@ -99,5 +109,7 @@ plot_grid(timing_plt,
           acc_plt,
           ncol = 1,
           align = "v")
+
+
 
 ```
