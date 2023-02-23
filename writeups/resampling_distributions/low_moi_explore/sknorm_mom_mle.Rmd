@@ -37,7 +37,7 @@ mle_fit <- function(y){
   return(out@param$dp)
 }
 
-# mle fit
+# mple fit
 mple_fit <- function(y){
   out <- selm(y~1, method = "MPLE")
   return(out@param$dp)
