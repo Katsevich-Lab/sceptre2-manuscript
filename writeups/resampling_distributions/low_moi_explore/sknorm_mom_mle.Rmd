@@ -1,0 +1,103 @@
+---
+title: "Test different fitting methods"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# a simple simulation on three different estimates
+# timing and accuracy
+
+```{r, warning = FALSE, error = FALSE, message = FALSE}
+library(sn)
+library(ggplot2)
+library(dplyr)
+library(cowplot)
+# mom fit
+mom_fit <- function(y){
+    n <- length(y)    
+    # maximum value gamma can take
+    max.gamma1 <- 0.5*(4-pi)*(2/(pi-2))^1.5 - (.Machine$double.eps)^(1/4)    
+    # method of moments strategy
+    s <- sd(y)
+    gamma1 <- sum((y-mean(y))^3)/(n*s^3)
+    if(abs(gamma1) > max.gamma1) gamma1 <- sign(gamma1)*0.9*max.gamma1
+    cp1 <- as.numeric(c(mean(y), s, gamma1))
+    dp1 <- cp2dp(cp1, family="SN")
+    return(dp1)
+}
+
+# hybrid fit
+hybrid_fit <- function(y){
+  dp1 <- mom_fit(y)
+  logL1 <- sum(dsn(y, sum(dp1[1]), dp1[2], dp1[3], log=TRUE))
+  # Azzalini and Salehi (2020) strategy
+  sn.prelim <- st.prelimFit(y = y, SN=TRUE)
+  logL2 <- sn.prelim$logLik
+  if(logL2 > logL1) {dp <- sn.prelim$dp; type <- 2} else {dp <- dp1; type <-1}
+  return(dp)
+}
+
+# mle fit
+mle_fit <- function(y){
+  # Azzalini and Salehi (2020) strategy
+  sn.prelim <- st.prelimFit(y = y, SN=TRUE)
+  logL2 <- sn.prelim$logLik
+  dp <- sn.prelim$dp
+  return(dp)
+}
+tail_list <- seq(0.9, 0.999, length.out = 500)
+no_sam <- round(seq(1e3, 1e6, length.out = 100))
+result <- data.frame(no_sam = rep(no_sam, 3),
+                     acc = 0,
+                     timing = 0, 
+                     type = 0)
+for (r in 1:100) {
+  set.seed(r)
+  data <- rsn(no_sam[r])
+  
+  # mom
+  start_time <- Sys.time()
+  acc <- max(abs(psn(quantile(data, tail_list), dp = mom_fit(data)) - tail_list))
+  end_time <- Sys.time()
+  timing <- as.numeric(end_time - start_time)
+  result[r, 2:3] <- c(acc, timing)  
+  result[r, 4] <- "mom"
+
+  # mle
+  start_time <- Sys.time()
+  acc <- max(abs(psn(quantile(data, tail_list), dp = mle_fit(data)) - tail_list))
+  end_time <- Sys.time()
+  timing <- as.numeric(end_time - start_time)
+  result[100 + r, 2:3] <- c(acc, timing) 
+  result[100 + r, 4] <- "mle"
+  
+  # hybrid
+  start_time <- Sys.time()
+  acc <- max(abs(psn(quantile(data, tail_list), dp = hybrid_fit(data)) - tail_list))
+  end_time <- Sys.time()
+  timing <- as.numeric(end_time - start_time)
+  result[200 + r, 2:3] <- c(acc, timing) 
+  result[200 + r, 4] <- "hyd"
+}
+
+# plot for accuracy and timing
+timing_plt <- result |>
+  ggplot(aes_string(x = "no_sam", y = "timing", colour = "type")) +
+  geom_line()
+
+acc_plt <- result |>
+  filter(type != "hyd") |>
+  ggplot(aes_string(x = "no_sam", y = "acc", colour = "type")) +
+  geom_line()
+
+plot_grid(timing_plt,
+          acc_plt,
+          ncol = 1,
+          align = "v")
+
+```
