@@ -22,12 +22,18 @@ library(kableExtra)
 
 ```{r}
 #using absolute paths to download results since files exist on github
-data.dir = '/Users/kmason/sceptre2-manuscript/writeups/papalexi_analysis/'
+code_dir = .get_config_path("LOCAL_CODE_DIR")
+data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
 gene_path = paste0(data.dir,'gene_result_PDL1_mrna.rds')
 protein_path = paste0(data.dir,'protein_result.rds')
 seurat_path = paste0(data.dir,'papalexi_results_seurat.rds')
+#Note that sceptre results have columns pvalue, grna, target
+#get sceptre perturbation on PDL1 mrna results
 gene_result = readRDS(gene_path)
+#get sceptre perturbation on protein results
 protein_result = readRDS(protein_path)
+#get seurat DE results. Columns 1,2,and 6 correspond to pvalue, effect size
+#and perturbation 
 seurat_result = readRDS(seurat_path)
 ```
 # Adjusting Pvalues
@@ -73,7 +79,8 @@ In addition to the 8 perturbations that papalexi et al found significant, SCEPTR
 ```{r}
 #get sceptre results on PDL1 protein
 protein_PDL1_raw = protein_result[which(protein_result[,3] == 'PDL1'),c(1,2)]
-#get seurat results on PDL1 protein
+#get seurat results on PDL1 protein. Columns 1,2, and 6 are pvalue,effect size
+#and perturbation
 seurat_PDL1_raw = seurat_result[which(seurat_result$Target == 'PDL1'),c(1,2,6)]
 #remove perturbations that aren't in both analyses
 for(target in protein_PDL1_raw$grna_group){
