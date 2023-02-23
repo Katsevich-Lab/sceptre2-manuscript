@@ -63,7 +63,7 @@ for (r in 1:100) {
   
   # mom
   start_time <- Sys.time()
-  acc <- max(abs(psn(quantile(data, tail_list), dp = mom_fit(data)) - tail_list))
+  acc <- max(tail_list / psn(quantile(data, tail_list), dp = mom_fit(data)))
   end_time <- Sys.time()
   timing <- as.numeric(end_time - start_time)
   result[r, 2:3] <- c(acc, timing)  
@@ -71,7 +71,7 @@ for (r in 1:100) {
 
   # MLE
   start_time <- Sys.time()
-  acc <- max(abs(psn(quantile(data, tail_list), dp = mle_fit(data)) - tail_list))
+  acc <- max(tail_list / psn(quantile(data, tail_list), dp = mle_fit(data)))
   end_time <- Sys.time()
   timing <- as.numeric(end_time - start_time)
   result[100 + r, 2:3] <- c(acc, timing) 
@@ -79,7 +79,7 @@ for (r in 1:100) {
   
   # MPLE
   start_time <- Sys.time()
-  acc <- max(abs(psn(quantile(data, tail_list), dp = mple_fit(data)) - tail_list))
+  acc <- max(tail_list / psn(quantile(data, tail_list), dp = mple_fit(data)))
   end_time <- Sys.time()
   timing <- as.numeric(end_time - start_time)
   result[200 + r, 2:3] <- c(acc, timing) 
@@ -87,7 +87,7 @@ for (r in 1:100) {
   
   # AS
   start_time <- Sys.time()
-  acc <- max(abs(psn(quantile(data, tail_list), dp = as_fit(data)) - tail_list))
+  acc <- max(tail_list / psn(quantile(data, tail_list), dp = as_fit(data)))
   end_time <- Sys.time()
   timing <- as.numeric(end_time - start_time)
   result[300 + r, 2:3] <- c(acc, timing) 
