@@ -1,6 +1,6 @@
 ---
 title: "Papalexi Confounders"
-output: html_document
+output: pdf_document
 date: "2023-02-21"
 ---
 
@@ -27,7 +27,7 @@ library(sceptre)
 library(kableExtra)
 ```
 
-
+# Read in Data
 ```{r}
 LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
@@ -50,11 +50,11 @@ mm_odm <- read_multimodal_odm(odm_fps = c(gene_odm_fp, grna_odm_fp,
                               multimodal_metadata_fp = mm_metadata_fp)
 ```
 
-
+# Test if grna Assignment Differs By Replication
 ```{r}
 # get perturbations for gene
 bio_rep = mm_odm@global_cell_covariates$bio_rep
-grna = stri_sub(mm_odm@modalities$grna_assignment@cell_covariates$assigned_grna,
+grna = str_sub(mm_odm@modalities$grna_assignment@cell_covariates$assigned_grna,
                 1,-3)
 grna[grna == 'NTg'] = 'NT'
 
@@ -83,11 +83,19 @@ for(gene in targets){
 #BH correction
 confounder = p.adjust(confounder,method = 'BH')
 #see which grna assignments differ by replicate
-confounder[which(confounder<0.05)]
+affected_confounders = confounder[which(confounder<0.05)]
+results = cbind(names(affected_confounders),affected_confounders)
+colnames(results) = c('Perturbation','Pvalue')
+rownames(results) = c(1:nrow(results))
+results_table = kable(results,booktabs = TRUE, linesep = "")
+kable_styling(results_table,position = "center", latex_options = "scale_down")
+
 ```
 
-
+\
 We see that CUL3 and BRD4 are the main grnas that are affected by biological replicate. I will now perform seuratDE analysis, stratifying by biological replicate. Recall that seuratDE finds that CUL3 and BRD4 KO increase the expression of PDL1 protein and mrna. Do these results hold true if we stratify by replicate?
+
+\newpage 
 
 # SeuratDE Analysis Stratifying by Replicate
 
