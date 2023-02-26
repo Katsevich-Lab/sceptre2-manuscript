@@ -1,0 +1,126 @@
+---
+title: "A brief comparison of the distilled and full score statistics"
+author: "Tim"
+date: "2023-02-24"
+output: html_document
+---
+
+I programmed into `sceptre` both the distilled NB score statistic and the full NB score statistic. Here, I conduct a very preliminary investigation into the differences between the distilled and full score statistics. I find that the full score statistic appears to be more powerful than the distilled statistic.
+
+First, I load the `sceptre3` package.
+
+```{r}
+library(sceptre3)
+```
+
+Next, I load the example data contained within the `sceptre` package. This is a subset of the Papalexi data.
+
+```{r}
+data(gene_matrix_lowmoi)
+data(grna_matrix_lowmoi)
+data(covariate_data_frame_lowmoi)
+data(grna_group_data_frame_lowmoi)
+data(response_grna_group_pairs_lowmoi)
+```
+
+I constructed the example `response_grna_group_pairs_lowmoi` by pairing the entire set of gRNAs to a randomly selected set of 50 highly expressed genes. There are 1,200 pairs in total. (Note: when I randomly sample a different set of 50 genes, I find very similar results.)
+
+Next, I set the arguments to the function. Note that `sceptre` uses an adaptive permutation strategy, drawing 501 resamples in the first round and 25,001 in the second.
+
+```{r}
+response_matrix <- gene_matrix_lowmoi
+grna_matrix <- grna_matrix_lowmoi
+covariate_data_frame <- covariate_data_frame_lowmoi
+grna_group_data_frame <- grna_group_data_frame_lowmoi
+calibration_check <- FALSE
+formula_object <- formula(~log(gene_n_umis) + log(gene_n_nonzero) + bio_rep + phase + p_mito)
+response_grna_group_pairs <- response_grna_group_pairs_lowmoi
+return_resampling_dist <- FALSE
+adaptive_permutation_test <- TRUE
+fit_skew_normal <- TRUE
+B2 <- 25001L
+```
+
+I run `sceptre` on the data, initially setting the statistic to "distilled." The function takes about 9 seconds to complete.
+
+```{r}
+system.time(result_dist <- run_sceptre_lowmoi(response_matrix,
+                                  grna_matrix,
+                                  covariate_data_frame,
+                                  grna_group_data_frame,
+                                  formula_object,
+                                  calibration_check,
+                                  response_grna_group_pairs,
+                                  test_stat = "distilled",
+                                  return_resampling_dist,
+                                  adaptive_permutation_test,
+                                  fit_skew_normal))
+head(result_dist)
+```
+
+Next, I run `sceptre` on the same data, this time setting the statistic to "full." The function takes about 47 seconds to run.
+
+```{r}
+system.time(result_full <- run_sceptre_lowmoi(response_matrix,
+                                  grna_matrix,
+                                  covariate_data_frame,
+                                  grna_group_data_frame,
+                                  formula_object,
+                                  calibration_check,
+                                  response_grna_group_pairs,
+                                  test_stat = "full",
+                                  return_resampling_dist,
+                                  adaptive_permutation_test,
+                                  fit_skew_normal))
+head(result_full)
+```
+
+I plot the distilled vs. full p-values against one another on a negative log transformed scale.
+
+```{r}
+ggplot(data = x, mapping = aes(x = p_value_full, y = p_value_dist)) +
+  geom_point() +
+  scale_x_continuous(trans = katlabutils::revlog_trans(), breaks = c(0.1, 0.01, 0.001, 0.0001)) +
+  scale_y_continuous(trans = katlabutils::revlog_trans(), breaks = c(0.1, 0.01, 0.001, 0.0001)) +
+  geom_abline(slope = 1, intercept = 0, col = "red") +
+  xlab("Full p-value") +
+  ylab("Distilled p-value")
+```
+
+We see that the full p-values are generally smaller (i.e., more significant than) the distilled p-values in the tail. I apply a BH correction to the p-values and recreated the plot, this time plotting the adjusted p-values. I draw horizontal and vertical lines at 0.01.
+
+```{r}
+p_dist_adj <- p.adjust(p = x$p_value_dist, method = "BH")
+p_full_adj <- p.adjust(p = x$p_value_full, method = "BH")
+```
+
+```{r}
+ggplot(data = data.frame(p_dist_adj = p_dist_adj, p_full_adj = p_full_adj),
+       mapping = aes(x = p_full_adj, y = p_dist_adj)) +
+  geom_point() +
+  scale_x_continuous(trans = katlabutils::revlog_trans(), breaks = c(0.1, 0.01)) +
+  scale_y_continuous(trans = katlabutils::revlog_trans(), breaks = c(0.1, 0.01)) +
+  geom_abline(slope = 1, intercept = 0, col = "red") +
+  geom_vline(xintercept = 0.01, col = "blue") +
+  geom_hline(yintercept = 0.01, col = "blue") +
+  xlab("Full p-value (adjusted)") +
+  ylab("Distilled p-valued (adjusted)")
+```
+
+I now compute the number of BH rejections made by each method.
+
+```{r}
+sum(p_dist_adj < 0.1)
+sum(p_full_adj < 0.1)
+```
+
+At FDR level 0.1, the full statistic makes 153 rejections, while the distilled statistic makes 144 rejections. This is an improvement of 6.3\%.
+
+```{r}
+sum(p_dist_adj < 0.01)
+sum(p_full_adj < 0.01)
+```
+
+Next, at an FDR level of 0.01 (blue lines, above plot), the full statistic makes 98 rejections, while the distilled statistic makes 89 rejections. This is an improvement of 10.1\% (!!). 
+
+Recall from our undercover analyses that both the distilled statistic and the full statistic control type-I error on the negative control pairs. Thus, the boost in power that results from using the full statistic very likely is real (and not the result of type-I error inflation).
