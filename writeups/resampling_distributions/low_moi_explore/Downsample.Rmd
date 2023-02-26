@@ -1,0 +1,105 @@
+---
+title: "Power_exploration_mom"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load data (negative control)
+
+```{r, warning = FALSE, error = FALSE, message = FALSE}
+library(eva)
+library(tidyverse)
+library(katlabutils)
+library(cowplot)
+
+sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+# load empirical distributions
+resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists.rds"))
+resampling_dists[1:5, 1:6]
+
+# mom fit
+mom_fit <- function(y){
+    n <- length(y)    
+    # maximum value gamma can take
+    max.gamma1 <- 0.5*(4-pi)*(2/(pi-2))^1.5 - (.Machine$double.eps)^(1/4)    
+    # method of moments strategy
+    s <- sd(y)
+    gamma1 <- sum((y-mean(y))^3)/(n*s^3)
+    if(abs(gamma1) > max.gamma1) gamma1 <- sign(gamma1)*0.9*max.gamma1
+    cp1 <- as.numeric(c(mean(y), s, gamma1))
+    dp1 <- cp2dp(cp1, family="SN")
+    return(dp1)
+}
+```
+
+
+# Load data (negative control)
+```{r, warning = FALSE, error = FALSE, message = FALSE}
+
+# number of total sample
+n <- 5e5
+
+unique(resampling_dists[,3])
+param_nc <- read_csv("figures/power_exploration/sknorm_tail_prob_500000_resamples_0.96_percentile/param_twosides.csv")
+param_twosides <- t(param_nc[,-1])
+overshoot_ratio <- as.numeric(param_twosides[, 6])
+undershoot_ratio <- as.numeric(param_twosides[, 7])
+quantile_list <- seq(0.01, 0.99, length.out = 10)
+overshoot_set <- data.frame(index = numeric(10), ratio = numeric(10))
+undershoot_set <- data.frame(index = numeric(10), ratio = numeric(10))
+tail_list <- (10:(0.04*n)) / n
+
+# find distributions based on right tail
+for (r in 1:10){
+  dist <- abs(overshoot_ratio[331:660] - quantile(overshoot_ratio[331:660], quantile_list[r]))
+  overshoot_set[r, 1] <- which(dist == min(dist))
+  overshoot_set[r, 2] <- overshoot_ratio[which(dist == min(dist)) + 330]
+  dist <- abs(undershoot_ratio[331:660] - quantile(undershoot_ratio[331:660], quantile_list[r]))
+  undershoot_set[r, 1] <- which(dist == min(dist))
+  undershoot_set[r, 2] <- undershoot_ratio[which(dist == min(dist)) + 330]
+}
+
+# downsample
+no_sam <- round(seq(1e3, 5e4, length.out = 10))
+B <- 100
+set.seed(1)
+overshoot <- list()
+undershoot <- list()
+for (s in 1:10) {
+  overshoot_sim <- data.frame(replicate_id = rep(1:B, length(no_sam)),
+                              overshoot_ratio = numeric(length(no_sam)*B),
+                              subsample = rep(no_sam, each = B))
+  undershoot_sim <- data.frame(replicate_id = rep(1:B, 10), 
+                               undershoot_ratio = numeric(10*B),
+                               subsample = rep(no_sam, each = B))
+  over_quantile_emp <- quantile(as.numeric(resampling_dists[overshoot_set[s, 1], 5:(4 + n)]), 1 - tail_list)
+  under_quantile_emp <- quantile(as.numeric(resampling_dists[undershoot_set[s, 1], 5:(4 + n)]), 1 - tail_list)
+  for(t in 1:10){
+    for (r in 1:B) {
+      rd_set <- sample(1:5e5, no_sam[t])
+      over_sub_sam <- as.numeric(resampling_dists[overshoot_set[s, 1], 4+rd_set])
+      under_sub_sam <- as.numeric(resampling_dists[undershoot_set[s, 1], 4+rd_set])
+      over_dp_fit <- mom_fit(over_sub_sam)
+      under_dp_fit <- mom_fit(under_sub_sam)
+      # undershoot case
+      undershoot_sim[(t-1)*B + r, 2] <- max(tail_list / (1 - psn(under_quantile_emp, dp = under_dp_fit)))
+      
+      # overshoot case
+      overshoot_sim[(t-1)*B + r, 2] <- max((1 - psn(over_quantile_emp, dp = over_dp_fit)) / tail_list)
+      print(undershoot_sim[(t-1)*B + r, 2])
+      print(overshoot_sim[(t-1)*B + r, 2])
+    }
+  }
+  overshoot[[s]] <- overshoot_sim
+  undershoot[[s]] <- undershoot_sim
+  print(s)
+}
+
+# save file
+write.csv(overshoot, "overshoot.csv")
+write.csv(undershoot, "undershoot.csv")
+
+```
