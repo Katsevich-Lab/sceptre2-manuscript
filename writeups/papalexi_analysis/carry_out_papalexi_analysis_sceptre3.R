@@ -41,24 +41,23 @@ covariate_data_frame <- gene_covariate_matrix
 grna_group_data_frame <- grna_groups
 formula_object <- gene_formula
 calibration_check <- FALSE
-response_grna_group_pairs <- response_grna_group_pairs_lowmoi # an example set of pairs
+response_grna_group_pairs <- data.frame(response_id = feature_ids[13565:13575], grna_group = "CUL3") # data.frame(response_id = "ZNF546", grna_group = "CUL3") # an example set of pairs
 test_stat <- "full"
 return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE
 fit_skew_normal <- FALSE
 
 result_gene <- run_sceptre_lowmoi(response_matrix,
-                             grna_matrix,
-                             covariate_data_frame,
-                             grna_group_data_frame,
-                             formula_object,
-                             calibration_check,
-                             response_grna_group_pairs,
-                             test_stat,
-                             return_resampling_dist,
-                             adaptive_permutation_test,
-                             fit_skew_normal)
-
+                                  grna_matrix,
+                                  covariate_data_frame,
+                                  grna_group_data_frame,
+                                  formula_object,
+                                  calibration_check,
+                                  response_grna_group_pairs,
+                                  test_stat,
+                                  return_resampling_dist,
+                                  adaptive_permutation_test,
+                                  fit_skew_normal)
 
 ##########################################
 # SET ARGS FOR PROTEIN EXPRESSION ANALYSIS
