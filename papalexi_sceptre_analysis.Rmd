@@ -3,7 +3,7 @@ title: "Papalexi Analysis SCEPTRE"
 output: pdf_document
 date: "2023-02-16"
 ---
-
+  
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -113,7 +113,7 @@ combined_results_PDL1 = data.frame(protein_PDL1_raw$p_value,
                                    protein_PDL1_raw$log_fold_change,
                                    seurat_PDL1_raw$p_val,
                                    seurat_PDL1_raw$avg_log2FC,
-                              protein_PDL1_raw$grna_group)
+                                   protein_PDL1_raw$grna_group)
 colnames(combined_results_PDL1) = c("SCEPTRE Pvalues","SCEPTRE Log Change",
                                     "Seurat Pvalues",
                                     'Seurat Log Change',
@@ -134,7 +134,11 @@ kable_styling(results_table,position = "center", latex_options = "scale_down")
 ## Other Protein Results
 The authors state that "Importantly, perturbation of these eight genes did not result in appreciable shifts in CD86 or PD-L2 protein expression,suggesting that these regulatory effects are specific to PD-L1'. I will now check to see if this is true when using SCEPTRE.
 
+\newpage
+
 ## CD86
+It seems as though these regulatory effects are not specific to PDL1. This is also true when using seurat. The positive controls for PDL1 (IRF1,IFNGR1,etc...) also seem to regulate expression of CD86.
+
 ```{r}
 #get sceptre results on CD86 protein
 protein_CD86_raw = subset(protein_result,response_id == "CD86")
@@ -177,10 +181,10 @@ results_table = kable(combined_results_CD86,booktabs = TRUE, linesep = "",
 kable_styling(results_table,position = "center", latex_options = "scale_down")
 #View(combined_results_CD86)
 ```
-It seems as though these regulatory effects are not specific to PDL1. This is also true when using seurat. The positive controls for PDL1 (IRF1,IFNGR1,etc...) also seem to regulate expression of CD86.
-
+\newpage
 
 ## PDL2
+For PDL2, the results are more or less in line with what paplexi reports. IRF1 seems to be the only gene that regulates PDL1 that also regulates PDL2.
 ```{r}
 #get sceptre results on PDL2 protein
 protein_PDL2_raw = subset(protein_result,response_id == "PDL2")
@@ -223,13 +227,14 @@ results_table = kable(combined_results_PDL2,booktabs = TRUE, linesep = "",
 kable_styling(results_table,position = "center", latex_options = "scale_down")
 #View(combined_results_PDL2)
 ```
-For PDL2, the results are more or less in line with what paplexi reports. IRF1 seems to be the only gene that regulates PDL1 that also regulates PDL2.
+\newpage
 
 # mRNA Results
 
 I will now analyze whether or not the perturbations affect PDL1 mRNA expression. I will compare results on the normalized and un-normalized assays when using seurat.
 
 ## Raw Data (Not Normalized)
+We see that the positive controls indeed correspond to the strongest signals in the data. Interestingly, BRD4 perturbation does not affect gene expression of PDL1 while CUL3 does, consistent with the paper. 
 ```{r}
 #get sceptre results on PDL1 protein
 gene_PDL1_raw = subset(gene_result,response_id == "CD274")
@@ -272,7 +277,8 @@ results_table = kable(combined_results_PDL1,booktabs = TRUE, linesep = "",
 kable_styling(results_table,position = "center", latex_options = "scale_down")
 #View(combined_results_PDL1)
 ```
-We see that the positive controls indeed correspond to the strongest signals in the data. Interestingly, BRD4 perturbation does not affect gene expression of PDL1 while CUL3 does, consistent with the paper. 
+
+\newpage
 
 ## Normalized Data
 ```{r}
