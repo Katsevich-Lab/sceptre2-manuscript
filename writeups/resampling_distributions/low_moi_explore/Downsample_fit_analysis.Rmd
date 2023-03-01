@@ -15,10 +15,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
 library(tidyverse)
-undershoot <- read_csv("undershoot.csv")[,-1]
-overshoot <- read_csv("overshoot.csv")[,-1]
+undershoot <- read_csv("undershoot_refine_fit.csv")[,-1]
+overshoot <- read_csv("overshoot_refine_fit.csv")[,-1]
 quantile_list <- seq(0.01, 0.99, length.out = 10)
-no_sam <- round(seq(1e3, 5e4, length.out = 10))
+no_sam <- round(exp(seq(log(1e3), log(5e4), length.out = 10)))
 # rearrange the data frame
 B <- 100
 undershoot_df <- data.frame(id = rep(1:B, 10*10),
@@ -114,6 +114,3 @@ rownames(overshoot_acc) <- as.character(round(quantile_list, 3))
 overshoot_acc
 ```
 
-We consider 10 cases where we vary quantile of $p^{emp}/p^{fit} (p^{fit}/p^{emp})$. The overshoot_set and undershoot_set repspectively store the index of resampling distribution and the corresponding ratio. Note that for both undershoot and overshoot cases, when we increase the number of resamples, all the quantiles except for $0.99$, are stable in terms of the ratio of estimate of p-value ratio to the true p-value ratio immediately after $6444$ resamples. For the extreme quantile case $0.99$, we should notice the p-value ratio of 327-th  resampling distribution reaches the highest (lowest) in the extreme right quantile position. Thus it is hard to capture the extreme ratio unless the number of resamples are close to 5e5. Other than this, I suggest we should use no more than 1e4 resamples.
-
-On the other hand, we should be careful on interpreting the power result. For example, for the extreme quantile case $0.99$, it is hard to reach the extreme ratio when resample is less than 1e5 but this does not mean we cannot have a decent estimate for true tail probability. Notice that for both overshoot and undershoot cases, it is even closer towards the true tail probability when using fewer resamples, ranging from $6444$ to $5e4$. 
