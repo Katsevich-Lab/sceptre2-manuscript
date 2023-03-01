@@ -24,8 +24,9 @@ library(kableExtra)
 #using absolute paths to download results since files exist on github
 code_dir = .get_config_path("LOCAL_CODE_DIR")
 data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
-gene_path = paste0(data.dir,'gene_result_PDL1_mrna.rds')
-protein_path = paste0(data.dir,'protein_result.rds')
+gene_path = paste0(data.dir,
+                   'sceptre_CUL3_and_PDL1_mrna_results_with_effect_size.rds')
+protein_path = paste0(data.dir,'sceptre_protein_results_with_effect_size.rds')
 seurat_path = paste0(data.dir,'papalexi_results_seurat.rds')
 #Note that sceptre results have columns pvalue, grna, target
 #get sceptre perturbation on PDL1 mrna results
@@ -42,7 +43,7 @@ seurat_result = readRDS(seurat_path)
 #See which gene perturbations are associated with PDL1 protein expression
 
 #get pvalues from sceptre
-P_adj = protein_result[,1]
+P_adj = protein_result$p_value
 #unlist pvalues
 P_adj = unlist(P_adj)
 #some pvalues are negative so take absolute value
@@ -53,7 +54,10 @@ P_adj = as.numeric(P_adj)
 P_adj = p.adjust(P_adj,method = 'BH')
 
 #replace results matrix pvalues with adjusted pvalues
-protein_adjusted= cbind(P_adj,protein_result[,c(2,3)])
+protein_adjusted = data.frame(adj.Pval = P_adj,
+                              log_fold_change = protein_result$log_fold_change,
+                              response_id = protein_result$response_id,
+                              grna_group = protein_result$grna_group)
 ```
 # Papalexi et al Comparison
 
@@ -65,7 +69,7 @@ The authors state that they found 8 perturbations to be significantly associated
 
 ```{r}
 #filter to just look at PDL1 pvalues
-protein_PDL1 = protein_adjusted[which(protein_adjusted[,3] == 'PDL1')]
+protein_PDL1 = protein_adjusted[which(protein_adjusted$response_id == 'PDL1')]
 #get significant perturbations
 sig_genes = subset(protein_PDL1,P_adj < 0.05)$grna_group
 #unfactor

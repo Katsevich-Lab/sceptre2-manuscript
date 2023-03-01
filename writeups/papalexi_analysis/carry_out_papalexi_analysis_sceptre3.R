@@ -79,7 +79,7 @@ grna_group_data_frame <- grna_groups
 formula_object <- protein_formula
 calibration_check <- FALSE
 response_grna_group_pairs <- expand.grid(response_id = rownames(response_matrix),
-                                         grna_group = unique(grna_groups$grna_group)[1:2]) # an example set of pairs
+                                         grna_group = unique(grna_groups$grna_group)) # an example set of pairs
 test_stat <- "full"
 return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE
@@ -102,5 +102,5 @@ result_protein <- run_sceptre_lowmoi(response_matrix,
 CODE_DIR <-.get_config_path("LOCAL_CODE_DIR")
 papalexi_analysis_data_dir <- paste0(CODE_DIR, "/sceptre2-manuscript/writeups/papalexi_analysis/")
 
-saveRDS(result_protein,paste0(papalexi_analysis_data_dir,"sceptre_protein_results_with_effect_size"))
-saveRDS(result_gene,paste0(papalexi_analysis_data_dir,"sceptre_CUL3_and_PDL1_mrna_results_with_effect_size"))
+saveRDS(result_protein,paste0(papalexi_analysis_data_dir,"sceptre_protein_results_with_effect_size.rds"))
+saveRDS(result_gene,paste0(papalexi_analysis_data_dir,"sceptre_CUL3_and_PDL1_mrna_results_with_effect_size.rds"))
