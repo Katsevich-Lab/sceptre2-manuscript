@@ -42,7 +42,14 @@ covariate_data_frame <- gene_covariate_matrix
 grna_group_data_frame <- grna_groups
 formula_object <- gene_formula
 calibration_check <- FALSE
-response_grna_group_pairs <- data.frame(response_id = rownames(gene_expression_matrix)[13565:13575], grna_group = "CUL3") # data.frame(response_id = "ZNF546", grna_group = "CUL3") # an example set of pairs
+unique_grna = unique(grna_groups$grna_group)
+response_grna_group_pairs_1 <- expand.grid(response_id = 'CD274',
+                                           grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs
+#get CUL3 mrna data. Remove genes 13565-13575 since they contain something that is causing code to crash
+response_grna_group_pairs_2 <- expand.grid(response_id = rownames(response_matrix)[-c(13565:13575)],
+                                           grna_group = "CUL3") # an example set of pairs
+response_grna_group_pairs = rbind(response_grna_group_pairs_1,response_grna_group_pairs_2)
+
 test_stat <- "full"
 return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE
@@ -59,3 +66,41 @@ result_gene <- run_sceptre_lowmoi(response_matrix,
                                   return_resampling_dist,
                                   adaptive_permutation_test,
                                   fit_skew_normal)
+
+
+
+##########################################
+# SET ARGS FOR PROTEIN EXPRESSION ANALYSIS
+##########################################
+response_matrix <- as.matrix(protein_matrix)
+grna_matrix <- grna_matrix
+covariate_data_frame <- protein_covariate_matrix
+grna_group_data_frame <- grna_groups
+formula_object <- protein_formula
+calibration_check <- FALSE
+response_grna_group_pairs <- expand.grid(response_id = rownames(response_matrix),
+                                         grna_group = unique(grna_groups$grna_group)[1:2]) # an example set of pairs
+test_stat <- "full"
+return_resampling_dist <- FALSE
+adaptive_permutation_test <- TRUE
+fit_skew_normal <- FALSE
+
+result_protein <- run_sceptre_lowmoi(response_matrix,
+                                     grna_matrix,
+                                     covariate_data_frame,
+                                     grna_group_data_frame,
+                                     formula_object,
+                                     calibration_check,
+                                     response_grna_group_pairs,
+                                     test_stat,
+                                     return_resampling_dist,
+                                     adaptive_permutation_test,
+                                     fit_skew_normal)
+
+
+#save results
+CODE_DIR <-.get_config_path("LOCAL_CODE_DIR")
+papalexi_analysis_data_dir <- paste0(CODE_DIR, "/sceptre2-manuscript/writeups/papalexi_analysis/")
+
+saveRDS(result_protein,paste0(papalexi_analysis_data_dir,"sceptre_protein_results_with_effect_size"))
+saveRDS(result_gene,paste0(papalexi_analysis_data_dir,"sceptre_CUL3_and_PDL1_mrna_results_with_effect_size"))
