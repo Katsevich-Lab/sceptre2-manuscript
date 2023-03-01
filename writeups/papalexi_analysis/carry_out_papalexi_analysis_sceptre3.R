@@ -79,7 +79,7 @@ grna_group_data_frame <- grna_groups
 formula_object <- protein_formula
 calibration_check <- FALSE
 response_grna_group_pairs <- expand.grid(response_id = rownames(response_matrix),
-                                         grna_group = unique(grna_groups$grna_group)) # an example set of pairs
+                                         grna_group = unique(grna_groups$grna_group)[-which(unique(grna_groups$grna_group)=='non-targeting')]) # an example set of pairs
 test_stat <- "full"
 return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE

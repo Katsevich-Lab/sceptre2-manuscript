@@ -229,37 +229,15 @@ p1 + theme(axis.text.x = element_text(size = 18, hjust = 1),
 
 ```
 
-# Perform Marker Gene Analysis/Pathway Enrichment Analysis
+# Perform Marker Gene Analysis/Pathway Enrichment Analysis Ordered by Log Fold Change
 
 Papalexi et reports 5 major pathways in CUL3 KO cells. Nuclear Receptors Meta-Pathway,NRF2 pathway,Phytochemical activity on NRF2 transcriptional activation,TYROBP causal network ,and complement system activation. We see pvalues that are approximately the same. However, we do see that the pathway "Phytochemical activity on NRF2 transcriptional activation" is ranked ahead of "TYROBP causal network" in this analysis whereas according to paplexi et al, the realtive pvalue rank should be flipped between these two pathways. 
 ```{r}
-CUL3_marker = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',assay = 'RNA',only.pos = T)
-```
-
-```{r}
-#get top 300 genes by log fold change
-top = 300
-CUL3_top = rownames(CUL3_marker)[order(CUL3_marker$avg_log2FC,decreasing = T)[1:top]]
-#run pathway enrichment analysis
-pathways = enrichr(CUL3_top,databases = 'WikiPathway_2021_Human')
-#get term and pvalue (using subset truncates pvalues for some reason)
-pathways = cbind(pathways$WikiPathway_2021_Human$Term,
-                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
-#make table
-pathway_table = kable(pathways,booktabs = TRUE, linesep = "")
-kable_styling(pathway_table,position = "center", latex_options = "scale_down")
-
-```
-
-
-
-
-# Perform Marker Gene Analysis/Pathway Enrichment Analysis on Normalized Data
-
-When using the normalized data, clearly the results are not at all the same.
-```{r}
 CUL3_marker = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',
-                          assay = 'PRTB',only.pos = T)
+                          assay = 'RNA',only.pos = T)
+CUL3_marker$avg_log2FC = signif(CUL3_marker$avg_log2FC, digits=2)
+CUL3_marker$p_val = signif(CUL3_marker$p_val, digits=2)
+
 ```
 
 ```{r}
@@ -271,11 +249,34 @@ pathways = enrichr(CUL3_top,databases = 'WikiPathway_2021_Human')
 #get term and pvalue (using subset truncates pvalues for some reason)
 pathways = cbind(pathways$WikiPathway_2021_Human$Term,
                  pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+
+pathways[,2] = signif(as.numeric(pathways[,2]), digits=2)
 #make table
-pathway_table = kable(pathways,booktabs = TRUE, linesep = "")
-kable_styling(pathway_table,position = "center", latex_options = "scale_down")
+results = kable(pathways,booktabs = TRUE, linesep = "",
+  caption = "Pathway Enrichment Analysis With Top 300 Genes by Log Fold Change")
+kable_styling(results,position = "center", latex_options = "scale_down")
 
 ```
 
 
+
+
+# Perform Marker Gene Analysis/Pathway Enrichment Analysis By Pvalue
+
+```{r}
+#get top 300 genes by log fold change
+top = 300
+CUL3_top = rownames(CUL3_marker)[order(CUL3_marker$p_val,decreasing = F)[1:top]]
+#run pathway enrichment analysis
+pathways = enrichr(CUL3_top,databases = 'WikiPathway_2021_Human')
+#get term and pvalue (using subset truncates pvalues for some reason)
+pathways = cbind(pathways$WikiPathway_2021_Human$Term,
+                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+pathways[,2] = signif(as.numeric(pathways[,2]), digits=2)
+#make table
+results = kable(pathways,booktabs = TRUE, linesep = "",
+  caption = "Pathway Enrichment Analysis With Top 300 Genes by Pvalue")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
 
