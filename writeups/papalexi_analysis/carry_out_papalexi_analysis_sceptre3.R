@@ -1,5 +1,6 @@
 library(ondisc) # devtools::install_github('timothy-barry/ondisc')
 library(sceptre3)
+library(BH)
 
 LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
@@ -41,7 +42,12 @@ covariate_data_frame <- gene_covariate_matrix
 grna_group_data_frame <- grna_groups
 formula_object <- gene_formula
 calibration_check <- FALSE
-response_grna_group_pairs <- response_grna_group_pairs_lowmoi # an example set of pairs
+unique_grna = unique(grna_groups$grna_group)
+response_grna_group_pairs_1 <- expand.grid(response_id = 'CD274',
+                                         grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs
+response_grna_group_pairs_2 <- expand.grid(response_id = rownames(response_matrix),
+                                           grna_group = "CUL3") # an example set of pairs
+response_grna_group_pairs = rbind(response_grna_group_pairs_1,response_grna_group_pairs_2)
 test_stat <- "full"
 return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE
@@ -53,7 +59,7 @@ result_gene <- run_sceptre_lowmoi(response_matrix,
                              grna_group_data_frame,
                              formula_object,
                              calibration_check,
-                             response_grna_group_pairs,
+                             response_grna_group_pairs_2,
                              test_stat,
                              return_resampling_dist,
                              adaptive_permutation_test,
