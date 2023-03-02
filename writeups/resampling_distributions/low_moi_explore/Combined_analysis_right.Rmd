@@ -183,19 +183,30 @@ overshoot_ame |>
 From the above figure, we notice it is much harder to estimate the ratio of $\max[C/D](\max[D/C])$ without using the oracle knowledge of $D$ which we had in the last analysis. Due to the large fluctuation of $B$ in the estimate $\max[A/B] (\max[B/A])$, the convergence as the increase of sample is not obvious in mean absolute ratio (mar).
 
 
-Here are my several comments:\\
+Here are my several comments:
+
+
 (a) It looks like skew normal fit can do a very decent job on estimating the tail probability even with thousands of data when the maximum tail ratio is not huge. (The resampling distribution tail is behaving okay.) This can be reflected in figures 1 and 2.
 
 (b) When it comes to account for the variation of downsample variation, it becomes significantly hard to get a direct decent estimate of the p-value ratio. This can be reflected in figure 3 and 4. Also there is a discrepancy between the overshoot and undershoot behaviors. For the undershoot, we see most of the curves are bumping while some of them do decrease as the resample increases. For the overshoot, it can be seen that when using small size of resamples, it always far overestimate the ratio. But the difference between the estimate and ground truth decreases much faster. 
 
 Similarly, we observe the same phenomenon in the other write-up. I conjecture that such result is due to method of moment estimate. I did a small simulation and tried to see if it is indeed such case.
 
-```{r, warning = FALSE, error = FALSE, message = FALSE}
+```{r error=FALSE, message=FALSE, warning=FALSE}
 undershoot_naive <- read_csv("undershoot_power_naive")
 overshoot_naive <- read_csv("overshoot_power_naive")
 
+# ground truth
+set.seed(1)
+gt_data <- rsn(1e6)
+gt_fit <- mom_fit(gt_data)
+tail_list <- (10:(0.04*n)) / n
+quantile_emp <-  quantile(gt_data, 1 - tail_list)
+gt_under <- max(tail_list / (1 - psn(quantile_emp, dp = gt_fit)))
+gt_over <- max((1 - psn(quantile_emp, dp = gt_fit)) / tail_list)
+
 # accuracy matrix for overshoot matrix
-undershoot_acc <- matrix(undershoot_sim_power$undershoot_ratio, 100, 10)
+undershoot_acc <- matrix(undershoot_naive$undershoot_ratio / gt_under, 100, 10)
 undershoot_ame <- data.frame(mar = apply(undershoot_acc, 2, mean),
                              no_sam = rep(no_sam, 10), 
                              ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
@@ -208,7 +219,7 @@ undershoot_ame |>
   labs(title = "Value of max(B/A)")
 
 # accuracy matrix for overshoot matrix
-overshoot_acc <- matrix(overshoot_sim_power$overshoot_ratio, 100, 100)
+overshoot_acc <- matrix(overshoot_naive$overshoot_ratio / gt_over, 100, 100)
 overshoot_ame <- data.frame(mar = apply(overshoot_acc, 2, mean),
                             no_sam = rep(no_sam, 10))
 overshoot_ame |>
