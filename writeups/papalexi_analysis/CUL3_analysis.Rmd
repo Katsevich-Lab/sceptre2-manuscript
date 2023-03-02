@@ -3,7 +3,7 @@ title: "Papalexi CUL3 Analysis"
 output: pdf_document
 date: "2023-02-21"
 ---
-
+  
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -24,6 +24,7 @@ library(mixtools)
 library(stringr)
 library(enrichR)
 library(kableExtra)
+library(varhandle)
 ```
 
 # Download Data
@@ -229,53 +230,244 @@ p1 + theme(axis.text.x = element_text(size = 18, hjust = 1),
 
 ```
 
-# Perform Marker Gene Analysis/Pathway Enrichment Analysis
+# Perform Marker Gene Analysis/Pathway Enrichment Analysis Ordered by Log Fold Change
 
 Papalexi et reports 5 major pathways in CUL3 KO cells. Nuclear Receptors Meta-Pathway,NRF2 pathway,Phytochemical activity on NRF2 transcriptional activation,TYROBP causal network ,and complement system activation. We see pvalues that are approximately the same. However, we do see that the pathway "Phytochemical activity on NRF2 transcriptional activation" is ranked ahead of "TYROBP causal network" in this analysis whereas according to paplexi et al, the realtive pvalue rank should be flipped between these two pathways. 
 ```{r}
-CUL3_marker = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',assay = 'RNA',only.pos = T)
-```
-
-```{r}
-#get top 300 genes by log fold change
-top = 300
-CUL3_top = rownames(CUL3_marker)[order(CUL3_marker$avg_log2FC,decreasing = T)[1:top]]
-#run pathway enrichment analysis
-pathways = enrichr(CUL3_top,databases = 'WikiPathway_2021_Human')
-#get term and pvalue (using subset truncates pvalues for some reason)
-pathways = cbind(pathways$WikiPathway_2021_Human$Term,
-                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
-#make table
-pathway_table = kable(pathways,booktabs = TRUE, linesep = "")
-kable_styling(pathway_table,position = "center", latex_options = "scale_down")
-
-```
-
-
-
-
-# Perform Marker Gene Analysis/Pathway Enrichment Analysis on Normalized Data
-
-When using the normalized data, clearly the results are not at all the same.
-```{r}
 CUL3_marker = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',
-                          assay = 'PRTB',only.pos = T)
+                          assay = 'RNA',only.pos = T)
+CUL3_marker$avg_log2FC = signif(CUL3_marker$avg_log2FC, digits=2)
+CUL3_marker$p_val = signif(CUL3_marker$p_val, digits=2)
+
 ```
 
 ```{r}
 #get top 300 genes by log fold change
 top = 300
-CUL3_top = rownames(CUL3_marker)[order(CUL3_marker$avg_log2FC,decreasing = T)[1:top]]
+CUL3_top = rownames(CUL3_marker)[order(CUL3_marker$avg_log2FC,decreasing = T
+                                       )[1:top]]
+#run pathway enrichment analysis
+pathways = enrichr(CUL3_top,databases = 'WikiPathway_2021_Human')
+#get term and pvalue (using subset truncates pvalues for some reason)
+pathways_seurat_log = cbind(pathways$WikiPathway_2021_Human$Term,
+            pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+colnames(pathways_seurat_log) = c('Term','Adj.Pvalue')
+
+pathways_seurat_log[,2] = signif(as.numeric(pathways_seurat_log[,2]), digits=2)
+#make table
+results = kable(pathways_seurat_log,booktabs = TRUE, linesep = "",
+  caption = "Seurat Pathway Enrichment Analysis With Top 300 Genes by Log Fold 
+  Change")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
+
+\newpage
+
+
+
+
+# Perform Marker Gene Analysis/Pathway Enrichment Analysis By Pvalue
+Sorting by pvalue returns similar results but the pvalues are not as extreme.However, the top 5 processes reported are much close to the top 5 overall. Overall I would say the results are consistent with what was reported in the paper regardless of how you chpose the top genes.
+```{r}
+#get top 300 genes by pvalue
+top = 300
+CUL3_top = rownames(CUL3_marker)[order(CUL3_marker$p_val,decreasing = F)[1:top]]
+#run pathway enrichment analysis
+pathways = enrichr(CUL3_top,databases = 'WikiPathway_2021_Human')
+#get term and pvalue (using subset truncates pvalues for some reason)
+pathways_seurat_pval = cbind(pathways$WikiPathway_2021_Human$Term,
+                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+pathways_seurat_pval[,2] = signif(as.numeric(pathways_seurat_pval[,2]),digits=2)
+colnames(pathways_seurat_pval) = c('Term','Adj.Pvalue')
+#make table
+results = kable(pathways_seurat_pval,booktabs = TRUE, linesep = "",
+  caption = "Seurat Pathway Enrichment Analysis With Top 300 Genes by Pvalue")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
+
+
+\newpage
+
+# SCEPTRE Pathway Analysis
+
+```{r}
+#using absolute paths to download results since files exist on github
+code_dir = .get_config_path("LOCAL_CODE_DIR")
+data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
+gene_path = paste0(data.dir,
+                   'sceptre_CUL3_and_PDL1_mrna_results_with_effect_size.rds')
+
+#Note that sceptre results have columns pvalue, grna, target
+#get sceptre perturbation on PDL1 mrna results
+gene_result = readRDS(gene_path)
+#gene_result$log_fold_change = signif(gene_result$log_fold_change, digits=2)
+```
+
+```{r}
+top = 300
+#Get CUL3 results
+CUL3_SCEPTRE = subset(gene_result,grna_group == "CUL3")
+```
+
+```{r}
+#get top 300 genes by pvalue
+pval_pos = CUL3_SCEPTRE$p_value*sign(CUL3_SCEPTRE$log_fold_change)
+pval_pos[pval_pos < 0] = 1000000
+order_pval = order(pval_pos)[1:top]
+order_fold = order(CUL3_SCEPTRE$log_fold_change,decreasing = T)[1:top]
+SCEPTRE_fold = unfactor(CUL3_SCEPTRE$response_id[order_fold])
+SCEPTRE_pval = unfactor(CUL3_SCEPTRE$response_id[order_pval])
+```
+
+## By Log Fold Change
+We see essentially no overlap between SCEPTRE and Seurat. 
+```{r}
+pathways = enrichr(SCEPTRE_fold,databases = 'WikiPathway_2021_Human')
+#get term and pvalue (using subset truncates pvalues for some reason)
+pathways_sceptre_log = cbind(pathways$WikiPathway_2021_Human$Term,
+                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+pathways_sceptre_log[,2] = signif(as.numeric(pathways_sceptre_log[,2]),digits=2)
+colnames(pathways_sceptre_log) = c('Term','Adj.Pvalue')
+#make table
+results = kable(pathways_sceptre_log,booktabs = TRUE, linesep = "",
+  caption = "SCEPTRE Pathway Enrichment Analysis With Top 300 Genes by 
+  Log Fold Change")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
+
+
+\newpage
+
+## SCEPTRE Pathway Enrichment By Pvalue
+Sorting by Pvalue gives more similar results to Seurat (NRF2,Nuclear Receptors,Phytochemical Activity), but it is missing the complement system and the TYROBP causal network. However, since NRF2 is the main topic of their paper, the differences do not have very large consequences. 
+```{r}
+pathways = enrichr(SCEPTRE_pval,databases = 'WikiPathway_2021_Human')
+#get term and pvalue (using subset truncates pvalues for some reason)
+pathways_sceptre_pval = cbind(pathways$WikiPathway_2021_Human$Term,
+                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+pathways_sceptre_pval[,2] = signif(as.numeric(pathways_sceptre_pval[,2]),
+                                   digits=2)
+colnames(pathways_sceptre_pval) = c('Term','Adj.Pvalue')
+#make table
+results = kable(pathways_sceptre_pval,booktabs = TRUE, linesep = "",
+  caption = "SCEPTRE Pathway Enrichment Analysis With Top 300 Genes by Pvalue")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
+
+\newpage
+
+# Looking Into the Overlapped Genes
+
+Clearly there is something going on when using log fold change with SCEPTRE's estimates. Looking at the results, we see that Seurat is consistent between ordering by pvalue and log fold change whereas SCEPTRE is not very consistent.  
+```{r}
+#get top 300 genes from seurat 
+seurat_pval = rownames(CUL3_marker)[order(CUL3_marker$p_val,decreasing = F)
+                                    [1:top]]
+seurat_fold = rownames(CUL3_marker)[order(CUL3_marker$avg_log2FC,decreasing = T
+)[1:top]]
+```
+
+```{r}
+
+overlap_mat = matrix(NA,2,2)
+colnames(overlap_mat) = c('Sceptre By Pvalue','Sceptre By log fold change')
+rownames(overlap_mat) = c('Seurat By Pvalue','Seurat By log fold change')
+
+#see seurat by pvalue overlap with sceptre
+overlap_mat[1,1] = sum(seurat_pval%in%SCEPTRE_pval)
+overlap_mat[1,2] = sum(seurat_pval%in%SCEPTRE_fold)
+#get seurat by LFC overlap woth sceptre
+overlap_mat[2,1] = sum(seurat_fold%in%SCEPTRE_pval)
+overlap_mat[2,2]= sum(seurat_fold%in%SCEPTRE_fold)
+
+#get within method overlap
+overlap_within = matrix(NA,1,2)
+colnames(overlap_within) = c('seurat','SCEPTRE')
+rownames(overlap_within) = c('Within Method Overlap')
+overlap_within[,1] = sum(seurat_fold%in%seurat_pval)
+overlap_within[,2] = sum(SCEPTRE_fold%in%SCEPTRE_pval)
+
+#make table
+results = kable(overlap_mat,booktabs = TRUE, linesep = "",
+                caption = "Seurat and SCEPTRE Top 300 Genes Overlap (Out of 300)")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+
+```
+
+```{r}
+#make table
+results = kable(overlap_within,booktabs = TRUE, linesep = "",
+                caption = "Seurat and SCEPTRE Top 300 Genes Overlap Within Each Method 
+(Out of 300)")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
+\newpage
+
+
+# Checking if Results Are More Similar When Not Using All Significant Genes
+Using all significant genes with a BH correction results in 321 genes when setting the cutoff to 0.05. The results are quite similar to those when ordering by pvalue. Something may be going on with SCEPTRE's large effect size estimates.
+```{r}
+#get top 300 genes by pvalue
+pval_pos = CUL3_SCEPTRE$p_value
+#apply BH
+pval_pos = p.adjust(pval_pos,method = 'BH')
+#get which are significant
+sig_genes = which(CUL3_SCEPTRE$log_fold_change > 0 & pval_pos < 0.05)
+sig_genes = unfactor(CUL3_SCEPTRE$response_id[sig_genes])
+```
+
+
+```{r}
+pathways = enrichr(sig_genes,databases = 'WikiPathway_2021_Human')
+#get term and pvalue (using subset truncates pvalues for some reason)
+pathways_sceptre_pval = cbind(pathways$WikiPathway_2021_Human$Term,
+                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+pathways_sceptre_pval[,2] = signif(as.numeric(pathways_sceptre_pval[,2]),
+                                   digits=2)
+colnames(pathways_sceptre_pval) = c('Term','Adj.Pvalue')
+#make table
+results = kable(pathways_sceptre_pval,booktabs = TRUE, linesep = "",
+  caption = "SCEPTRE Pathway Enrichment Analysis With All Significant Genes")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
+
+\newpage 
+# Analyzing Number of Genes That Contribute to Processes 
+We know that SCEPTRE and Seurat Differ on the processes TYROBP and Photochemical activity. Looking at the table below we see that 10/61 and 7/15 of the genes contribute the significant pvalue seen when using Seurat. This is quite noisy. On the other hand, for NRF2, the overlap is 22/146 which is less noisy.
+```{r}
+#get top 300 genes by log fold change
+top = 300
+CUL3_top = rownames(CUL3_marker)[order(CUL3_marker$avg_log2FC,decreasing = T
+                                       )[1:top]]
 #run pathway enrichment analysis
 pathways = enrichr(CUL3_top,databases = 'WikiPathway_2021_Human')
 #get term and pvalue (using subset truncates pvalues for some reason)
 pathways = cbind(pathways$WikiPathway_2021_Human$Term,
-                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+            pathways$WikiPathway_2021_Human$Adjusted.P.value,
+            pathways$WikiPathway_2021_Human$Overlap)[1:50,]
+
+pathways[,2] = signif(as.numeric(pathways_seurat_log[,2]), digits=2)
+colnames(pathways) = c('Term','Adj.Pvalue','Overlap')
+
 #make table
-pathway_table = kable(pathways,booktabs = TRUE, linesep = "")
-kable_styling(pathway_table,position = "center", latex_options = "scale_down")
+results = kable(pathways,booktabs = TRUE, linesep = "",
+  caption = "Seurat Pathway Enrichment Analysis With Top 300 Genes by Log Fold 
+  Change")
+kable_styling(results,position = "center", latex_options = "scale_down")
 
 ```
+
+
+
+
+
 
 
 
