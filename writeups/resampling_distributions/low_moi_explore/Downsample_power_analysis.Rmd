@@ -102,16 +102,30 @@ for (r in 1:10){
 }
 
 # accuracy matrix for undershoot matrix
-undershoot_acc <- matrix(abs(under_ratio_avg$avg_ratio - rep(undershoot_set$ratio, 10)), 10, 10)
-colnames(undershoot_acc) <- as.character(no_sam)
-rownames(undershoot_acc) <- as.character(round(quantile_list, 3))
-undershoot_acc
+undershoot_acc <- matrix(abs(undershoot_df$ratio_value / rep(rep(undershoot_set$ratio, each = 10), each = B)), 100, 100)
+undershoot_ame <- data.frame(mae = apply(undershoot_acc, 2, mean),
+                             no_sam = rep(no_sam, 10), 
+                             ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
+undershoot_ame |>
+  ggplot(aes_string(x = "no_sam", y = "mae", colour = "ratio_quantile")) +
+  scale_x_log10() +
+  scale_y_log10() +
+  geom_point() +
+  geom_line() +
+  geom_hline(yintercept = 1, linetype = "dashed", colour = "red")
 
 # accuracy matrix for overshoot matrix
-overshoot_acc <- matrix(abs(over_ratio_avg$avg_ratio - rep(overshoot_set$ratio, 10)), 10, 10)
-colnames(overshoot_acc) <- as.character(no_sam)
-rownames(overshoot_acc) <- as.character(round(quantile_list, 3))
-overshoot_acc
+overshoot_acc <- matrix(abs(overshoot_df$ratio_value / rep(rep(overshoot_set$ratio, each = 10), each = B)), 100, 100)
+overshoot_ame <- data.frame(mae = apply(overshoot_acc, 2, mean),
+                            no_sam = rep(no_sam, 10), 
+                            ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
+overshoot_ame |>
+  ggplot(aes_string(x = "no_sam", y = "mae", colour = "ratio_quantile")) +
+  scale_x_log10() +
+  scale_y_log10() +
+  geom_point() +
+  geom_line() +
+  geom_hline(yintercept = 1, linetype = "dashed", colour = "red")
 ```
 
 From the above figure and table, we can clearly see the distance between the estimated overshoot ratio and the true ratio decrease substantially with the increase of the number of resamples. But for undershoot case, such decrease is not obvious possibly due to the fact that the skew normal fit does not undershoot a lot and the maximum undershoot ratio are most around 1.
