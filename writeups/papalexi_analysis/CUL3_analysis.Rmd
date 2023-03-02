@@ -232,7 +232,7 @@ p1 + theme(axis.text.x = element_text(size = 18, hjust = 1),
 
 # Perform Marker Gene Analysis/Pathway Enrichment Analysis Ordered by Log Fold Change
 
-Papalexi et reports 5 major pathways in CUL3 KO cells. Nuclear Receptors Meta-Pathway,NRF2 pathway,Phytochemical activity on NRF2 transcriptional activation,TYROBP causal network ,and complement system activation. We see pvalues that are approximately the same. However, we do see that the pathway "Phytochemical activity on NRF2 transcriptional activation" is ranked ahead of "TYROBP causal network" in this analysis whereas according to paplexi et al, the realtive pvalue rank should be flipped between these two pathways. 
+Papalexi et reports 5 major pathways in CUL3 KO cells. Nuclear Receptors Meta-Pathway,NRF2 pathway,Phytochemical activity on NRF2 transcriptional activation,TYROBP causal network ,and complement system activation. We see pvalues that are approximately the same. However, we do see that the pathway "Phytochemical activity on NRF2 transcriptional activation" is ranked ahead of "TYROBP causal network" in this analysis whereas according to paplexi et al, the relative pvalue rank should be flipped between these two pathways. 
 ```{r}
 CUL3_marker = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',
                           assay = 'RNA',only.pos = T)
@@ -464,10 +464,135 @@ kable_styling(results,position = "center", latex_options = "scale_down")
 
 ```
 
+\newpage
+
+# Checking If Seurat Filters Drive Differences
+Seurat has two filters that change what genes are tested. Logfc.threshold makes it so that only genes that show a log fold change greater than some level are ouputted. The default value is 0.25. The min.pct argument makes it so that only genes that are present in over a certain percentage of cells in each class are tested. We see that when including all genes, both Seurat and SCEPTRE have little correspondence with both each other and with themselves. 
 
 
+```{r}
+CUL3_marker_all = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',
+                  assay = 'RNA',only.pos = F,logfc.threshold = 0,min.pct = 0)
+CUL3_marker_all$avg_log2FC = signif(CUL3_marker_all$avg_log2FC, digits=2)
+CUL3_marker_all$p_val = signif(CUL3_marker_all$p_val, digits=2)
+
+```
 
 
+```{r}
+#get top seurat genes by pvalue and log fold change
+seurat_fold_all =  rownames(CUL3_marker_all)[
+  order(CUL3_marker_all$avg_log2FC,decreasing = T)[1:top]]
+P_seurat  = CUL3_marker_all$p_val*sign(CUL3_marker_all$avg_log2FC)
+P_seurat [P_seurat  < 0] = 1000000
+seurat_pval_all = rownames(CUL3_marker_all)[order(pval_pos)[1:top]]
+
+#
+```
+
+```{r}
+
+overlap_mat = matrix(NA,2,2)
+colnames(overlap_mat) = c('Sceptre By Pvalue','Sceptre By log fold change')
+rownames(overlap_mat) = c('Seurat By Pvalue','Seurat By log fold change')
+
+#see seurat by pvalue overlap with sceptre
+overlap_mat[1,1] = sum(seurat_pval_all%in%SCEPTRE_pval)
+overlap_mat[1,2] = sum(seurat_pval_all%in%SCEPTRE_fold)
+#get seurat by LFC overlap woth sceptre
+overlap_mat[2,1] = sum(seurat_fold_all%in%SCEPTRE_pval)
+overlap_mat[2,2]= sum(seurat_fold_all%in%SCEPTRE_fold)
+
+#get within method overlap
+overlap_within = matrix(NA,1,2)
+colnames(overlap_within) = c('seurat','SCEPTRE')
+rownames(overlap_within) = c('Within Method Overlap')
+overlap_within[,1] = sum(seurat_fold_all%in%seurat_pval_all)
+overlap_within[,2] = sum(SCEPTRE_fold%in%SCEPTRE_pval)
+
+#make table
+results = kable(overlap_mat,booktabs = TRUE, linesep = "",
+caption = "Unfiltered Seurat and SCEPTRE Top 300 Genes Overlap (Out of 300)")
+kable_styling(results,position = "center", latex_options = "scale_down")
 
 
+```
+
+```{r}
+#make table
+results = kable(overlap_within,booktabs = TRUE, linesep = "",
+caption = "Unfiltered Seurat and SCEPTRE Top 300 Genes Overlap Within Each 
+Method (Out of 300)")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
+
+\newpage
+
+
+# Checking Correspondence When Filtering SCEPTRE
+```{r}
+top = 300
+#Get CUL3 results
+CUL3_SCEPTRE = subset(gene_result,grna_group == "CUL3")
+```
+
+```{r}
+#get top 300 genes by pvalue
+pval_pos = CUL3_SCEPTRE$p_value*sign(CUL3_SCEPTRE$log_fold_change)
+pval_pos[pval_pos < 0 | CUL3_SCEPTRE$log_fold_change > 0.25] = 1000000
+order_pval = order(pval_pos)[1:top]
+order_pval = order_pval[pval_pos[order_pval] < 1]
+order_fold = order(CUL3_SCEPTRE$log_fold_change,decreasing = T)[1:top]
+SCEPTRE_fold = unfactor(CUL3_SCEPTRE$response_id[order_fold])
+SCEPTRE_pval = unfactor(CUL3_SCEPTRE$response_id[order_pval])
+```
+
+## SCEPTRE Pathway Enrichment By Pvalue
+Using SCEPTRE ordered by pvalue removes a lot of the shared signal detected by SCEPTRE and Seurat. We see the NRF2 is barely significant after pvalue adjustment and that the Nuclear Receptors Meta-Pathway has an adjusted pvalue of 0.1. The TYROBP pathway is now the most significant process. 
+```{r}
+pathways = enrichr(SCEPTRE_pval,databases = 'WikiPathway_2021_Human')
+#get term and pvalue (using subset truncates pvalues for some reason)
+pathways_sceptre_pval = cbind(pathways$WikiPathway_2021_Human$Term,
+                 pathways$WikiPathway_2021_Human$Adjusted.P.value)[1:50,]
+pathways_sceptre_pval[,2] = signif(as.numeric(pathways_sceptre_pval[,2]),
+                                   digits=2)
+colnames(pathways_sceptre_pval) = c('Term','Adj.Pvalue')
+#make table
+results = kable(pathways_sceptre_pval,booktabs = TRUE, linesep = "",
+caption = "Filtered SCEPTRE Pathway Analysis With Top 300 Genes by Pvalue")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+```
+\newpage 
+Additionally, there is even less of a correspondence between Seurat and SCEPTRE. 
+```{r}
+
+overlap_mat = matrix(NA,2,2)
+colnames(overlap_mat) = c('Sceptre By Pvalue','Sceptre By log fold change')
+rownames(overlap_mat) = c('Seurat By Pvalue','Seurat By log fold change')
+
+#see seurat by pvalue overlap with sceptre
+overlap_mat[1,1] = sum(seurat_pval%in%SCEPTRE_pval)
+overlap_mat[1,2] = sum(seurat_pval%in%SCEPTRE_fold)
+#get seurat by LFC overlap woth sceptre
+overlap_mat[2,1] = sum(seurat_fold%in%SCEPTRE_pval)
+overlap_mat[2,2]= sum(seurat_fold%in%SCEPTRE_fold)
+
+#get within method overlap
+overlap_within = matrix(NA,1,2)
+colnames(overlap_within) = c('seurat','SCEPTRE')
+rownames(overlap_within) = c('Within Method Overlap')
+overlap_within[,1] = sum(seurat_fold%in%seurat_pval)
+overlap_within[,2] = sum(SCEPTRE_fold%in%SCEPTRE_pval)
+
+#make table
+results = kable(overlap_mat,booktabs = TRUE, linesep = "",
+caption = "Seurat and Filtered SCEPTRE Top 300 Genes Overlap (Out of 300)")
+kable_styling(results,position = "center", latex_options = "scale_down")
+
+
+```
+
+\newpage
 
