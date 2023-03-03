@@ -54,27 +54,35 @@ tail_list <- (10:(0.04*n)) / n
 
 # find distributions based on right tail
 for (r in 1:10){
-  dist <- abs(overshoot_ratio[331:660] - quantile(overshoot_ratio[331:660], quantile_list[r]))
+  dist <- abs(overshoot_ratio[1:330] - quantile(overshoot_ratio[1:330], quantile_list[r]))
   overshoot_set[r, 1] <- which(dist == min(dist))
-  overshoot_set[r, 2] <- overshoot_ratio[which(dist == min(dist)) + 330]
-  dist <- abs(undershoot_ratio[331:660] - quantile(undershoot_ratio[331:660], quantile_list[r]))
+  overshoot_set[r, 2] <- overshoot_ratio[which(dist == min(dist))]
+  dist <- abs(undershoot_ratio[1:330] - quantile(undershoot_ratio[1:330], quantile_list[r]))
   undershoot_set[r, 1] <- which(dist == min(dist))
-  undershoot_set[r, 2] <- undershoot_ratio[which(dist == min(dist)) + 330]
+  undershoot_set[r, 2] <- undershoot_ratio[which(dist == min(dist))]
 }
 
 # downsample
-no_sam <- round(seq(1e3, 5e4, length.out = 10))
+no_sam <- round(exp(seq(log(1e3), log(5e4), length.out = 10)))
 B <- 100
 set.seed(1)
-overshoot <- list()
-undershoot <- list()
+overshoot_left_fit <- list()
+overshoot_left_power <- list()
+undershoot_left_fit <- list()
+undershoot_left_power <- list()
 for (s in 1:10) {
-  overshoot_sim <- data.frame(replicate_id = rep(1:B, length(no_sam)),
+  overshoot_sim_fit <- data.frame(replicate_id = rep(1:B, length(no_sam)),
                               overshoot_ratio = numeric(length(no_sam)*B),
                               subsample = rep(no_sam, each = B))
-  undershoot_sim <- data.frame(replicate_id = rep(1:B, 10), 
-                               undershoot_ratio = numeric(10*B),
-                               subsample = rep(no_sam, each = B))
+  overshoot_sim_power <- data.frame(replicate_id = rep(1:B, length(no_sam)),
+                                    overshoot_ratio = numeric(length(no_sam)*B),
+                                    subsample = rep(no_sam, each = B))
+  undershoot_sim_fit <- data.frame(replicate_id = rep(1:B, 10), 
+                                   undershoot_ratio = numeric(10*B),
+                                   subsample = rep(no_sam, each = B))
+  undershoot_sim_power <- data.frame(replicate_id = rep(1:B, 10), 
+                                     undershoot_ratio = numeric(10*B),
+                                     subsample = rep(no_sam, each = B))
   over_quantile_emp <- quantile(as.numeric(resampling_dists[overshoot_set[s, 1], 5:(4 + n)]), 1 - tail_list)
   under_quantile_emp <- quantile(as.numeric(resampling_dists[undershoot_set[s, 1], 5:(4 + n)]), 1 - tail_list)
   for(t in 1:10){
@@ -84,22 +92,34 @@ for (s in 1:10) {
       under_sub_sam <- as.numeric(resampling_dists[undershoot_set[s, 1], 4+rd_set])
       over_dp_fit <- mom_fit(over_sub_sam)
       under_dp_fit <- mom_fit(under_sub_sam)
-      # undershoot case
-      undershoot_sim[(t-1)*B + r, 2] <- max(tail_list / (1 - psn(under_quantile_emp, dp = under_dp_fit)))
       
-      # overshoot case
-      overshoot_sim[(t-1)*B + r, 2] <- max((1 - psn(over_quantile_emp, dp = over_dp_fit)) / tail_list)
-      print(undershoot_sim[(t-1)*B + r, 2])
-      print(overshoot_sim[(t-1)*B + r, 2])
+      # undershoot case for fit and power
+      undershoot_sim_fit[(t-1)*B + r, 2] <- max(tail_list / (1 - psn(under_quantile_emp, dp = under_dp_fit)))
+      under_quantile_emp_power <- quantile(as.numeric(under_sub_sam), 1 - tail_list)
+      undershoot_sim_power[(t-1)*B + r, 2] <- max(tail_list / (1 - psn(under_quantile_emp_power, dp = under_dp_fit)))
+      
+      # overshoot case for fit and power
+      overshoot_sim_fit[(t-1)*B + r, 2] <- max((1 - psn(over_quantile_emp, dp = over_dp_fit)) / tail_list)
+      over_quantile_emp_power <- quantile(as.numeric(over_sub_sam), 1 - tail_list)
+      overshoot_sim_power[(t-1)*B + r, 2] <- max((1 - psn(over_quantile_emp_power, dp = over_dp_fit)) / tail_list)
+      
+      print(undershoot_sim_fit[(t-1)*B + r, 2])
+      print(undershoot_sim_power[(t-1)*B + r, 2])
+      print(overshoot_sim_fit[(t-1)*B + r, 2])
+      print(overshoot_sim_power[(t-1)*B + r, 2])
     }
   }
-  overshoot[[s]] <- overshoot_sim
-  undershoot[[s]] <- undershoot_sim
+  overshoot_left_fit[[s]] <- overshoot_sim_fit
+  undershoot_left_fit[[s]] <- undershoot_sim_fit
+  overshoot_left_power[[s]] <- overshoot_sim_power
+  undershoot_left_power[[s]] <- undershoot_sim_power
   print(s)
 }
 
 # save file
-write.csv(overshoot, "overshoot.csv")
-write.csv(undershoot, "undershoot.csv")
+write.csv(overshoot_left_fit, "overshoot_left_fit.csv")
+write.csv(overshoot_left_power, "overshoot_left_power.csv")
+write.csv(undershoot_left_fit, "undershoot_left_fit.csv")
+write.csv(undershoot_left_power, "undershoot_left_power.csv")
 
 ```
