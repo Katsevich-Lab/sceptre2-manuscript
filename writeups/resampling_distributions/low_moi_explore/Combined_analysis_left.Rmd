@@ -71,31 +71,38 @@ for (r in 1:10){
   undershoot_set[r, 2] <- undershoot_ratio[which(dist == min(dist))]
 }
 
+
 # accuracy matrix for undershoot matrix
-undershoot_acc <- matrix(abs(undershoot_df$ratio_value / rep(rep(undershoot_set$ratio, each = 10), each = B)), 100, 100)
+undershoot_acc <- matrix(abs(undershoot_df$ratio_value), 100, 100)
 undershoot_ame <- data.frame(mar = apply(undershoot_acc, 2, mean),
                              no_sam = rep(no_sam, 10), 
                              ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
 undershoot_ame |>
+  filter(ratio_quantile != as.character(0.99)) |>
   ggplot(aes_string(x = "no_sam", y = "mar", colour = "ratio_quantile")) +
   scale_x_log10() +
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Ratio of max(D/A) / max(D/C)")
+  labs(title = "Ratio of max(D/A)")
 
 # accuracy matrix for overshoot matrix
-overshoot_acc <- matrix(abs(overshoot_df$ratio_value / rep(rep(overshoot_set$ratio, each = 10), each = B)), 100, 100)
+overshoot_acc <- matrix(abs(overshoot_df$ratio_value), 100, 100)
 overshoot_ame <- data.frame(mar = apply(overshoot_acc, 2, mean),
                             no_sam = rep(no_sam, 10), 
                             ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
 overshoot_ame |>
+  filter(ratio_quantile != as.character(0.99)) |>
   ggplot(aes_string(x = "no_sam", y = "mar", colour = "ratio_quantile")) +
   scale_x_log10() +
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Ratio of max(A/D) / max(C/D)")
+  labs(title = "Ratio of max(A/D)")
+
+# store D/A (A/D)
+gt_overshoot_curve <- overshoot_df$ratio_value
+gt_undershoot_curve <- undershoot_df$ratio_value
 ```
 
 Here we clearly see the ratio $\max[A/D] (max[D/A])$ approaches $\max[C/D] (\max[D/C])$ very fast. This indicates the error decrease rather fast in estimating the tail probability at least in average sense. In the next section, we mainly consider the changes for the ratio $\max[A/B] (max[B/A])$ and how does this approach $\max[C/D] (\max[D/C])$.
@@ -154,7 +161,7 @@ for (r in 1:10){
 }
 
 # load the oracle ratio
-undershoot_acc <- matrix(abs(undershoot_df$ratio_value / rep(rep(undershoot_set$ratio, each = 10), each = B)), 100, 100)
+undershoot_acc <- matrix(abs(undershoot_df$ratio_value / gt_undershoot_curve), 100, 100)
 undershoot_ame <- data.frame(mar = apply(undershoot_acc, 2, mean),
                              no_sam = rep(no_sam, 10), 
                              ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
@@ -164,10 +171,10 @@ undershoot_ame |>
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Ratio of max(B/A) / max(D/C)")
+  labs(title = "Ratio of max(B/A) / max(D/A)")
 
 # accuracy matrix for overshoot matrix
-overshoot_acc <- matrix(abs(overshoot_df$ratio_value / rep(rep(overshoot_set$ratio, each = 10), each = B)), 100, 100)
+overshoot_acc <- matrix(abs(overshoot_df$ratio_value / gt_overshoot_curve), 100, 100)
 overshoot_ame <- data.frame(mar = apply(overshoot_acc, 2, mean),
                             no_sam = rep(no_sam, 10), 
                             ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
@@ -177,9 +184,7 @@ overshoot_ame |>
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Ratio of max(A/B) / max(C/D) change with number of resample")
+  labs(title = "Ratio of max(A/B) / max(A/D)")
 ```
-
-From the above figure, we notice it is much harder to estimate the ratio of $\max[C/D](\max[D/C])$ without using the oracle knowledge of $D$ which we had in the last analysis. Due to the large fluctuation of $B$ in the estimate $\max[A/B] (\max[B/A])$, the convergence as the increase of sample is not obvious in mean absolute ratio (mar).
 
 

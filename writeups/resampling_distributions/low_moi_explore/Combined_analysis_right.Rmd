@@ -71,31 +71,53 @@ for (r in 1:10){
   undershoot_set[r, 2] <- undershoot_ratio[which(dist == min(dist)) + 330]
 }
 
+# accuracy using 5e5 mom estimate
+groundtruth <- data.frame(ratio = c(overshoot_ratio, undershoot_ratio), 
+                          type = c(rep("overshoot", 660), rep("undershoot", 660)),
+                          tail = c(rep(c(rep("left", 330),rep("right", 330)) , 2)),
+                          id = c(rep(1:330, 2)))
+groundtruth |>
+  ggplot(aes_string(x = "id", y = "ratio", colour = "type")) +
+  facet_grid(tail~.) +
+  geom_point() +
+  scale_y_log10() +
+  geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
+  labs(title = "Undershoot (max(D/C)) and overshoot (max(C/D)) ratios: negative control")
+
+```
+
+```{r, warning = FALSE, error = FALSE, message = FALSE}
 # accuracy matrix for undershoot matrix
-undershoot_acc <- matrix(abs(undershoot_df$ratio_value / rep(rep(undershoot_set$ratio, each = 10), each = B)), 100, 100)
+undershoot_acc <- matrix(abs(undershoot_df$ratio_value), 100, 100)
 undershoot_ame <- data.frame(mar = apply(undershoot_acc, 2, mean),
                              no_sam = rep(no_sam, 10), 
                              ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
 undershoot_ame |>
+  filter(ratio_quantile != as.character(0.99)) |>
   ggplot(aes_string(x = "no_sam", y = "mar", colour = "ratio_quantile")) +
   scale_x_log10() +
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Ratio of max(D/A) / max(D/C)")
+  labs(title = "Ratio of max(D/A)")
 
 # accuracy matrix for overshoot matrix
-overshoot_acc <- matrix(abs(overshoot_df$ratio_value / rep(rep(overshoot_set$ratio, each = 10), each = B)), 100, 100)
+overshoot_acc <- matrix(abs(overshoot_df$ratio_value), 100, 100)
 overshoot_ame <- data.frame(mar = apply(overshoot_acc, 2, mean),
                             no_sam = rep(no_sam, 10), 
                             ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
 overshoot_ame |>
+  filter(ratio_quantile != as.character(0.99)) |>
   ggplot(aes_string(x = "no_sam", y = "mar", colour = "ratio_quantile")) +
   scale_x_log10() +
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Ratio of max(A/D) / max(C/D)")
+  labs(title = "Ratio of max(A/D)")
+
+# store D/A (A/D)
+gt_overshoot_curve <- overshoot_df$ratio_value
+gt_undershoot_curve <- undershoot_df$ratio_value
 ```
 
 Here we clearly see the ratio $\max[A/D] (max[D/A])$ approaches $\max[C/D] (\max[D/C])$ very fast. This indicates the error decrease rather fast in estimating the tail probability at least in average sense. In the next section, we mainly consider the changes for the ratio $\max[A/B] (max[B/A])$ and how does this approach $\max[C/D] (\max[D/C])$.
@@ -154,7 +176,7 @@ for (r in 1:10){
 }
 
 # load the oracle ratio
-undershoot_acc <- matrix(abs(undershoot_df$ratio_value / rep(rep(undershoot_set$ratio, each = 10), each = B)), 100, 100)
+undershoot_acc <- matrix(abs(undershoot_df$ratio_value / gt_undershoot_curve), 100, 100)
 undershoot_ame <- data.frame(mar = apply(undershoot_acc, 2, mean),
                              no_sam = rep(no_sam, 10), 
                              ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
@@ -164,10 +186,10 @@ undershoot_ame |>
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Ratio of max(B/A) / max(D/C)")
+  labs(title = "Ratio of max(B/A) / max(D/A)")
 
 # accuracy matrix for overshoot matrix
-overshoot_acc <- matrix(abs(overshoot_df$ratio_value / rep(rep(overshoot_set$ratio, each = 10), each = B)), 100, 100)
+overshoot_acc <- matrix(abs(overshoot_df$ratio_value / gt_overshoot_curve), 100, 100)
 overshoot_ame <- data.frame(mar = apply(overshoot_acc, 2, mean),
                             no_sam = rep(no_sam, 10), 
                             ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
@@ -177,10 +199,10 @@ overshoot_ame |>
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Ratio of max(A/B) / max(C/D)")
+  labs(title = "Ratio of max(A/B) / max(A/D)")
 ```
 
-From the above figure, we notice it is much harder to estimate the ratio of $\max[C/D](\max[D/C])$ without using the oracle knowledge of $D$ which we had in the last analysis. Due to the large fluctuation of $B$ in the estimate $\max[A/B] (\max[B/A])$, the convergence as the increase of sample is not obvious in mean absolute ratio (mar).
+From the above figure, we notice it is much harder to approximate $\max[A/D](\max[D/A])$. Due to the large fluctuation of $B$ in the estimate $\max[A/B] (\max[B/A])$, the convergence as the increase of sample is not obvious in mean absolute ratio (mar).
 
 
 Here are my several comments:
@@ -190,47 +212,60 @@ Here are my several comments:
 
 (b) When it comes to account for the variation of downsample variation, it becomes significantly hard to get a direct decent estimate of the p-value ratio. This can be reflected in figure 3 and 4. Also there is a discrepancy between the overshoot and undershoot behaviors. For the undershoot, we see most of the curves are bumping while some of them do decrease as the resample increases. For the overshoot, it can be seen that when using small size of resamples, it always far overestimate the ratio. But the difference between the estimate and ground truth decreases much faster. 
 
-Similarly, we observe the same phenomenon in the other write-up. I conjecture that such result is due to method of moment estimate. I did a small simulation and tried to see if it is indeed such case.
+<!-- Similarly, we observe the same phenomenon in the other write-up. I conjecture that such result is due to method of moment estimate. I did a small simulation and tried to see if it is indeed such case. -->
 
-```{r error=FALSE, message=FALSE, warning=FALSE}
-undershoot_naive <- read_csv("undershoot_power_naive")
-overshoot_naive <- read_csv("overshoot_power_naive")
+<!-- ```{r error=FALSE, message=FALSE, warning=FALSE} -->
+<!-- library(sn) -->
+<!-- undershoot_naive <- read_csv("undershoot_power_naive") -->
+<!-- overshoot_naive <- read_csv("overshoot_power_naive") -->
 
-# ground truth
-set.seed(1)
-gt_data <- rsn(1e6)
-gt_fit <- mom_fit(gt_data)
-tail_list <- (10:(0.04*n)) / n
-quantile_emp <-  quantile(gt_data, 1 - tail_list)
-gt_under <- max(tail_list / (1 - psn(quantile_emp, dp = gt_fit)))
-gt_over <- max((1 - psn(quantile_emp, dp = gt_fit)) / tail_list)
+<!-- # ground truth -->
+<!-- set.seed(1) -->
+<!-- gt_data <- rsn(1e6) -->
+<!-- mom_fit <- function(y){ -->
+<!--     n <- length(y)     -->
+<!--     # maximum value gamma can take -->
+<!--     max.gamma1 <- 0.5*(4-pi)*(2/(pi-2))^1.5 - (.Machine$double.eps)^(1/4)     -->
+<!--     # method of moments strategy -->
+<!--     s <- sd(y) -->
+<!--     gamma1 <- sum((y-mean(y))^3)/(n*s^3) -->
+<!--     if(abs(gamma1) > max.gamma1) gamma1 <- sign(gamma1)*0.9*max.gamma1 -->
+<!--     cp1 <- as.numeric(c(mean(y), s, gamma1)) -->
+<!--     dp1 <- cp2dp(cp1, family="SN") -->
+<!--     return(dp1) -->
+<!-- } -->
+<!-- gt_fit <- mom_fit(gt_data) -->
+<!-- tail_list <- (10:(0.04*n)) / n -->
+<!-- quantile_emp <-  quantile(gt_data, 1 - tail_list) -->
+<!-- gt_under <- max(tail_list / (1 - psn(quantile_emp, dp = gt_fit))) -->
+<!-- gt_over <- max((1 - psn(quantile_emp, dp = gt_fit)) / tail_list) -->
 
-# accuracy matrix for overshoot matrix
-undershoot_acc <- matrix(undershoot_naive$undershoot_ratio / gt_under, 100, 10)
-undershoot_ame <- data.frame(mar = apply(undershoot_acc, 2, mean),
-                             no_sam = rep(no_sam, 10), 
-                             ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2)))
-undershoot_ame |>
-  ggplot(aes_string(x = "no_sam", y = "mar")) +
-  scale_x_log10() +
-  geom_point() +
-  geom_line() +
-  geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Value of max(B/A)")
+<!-- # accuracy matrix for overshoot matrix -->
+<!-- undershoot_acc <- matrix(undershoot_naive$undershoot_ratio / gt_under, 100, 10) -->
+<!-- undershoot_ame <- data.frame(mar = apply(undershoot_acc, 2, mean), -->
+<!--                              no_sam = rep(no_sam, 10), -->
+<!--                              ratio_quantile = as.character(round(rep(quantile_list, each = 10), 2))) -->
+<!-- undershoot_ame |> -->
+<!--   ggplot(aes_string(x = "no_sam", y = "mar")) + -->
+<!--   scale_x_log10() + -->
+<!--   geom_point() + -->
+<!--   geom_line() + -->
+<!--   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") + -->
+<!--   labs(title = "Value of max(B/A)") -->
 
-# accuracy matrix for overshoot matrix
-overshoot_acc <- matrix(overshoot_naive$overshoot_ratio / gt_over, 100, 100)
-overshoot_ame <- data.frame(mar = apply(overshoot_acc, 2, mean),
-                            no_sam = rep(no_sam, 10))
-overshoot_ame |>
-  ggplot(aes_string(x = "no_sam", y = "mar")) +
-  scale_x_log10() +
-  geom_point() +
-  geom_line() +
-  geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
-  labs(title = "Value of max(A/B)")
-```
-The above two figures verify the conjecture. 
+<!-- # accuracy matrix for overshoot matrix -->
+<!-- overshoot_acc <- matrix(overshoot_naive$overshoot_ratio / gt_over, 100, 100) -->
+<!-- overshoot_ame <- data.frame(mar = apply(overshoot_acc, 2, mean), -->
+<!--                             no_sam = rep(no_sam, 10)) -->
+<!-- overshoot_ame |> -->
+<!--   ggplot(aes_string(x = "no_sam", y = "mar")) + -->
+<!--   scale_x_log10() + -->
+<!--   geom_point() + -->
+<!--   geom_line() + -->
+<!--   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") + -->
+<!--   labs(title = "Value of max(A/B)") -->
+<!-- ``` -->
+<!-- The above two figures verify the conjecture. -->
 
 
 (c) The last point is the validity of the maximal measure. We should notice that until now the results we have are all under the measure which is maximum of the ratios among the tail_list. It is reasonable to conjecture that such measure converge slower than the other mean-based measure due to uniform nature. 
