@@ -92,6 +92,7 @@ groundtruth_comp <- data.frame(ratio = c(mom_overshoot_ratio, mom_undershoot_rat
                                id = c(rep(1:330, 2)))
 
 groundtruth_comp |>
+  filter(ratio <= 100) |>
   ggplot(aes_string(x = "id", y = "ratio", colour = "type")) +
   facet_grid(tail~.) +
   geom_point() +
