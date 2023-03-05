@@ -2,6 +2,7 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{graphicx} 
+\usepackage{hyperref}
 \usepackage{float}
 \usepackage[caption = false]{subfig}
 \usepackage{/Users/timbarry/Documents/optionFiles/mymacros}
@@ -33,13 +34,16 @@ We proceed in several steps.
 \textbf{Step 3a: Enumerate the possible undercover gRNA groups}. If $N_\textrm{possible-groups} \leq 20,000$, we enumerate the possible undercover gRNA groups. We map each possible undercover gRNA group to a length-$k$ vector of integers sorted in increasing order, where the integers represent individual NT gRNAs. For example, the undercover gRNA group containing NT gRNAs 2, 3, and 7 (arbitrarily labeled) would be mapped to the vector $\texttt{[ 2, 3, 7 ]}.$ We then generate the entire set of $N_\textrm{possible-groups}$ length-$k$ vectors containing integers in the range $\{1, \dots, N_\textrm{grna}\}$. We store these vectors in an ordered list $\texttt{x}$. We also set $N_\textrm{grna-groups} = N_\textrm{possible-groups}.$
 \\ \\
 \textbf{Step 3b: Sample a set of possible undercover gRNA groups}. If $N_\textrm{possible-groups} > 20,000$, then we do not attempt to enumerate the entire set of possible undercover gRNA groups. Instead, we sample a set of undercover gRNA groups. We proceed as follows. First, we estimate the fraction of undercover gRNA-gene pairs (of group size $k$) that passes QC. We do this by pairing a randomly generated undercover gRNA group to a randomly selected gene and checking if that pair passes the pairwise QC threshold. We sample (with replacement) a large number (e.g., $5,000$) undercover gRNA-gene pairs in this way, producing an estimate $\hat{p}$ of the fraction of undercover gRNA-gene pairs that passes QC. We then set the number of gRNA groups to sample $N_\textrm{grna-groups}$ to $$N_\textrm{grna-groups} = \frac{c \cdot N_\textrm{pairs} }{ \hat{p} N_\textrm{genes}},$$ where $c > 1$ is a number that ensures we sample a \textit{conservative} number of gRNA groups (i.e., more than we need). Finally, we sample $N_\textrm{grna-groups}$ gRNA groups by sampling from the set of length $k$ vectors containing integers in the range $\{1, \dots, N_\textrm{grna}\}$ via membership checking sampling.$^*$ We store these $N_\textrm{grna-groups}$ vectors in an ordered list $\texttt{x}$.
-
-$^*$  
+\\ \\
+$^*$ To be more specific, we sample $N_\textrm{grna-groups}$ gRNA groups as follows. We initialize an empty set (implemented as a hash table) $\mathcal{D}$. We then construct a length-k sample from the set $\{1, \dots, N_\textrm{grna}\}$ via Fisher-Yates sampling and sort the resulting vector. Finally, we check for inclusion of this vector in $\mathcal{D}.$ If the vector already is in $\mathcal{D}$, we proceed to the next iteration. Otherwise, we add this vector to $\mathcal{D}$. We conclude this process when the number of elements in $\mathcal{D}$ is equal to $N_\textrm{grna-groups}.$ In the rare case that $N_\textrm{grna-groups} \geq N_\textrm{possible-groups}$, we can construct the gRNA groups via enumerating over all combinations, as in step 3a. 
 \\ \\
 \textbf{Step 4: Sample without replacement from the set of undercover gRNA group-gene pairs}. The final step is to sample a set of undercover gRNA group-gene pairs without replacement. Recall that step 3 yields a list $\texttt{x}$ of undercover gRNA groups of length $N_\textrm{grna-groups}$. (This is true whether we have carried out step 3a or step 3b). There are thus $N_\textrm{grna-group} \cdot N_\textrm{gene}$ pairs that we could sample. We map each gRNA group-gene pair in this set of pairs to an integer in the set $\{1, \dots, N_\textrm{gene} \cdot N_\textrm{grna-group} \}.$ The map is defined as follows: for an integer $i \in \{1, \dots, N_\textrm{gene} \cdot N_\textrm{grna-group}\},$ we carry out the integer division $$ \texttt{grna\_group\_idx} = i \%/\% N_\textrm{gene},$$ which defines a gRNA group index. Next, we compute the remainder of this division
 $$ \texttt{gene\_idx} = i \%\% N_\textrm{gene}$$ to compute a gene index. Through this map, sampling without replacement from the set of integers $\{1, \dots, N_\textrm{gene} \cdot N_\textrm{grna-group}\}$ is identical to sampling without replacement from the set of undercover gRNA group-gene pairs.
 
 If the number of pairs to sample $N_\textrm{pairs}$ exceeds the number of pairs that we possibly could sample $ N_\textrm{gene} \cdot N_\textrm{grna-group}$, then we iterate through the pairs one-by-one, checking if the pair passes pairwise-QC and, if so, adding it to the set pairs to return. If, on the other hand, the number of pairs to sample $N_\textrm{pairs}$ is less than $N_\textrm{gene} \cdot N_\textrm{grna-group}$, we sample without replacement from the set $\{ 1, \dots, N_\textrm{gene} \cdot N_\textrm{grna-group} \},$ discarding those pairs that do not pass QC. (We can implement this final sampling without replacement step via Fisher-Yates sampling or sparse Fisher-Yates sampling.)
+\\ \\
+\textbf{Background on without replacement sampling}
+See the preprint  \href{https://arxiv.org/abs/2104.05091}{``Simple, Optimal Algorithms for Random Sampling without Replacement''} (Ting, 2021) for descriptions of Fisher-Yates, sparse Fisher-Yates, and membership checking algorithms for without replacement sampling.
 
 
 \bibliographystyle{unsrt}
