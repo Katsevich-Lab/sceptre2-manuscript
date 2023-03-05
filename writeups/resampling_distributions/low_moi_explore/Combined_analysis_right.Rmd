@@ -53,34 +53,65 @@ for (i in 1:10) {
 }
 
 # load the oracle ratio
-param_nc <- read_csv("figures/power_exploration/sknorm_tail_prob_500000_resamples_0.96_percentile/param_twosides.csv")
-param_twosides <- t(param_nc[,-1])
-overshoot_ratio <- as.numeric(param_twosides[, 6])
-undershoot_ratio <- as.numeric(param_twosides[, 7])
+mle_param_nc <- read_csv("figures/power_exploration/sknorm_tail_prob_500000_resamples_0.96_percentile/param_twosides.csv")
+mom_param_nc <- read_csv("figures/power_exploration/sknorm_tail_prob_500000_resamples_0.96_percentile/mom_param.csv")
+mle_param_twosides <- t(mle_param_nc[,-1])
+mom_param_twosides <- t(mom_param_nc[,-1])
+mle_overshoot_ratio <- as.numeric(mle_param_twosides[, 6])
+mle_undershoot_ratio <- as.numeric(mle_param_twosides[, 7])
+mom_overshoot_ratio <- as.numeric(mom_param_twosides[, 6])
+mom_undershoot_ratio <- as.numeric(mom_param_twosides[, 7])
 quantile_list <- seq(0.01, 0.99, length.out = 10)
 overshoot_set <- data.frame(index = numeric(10), ratio = numeric(10))
 undershoot_set <- data.frame(index = numeric(10), ratio = numeric(10))
 
 # find distributions based on right tail
 for (r in 1:10){
-  dist <- abs(overshoot_ratio[331:660] - quantile(overshoot_ratio[331:660], quantile_list[r]))
+  dist <- abs(mom_overshoot_ratio[331:660] - quantile(mom_overshoot_ratio[331:660], quantile_list[r]))
   overshoot_set[r, 1] <- which(dist == min(dist))
-  overshoot_set[r, 2] <- overshoot_ratio[which(dist == min(dist)) + 330]
-  dist <- abs(undershoot_ratio[331:660] - quantile(undershoot_ratio[331:660], quantile_list[r]))
+  overshoot_set[r, 2] <- mom_overshoot_ratio[which(dist == min(dist)) + 330]
+  dist <- abs(mom_undershoot_ratio[331:660] - quantile(mom_undershoot_ratio[331:660], quantile_list[r]))
   undershoot_set[r, 1] <- which(dist == min(dist))
-  undershoot_set[r, 2] <- undershoot_ratio[which(dist == min(dist)) + 330]
+  undershoot_set[r, 2] <- mom_undershoot_ratio[which(dist == min(dist)) + 330]
 }
 
 # accuracy using 5e5 mom estimate
-groundtruth <- data.frame(ratio = c(overshoot_ratio, undershoot_ratio), 
-                          type = c(rep("overshoot", 660), rep("undershoot", 660)),
-                          tail = c(rep(c(rep("left", 330),rep("right", 330)) , 2)),
-                          id = c(rep(1:330, 2)))
-groundtruth |>
+mle_groundtruth <- data.frame(ratio = c(mle_overshoot_ratio, mle_undershoot_ratio), 
+                              type = c(rep("overshoot", 660), rep("undershoot", 660)),
+                              tail = c(rep(c(rep("left", 330),rep("right", 330)) , 2)),
+                              id = c(rep(1:330, 2)))
+
+mom_groundtruth <- data.frame(ratio = c(mom_overshoot_ratio, mom_undershoot_ratio), 
+                              type = c(rep("overshoot", 660), rep("undershoot", 660)),
+                              tail = c(rep(c(rep("left", 330),rep("right", 330)) , 2)),
+                              id = c(rep(1:330, 2)))
+
+groundtruth_comp <- data.frame(ratio = c(mom_overshoot_ratio, mom_undershoot_ratio) / c(mle_overshoot_ratio, mle_undershoot_ratio), 
+                               type = c(rep("overshoot", 660), rep("undershoot", 660)),
+                               tail = c(rep(c(rep("left", 330),rep("right", 330)) , 2)),
+                               id = c(rep(1:330, 2)))
+
+groundtruth_comp |>
   ggplot(aes_string(x = "id", y = "ratio", colour = "type")) +
   facet_grid(tail~.) +
   geom_point() +
   scale_y_log10() +
+  geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
+  labs(title = "Comparison: mom / mle in negative control")
+
+mom_groundtruth |>
+  ggplot(aes_string(x = "ratio")) +
+  facet_grid(tail~type) +
+  geom_histogram() +
+  scale_x_log10() +
+  geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
+  labs(title = "Undershoot (max(D/C)) and overshoot (max(C/D)) ratios: negative control")
+
+mle_groundtruth |>
+  ggplot(aes_string(x = "ratio")) +
+  facet_grid(tail~type) +
+  geom_histogram() +
+  scale_x_log10() +
   geom_hline(yintercept = 1, linetype = "dashed", colour = "red") +
   labs(title = "Undershoot (max(D/C)) and overshoot (max(C/D)) ratios: negative control")
 
