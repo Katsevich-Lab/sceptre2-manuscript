@@ -16,7 +16,7 @@ Tim
 \textbf{A strategy for generating negative control pairs: version \# 2}
 \end{center}
 
-I describe another, more workable (and simpler) strategy for generating negative control pairs. Again, define the following variables.
+I describe another, more workable (and simpler) strategy for generating negative control pairs. Again, define the following quantities.
 
 \begin{itemize}
 	\item The number of negative control gRNAs $N_\textrm{grna}$. Label the NT gRNAs $1, 2, \dots, N_\textrm{grna}$.
@@ -29,7 +29,7 @@ We proceed in several steps.
 \\ \\
 \textbf{Step 1: Tabulate the number of of cells with nonzero expression for each individual NT gRNA and gene}. First, we compute an $N_\textrm{grna} \times N_\textrm{gene}$ matrix $M$, where entry $(i,j)$ is the number of cells containing NT gRNA $i$ with nonzero expression of gene $j$. We easily can construct this matrix either in memory or out-of-core by summing over columns of the gene expression matrix.
 \\ \\
-\textbf{Step 2: Determine if it is feasible to enumerate the possible undercover gRNA groups}. We check the value of $N_\textrm{possible-groups} := \binom{N_\textrm{gene}}{k}$. If $N_\textrm{possible-groups}$ is a huge number (e.g, $ \binom{100}{50} \approx 10^{30}$), then it is not possible to enumerate the possible undercover gRNA groups. If $N_\textrm{possible-groups}$ is small, by contrast (e.g., $\binom{9}{2} = 36$), then it is possible to enumerate the possible undercover gRNA groups. We check if $N_\textrm{possible-groups}$ exceeds some pre-defined threshold (e.g., 20,000), carrying out a different routine in either case. If $N_\textrm{possible-groups} \leq 20,000$, then we proceed to step 3a. Otherwise, we proceed to step 3b. 
+\textbf{Step 2: Determine if it is feasible to enumerate the possible undercover gRNA groups}. We check the value of $N_\textrm{possible-groups} := \binom{N_\textrm{gene}}{k}$. If $N_\textrm{possible-groups}$ is a huge number (e.g, $ \binom{100}{50} \approx 10^{30}$), then it is not possible to enumerate the possible undercover gRNA groups. If $N_\textrm{possible-groups}$ is small, by contrast (e.g., $\binom{9}{2} = 36$), then it is possible to enumerate the possible undercover gRNA groups. We check if $N_\textrm{possible-groups}$ exceeds some pre-defined threshold (e.g., 20,000). If $N_\textrm{possible-groups} \leq 20,000$, then we proceed to step 3a. Otherwise, we proceed to step 3b. 
 \\ \\
 \textbf{Step 3a: Enumerate the possible undercover gRNA groups}. If $N_\textrm{possible-groups} \leq 20,000$, we enumerate the possible undercover gRNA groups. We map each possible undercover gRNA group to a length-$k$ vector of integers sorted in increasing order, where the integers represent individual NT gRNAs. For example, the undercover gRNA group containing NT gRNAs 2, 3, and 7 (arbitrarily labeled) would be mapped to the vector $\texttt{[ 2, 3, 7 ]}.$ We then generate the entire set of $N_\textrm{possible-groups}$ length-$k$ vectors containing integers in the range $\{1, \dots, N_\textrm{grna}\}$. We store these vectors in an ordered list $\texttt{x}$. We also set $N_\textrm{grna-groups} = N_\textrm{possible-groups}.$
 \\ \\
