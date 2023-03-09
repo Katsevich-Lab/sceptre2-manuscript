@@ -235,9 +235,25 @@ p1 + theme(axis.text.x = element_text(size = 18, hjust = 1),
 Papalexi et reports 5 major pathways in CUL3 KO cells. Nuclear Receptors Meta-Pathway,NRF2 pathway,Phytochemical activity on NRF2 transcriptional activation,TYROBP causal network ,and complement system activation. We see pvalues that are approximately the same. However, we do see that the pathway "Phytochemical activity on NRF2 transcriptional activation" is ranked ahead of "TYROBP causal network" in this analysis whereas according to paplexi et al, the relative pvalue rank should be flipped between these two pathways. 
 ```{r}
 CUL3_marker = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',
-                          assay = 'RNA',only.pos = T)
-CUL3_marker$avg_log2FC = signif(CUL3_marker$avg_log2FC, digits=2)
-CUL3_marker$p_val = signif(CUL3_marker$p_val, digits=2)
+                          assay = 'RNA',only.pos = F)
+#CUL3_marker$avg_log2FC = signif(CUL3_marker$avg_log2FC, digits=2)
+#CUL3_marker$p_val = signif(CUL3_marker$p_val, digits=2)
+
+```
+```{r}
+CUL3_marker = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',
+                          assay = 'RNA',only.pos = F,base = exp(1))
+CUL3_marker_all = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',
+                          assay = 'RNA',only.pos = F,base = exp(1),logfc.threshold = 0)
+CUL3_marker_no_filter = FindMarkers(eccite,ident.1 = 'CUL3 KO',ident.2 = 'NT',
+                          assay = 'RNA',only.pos = F,base = exp(1),logfc.threshold = 0,min.pct = 0)
+
+```
+```{r}
+dir = "/Users/kmason/code/sceptre2-manuscript/writeups/papalexi_analysis/"
+saveRDS(CUL3_marker,paste0(dir,"seurat_CUL3_results.rds"))
+saveRDS(CUL3_marker_all,paste0(dir,"seurat_CUL3_results_all.rds"))
+saveRDS(CUL3_marker_no_filter,paste0(dir,"seurat_CUL3_results_no_filter.rds"))
 
 ```
 
