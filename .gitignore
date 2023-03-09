@@ -21,6 +21,10 @@ pipeline_launch_scripts/debug/.nextflow*
 
 writeups/sceptre_debugging/pt_2/sceptre_debugging_2_cache
 writeups/sceptre_debugging/pt_2/sceptre_debugging_2_files
+
+writeups/papalexi_analysis/sceptre_vs_seurat_gene_cache
+writeups/papalexi_analysis/sceptre_vs_seurat_gene_files
+
 .Rproj.user
 
 *.gz
