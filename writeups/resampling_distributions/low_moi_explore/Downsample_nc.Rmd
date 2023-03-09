@@ -173,9 +173,9 @@ for (s in 1:10) {
 }
 
 # save file
-write.csv(overshoot_joint_fit, "overshoot_joint_fit.csv")
-write.csv(overshoot_joint_power, "overshoot_joint_power.csv")
-write.csv(undershoot_joint_fit, "undershoot_joint_fit.csv")
-write.csv(undershoot_joint_power, "undershoot_joint_power.csv")
+write.csv(overshoot_joint_fit, "overshoot_res_fit.csv")
+write.csv(overshoot_joint_power, "overshoot_res_power.csv")
+write.csv(undershoot_joint_fit, "undershoot_res_fit.csv")
+write.csv(undershoot_joint_power, "undershoot_res_power.csv")
 
 ```
