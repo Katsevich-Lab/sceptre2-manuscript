@@ -25,7 +25,7 @@ library(ggplot2)
 library(tidyverse)
 undershoot <- read_csv("undershoot_res_fit.csv")[,-1]
 overshoot <- read_csv("overshoot_res_fit.csv")[,-1]
-quantile_list <- seq(0.01, 0.99, length.out = 10)
+quantile_list <- seq(0.03, 0.97, length.out = 10)
 no_sam <- round(exp(seq(log(1e3), log(5e4), length.out = 10)))
 # rearrange the data frame
 B <- 100
