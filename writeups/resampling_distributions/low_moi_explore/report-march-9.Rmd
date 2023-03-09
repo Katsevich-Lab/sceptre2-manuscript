@@ -1,0 +1,21 @@
+---
+title: "Progress report 3/9/23"
+output:
+  pdf_document: default
+---
+
+# Load the results
+```{r}
+# full analysis for 5690 resamples
+full_results <- readRDS("full_nc_results.rds")
+
+# overshoot (ground truth)
+overshoot_ground_truth <- read_csv("overshoot_res_fit.csv")
+
+# overshoot (estimate)
+
+# undershoot (ground truth)
+
+# undershoot (estimate)
+
+```
