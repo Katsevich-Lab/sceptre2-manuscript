@@ -138,7 +138,7 @@ full_results_overshoot <- bind_rows(
 
 full_results_undershoot <- bind_rows(
   undershoot_left_fit |> mutate(tail = "left", evaluation = "ground truth") |> rename(undershoot_ratio = overshoot_ratio),
-  undershoot_right_fit |> mutate(tail = "right", evaluation = "ground truth"),
+  undershoot_right_fit |> mutate(tail = "right", evaluation = "ground truth", replicate_id = row_number(), subsample = 5690),
   undershoot_left_power |> mutate(tail = "left", evaluation = "estimate") |> rename(undershoot_ratio = overshoot_ratio),
   undershoot_right_power |> mutate(tail = "right", evaluation = "estimate") |> rename(undershoot_ratio = overshoot_ratio)
 ) |>
