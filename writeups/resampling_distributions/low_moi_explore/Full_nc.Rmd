@@ -15,6 +15,8 @@ library(tidyverse)
 library(katlabutils)
 library(cowplot)
 
+conflicts_prefer(dplyr::rename)
+
 sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 # load empirical distributions
 resampling_dists <- readRDS(paste0(sceptre2_results_dir, "resampling_distributions/sceptre_resampling_dists.rds"))
@@ -124,4 +126,32 @@ write.csv(cbind(overshoot_left_power, overshoot_right_power), "overshoot_full_po
 write.csv(cbind(undershoot_left_fit, undershoot_right_fit), "undershoot_full_fit.csv")
 write.csv(cbind(undershoot_left_power, undershoot_right_power), "undershoot_full_power.csv")
 
+
+full_results_overshoot <- bind_rows(
+  overshoot_left_fit |> mutate(tail = "left", evaluation = "ground truth"),
+  overshoot_right_fit |> mutate(tail = "right", evaluation = "ground truth"),
+  overshoot_left_power |> mutate(tail = "left", evaluation = "estimate"),
+  overshoot_right_power |> mutate(tail = "right", evaluation = "estimate")
+) |>
+  rename(ratio = overshoot_ratio) |>
+  mutate(error_type = "overshoot")
+
+full_results_undershoot <- bind_rows(
+  undershoot_left_fit |> mutate(tail = "left", evaluation = "ground truth") |> rename(undershoot_ratio = overshoot_ratio),
+  undershoot_right_fit |> mutate(tail = "right", evaluation = "ground truth"),
+  undershoot_left_power |> mutate(tail = "left", evaluation = "estimate") |> rename(undershoot_ratio = overshoot_ratio),
+  undershoot_right_power |> mutate(tail = "right", evaluation = "estimate") |> rename(undershoot_ratio = overshoot_ratio)
+) |>
+  rename(ratio = undershoot_ratio) |>
+  mutate(error_type = "undershoot")
+
+full_results <- bind_rows(
+  full_results_overshoot,
+  full_results_undershoot
+) |>
+  rename(id = replicate_id,
+         num_samples_fit = subsample) |>
+  as_tibble()
+
+saveRDS(full_results, "full_nc_results.rds")
 ```
