@@ -1,17 +1,21 @@
 ---
 title: "Papalexi positive controls"
 output: pdf_document
-date: "2023-02-16"
+date: "2023-03-13"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
-Here we look at the SCEPTRE and Seurat DE p-values for the positive control pairs on the Papalexi (gene) data. These are of particular interest, because Mixscape labels many of the Papalexi perturbations as having no effect in any cells. Let's see whether some of these perturbations nevertheless show significant associations with the expressions of their target genes.
+We look at SCEPTRE (with skew-normal) and Seurat p-values for the positive control pairs on the Papalexi (gene) data. We indicate, for each gene targeted, whether it survived Mixscape and whether it is a transcription factor. Transcription factors are displayed first; they are top candidates for our discovery analysis.  
 
-```{r, echo = FALSE, message = FALSE}
+\vspace{-0.05in}
+
+```{r, echo = FALSE, message = FALSE, cache = FALSE}
 library(tidyverse)
+library(sceptre3)
+library(ondisc)
 library(kableExtra)
 
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
@@ -19,45 +23,96 @@ result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 N_NONZERO_TREATMENT_CUTOFF <- 7
 N_NONZERO_CONTROL_CUTOFF <- 7
 
-pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results_processed.rds")) |>
-  mutate(Method = forcats::fct_recode(Method,
-                                      "SCEPTRE" = "Sceptre",
-                                      "Liscovitch" = "Liscovitch Method",
-                                      "Schraivogel" = "Schraivogel Method",
-                                      "Weissman" = "Weissman Method")) |>
-  mutate(dataset_rename = forcats::fct_recode(dataset_rename,
-                                              "Frangieh (Co Culture)" = "Frangieh Co Culture Gene",
-                                              "Frangieh (Control)" = "Frangieh Control Gene",
-                                              "Frangieh (IFN-\u03B3)" = "Frangieh Ifn Gamma Gene",
-                                              "Papalexi (Gene)" = "Papalexi Eccite Screen Gene",
-                                              "Papalexi (Protein)" = "Papalexi Eccite Screen Protein",
-                                              "Schraivogel" = "Schraivogel Enhancer Screen")) 
+seurat_results <- readRDS(paste0(
+  result_dir,
+  "positive_control_analysis/pc_results_processed.rds"
+)) |>
+  filter(dataset == "papalexi_eccite_screen_gene", 
+         method == "seurat_de", 
+         n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+         n_control >= N_NONZERO_CONTROL_CUTOFF)
 
+prtb <- seurat_results |> pull(grna_group)
+```
+
+```{r, message = FALSE, echo = FALSE, results = "hide"}
+LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
+
+# gene info
+gene_odm_fp <- paste0(papalexi_dir, "gene/matrix.odm")
+
+# grna info
+grna_odm_fp <- paste0(papalexi_dir, "grna_expression/matrix.odm")
+
+# mm odm metadata fp
+mm_metadata_fp <- paste0(papalexi_dir, "multimodal_metadata.rds")
+
+# construct mm odm
+mm_odm <- read_multimodal_odm(odm_fps = c(gene_odm_fp, grna_odm_fp),
+                                      multimodal_metadata_fp = mm_metadata_fp)
+
+# get the in-memory gene matrix
+gene_odm <- mm_odm |> get_modality("gene")
+response_matrix <- gene_odm[[seq(1, nrow(gene_odm)),]]
+rownames(response_matrix) <- get_feature_ids(gene_odm)
+
+# get the in-memory grna matrix
+grna_odm <- mm_odm |> get_modality("grna_expression")
+grna_matrix <- grna_odm[[seq(1, nrow(grna_odm)),]]
+
+# covariate matrix
+covariate_data_frame <- mm_odm |> get_cell_covariates()
+
+# grna group data frame
+grna_group_data_frame <- data.frame(grna_id = rownames(grna_odm@feature_covariates),
+                                    grna_group = grna_odm@feature_covariates$target)
+
+# set formulas, grna group target name
+gene_formula <- ~ log(gene_n_umis) + log(gene_n_nonzero) + bio_rep + phase + p_mito
+
+gene_grna_group_pairs <- tibble(response_id = prtb, grna_group = prtb)
+
+
+sceptre_results <- run_sceptre_lowmoi(response_matrix = response_matrix,
+                                                   grna_matrix = grna_matrix,
+                                                   covariate_data_frame = covariate_data_frame,
+                                                   grna_group_data_frame = grna_group_data_frame,
+                                                   formula_object = gene_formula,
+                                                   calibration_check = FALSE,
+                                                   response_grna_group_pairs = gene_grna_group_pairs)
+```
+
+```{r, echo = FALSE}
 # list of perturbations surviving Mixscape
 ptrb_surviving_mixscape <- c("SMAD4", "STAT2", "JAK2", 
                              "STAT1", "IFNGR2", "IFNGR1", 
                              "IRF1", "BRD4", "SPI1", 
                              "CUL3", "MYC")
 
-# rejection threshold
-reject_thresh <- 1e-5
+prtb_tf <- c("ATF2", "ETV7", "IRF1", "IRF7", "MYC", "NFKBIA", "POU2F2", "SMAD4", 
+             "SPI1", "STAT1", "STAT2", "STAT3", "STAT5A")
 
-# create the table of SCEPTRE and Seurat DE p-values
-pc_res |>
-  filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
-         n_control >= N_NONZERO_CONTROL_CUTOFF, 
-         dataset == "papalexi_eccite_screen_gene", 
-         Method %in% c("SCEPTRE", "Seurat De")) |> 
-  select(response_id, p_value, Method) |> 
-  pivot_wider(names_from = Method, values_from = p_value) |>
-  filter(SCEPTRE < reject_thresh) |> 
-  arrange(SCEPTRE, `Seurat De`) |>
-  mutate(`Survived Mixscape` = response_id %in% ptrb_surviving_mixscape) |> 
-  rename(Gene = response_id, 
-         `Seurat De p-value` = `Seurat De`,
-         `SCEPTRE p-value` = `SCEPTRE`) |>
+seurat_results |>
+  select(response_id, p_value) |>
+  rename(`Seurat p-value` = p_value) |>
+  left_join(sceptre_results |> 
+              select(response_id, p_value) |> 
+              rename(`SCEPTRE p-value` = p_value),
+            by = "response_id") |>
+  mutate(`Survived Mixscape` = response_id %in% ptrb_surviving_mixscape,
+         TF = response_id %in% prtb_tf) |>
+  arrange(desc(TF), `SCEPTRE p-value`, `Seurat p-value`) |>
+  mutate_if(is.numeric, ~ as.character(signif(., 2))) |>
+  rename(Gene = response_id) |>
   kable(booktabs = TRUE, linesep = "") |>
   kable_styling(position = "center", latex_options = "hold_position")
 ```
 
-We see that roughly half of the positive control perturbations passing the 1e-5 p-value threshold did not survive Mixscape, suggesting that Mixscape is too aggressive in labeling perturbations as having no effect.
+\vspace{-0.05in}
+
+- SCEPTRE with skew-normal fit is quite capable of producing very small p-values!
+- The SCEPTRE and Seurat p-values are generally concordant. It's not atypical, however, for them to differ by an order of magnitude or two.
+- Some perturbations pass Mixscape even though their Seurat positive control p-values are not small. This suggests that it is possible for a perturbation to have significant associations with expressions of genes that are not its direct target even if the association with its direct target is not significant. 
+- Some perturbations do not pass Mixscape even though their Seurat / SCEPTRE positive control p-values are small. These are examples of Mixscape being too aggressive. In Papalexi et al, they say that they do not detect any differentially expressed genes for perturbations that did not pass Mixscape. This appears at odds with the fact that there are cases not passing Mixscape where the Seurat positive p-values are small. This discrepancy can be reconciled if the latter small p-values did not pass Seurat's other filters, e.g. log fold change. 
+- Initial perturbations to explore for our Papalexi discovery analysis are STAT3, NFKBIA, and ETV7. These TFs, for which SCEPTRE's positive control p-values are small, did not pass Mixscape.
