@@ -107,5 +107,3 @@ protein_result <- run_sceptre_low_moi(mm_odm,
 #data.dir = '/Users/kmason/sceptre2-manuscript/writeups/papalexi_analysis/'
 #saveRDS(gene_result,'gene_result_PDL1_mrna.rds')
 
-
-
