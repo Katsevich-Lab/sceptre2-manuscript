@@ -1,6 +1,5 @@
 library(ondisc) # devtools::install_github('timothy-barry/ondisc')
 library(sceptre3)
-library(BH)
 
 LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
