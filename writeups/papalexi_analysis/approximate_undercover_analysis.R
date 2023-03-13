@@ -1,3 +1,7 @@
+
+library(ondisc) # devtools::install_github('timothy-barry/ondisc')
+library(sceptre3)
+library(BH)
 # This script uses sceptre3 to run an approximate undercover analysis on the 
 LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
