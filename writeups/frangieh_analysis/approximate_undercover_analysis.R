@@ -1,5 +1,7 @@
 # This script uses sceptre3 to run an approximate undercover analysis on the 
 LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+result_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/writeup_results/calibration_check")
+if (!dir.exists(result_dir)) dir.create(result_dir, recursive = TRUE)
 ifn_gamma_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/frangieh/ifn_gamma/")
 
 # gene info
@@ -35,7 +37,7 @@ n_ntc <- grna_group_data_frame |>
   nrow()
 
 # set formulas, grna group target name
-gene_formula <- formula(~log(gene_n_umis) + log(gene_n_nonzero) + phase) #  mm_odm@global_misc$formula
+gene_formula <- mm_odm@global_misc$formula
 
 undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_matrix,
                                                   grna_matrix = grna_matrix,
@@ -51,10 +53,6 @@ undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_mat
                                                   B2 = 5000,
                                                   B3 = 25000,
                                                   undercover_group_size = 1,
-                                                  n_calibration_pairs =  20000) # n_ntc * nrow(response_matrix))
-p <- sceptre3::plot_calibration_results(undercover_result)
-library(ggplot2)
+                                                  n_calibration_pairs = 200) # n_ntc * nrow(response_matrix))
 
-
-
-sceptre3::run_sceptre_lowmoi(response_matrix = )
+saveRDS(object = undercover_result, file = paste0(result_dir, "/frangieh_calibration_check.rds"))
