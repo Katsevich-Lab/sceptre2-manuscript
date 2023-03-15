@@ -244,3 +244,10 @@ ETV7_marker = FindMarkers(eccite,ident.1 = 'ETV7 NP',ident.2 = 'NT',
                           assay = 'RNA',only.pos = F,base = exp(1),
                           logfc.threshold = 0)
 ```
+```{r}
+dir = "/Users/kmason/code/sceptre2-manuscript/writeups/papalexi_analysis/"
+saveRDS(STAT3_marker ,paste0(dir,"seurat_STAT3_results.rds"))
+saveRDS(NFKBIA_marker ,paste0(dir,"seurat_NFKBIA_results.rds"))
+saveRDS(ETV7_marker ,paste0(dir,"seurat_ETV7_results.rds"))
+
+```

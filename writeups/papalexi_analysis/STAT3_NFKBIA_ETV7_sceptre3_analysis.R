@@ -46,7 +46,7 @@ unique_grna = unique(grna_groups$grna_group)
 
 #get CUL3 mrna data. Remove genes 13565-13575 since they contain something that is causing code to crash
 response_grna_group_pairs <- expand.grid(response_id = rownames(response_matrix)[-c(13565:13575)],
-                                           grna_group = c("STAT3","NFKBIA","ETV7")) # an example set of pairs
+                                           grna_group = unique_grna[-which(unique_grna %in% c('non-targeting','CD274'))]) # an example set of pairs
 
 test_stat <- "full"
 return_resampling_dist <- FALSE
@@ -71,4 +71,4 @@ result_gene <- run_sceptre_lowmoi(response_matrix,
 CODE_DIR <-.get_config_path("LOCAL_CODE_DIR")
 papalexi_analysis_data_dir <- paste0(CODE_DIR, "/sceptre2-manuscript/writeups/papalexi_analysis/")
 
-saveRDS(result_gene,paste0(papalexi_analysis_data_dir,"sceptre_STAT3_NFKBIA_ETV7_mrna_results_with_effect_size.rds"))
+saveRDS(result_gene,paste0(papalexi_analysis_data_dir,"sceptre_full_mrna_results_with_effect_size.rds"))
