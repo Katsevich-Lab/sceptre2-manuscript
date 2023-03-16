@@ -233,7 +233,7 @@ p1 + theme(axis.text.x = element_text(size = 18, hjust = 1),
 # Perform Marker Gene Analysis/Pathway Enrichment Analysis Ordered by Log Fold Change
 
 Papalexi et reports 5 major pathways in CUL3 KO cells. Nuclear Receptors Meta-Pathway,NRF2 pathway,Phytochemical activity on NRF2 transcriptional activation,TYROBP causal network ,and complement system activation. We see pvalues that are approximately the same. However, we do see that the pathway "Phytochemical activity on NRF2 transcriptional activation" is ranked ahead of "TYROBP causal network" in this analysis whereas according to paplexi et al, the relative pvalue rank should be flipped between these two pathways. 
-```{r}
+```{r,eval = F}
 STAT3_marker = FindMarkers(eccite,ident.1 = 'STAT3 NP',ident.2 = 'NT',
                           assay = 'RNA',only.pos = F,base = exp(1),
                           logfc.threshold = 0)
@@ -251,3 +251,32 @@ saveRDS(NFKBIA_marker ,paste0(dir,"seurat_NFKBIA_results.rds"))
 saveRDS(ETV7_marker ,paste0(dir,"seurat_ETV7_results.rds"))
 
 ```
+
+
+```{r}
+eccite_copy = eccite
+grna = unfactor((Idents(eccite)))
+grna = substr(grna,1,nchar(grna)-3)
+grna[nchar(grna)==0] = 'NT'
+Idents(eccite_copy) = grna
+prtb = unique(grna)[prtb != 'NT']
+diff_genes <- vector(mode='list', length=length(prtb))
+names(diff_genes) = prtb
+counter = 1
+for(val in prtb){
+  marker_all = FindMarkers(eccite_copy,ident.1 = val,ident.2 = 'NT',
+                          assay = 'RNA',only.pos = F,base = exp(1),
+                          logfc.threshold = 0)
+  val[[counter]] = marker_all
+  counter = counter + 1
+}
+
+```
+
+
+
+
+
+
+
+
