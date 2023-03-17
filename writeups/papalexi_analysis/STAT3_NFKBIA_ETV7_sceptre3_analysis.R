@@ -1,3 +1,5 @@
+devtools::install_github("https://github.com/timothy-barry/sceptre3")
+
 library(ondisc) # devtools::install_github('timothy-barry/ondisc')
 library(sceptre3)
 library(BH)

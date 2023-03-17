@@ -267,14 +267,18 @@ for(val in prtb){
   marker_all = FindMarkers(eccite_copy,ident.1 = val,ident.2 = 'NT',
                           assay = 'RNA',only.pos = F,base = exp(1),
                           logfc.threshold = 0)
-  val[[counter]] = marker_all
+  diff_genes[[counter]] = marker_all
   counter = counter + 1
 }
 
 ```
 
 
+```{r}
+dir = "/Users/kmason/code/sceptre2-manuscript/writeups/papalexi_analysis/"
+saveRDS(diff_genes ,paste0(dir,"seurat_all_perturbations_results.rds"))
 
+```
 
 
 
