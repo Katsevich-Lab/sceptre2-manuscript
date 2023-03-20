@@ -39,7 +39,7 @@ n_ntc <- grna_group_data_frame |>
 # set formulas, grna group target name
 gene_formula <- mm_odm@global_misc$formula
 
-undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_matrix,
+system.time(undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_matrix,
                                                   grna_matrix = grna_matrix,
                                                   covariate_data_frame = covariate_data_frame,
                                                   grna_group_data_frame = grna_group_data_frame,
@@ -53,6 +53,9 @@ undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_mat
                                                   B2 = 5000,
                                                   B3 = 25000,
                                                   undercover_group_size = 1,
-                                                  n_calibration_pairs = 200) # n_ntc * nrow(response_matrix))
+                                                  n_calibration_pairs =  n_ntc * nrow(response_matrix)))
 
 saveRDS(object = undercover_result, file = paste0(result_dir, "/frangieh_calibration_check.rds"))
+p <- sceptre3:::plot_calibration_results(undercover_result)
+library(ggplot2)
+ggsave(filename = "~/Desktop/ifn_gamma_undercover_grp1.pdf", plot = p, device = "pdf", scale = 0.9, width = 6, height = 5.5)

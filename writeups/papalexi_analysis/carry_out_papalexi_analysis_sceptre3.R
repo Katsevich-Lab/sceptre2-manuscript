@@ -52,7 +52,7 @@ response_grna_group_pairs = rbind(response_grna_group_pairs_1,response_grna_grou
 test_stat <- "full"
 return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE
-fit_skew_normal <- FALSE
+fit_skew_normal <- TRUE
 
 result_gene <- run_sceptre_lowmoi(response_matrix,
                                   grna_matrix,
@@ -65,8 +65,6 @@ result_gene <- run_sceptre_lowmoi(response_matrix,
                                   return_resampling_dist,
                                   adaptive_permutation_test,
                                   fit_skew_normal)
-
-
 
 ##########################################
 # SET ARGS FOR PROTEIN EXPRESSION ANALYSIS
