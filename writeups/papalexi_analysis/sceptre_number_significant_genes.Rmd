@@ -31,17 +31,11 @@ code_dir = .get_config_path("LOCAL_CODE_DIR")
 data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
 sceptre_path = paste0(data.dir,
                   'sceptre_full_mrna_results_with_effect_size.rds')
-seurat_stat3_path = paste0(data.dir,
-                   'seurat_STAT3_results.rds')
-seurat_nfkbia_path = paste0(data.dir,
-                   'seurat_NFKBIA_results.rds')
-seurat_etv7_path = paste0(data.dir,
-                   'seurat_ETV7_results.rds')
+seurat_path = paste0(data.dir,
+                   'seurat_all_perturbations_results.rds')
 
 sceptre = readRDS(sceptre_path)
-seurat_stat3 = readRDS(seurat_stat3_path)
-seurat_nfkbia = readRDS(seurat_nfkbia_path)
-seurat_etv7 = readRDS(seurat_etv7_path)
+seurat = readRDS(seurat_path)
 ```
 
 
