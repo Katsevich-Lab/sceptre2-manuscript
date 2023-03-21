@@ -127,5 +127,9 @@ print(paste0("The sensitivity of SCEPTRE ",wrt," is ",sceptre_sensitivity))
 print(paste0("The sensitivity of Seurat ",wrt," is ",seurat_sensitivity))
 ```
 
+```{r}
+#get number of true discoveries made by each method
 
+
+```
 

@@ -266,7 +266,7 @@ counter = 1
 for(val in prtb){
   marker_all = FindMarkers(eccite_copy,ident.1 = val,ident.2 = 'NT',
                           assay = 'RNA',only.pos = F,base = exp(1),
-                          logfc.threshold = 0)
+                          logfc.threshold = 0,min.pct = 0)
   diff_genes[[counter]] = marker_all
   counter = counter + 1
 }
