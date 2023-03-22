@@ -259,7 +259,7 @@ grna = unfactor((Idents(eccite)))
 grna = substr(grna,1,nchar(grna)-3)
 grna[nchar(grna)==0] = 'NT'
 Idents(eccite_copy) = grna
-prtb = unique(grna)[prtb != 'NT']
+prtb = unique(grna)[unique(grna) != 'NT']
 diff_genes <- vector(mode='list', length=length(prtb))
 names(diff_genes) = prtb
 counter = 1
