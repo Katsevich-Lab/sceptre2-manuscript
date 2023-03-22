@@ -1,5 +1,5 @@
 ---
-title: "SCEPTRE CHIP-seq"
+title: "SCEPTRE Vs Seurat CHIP-seq Analysis"
 output: pdf_document
 date: "2023-03-20"
 ---
@@ -21,7 +21,14 @@ library(BH)
 library(varhandle)
 library(kableExtra)
 library(rjson)
+library(ggplot2)
 ```
+
+# Goal
+
+The goal of this report is to compare the genes that are found to be significantly affected by IRF1 perturbation via Seurat and SCEPTRE to CHIPseq data. 
+
+## Read in Promoter Data
 
 ```{r}
 #read in papalexi data
@@ -76,6 +83,7 @@ promoters <- GRanges(
   TF = A$hgnc_symbol)
 ```
 
+## Read in CHIPseq Data and Join the Datasets
 
 ```{r}
 #read in chipseq data as granges object 
@@ -93,6 +101,9 @@ null_genes = direct_effects$TF[is.na(direct_effects$score)==T]
 print(paste0("The number of promoters that overlap with Chipseq peaks is ",
              length(overlap_genes)))
 ```
+
+
+## Read in Seurat and SCEPTRE Results 
 
 ```{r}
 #read in sceptre and seurat analysis data
@@ -114,13 +125,15 @@ for(j in c(1:length(seurat))){
 }
 ```
 
-
+## Filter to Get IRF1 Results
 ```{r}
 #get sceptre and seurat IRF1 results 
 PRTB = 'IRF1'
 sceptre_prtb = subset(sceptre,grna_group == PRTB)
 seurat_prtb = seurat[[PRTB]]
 ```
+
+## Compare Significant Genes to CHIPseq Results
 
 ```{r}
 alpha = 0.05
@@ -156,6 +169,7 @@ seurat_specificity = 1-length(seurat_false)/length(null_genes)
 
 ```
 
+## True Positive Table
 
 ```{r}
 #make table for true positives
@@ -172,9 +186,13 @@ kable_styling(results_table,position = "center")
 
 ```
 
+\newpage
+
+## True Positive Table
+
 
 ```{r}
-#make table for true positives
+#make table for false positives
 false_pos = matrix(NA,1,4)
 rownames(false_pos) = "False Positives"
 colnames(false_pos) = c("Total Null Genes","Unique to SCEPTRE",
@@ -187,10 +205,12 @@ results_table = kable(false_pos,booktabs = TRUE, linesep = "",
 kable_styling(results_table,position = "center")
 
 ```
+\newpage
 
+## Sensitivity Specificity Table
 
 ```{r}
-#make table for true positives
+#make table for sens and spec
 sens_spec = matrix(NA,2,2)
 rownames(sens_spec) = c("SCEPTRE","Seurat")
 colnames(sens_spec) = c("Sensitivity","Specificity")
@@ -204,15 +224,17 @@ kable_styling(results_table,position = "center")
 
 ```
 
+\newpage 
 
 
+## Get Top Genes by Score 
 ```{r}
 TF = direct_effects$TF
-scores = direct_effects$signalValue
+scores = direct_effects$score
 top_genes = sort(TF[order(scores,decreasing = T)][1:500])
 ```
 
-
+## Read in Reference Dataset For IRF1 TF Targets
 ```{r}
 data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
 targets.dir = paste0(data.dir,'IRF1_targets.json')
@@ -221,8 +243,11 @@ targets = c()
 for(j in c(1:length(prtb_targets$associations))){
   targets = c(targets,prtb_targets$associations[[j]]$gene$symbol)
 }
+targets = targets[(targets%in%sceptre_prtb$response_id)]
+null_targets =sceptre_prtb$response_id[(sceptre_prtb$response_id%in%targets)==F]
 ```
 
+## Table For Overlap Of Gene Sets
 ```{r}
 overlap_targets = top_genes[(top_genes%in% targets)]
 CHIP_target_unique = top_genes[(top_genes%in% targets)==F]
@@ -231,7 +256,8 @@ ref_target_unique = targets[(targets %in% top_genes) == F]
 chip_agree = matrix(NA,1,3)
 rownames(chip_agree) = c("IRF1 Targets")
 colnames(chip_agree ) = c("Unique to CHIPseq","Unique to Reference","Shared")
-chip_agree [1,] = c(length(CHIP_target_unique),length(ref_target_unique),length(overlap_targets))
+chip_agree [1,] = c(length(CHIP_target_unique),length(ref_target_unique),
+                    length(overlap_targets))
 
 
 results_table = kable(chip_agree ,booktabs = TRUE, linesep = "",
@@ -239,13 +265,129 @@ caption = paste0("SCEPTRE Vs Seurat:",PRTB,
                  " Perturbation CHIPseq and Reference Agreement"))
 kable_styling(results_table,position = "center")
 
+```
+
+\newpage 
+
+
+## Compare Significant Gene Sets to Reference Data
+
+```{r}
+alpha = 0.05
+#get all significant genes from each method
+sceptre_sig = unfactor(sceptre_prtb$response_id[sceptre_prtb$p_value_adj < alpha])
+seurat_sig = rownames(seurat_prtb)[seurat_prtb$p_val_adj < alpha]
+#get true positive sets
+sceptre_true = sceptre_sig[sceptre_sig %in% targets]
+seurat_true = seurat_sig[seurat_sig %in% targets]
+#get number of shared and unique true postives
+shared_true = sceptre_true[sceptre_true %in% seurat_true]
+sceptre_true_unique = sceptre_true[(sceptre_true %in% seurat_true) == F]
+seurat_true_unique = seurat_true[(seurat_true %in% sceptre_true) == F]
+
+#get sensitivity
+sceptre_sensitivity = length(sceptre_true)/length(targets)
+seurat_sensitivity = length(seurat_true)/length(targets)
+
+#get false positive sets
+sceptre_false = sceptre_sig[sceptre_sig %in% null_targets]
+seurat_false = seurat_sig[seurat_sig %in% null_targets]
+#get number of shared and unique false postives
+shared_false = sceptre_false[sceptre_false %in% seurat_false]
+sceptre_false_unique = sceptre_false[(sceptre_false %in% seurat_false) == F]
+seurat_false_unique = seurat_false[(seurat_false %in% sceptre_false) == F]
+
+
+#get specificity
+sceptre_specificity = 1-length(sceptre_false)/length(null_targets)
+seurat_specificity = 1-length(seurat_false)/length(null_targets)
 
 ```
 
 
+## True Positive Table
+
+```{r}
+#make table for true positives
+true_pos = matrix(NA,1,4)
+rownames(true_pos) = "True Positives"
+colnames(true_pos) = c("Total Positive Genes","Unique to SCEPTRE",
+                       "Unique to Seurat","Shared")
+true_pos[1,] = c(length(targets),length(sceptre_true_unique),
+                 length(seurat_true_unique),length(shared_true))
+
+results_table = kable(true_pos,booktabs = TRUE, linesep = "",
+    caption = paste0("SCEPTRE Vs Seurat:",PRTB,
+                     " Perturbation Reference Target True Positives"))
+kable_styling(results_table,position = "center")
+
+```
+
+\newpage
+
+## False Positive Table
+
+```{r}
+#make table for true positives
+false_pos = matrix(NA,1,4)
+rownames(false_pos) = "False Positives"
+colnames(false_pos) = c("Total Null Genes","Unique to SCEPTRE",
+                       "Unique to Seurat","Shared")
+false_pos[1,] = c(length(null_targets),length(sceptre_false_unique),
+                 length(seurat_false_unique),length(shared_false))
+
+results_table = kable(false_pos,booktabs = TRUE, linesep = "",
+    caption = paste0("SCEPTRE Vs Seurat:",PRTB,
+                     " Perturbation Reference Target False Positives"))
+kable_styling(results_table,position = "center")
+
+```
+
+\newpage
+
+## Sensitivity and Specificity Table
+
+```{r}
+#make table for true positives
+sens_spec = matrix(NA,2,2)
+rownames(sens_spec) = c("SCEPTRE","Seurat")
+colnames(sens_spec) = c("Sensitivity","Specificity")
+sens_spec[1,] = c(sceptre_sensitivity,sceptre_specificity)
+sens_spec[2,] = c(seurat_sensitivity,seurat_specificity)
+
+results_table = kable(sens_spec,booktabs = TRUE, linesep = "",
+caption = paste0("SCEPTRE Vs Seurat:",PRTB,
+                 " Perturbation Reference Target Sensitivity and Specificity"))
+kable_styling(results_table,position = "center")
+
+```
+
+\newpage 
+
+## Bonus: Pvalue Scatterplot
+
+```{r}
+sceptre_genes = unfactor(sceptre_prtb$response_id)
+seurat_pvals = log(seurat_prtb[sceptre_genes,]$p_val,10)
+sceptre_pvals = log(sceptre_prtb$p_value,10)
+#remove those with sceptre pval = 0
+sceptre_0 = which(is.na(sceptre_pvals) == T)
+sceptre_pvals = sceptre_pvals[-sceptre_0]
+seurat_pvals = seurat_pvals[-sceptre_0]
+```
+```{r}
+#merge pvalues
+Pval = data.frame(seuratP = seurat_pvals,
+                  sceptreP = sceptre_pvals)
+```
 
 
-
-
-
-
+```{r}
+#volcano plot 
+ggplot(Pval,aes(x = seuratP,y = sceptreP)) + geom_point() +
+  ggtitle('Identity Plot of CUL3 Pvalues: SCEPTRE vs  Unfiltered Seurat') +
+  labs(y = 'Sceptre Pvalues',x = 'Seurat Pvalues')+
+  geom_abline(slope=1, intercept = 0,color = 'red')+
+  geom_vline(xintercept = log(0.05,10),color = 'red')+
+  geom_hline(yintercept = log(0.05,10), color = 'red')
+```
