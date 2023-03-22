@@ -364,7 +364,10 @@ kable_styling(results_table,position = "center")
 
 \newpage 
 
-## Bonus: Pvalue Scatterplot
+## Summary
+The CHIPseq peaks that we are using do not agree with the database reference at all. This could be due to incorrect reading of the file. Seurat and SCEPTRE generally have similar sensitivity and specificity for both the CHIPseq data and the database reference although the sensitivity is much higher when compared to the database reference (30 percent vs 12 percent). In this case, around 10 percent of the total genes that are rejected differ between the two sets. 
+
+## Bonus: Pvalue Scatterplot Between log Pvalues For Seurat and SCEPTRE
 
 ```{r}
 sceptre_genes = unfactor(sceptre_prtb$response_id)
