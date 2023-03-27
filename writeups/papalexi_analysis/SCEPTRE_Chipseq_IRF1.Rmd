@@ -90,7 +90,7 @@ promoters <- GRanges(
 code_dir = .get_config_path("LOCAL_CODE_DIR")
 data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
 chipseq.dir = paste0(data.dir,
-              'GSM935549_hg19_wgEncodeSydhTfbsK562Irf1Ifng6hStdPk.narrowPeak')
+              'GSM935505_hg19_wgEncodeSydhTfbsK562Irf1Ifng30StdPk.narrowPeak')
 chipseq_data = readNarrowPeak(chipseq.dir, track.line=FALSE, zero.based=TRUE)
 #get left join of promoters and chipseq peaks
 direct_effects = plyranges::join_overlap_left(promoters,chipseq_data,
@@ -138,7 +138,7 @@ seurat_prtb = seurat[[PRTB]]
 ```{r}
 alpha = 0.05
 #get all significant genes from each method
-sceptre_sig = unfactor(sceptre_prtb$response_id[sceptre_prtb$p_value_adj < alpha])
+sceptre_sig=unfactor(sceptre_prtb$response_id[sceptre_prtb$p_value_adj < alpha])
 seurat_sig = rownames(seurat_prtb)[seurat_prtb$p_val_adj < alpha]
 #get true positive sets
 sceptre_true = sceptre_sig[sceptre_sig %in% overlap_genes]
@@ -230,7 +230,7 @@ kable_styling(results_table,position = "center")
 ## Get Top Genes by Score 
 ```{r}
 TF = direct_effects$TF
-scores = direct_effects$score
+scores = direct_effects$pvalue
 top_genes = sort(TF[order(scores,decreasing = T)][1:500])
 ```
 
