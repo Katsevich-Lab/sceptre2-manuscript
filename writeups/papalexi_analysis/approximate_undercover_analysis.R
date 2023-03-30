@@ -1,4 +1,3 @@
-
 library(ondisc) # devtools::install_github('timothy-barry/ondisc')
 library(sceptre3)
 library(BH)
@@ -27,6 +26,7 @@ rownames(response_matrix) <- ondisc::get_feature_ids(gene_odm)
 # get the in-memory grna matrix
 grna_odm <- mm_odm |> ondisc::get_modality("grna_expression")
 grna_matrix <- grna_odm[[seq(1, nrow(grna_odm)),]]
+rownames(grna_matrix) <- ondisc::get_feature_ids(grna_odm)
 
 # covariate matrix
 covariate_data_frame <- mm_odm |> ondisc::get_cell_covariates()
@@ -36,7 +36,7 @@ grna_group_data_frame <- data.frame(grna_id = rownames(grna_odm@feature_covariat
                                     grna_group = grna_odm@feature_covariates$target)
 
 # set formulas, grna group target name
-gene_formula <- ~ log(gene_n_umis) + log(gene_n_nonzero) + bio_rep + phase + p_mito
+gene_formula <- ~ log(gene_n_umis) + log(gene_n_nonzero) + bio_rep + p_mito
 
 undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_matrix,
                                                   grna_matrix = grna_matrix,
@@ -51,7 +51,7 @@ undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_mat
                                                   B1 = 500,
                                                   B2 = 5000,
                                                   B3 = 25000,
-                                                  undercover_group_size = 1,
+                                                  calibration_group_size = 1,
                                                   n_calibration_pairs = 9 * nrow(response_matrix))
 p <- sceptre3::plot_calibration_results(undercover_result)
 library(ggplot2)

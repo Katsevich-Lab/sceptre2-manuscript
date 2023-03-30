@@ -30,8 +30,8 @@ protein_matrix <- protein_odm[[seq(1,nrow(protein_odm)),]]
 rownames(protein_matrix) <- get_feature_ids(protein_odm)
 
 # set formulas, grna group target name
-gene_formula <- ~ log(n_umis) + log(n_nonzero) + bio_rep + phase + p_mito
-protein_formula <- ~ log(n_umis) + bio_rep + phase + p_mito
+gene_formula <- ~ log(n_umis) + log(n_nonzero) + bio_rep + p_mito
+protein_formula <- ~ log(n_umis) + bio_rep + p_mito
 
 #######################################
 # SET ARGS FOR GENE EXPRESSION ANALYSIS
@@ -52,17 +52,13 @@ return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE
 fit_skew_normal <- TRUE
 
-result_gene <- run_sceptre_lowmoi(response_matrix,
-                                  grna_matrix,
-                                  covariate_data_frame,
-                                  grna_group_data_frame,
-                                  formula_object,
-                                  calibration_check,
-                                  response_grna_group_pairs,
-                                  test_stat,
-                                  return_resampling_dist,
-                                  adaptive_permutation_test,
-                                  fit_skew_normal)
+result_gene <- run_sceptre_lowmoi(response_matrix = response_matrix,
+                                  grna_matrix = grna_matrix,
+                                  covariate_data_frame = covariate_data_frame,
+                                  grna_group_data_frame = grna_group_data_frame,
+                                  formula_object = formula_object,
+                                  response_grna_group_pairs = response_grna_group_pairs,
+                                  calibration_check = calibration_check)
 
 ##########################################
 # SET ARGS FOR PROTEIN EXPRESSION ANALYSIS
