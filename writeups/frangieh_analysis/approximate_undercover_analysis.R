@@ -38,22 +38,24 @@ n_ntc <- grna_group_data_frame |>
 
 # set formulas, grna group target name
 gene_formula <- mm_odm@global_misc$formula
+response_grna_group_pairs <- data.frame(grna_group = sample(x = factor(grna_group_data_frame$grna_group[grna_group_data_frame$grna_group != "non-targeting"]), size = 30000, replace = TRUE),
+                                        response_id = sample(x = factor(rownames(response_matrix)), size = 30000, replace = TRUE)) |>
+  dplyr::filter(grna_group != "non-targeting") |>
+  dplyr::distinct()
 
-system.time(undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_matrix,
+undercover_result <- sceptre3::run_sceptre_lowmoi(response_matrix = response_matrix,
                                                   grna_matrix = grna_matrix,
                                                   covariate_data_frame = covariate_data_frame,
                                                   grna_group_data_frame = grna_group_data_frame,
                                                   formula_object = gene_formula,
                                                   calibration_check = TRUE,
-                                                  response_grna_group_pairs = NULL,
+                                                  response_grna_group_pairs = response_grna_group_pairs,
                                                   test_stat = "full",
                                                   return_resampling_dist = FALSE,
                                                   fit_skew_normal = TRUE,
                                                   B1 = 500,
                                                   B2 = 5000,
-                                                  B3 = 25000,
-                                                  undercover_group_size = 1,
-                                                  n_calibration_pairs =  n_ntc * nrow(response_matrix)))
+                                                  B3 = 25000)
 
 saveRDS(object = undercover_result, file = paste0(result_dir, "/frangieh_calibration_check.rds"))
 p <- sceptre3:::plot_calibration_results(undercover_result)
