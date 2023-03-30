@@ -43,14 +43,13 @@ gene_odm <- read_odm(odm_fp = gene_odm_fp, metadata_fp = gene_metadata_fp)
 
 ```{r}
 #get TSS for each gene 
-ensembl <- useEnsembl(host = 'https://grch37.ensembl.org',biomart = "genes", 
+ensembl <- useEnsembl(host = 'https://grch37.ensembl.org',biomart = 'ENSEMBL_MART_ENSEMBL', 
                       dataset = "hsapiens_gene_ensembl")
 A = getBM(attributes=c("hgnc_symbol", "chromosome_name", "start_position", 
                        "end_position", "strand"),
           filters=c('hgnc_symbol'),
           value = gene_odm |> get_feature_ids(), mart=ensembl) |>
   filter(chromosome_name %in% c(1:22, "X", "Y"))
-
 ```
 
 ```{r}
@@ -89,17 +88,20 @@ promoters <- GRanges(
 #read in chipseq data as granges object 
 code_dir = .get_config_path("LOCAL_CODE_DIR")
 data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
-chipseq.dir = paste0(data.dir,
-              'GSM935505_hg19_wgEncodeSydhTfbsK562Irf1Ifng30StdPk.narrowPeak')
+stat1 = 'GSM935488_hg19_wgEncodeSydhTfbsK562Stat1Ifng6hStdPk.narrowPeak'
+irf1 = "GSM935549_hg19_wgEncodeSydhTfbsK562Irf1Ifng6hStdPk.narrowPeak"
+chipseq.dir = paste0(data.dir,irf1)
 chipseq_data = readNarrowPeak(chipseq.dir, track.line=FALSE, zero.based=TRUE)
-#get left join of promoters and chipseq peaks
-direct_effects = plyranges::join_overlap_left(promoters,chipseq_data,
-                                              minoverlap = 500)
-#get overlapped genes
-overlap_genes = direct_effects$TF[is.na(direct_effects$score)==F]
-null_genes = direct_effects$TF[is.na(direct_effects$score)==T]
-print(paste0("The number of promoters that overlap with Chipseq peaks is ",
-             length(overlap_genes)))
+overlap_genes = c()
+for(chr in paste0('chr',c(1:23,"X","Y"))){
+  bobby = subset(chipseq_data,seqnames@values == chr)
+  chucky = subset(promoters,seqnames@values == chr)
+  direct_effects = plyranges::join_overlap_left(chucky,bobby,
+                                              minoverlap = 1)
+  overlap_genes = c(overlap_genes,direct_effects$TF[is.na(direct_effects$score)==F])
+  print(length(overlap_genes))
+}
+null_genes = direct_effects$TF[-(direct_effects$TF%in%overlap_genes == T)]
 ```
 
 
@@ -132,6 +134,43 @@ PRTB = 'IRF1'
 sceptre_prtb = subset(sceptre,grna_group == PRTB)
 seurat_prtb = seurat[[PRTB]]
 ```
+
+```{r}
+#get sceptre and seurat IRF1 results 
+alpha = 0.10
+perturbations = names(seurat)
+gene_summary = as.data.frame(matrix(NA,length(perturbations),3))
+colnames(gene_summary) = c("Unique to SCEPTRE",
+                           "Unique to Seurat","Shared")
+rownames(gene_summary) = perturbations
+
+for(j in c(1:length(perturbations))){
+  PRTB = perturbations[j]
+  sceptre_prtb = subset(sceptre,grna_group == PRTB)
+  seurat_prtb = seurat[[PRTB]]
+  #filter genes
+  #sceptre_genes = unfactor(sceptre_prtb$response_id)
+  seurat_genes = rownames(seurat_prtb)
+  sceptre_prtb = subset(sceptre_prtb,response_id %in% seurat_genes)
+  seurat_prtb = seurat_prtb[rownames(seurat_prtb)%in% sceptre_prtb$response_id,]
+  #get all significant genes from each method
+  sceptre_sig=unfactor(sceptre_prtb$response_id[sceptre_prtb$p_value_adj < alpha])
+  seurat_sig = rownames(seurat_prtb)[seurat_prtb$p_val_adj < alpha]
+  #add number of rejections
+  shared = sum(sceptre_sig %in% seurat_sig)
+  sceptre_sig_unique = length(sceptre_sig[(sceptre_sig %in% seurat_sig) == F])
+  seurat_sig_unique = length(seurat_sig[(seurat_sig %in% sceptre_sig) == F])
+  gene_summary[j,] = c(sceptre_sig_unique,seurat_sig_unique,shared)
+}
+
+
+```
+```{r}
+View(gene_summary)
+colSums(gene_summary)
+```
+
+
 
 ## Compare Significant Genes to CHIPseq Results
 
@@ -231,13 +270,14 @@ kable_styling(results_table,position = "center")
 ```{r}
 TF = direct_effects$TF
 scores = direct_effects$pvalue
-top_genes = sort(TF[order(scores,decreasing = T)][1:500])
+#top_genes = sort(TF[order(scores,decreasing = T)][1:500])
+top_genes = overlap_genes
 ```
 
 ## Read in Reference Dataset For IRF1 TF Targets
 ```{r}
 data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
-targets.dir = paste0(data.dir,'IRF1_targets.json')
+targets.dir = paste0(data.dir,'IRF1_monocytes_target.json')
 prtb_targets = fromJSON(file = targets.dir)
 targets = c()
 for(j in c(1:length(prtb_targets$associations))){
@@ -371,8 +411,8 @@ The CHIPseq peaks that we are using do not agree with the database reference at 
 
 ```{r}
 sceptre_genes = unfactor(sceptre_prtb$response_id)
-seurat_pvals = log(seurat_prtb[sceptre_genes,]$p_val,10)
-sceptre_pvals = log(sceptre_prtb$p_value,10)
+seurat_pvals = pmax(log(seurat_prtb[sceptre_genes,]$p_val,10),-10)
+sceptre_pvals = pmax(log(sceptre_prtb$p_value,10),-10)
 #remove those with sceptre pval = 0
 sceptre_0 = which(is.na(sceptre_pvals) == T)
 sceptre_pvals = sceptre_pvals[-sceptre_0]
@@ -388,9 +428,14 @@ Pval = data.frame(seuratP = seurat_pvals,
 ```{r}
 #volcano plot 
 ggplot(Pval,aes(x = seuratP,y = sceptreP)) + geom_point() +
-  ggtitle('Identity Plot of CUL3 Pvalues: SCEPTRE vs  Unfiltered Seurat') +
+  ggtitle('Identity Plot of IRF1 Pvalues: SCEPTRE vs  Unfiltered Seurat') +
   labs(y = 'Sceptre Pvalues',x = 'Seurat Pvalues')+
   geom_abline(slope=1, intercept = 0,color = 'red')+
-  geom_vline(xintercept = log(0.05,10),color = 'red')+
-  geom_hline(yintercept = log(0.05,10), color = 'red')
+  geom_vline(xintercept = log(0.05/14000,10),color = 'red')+
+  geom_hline(yintercept = log(0.05/14000,10), color = 'red')
 ```
+
+
+
+
+
