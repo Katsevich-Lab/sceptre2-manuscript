@@ -18,7 +18,7 @@ library(SeuratData)
 library(ggplot2)
 library(patchwork)
 library(scales)
-library(dplyr)
+#library(dplyr)
 library(reshape2)
 library(mixtools)
 library(stringr)
@@ -232,27 +232,6 @@ p1 + theme(axis.text.x = element_text(size = 18, hjust = 1),
 
 # Perform Marker Gene Analysis/Pathway Enrichment Analysis Ordered by Log Fold Change
 
-Papalexi et reports 5 major pathways in CUL3 KO cells. Nuclear Receptors Meta-Pathway,NRF2 pathway,Phytochemical activity on NRF2 transcriptional activation,TYROBP causal network ,and complement system activation. We see pvalues that are approximately the same. However, we do see that the pathway "Phytochemical activity on NRF2 transcriptional activation" is ranked ahead of "TYROBP causal network" in this analysis whereas according to paplexi et al, the relative pvalue rank should be flipped between these two pathways. 
-```{r,eval = F}
-STAT3_marker = FindMarkers(eccite,ident.1 = 'STAT3 NP',ident.2 = 'NT',
-                          assay = 'RNA',only.pos = F,base = exp(1),
-                          logfc.threshold = 0)
-NFKBIA_marker = FindMarkers(eccite,ident.1 = 'NFKBIA NP',ident.2 = 'NT',
-                          assay = 'RNA',only.pos = F,base = exp(1),
-                          logfc.threshold = 0)
-ETV7_marker = FindMarkers(eccite,ident.1 = 'ETV7 NP',ident.2 = 'NT',
-                          assay = 'RNA',only.pos = F,base = exp(1),
-                          logfc.threshold = 0)
-```
-```{r}
-dir = "/Users/kmason/code/sceptre2-manuscript/writeups/papalexi_analysis/"
-saveRDS(STAT3_marker ,paste0(dir,"seurat_STAT3_results.rds"))
-saveRDS(NFKBIA_marker ,paste0(dir,"seurat_NFKBIA_results.rds"))
-saveRDS(ETV7_marker ,paste0(dir,"seurat_ETV7_results.rds"))
-
-```
-
-
 ```{r}
 eccite_copy = eccite
 grna = unfactor((Idents(eccite)))
@@ -260,23 +239,30 @@ grna = substr(grna,1,nchar(grna)-3)
 grna[nchar(grna)==0] = 'NT'
 Idents(eccite_copy) = grna
 prtb = unique(grna)[unique(grna) != 'NT']
-diff_genes <- vector(mode='list', length=length(prtb))
-names(diff_genes) = prtb
+#diff_genes <- vector(mode='list', length=length(prtb))
+#names(diff_genes) = prtb
 counter = 1
 for(val in prtb){
   marker_all = FindMarkers(eccite_copy,ident.1 = val,ident.2 = 'NT',
                           assay = 'RNA',only.pos = F,base = exp(1),
                           logfc.threshold = 0,min.pct = 0)
-  diff_genes[[counter]] = marker_all
+  marker_all$grna = rep(val,nrow(marker_all))
+  marker_all$response_id = rownames(marker_all)
+  if(counter ==1){
+    diff_genes = marker_all
+  }else{
+    diff_genes = rbind(diff_genes,marker_all)
+  }
   counter = counter + 1
 }
 ```
 
 
 ```{r}
-dir = "/Users/kmason/code/sceptre2-manuscript/writeups/papalexi_analysis/"
-saveRDS(diff_genes ,paste0(dir,"seurat_all_perturbations_results.rds"))
-
+sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+output_filename <- paste0(sceptre2_dir, "/results/papalexi_analysis/")
+saveRDS(result_gene,paste0(output_filename,
+                           "seurat_all_perturbations_results.rds"))
 ```
 
 

@@ -1,4 +1,5 @@
 library(ondisc) # devtools::install_github('timothy-barry/ondisc')
+#devtools::install_github('timothy-barry/sceptre3')
 library(sceptre3)
 
 LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
@@ -37,17 +38,14 @@ protein_formula <- ~ log(n_umis) + bio_rep + phase + p_mito
 #######################################
 response_matrix <- gene_expression_matrix
 grna_matrix <- grna_matrix
+rownames(grna_matrix) <- ondisc::get_feature_ids(grna_odm)
 covariate_data_frame <- gene_covariate_matrix
 grna_group_data_frame <- grna_groups
 formula_object <- gene_formula
 calibration_check <- FALSE
 unique_grna = unique(grna_groups$grna_group)
-response_grna_group_pairs_1 <- expand.grid(response_id = 'CD274',
+response_grna_group_pairs <- expand.grid(response_id = get_feature_ids(gene_odm),
                                            grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs
-#get CUL3 mrna data. 
-response_grna_group_pairs_2 <- expand.grid(response_id = rownames(response_matrix),
-                                           grna_group = "CUL3") # an example set of pairs
-response_grna_group_pairs = rbind(response_grna_group_pairs_1,response_grna_group_pairs_2)
 
 test_stat <- "full"
 return_resampling_dist <- FALSE
@@ -71,12 +69,13 @@ result_gene <- run_sceptre_lowmoi(response_matrix,
 ##########################################
 response_matrix <- as.matrix(protein_matrix)
 grna_matrix <- grna_matrix
+rownames(grna_matrix) <- ondisc::get_feature_ids(grna_odm)
 covariate_data_frame <- protein_covariate_matrix
 grna_group_data_frame <- grna_groups
 formula_object <- protein_formula
 calibration_check <- FALSE
 response_grna_group_pairs <- expand.grid(response_id = rownames(response_matrix),
-                                         grna_group = unique(grna_groups$grna_group)[-which(unique(grna_groups$grna_group)=='non-targeting')]) # an example set of pairs
+                                         grna_group = grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs
 test_stat <- "full"
 return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE
@@ -95,13 +94,8 @@ result_protein <- run_sceptre_lowmoi(response_matrix,
                                      fit_skew_normal)
 
 
-#save results
-CODE_DIR <-.get_config_path("LOCAL_CODE_DIR")
-papalexi_analysis_data_dir <- paste0(CODE_DIR, "/sceptre2-manuscript/writeups/papalexi_analysis/")
-
-saveRDS(result_protein,paste0(papalexi_analysis_data_dir,"sceptre_protein_results_with_effect_size.rds"))
-saveRDS(result_gene,paste0(papalexi_analysis_data_dir,"sceptre_CUL3_and_PDL1_mrna_results_with_effect_size.rds"))
-
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
-output_filename <- paste0(sceptre2_dir, "/results/papalexi_analysis/<result file name>")
-saveRDS(...)
+output_filename <- paste0(sceptre2_dir, "/results/papalexi_analysis/")
+saveRDS(result_gene,paste0(output_filename,"sceptre_full_mrna_results_with_effect_size.rds"))
+saveRDS(result_gene,paste0(output_filename,"sceptre_protein_results_with_effect_size.rds"))
+
