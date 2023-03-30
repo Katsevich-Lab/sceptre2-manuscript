@@ -270,7 +270,6 @@ for(val in prtb){
   diff_genes[[counter]] = marker_all
   counter = counter + 1
 }
-
 ```
 
 

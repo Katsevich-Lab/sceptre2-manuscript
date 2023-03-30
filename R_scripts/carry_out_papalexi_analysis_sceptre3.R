@@ -44,8 +44,8 @@ calibration_check <- FALSE
 unique_grna = unique(grna_groups$grna_group)
 response_grna_group_pairs_1 <- expand.grid(response_id = 'CD274',
                                            grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs
-#get CUL3 mrna data. Remove genes 13565-13575 since they contain something that is causing code to crash
-response_grna_group_pairs_2 <- expand.grid(response_id = rownames(response_matrix)[-c(13565:13575)],
+#get CUL3 mrna data. 
+response_grna_group_pairs_2 <- expand.grid(response_id = rownames(response_matrix),
                                            grna_group = "CUL3") # an example set of pairs
 response_grna_group_pairs = rbind(response_grna_group_pairs_1,response_grna_group_pairs_2)
 
@@ -101,3 +101,7 @@ papalexi_analysis_data_dir <- paste0(CODE_DIR, "/sceptre2-manuscript/writeups/pa
 
 saveRDS(result_protein,paste0(papalexi_analysis_data_dir,"sceptre_protein_results_with_effect_size.rds"))
 saveRDS(result_gene,paste0(papalexi_analysis_data_dir,"sceptre_CUL3_and_PDL1_mrna_results_with_effect_size.rds"))
+
+sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+output_filename <- paste0(sceptre2_dir, "/results/papalexi_analysis/<result file name>")
+saveRDS(...)
