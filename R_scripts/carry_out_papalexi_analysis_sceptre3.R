@@ -1,6 +1,7 @@
 library(ondisc) # devtools::install_github('timothy-barry/ondisc')
 #devtools::install_github('timothy-barry/sceptre3')
 library(sceptre3)
+library(BH)
 
 LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 papalexi_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/")
@@ -71,27 +72,24 @@ grna_group_data_frame <- grna_groups
 formula_object <- protein_formula
 calibration_check <- FALSE
 response_grna_group_pairs <- expand.grid(response_id = rownames(response_matrix),
-                                         grna_group = grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs
+                                         grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs
 test_stat <- "full"
 return_resampling_dist <- FALSE
 adaptive_permutation_test <- TRUE
-fit_skew_normal <- FALSE
+fit_skew_normal <- TRUE
 
-result_protein <- run_sceptre_lowmoi(response_matrix,
-                                     grna_matrix,
-                                     covariate_data_frame,
-                                     grna_group_data_frame,
-                                     formula_object,
+result_protein <- run_sceptre_lowmoi(response_matrix = response_matrix,
+                                     grna_matrix = grna_matrix,
+                                     covariate_data_frame = covariate_data_frame,
+                                     grna_group_data_frame = grna_group_data_frame,
+                                     formula_object = formula_object,
                                      calibration_check,
-                                     response_grna_group_pairs,
-                                     test_stat,
-                                     return_resampling_dist,
-                                     adaptive_permutation_test,
-                                     fit_skew_normal)
+                                     response_grna_group_pairs = response_grna_group_pairs,
+                                     calibration_check = calibration_check)
 
 
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
-output_filename <- paste0(sceptre2_dir, "/results/papalexi_analysis/")
+output_filename <- paste0(sceptre2_dir, "results/papalexi_analysis/")
 saveRDS(result_gene,paste0(output_filename,"sceptre_full_mrna_results_with_effect_size.rds"))
-saveRDS(result_gene,paste0(output_filename,"sceptre_protein_results_with_effect_size.rds"))
+saveRDS(result_protein,paste0(output_filename,"sceptre_full_protein_results_with_effect_size.rds"))
 
