@@ -257,11 +257,24 @@ for(val in prtb){
 }
 ```
 
+```{r}
+code_dir = .get_config_path("LOCAL_CODE_DIR")
+data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
+#read in sceptre and seurat analysis data
+sceptre_path = paste0(data.dir,
+                      'sceptre_full_mrna_results_with_effect_size.rds')
+seurat_path = paste0(data.dir,
+                     'seurat_all_perturbations_results.rds')
+#read in sceptre and seurat results
+sceptre = readRDS(sceptre_path)
+seurat = readRDS(seurat_path)
+```
+
 
 ```{r}
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 output_filename <- paste0(sceptre2_dir, "/results/papalexi_analysis/")
-saveRDS(result_gene,paste0(output_filename,
+saveRDS(diff_genes,paste0(output_filename,
                            "seurat_all_perturbations_results.rds"))
 ```
 
