@@ -83,10 +83,8 @@ result_protein <- run_sceptre_lowmoi(response_matrix = response_matrix,
                                      covariate_data_frame = covariate_data_frame,
                                      grna_group_data_frame = grna_group_data_frame,
                                      formula_object = formula_object,
-                                     calibration_check,
                                      response_grna_group_pairs = response_grna_group_pairs,
                                      calibration_check = calibration_check)
-
 
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 output_filename <- paste0(sceptre2_dir, "results/papalexi_analysis/")
