@@ -70,6 +70,7 @@ rownames(grna_matrix) <- ondisc::get_feature_ids(grna_odm)
 covariate_data_frame <- protein_covariate_matrix
 grna_group_data_frame <- grna_groups
 formula_object <- protein_formula
+unique_grna = unique(grna_groups$grna_group)
 calibration_check <- FALSE
 response_grna_group_pairs <- expand.grid(response_id = rownames(response_matrix),
                                          grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs

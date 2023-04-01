@@ -20,6 +20,9 @@ dir.create(chipseq_dir)
 htftarget_dir <- paste0(sceptre2_dir, "/data/htftarget")
 dir.create(htftarget_dir)
 
+# directory for hTFtarget data
+chromhmm_dir <- paste0(sceptre2_dir, "data/ChromHMM")
+dir.create(chromhmm_dir)
 
 
 for(j in c(1:nrow(metadata_table))){
@@ -56,6 +59,15 @@ for(j in c(1:nrow(metadata_table))){
   
 }
 
+############### Download ChromHMM data for Monocytess ###########################
+
+chromhmm_url <- "https://www.encodeproject.org/files/"
+ID = "ENCFF269WBG"
+filename = paste0(ID,"/@@download/",ID,".bed.gz")
+destfile <- paste0(chromhmm_dir, "/", ID,".bed.gz")
+url <- paste0(chromhmm_url, filename)
+download.file(url = url, destfile = destfile)
+R.utils::gunzip(destfile)
 
 
 
