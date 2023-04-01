@@ -59,7 +59,7 @@ for(j in c(1:nrow(metadata_table))){
   
 }
 
-############### Download ChromHMM data for Monocytess ###########################
+############### Download ChromHMM data for Monocytes ###########################
 
 chromhmm_url <- "https://www.encodeproject.org/files/"
 ID = "ENCFF269WBG"
@@ -69,5 +69,12 @@ url <- paste0(chromhmm_url, filename)
 download.file(url = url, destfile = destfile)
 R.utils::gunzip(destfile)
 
+############### Download ChromHMM data for K562 ###########################
 
-
+chromhmm_url <- "https://www.encodeproject.org/files/"
+ID = "ENCFF163QUM"
+filename = paste0(ID,"/@@download/",ID,".bed.gz")
+destfile <- paste0(chromhmm_dir, "/", ID,".bed.gz")
+url <- paste0(chromhmm_url, filename)
+download.file(url = url, destfile = destfile)
+R.utils::gunzip(destfile)
