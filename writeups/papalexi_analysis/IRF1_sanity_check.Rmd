@@ -8,14 +8,15 @@ date: "2023-03-20"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, message = FALSE}
-#load required packages. Sometimes need to redownload ondisc
+```{r, message = FALSE, warning = FALSE}
+#load required packages.
 library(biomaRt)
 library(plyranges)
 library(GenomicRanges)
 library(genomation)
-#devtools::install_github('timothy-barry/ondisc')
 library(ondisc) 
+library(readr)
+library(dplyr)
 library(sceptre3)
 library(BH)
 library(varhandle)
@@ -49,7 +50,7 @@ A = getBM(attributes=c("hgnc_symbol", "chromosome_name", "start_position",
                        "end_position", "strand"),
           filters=c('hgnc_symbol'),
           value = gene_odm |> get_feature_ids(), mart=ensembl) |>
-  filter(chromosome_name %in% c(1:22, "X", "Y"))
+  dplyr::filter(chromosome_name %in% c(1:22, "X", "Y"))
 ```
 
 ```{r}
@@ -86,11 +87,10 @@ promoters <- GRanges(
 
 ```{r}
 #read in chipseq data as granges object 
-code_dir = .get_config_path("LOCAL_CODE_DIR")
-data.dir = paste0(code_dir,"/sceptre2-manuscript/writeups/papalexi_analysis/")
+data.dir = .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 stat1 = 'GSM935488_hg19_wgEncodeSydhTfbsK562Stat1Ifng6hStdPk.narrowPeak'
 irf1 = "GSM935549_hg19_wgEncodeSydhTfbsK562Irf1Ifng6hStdPk.narrowPeak"
-chipseq.dir = paste0(data.dir,irf1)
+chipseq.dir = paste0(data.dir, "data/chipseq/", irf1)
 chipseq_data = readNarrowPeak(chipseq.dir, track.line=FALSE, zero.based=TRUE)
 overlap_genes = c()
 for(chr in paste0('chr',c(1:23,"X","Y"))){
@@ -99,7 +99,6 @@ for(chr in paste0('chr',c(1:23,"X","Y"))){
   direct_effects = plyranges::join_overlap_left(chucky,bobby,
                                               minoverlap = 1)
   overlap_genes = c(overlap_genes,direct_effects$TF[is.na(direct_effects$score)==F])
-  print(length(overlap_genes))
 }
 ```
 
@@ -110,10 +109,24 @@ sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 htftarget_dir <- paste0(sceptre2_dir, "data/htftarget")
 ```
 
-```{r}
-ref_genes = read.table("/Users/kmason/data/projects/sceptre2/data/htftarget/IRF1_target_copy.txt",sep="\t", header=TRUE)
+```{r, warning = FALSE, message = FALSE}
+ref_genes = read_table(paste0(data.dir, "data/htftarget/dataset_1762.IRF1.target.txt")) |>
+  pull(target_name)
 ```
 
 ```{r}
-mean(overlap_genes%in%ref_genes[,1])
+# number of targets in database
+length(ref_genes)
+
+# number of targets we found
+length(overlap_genes)
+
+# number of targets overlapping
+length(base::intersect(overlap_genes, ref_genes))
+
+# number of targets unique to us
+length(base::setdiff(overlap_genes, ref_genes))
+
+# number of targets unique to database
+length(base::setdiff(ref_genes, overlap_genes))
 ```
