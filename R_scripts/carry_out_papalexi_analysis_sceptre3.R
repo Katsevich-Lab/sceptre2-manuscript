@@ -48,11 +48,6 @@ unique_grna = unique(grna_groups$grna_group)
 response_grna_group_pairs <- expand.grid(response_id = get_feature_ids(gene_odm),
                                            grna_group = unique_grna[-which(unique_grna == 'non-targeting')]) # an example set of pairs
 
-test_stat <- "full"
-return_resampling_dist <- FALSE
-adaptive_permutation_test <- TRUE
-fit_skew_normal <- TRUE
-
 result_gene <- run_sceptre_lowmoi(response_matrix = response_matrix,
                                   grna_matrix = grna_matrix,
                                   covariate_data_frame = covariate_data_frame,
