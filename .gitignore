@@ -27,6 +27,9 @@ writeups/papalexi_analysis/sceptre_vs_seurat_gene_files
 
 writeups/papalexi_analysis/papalexi_positive_controls_cache/
 
+writeups/papalexi_analysis/IRF1-analysis-v2_files/
+writeups/papalexi_analysis/IRF1-analysis-v2_cache/
+
 .Rproj.user
 
 *.gz
