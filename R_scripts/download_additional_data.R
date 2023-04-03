@@ -6,9 +6,10 @@ sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
 metadata_table <- 
   tribble(
-    ~geo_id, ~TF, ~cell_type, ~condition, ~genome,~hTFtarget_id,
-    935488,   "Stat1", "K562", "Ifng6h", "hg19",3385,
-    935549,   "Irf1", "K562","Ifng6h","hg19",1762
+    ~geo_id, ~TF, ~cell_type, ~condition, ~genome,~hTFtarget_id,~txt,
+    935488,   "Stat1", "K562", "Ifng6h", "hg19",3385,F,
+    935549,   "Irf1", "K562","Ifng6h","hg19",1762,F,
+    1057025,"Irf1","Monocytes","Ifngh24h",'hg19',1767,T
     )
 
 
@@ -33,19 +34,25 @@ for(j in c(1:nrow(metadata_table))){
   TF <- metadata_table$TF[j]
   condition <- metadata_table$condition[j]
   hTFtarget_id <- metadata_table$hTFtarget_id[j]
+  txt = metadata_table$txt[j]
   
   geo_url <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc="
   
   ############### Download ENCODE ChIP-seq data ###########################
+  if(txt == T){
+    filename <- paste0("GSM", geo_id,
+                       "_",toupper(TF),"peak_B.txt.gz" )
+  }else{
+    filename <- paste0("GSM", geo_id, 
+                       "_", genome, "_wgEncodeSydhTfbs", 
+                       cell_type, TF, condition, 
+                       "StdPk.narrowPeak.gz")
+  }
   
-  filename <- paste0("GSM", geo_id, 
-                     "_", genome, "_wgEncodeSydhTfbs", 
-                     cell_type, TF, condition, 
-                     "StdPk.narrowPeak.gz")
   url <- paste0(geo_url, "GSM", geo_id, "&format=file&file=", filename)
   destfile <- paste0(chipseq_dir, "/", filename)
   download.file(url = url, destfile = destfile)
-  R.utils::gunzip(destfile)
+  R.utils::gunzip(destfile,overwrit = T)
   
   ############### Download hTFtarget data ###########################
   
@@ -55,7 +62,7 @@ for(j in c(1:nrow(metadata_table))){
   
   url <- paste0(htftarget_url, filename)
   download.file(url = url, destfile = destfile)
-  R.utils::gunzip(destfile)
+  R.utils::gunzip(destfile,overwrite = T)
   
 }
 
@@ -67,7 +74,7 @@ filename = paste0(ID,"/@@download/",ID,".bed.gz")
 destfile <- paste0(chromhmm_dir, "/", ID,".bed.gz")
 url <- paste0(chromhmm_url, filename)
 download.file(url = url, destfile = destfile)
-R.utils::gunzip(destfile)
+R.utils::gunzip(destfile,overwrite = T)
 
 ############### Download ChromHMM data for K562 ###########################
 
@@ -77,4 +84,6 @@ filename = paste0(ID,"/@@download/",ID,".bed.gz")
 destfile <- paste0(chromhmm_dir, "/", ID,".bed.gz")
 url <- paste0(chromhmm_url, filename)
 download.file(url = url, destfile = destfile)
-R.utils::gunzip(destfile)
+R.utils::gunzip(destfile,overwrite = T)
+
+
