@@ -5,14 +5,14 @@ nextflow pull https://github.com/Katsevich-Lab/undercover-grna-pipeline
 
 # run pipeline
 nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
- --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/params_undercover.groovy" \
+ --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/params_undercover_0423.groovy" \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
- --result_file_name "undercover_result_grp_2.rds" \
+ --result_file_name "undercover_result_grp_1_0423.rds" \
  --grna_modality "assignment" \
- --group_size "2" \
+ --group_size "1" \
  --is_group_size_frac "false" \
  --partition_count "1" \
- --is_partition_count_frac "false" \
+ --is_partition_count_frac "true" \
  -profile standard \
  -with-trace \
  -resume
