@@ -9,7 +9,7 @@ header-includes:
 ---
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(fig.align = 'center', echo = FALSE, cache = TRUE)
+knitr::opts_chunk$set(fig.align = 'center', echo = FALSE)
 ```
 
 ```{r, message = FALSE, warning = FALSE, cache = FALSE}
@@ -201,7 +201,7 @@ merged_results |>
                where = "!htbp")
 ```
 
-This table suggests that SCEPTRE and Seurat results have decent, but imperfect, agreement. Next, let's look at how the SCEPTRE and Seurat discoveries align with the ChIP-seq signal (as measured by the hTFtarget database, the binary ChIP-seq scores, and the linear ChIP-seq scores).
+This table suggests that SCEPTRE and Seurat results have decent, but imperfect, agreement. Next, let's look at how the SCEPTRE and Seurat discoveries align with the ChIP-seq target genes (as identified by either the hTFtarget database or directly from the ChIP-seq data).
 
 \newpage
 
@@ -254,7 +254,7 @@ merged_results |>
            where = "!htbp")
 ```
 
-From these tables, we see that SCEPTRE has slightly higher sensitivity but slighly lower specificity. We can summarize each 2-by-2 table via its odds ratio (the p-values are all extremely small). The resulting odds ratios are shown below.
+The proportions are the proportion of `TRUE` values in each row or column. For example, 0.58 of the genes found by SCEPTRE are marked as IRF1 targets in the database (i.e. SCEPTRE has specificity 0.58). From these tables, we see that **SCEPTRE has slightly higher sensitivity but slighly lower specificity than Seurat.** We can summarize each 2-by-2 table via its odds ratio (the p-values are all extremely small). The resulting odds ratios are shown below.
 
 ```{r, results = 'asis'}
 odds_ratios <- matrix(NA, nrow = 2, ncol = 2, 
@@ -314,7 +314,7 @@ merged_results |>
   kable_styling(position = "center", latex_options = "HOLD_position")
 ```
 
-These results suggest that there is nontrivial (roughly two-fold) enrichment of ChIP-seq signal in both the SCEPTRE and Seurat discoveries, presumably because CD14+ cells are a better match to THP1 cells. Unfortunately, the Seurat discoveries have slightly higher enrichment, as measured by the odds ratio. This result is somewhat contradictory to our results on control data, where SCEPTRE found fewer false positives and more true positives than Seurat.
+These results suggest that **there is nontrivial (roughly two-fold) enrichment of ChIP-seq signal in both the SCEPTRE and Seurat discoveries, presumably because CD14+ cells are a better match to THP1 cells. Unfortunately, the Seurat discoveries have slightly higher enrichment, as measured by the odds ratio.** This result is somewhat contradictory to our results on control data, where SCEPTRE found fewer false positives and more true positives than Seurat.
 
 \newpage
 
