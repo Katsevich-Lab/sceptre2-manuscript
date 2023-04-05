@@ -12,7 +12,7 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --group_size "1" \
  --is_group_size_frac "false" \
  --partition_count "1" \
- --is_partition_count_frac "true" \
+ --is_partition_count_frac "false" \
  -profile standard \
  -with-trace \
  -resume
