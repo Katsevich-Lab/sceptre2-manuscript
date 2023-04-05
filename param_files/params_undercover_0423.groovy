@@ -58,7 +58,7 @@ optional_args = [
 "", // nb_regression_w_covariates
 "", // nb_regression_no_covariates
 "", // sceptre
-"" // sceptre_no_covariates
+"", // sceptre_no_covariates
 "", // schraivogel_method
 "", // seurat_de
 "", // liscovitch_method
