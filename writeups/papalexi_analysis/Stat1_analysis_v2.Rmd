@@ -1,5 +1,5 @@
 ---
-title: "IRF1 SCEPTRE vs Seurat in monocytes, with same QC"
+title: "STAT1 SCEPTRE vs Seurat in monocytes, with same QC"
 output: pdf_document
 date: "2023-04-04"
 header-includes:
