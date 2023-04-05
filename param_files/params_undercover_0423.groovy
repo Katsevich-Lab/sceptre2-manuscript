@@ -36,7 +36,7 @@ data_method_ram_matrix = [
 [5, 5, 4, 4,  5,  5,  5,  5,  5], // papalexi/eccite_screen/protein
 [5, 5, 8, 8,  6, 12, 12, 18,  6], // schraivogel/enhancer_screen_chr11/gene
 [5, 5, 8, 8,  8, 14, 14, 21,  6], // schraivogel/enhancer_screen_chr8/gene
-[5, 5, 7, 7, 28,  7,  7, 17, 19]  // simulated/experiment_1/gene
+[5, 5, 10, 10, 28,  7,  7, 17, 19]  // simulated/experiment_1/gene
 ]
 // nb_regression_w_covariates, nb_regression_no_covariates, sceptre, sceptre_no_covariates, schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method
 
