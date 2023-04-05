@@ -9,7 +9,8 @@ metadata_table <-
     ~geo_id, ~TF, ~cell_type, ~condition, ~genome,~hTFtarget_id,~txt,
     935488,   "Stat1", "K562", "Ifng6h", "hg19",3385,F,
     935549,   "Irf1", "K562","Ifng6h","hg19",1762,F,
-    1057025,"Irf1","Monocytes","Ifngh24h",'hg19',1767,T
+    1057025,"Irf1","Monocytes","Ifng24h",'hg19',1767,T,
+    1057011,"Stat1","Monocytes","IFNg24h","hg19",3390,T
     )
 
 
@@ -86,4 +87,5 @@ url <- paste0(chromhmm_url, filename)
 download.file(url = url, destfile = destfile)
 R.utils::gunzip(destfile,overwrite = T)
 
-
+http://bioinfo.life.hust.edu.cn/hTFtarget/static/hTFtarget/tmp_files/targets/dataset_3390.STAT1.target.txt.gz
+https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSM1057011&format=file&file=GSM1057011%5FSTAT1peak%5FB%2Etxt%2Egz
