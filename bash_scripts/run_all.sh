@@ -39,18 +39,19 @@ Rscript ../R_scripts/uniform_processing_highmoi.R
 # 9. compute dataset sample sizes
 Rscript ../R_scripts/compute_dataset_sample_sizes.R
 
-#######################################
-# PART 2: RESULTS GENERATION
-#######################################
-# . Undercover results for group size = 1, all methods and datasets
+###################################################
+# PART 2: RESULTS GENERATION VIA NEXTFLOW PIPELINES
+###################################################
+# Undercover results for group size = 1, all methods and datasets
 qsub ../pipeline_launch_scripts/undercover/grp_size_1/grp_size_1.sh
 
-# . Undercover results for group size = 2, all methods and datasets
+# Positive control results
 
-# . Undercover results for group size = half, all methods and datasets
 
-Rscript ../R_scripts/process_results.R
+# MW Resampling results
 
 #######################################
 # PART 3: MAKING FIGURES
 #######################################
+# process the results
+Rscript ../R_scripts/process_results.R

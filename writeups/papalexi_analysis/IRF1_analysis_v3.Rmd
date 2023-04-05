@@ -1,11 +1,15 @@
 ---
-title: "IRF1 SCEPTRE vs Seurat"
+title: "IRF1 SCEPTRE vs Seurat in monocytes"
 output: pdf_document
-date: "2023-04-03"
+date: "2023-04-04"
+header-includes:
+- \usepackage{diagbox}
+- \usepackage{multicol}
+- \usepackage{float}
 ---
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(fig.align = 'center', echo = FALSE, cache = TRUE)
+knitr::opts_chunk$set(fig.align = 'center', echo = FALSE)
 ```
 
 ```{r, message = FALSE, warning = FALSE, cache = FALSE}
@@ -25,17 +29,8 @@ conflicts_prefer(dplyr::rename)
 ```
 
 # Introduction
-This is a followup analysis of Gene's IRF1-analysis-v2 writeup \
-The goal of this writeup is to take a closer look at the ChIP-seq enrichment analysis, focusing on IRF1 in monocytes. In particular, I examine the following questions (same as Gene's):
 
-- How do people typically determine transcription factor targets?
-- How do ChIP-seq scores for potential target genes align with those in the hTFtarget database?
-- How do SCEPTRE and Seurat IRF1 discoveries align with each other? 
-- How do SCEPTRE and Seurat IRF1 discoveries align with ChIP-seq scores?
-
-# Determining transcription factor targets
-
-[Sikora-Wohlfeld et al, 2013](https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1003342&type=printable) discuss various computational methods to infer TF targets based on ChIP-seq data. This problem turns out to be not completely straightforward, with several competing methodologies available. The one we had been trying, which Sikora-Wohlfeld et al call the "binary" approach, is the most naive method. It has fairly poor performance. However, Sikora-Wohlfeld find that the best window width to use for this approach is 5kb, and they consider an interval of this width centered on the TSS rather than just upstream of it. An approach that performs better is called the "linear" approach. In this approach, the relative distances of ChIP-seq peaks to the TSS are summed, restricting attention to a 50kb window centered on the TSS. Another approach is [TIP](https://academic.oup.com/bioinformatics/article/27/23/3221/234205), which is the preferred approach of [ENCODE](https://www.nature.com/articles/nature11245). Unfortunately, the [TIP results for ENCODE](http://encodenets.gersteinlab.org/) are available only for K562 and GM12878 cell types (probably without IFN-gamma stimulation), and the [TIP software](http://archive.gersteinlab.org/proj/tftarget/) appears somewhat out of date. Hence, in this writeup, I will focus on the binary and linear scoring approaches outlined by Sikora-Wohlfeld et al.
+This is a followup analysis of Gene's `IRF1-analysis-v2` writeup, with the main difference that the ChIP-seq data is from CD14+ monocytes rather than K562 is considered. Here, we consider two ways of determining transcription factor target genes: those that are in the hTFtarget database and those that have at least one ChIP-seq peak within 5kb of their TSS. These two align reasonably well; see the table below.
 
 ```{r, message = FALSE}
 data_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
@@ -74,10 +69,7 @@ chipseq_data = GRanges(
   ranges = IRanges(start = chipseq_data$start_pos, end = chipseq_data$end_pos),
   score = chipseq_data$score,
   peak_position = chipseq_data$pos_max_peak)
-
 ```
-
-# Get ChIP-seq scores for each gene
 
 ```{r}
 # get TSS for each gene 
@@ -97,7 +89,7 @@ TSS_info <-getBM(attributes=c("hgnc_symbol", "chromosome_name", "start_position"
 ```
 
 
-```{r, echo = TRUE}
+```{r}
 # get binary score for each gene
 window_width_binary <- 5e3
 chipseq_scores_binary <- GRanges(
@@ -135,18 +127,18 @@ chipseq_scores <- full_join(chipseq_scores_binary,
   mutate(in_database = gene %in% database_genes)
 ```
 
-Let's take a look at the distribution of the linear ChIP-seq scores. 
-```{r, fig.width = 4, fig.height = 3, message = FALSE}
+```{r, results = "asis"}
 chipseq_scores |> 
-  ggplot(aes(x = linear_score)) +
-  geom_histogram(color = "black") +
-  labs(x = "ChIP-seq linear score") +
-  theme(axis.title.y = element_blank())
+  select(in_database, binary_score) |>
+  table() |>
+  Hmisc::latex(booktabs = TRUE,
+               rowlabel="\\diagbox{Database}{ChIP-seq}", 
+               file="",
+               caption = "Comparing target genes identified based on database and based directly on ChIP-seq data (at least one peak within 5kb).",
+               where = "!htbp")
 ```
 
-We see that there are modes at 0 (no peaks within the window width) and 1 (one peaks near the TSS). There is also a long right tail. Next, we check how these ChIP-seq scores align with the hTFtarget database.
-
-```{r, fig.width = 4, fig.height = 3}
+```{r, fig.width = 4, fig.height = 3, eval = FALSE}
 chipseq_scores |> 
   group_by(in_database) |>
   summarise(round(mean(binary_score), 2)) |>
@@ -154,7 +146,7 @@ chipseq_scores |>
         linesep = "",
         col.names = c("In database", "Mean binary score"),
         caption = paste0("Comparing ChIP-seq binary score to database.")) |>
-  kable_styling(position = "center", latex_options = "hold_position")
+  kable_styling(position = "center", latex_options = "HOLD_position")
 
 chipseq_scores |> 
   group_by(in_database) |>
@@ -163,15 +155,13 @@ chipseq_scores |>
         linesep = "",
         col.names = c("In database", "Median linear score"),
         caption = paste0("Comparing ChIP-seq linear score to database.")) |>
-  kable_styling(position = "center", latex_options = "hold_position")
+  kable_styling(position = "center", latex_options = "HOLD_position")
 
 chipseq_scores |> 
   ggplot(aes(x = in_database, y = linear_score)) +
   geom_violin(fill = "dodgerblue") +
   labs(x = "In database", y = "Linear score")
 ```
-
-These results suggest that there is decent agreement between the hTFtarget database and the scores we derived from the ChIP-seq data.
 
 # Compare SCEPTRE and Seurat results with ChIP-seq scores
 
@@ -200,81 +190,166 @@ merged_results <- chipseq_scores |>
   na.omit()
 ```
 
-```{r}
+```{r, results='asis'}
 merged_results |> 
-  count(sceptre_discovery, seurat_discovery) |>
-  kable(booktabs = TRUE, 
-        linesep = "",
-        col.names = c("SCEPTRE discovery", "Seurat Discovery", "Number"),
-        caption = paste0("Comparing numbers of discoveries made by SCEPTRE 
-                         and Seurat.")) |>
-  kable_styling(position = "center", latex_options = "hold_position")
+  select(sceptre_discovery, seurat_discovery) |>
+  table() |>
+  Hmisc::latex(booktabs = TRUE,
+               rowlabel="\\diagbox{SCEPTRE}{Seurat}", 
+               file="",
+               caption = "Comparing SCEPTRE versus Seurat discoveries.",
+               where = "!htbp")
 ```
 
-This table suggests that SCEPTRE and Seurat results have decent, but highly imperfect, agreement. Next, let's look at how the SCEPTRE and Seurat discoveries align with the ChIP-seq signal (as measured by the hTFtarget database, the binary ChIP-seq scores, and the linear ChIP-seq scores).
+This table suggests that SCEPTRE and Seurat results have decent, but imperfect, agreement. Next, let's look at how the SCEPTRE and Seurat discoveries align with the ChIP-seq target genes (as identified by either the hTFtarget database or directly from the ChIP-seq data).
 
-```{r}
-merged_results |> 
-  group_by(in_database) |>
-  summarise(round(mean(sceptre_discovery), 2)) |>
-  kable(booktabs = TRUE, 
-      linesep = "",
-      col.names = c("In hTFtarget", "Proportion SCEPTRE discoveries"),
-      caption = paste0("Comparing SCEPTRE discoveries to ChIP-seq binary scores.")) |>
-  kable_styling(position = "center", latex_options = "hold_position")
+\newpage
+
+```{r, results='asis'}
+add_proportions <- function(tab){
+  tab |>
+    addmargins(quiet = TRUE, FUN = list(Prop = function(x){
+      if(any(x < 1)) NA_character_ else round(x["TRUE"]/sum(x), 2)
+    }))
+}
 
 merged_results |> 
-  group_by(in_database) |>
-  summarise(round(mean(seurat_discovery), 2)) |>
-  kable(booktabs = TRUE, 
-      linesep = "",
-      col.names = c("In hTFtarget", "Proportion Seurat discoveries"),
-      caption = paste0("Comparing Seurat discoveries to ChIP-seq binary scores.")) |>
-  kable_styling(position = "center", latex_options = "hold_position")
+  select(in_database, sceptre_discovery) |>
+  table() |>
+  add_proportions() |>
+  Hmisc::latex(booktabs = TRUE,
+             rowlabel="\\diagbox{Database}{SCEPTRE}", 
+             file="",
+             caption = "Comparing SCEPTRE to database.", 
+             where = "!htbp")
+
+merged_results |> 
+  select(in_database, seurat_discovery) |>
+  table() |>
+  add_proportions() |>
+  Hmisc::latex(booktabs = TRUE,
+           rowlabel="\\diagbox{Database}{Seurat}", 
+           file="",
+           caption = "Comparing Seurat to database.",
+           where = "!htbp")
+
+merged_results |> 
+  select(binary_score, sceptre_discovery) |>
+  table() |>
+  add_proportions() |>
+  Hmisc::latex(booktabs = TRUE,
+           rowlabel="\\diagbox{ChIP-seq}{SCEPTRE}", 
+           file="",
+           caption = "Comparing SCEPTRE to ChIP-seq binary scores.",
+           where = "!htbp")
+
+merged_results |> 
+  select(binary_score, seurat_discovery) |>
+  table() |>
+  add_proportions() |>
+  Hmisc::latex(booktabs = TRUE,
+           rowlabel="\\diagbox{ChIP-seq}{Seurat}", 
+           file="",
+           caption = "Comparing Seurat to ChIP-seq binary scores.",
+           where = "!htbp")
 ```
 
-```{r}
-merged_results |> 
-  group_by(binary_score) |>
-  summarise(round(mean(sceptre_discovery), 2)) |>
-  kable(booktabs = TRUE, 
-      linesep = "",
-      col.names = c("Binary ChIP-seq score", "Proportion SCEPTRE discoveries"),
-      caption = paste0("Comparing SCEPTRE discoveries to ChIP-seq binary scores.")) |>
-  kable_styling(position = "center", latex_options = "hold_position")
+The proportions are the proportion of `TRUE` values in each row or column. For example, 0.58 of the genes found by SCEPTRE are marked as IRF1 targets in the database (i.e. SCEPTRE has specificity 0.58). From these tables, we see that **SCEPTRE has slightly higher sensitivity but slighly lower specificity than Seurat.** We can summarize each 2-by-2 table via its odds ratio (the p-values are all extremely small). The resulting odds ratios are shown below.
 
-merged_results |> 
-  group_by(binary_score) |>
-  summarise(round(mean(seurat_discovery), 2)) |>
-  kable(booktabs = TRUE, 
-      linesep = "",
-      col.names = c("Binary ChIP-seq score", "Proportion Seurat discoveries"),
-      caption = paste0("Comparing Seurat discoveries to ChIP-seq binary scores.")) |>
-  kable_styling(position = "center", latex_options = "hold_position")
+```{r, results = 'asis'}
+odds_ratios <- matrix(NA, nrow = 2, ncol = 2, 
+                      dimnames = list(ground_truth = c("database", "ChIP-seq"), 
+                                      method = c("SCEPTRE", "Seurat")))
+
+odds_ratios["database", "SCEPTRE"] <- merged_results |> 
+  select(in_database, sceptre_discovery) |>
+  table() |>
+  fisher.test() %>%
+  `$`("estimate")
+
+odds_ratios["database", "Seurat"] <- merged_results |> 
+  select(in_database, seurat_discovery) |>
+  table() |>
+  fisher.test() %>%
+  `$`("estimate")
+
+odds_ratios["ChIP-seq", "SCEPTRE"] <- merged_results |> 
+  select(binary_score, sceptre_discovery) |>
+  table() |>
+  fisher.test() %>%
+  `$`("estimate")
+
+odds_ratios["ChIP-seq", "Seurat"] <- merged_results |> 
+  select(binary_score, seurat_discovery) |>
+  table() |>
+  fisher.test() %>%
+  `$`("estimate")
+
+odds_ratios |>
+  round(2) |>
+  Hmisc::latex(booktabs = TRUE,
+           rowlabel="\\diagbox{Ground truth}{Method}", 
+           file="",
+           caption = "Enrichment odds ratios, comparing to database and our ChIP-seq target assignments.",
+           where = "!htbp")
 ```
 
-```{r, fig.width = 4, fig.height = 3}
-merged_results |>
-  ggplot(aes(x = sceptre_discovery, y = linear_score)) +
-  geom_violin(fill = "dodgerblue") +
-  labs(x = "SCEPTRE discovery",
-       y = "ChIP-seq linear score")
+```{r, eval = FALSE}
+merged_results |> 
+  group_by(sceptre_discovery) |>
+  summarise(round(median(linear_score), 2)) |>
+  kable(booktabs = TRUE, 
+      linesep = "",
+      col.names = c("SCEPTRE discovery", "Median linear ChIP-seq score"),
+      caption = paste0("Comparing SCEPTRE discoveries to ChIP-seq linear scores.")) |>
+  kable_styling(position = "center", latex_options = "HOLD_position")
 
-merged_results |>
-  ggplot(aes(x = seurat_discovery, y = linear_score)) +
-  geom_violin(fill = "dodgerblue") +
-  labs(x = "Seurat discovery",
-       y = "ChIP-seq linear score")
+merged_results |> 
+  group_by(seurat_discovery) |>
+  summarise(round(median(linear_score), 2)) |>
+  kable(booktabs = TRUE, 
+      linesep = "",
+      col.names = c("Seurat discovery", "Median linear ChIP-seq score"),
+      caption = paste0("Comparing Seurat discoveries to ChIP-seq linear scores.")) |>
+  kable_styling(position = "center", latex_options = "HOLD_position")
 ```
 
-These results suggest that there is some enrichment of ChIP-seq signal in either the SCEPTRE or Seurat discoveries. However, the difference is not nearly as stark as in the htftarget database.
+These results suggest that **there is nontrivial (roughly two-fold) enrichment of ChIP-seq signal in both the SCEPTRE and Seurat discoveries, presumably because CD14+ cells are a better match to THP1 cells. Unfortunately, the Seurat discoveries have slightly higher enrichment, as measured by the odds ratio.** This result is somewhat contradictory to our results on control data, where SCEPTRE found fewer false positives and more true positives than Seurat.
 
-# Conclusions
+\newpage
 
-Below are the answers to the questions posed at the beginning:
+# Appendix
 
-- How do people typically determine transcription factor targets? **There isn't just one way of doing this. One lesson learned from the literature is that the window sizes used are larger than our original one (500bp) and are centered on the TSS rather than just upstream of it. Perhaps ChromHMM would help, but no one appears to have used this approach so perhaps neither should we.**
-- How do ChIP-seq scores for potential target genes align with those in the hTFtarget database? **The alignment is pretty decent, suggesting that we're not making a big mistake processing the ChIP-seq data.**
-- How do SCEPTRE and Seurat IRF1 discoveries align with each other? **The alignment is decent but very imperfect, as Kaishu has found before.**
-- How do SCEPTRE and Seurat IRF1 discoveries align with ChIP-seq scores? **There appears to be some enrichment of ChIP-seq signal in the SCEPTRE and Seurat discoveries.**
+Another way of measuring the amount of ChIP-seq signal near a gene is the linear score proposed by [Sikora-Wohlfeld et al, 2013](https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1003342&type=printable). In this approach, the relative distances of ChIP-seq peaks to the TSS are summed, restricting attention to a 50kb window centered on the TSS. Below is the distribution of the linear IRF1 ChIP-seq scores across genes:
 
+```{r, fig.width = 4, fig.height = 3, message = FALSE}
+chipseq_scores |> 
+  ggplot(aes(x = linear_score)) +
+  geom_histogram(color = "black") +
+  labs(x = "ChIP-seq linear score") +
+  theme(axis.title.y = element_blank())
+```
+
+We see that there are modes at 0 (no peaks within the window width) and 1 (one peaks near the TSS). There is also a long right tail.
+
+Now, let's see the distributions of these linear scores for genes detected by SCEPTRE and Seurat.
+
+```{r, fig.width = 6, fig.height = 3}
+cowplot::plot_grid(
+  merged_results |>
+    ggplot(aes(x = sceptre_discovery, y = linear_score)) +
+    geom_violin(fill = "dodgerblue") +
+    geom_boxplot(width = 0.1, outlier.colour = NA, fill = NA) +
+    labs(x = "SCEPTRE discovery",
+         y = "ChIP-seq linear score"),
+  merged_results |>
+    ggplot(aes(x = seurat_discovery, y = linear_score)) +
+    geom_violin(fill = "dodgerblue") +
+    geom_boxplot(width = 0.1, outlier.colour = NA, fill = NA) +
+    labs(x = "Seurat discovery",
+         y = "ChIP-seq linear score"),
+  nrow = 1
+)
+```
+
+Again, we see some nontrivial enrichment for both SCEPTRE and Seurat, without a significant difference apparent between the two methods.
