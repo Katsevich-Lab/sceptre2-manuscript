@@ -1,12 +1,14 @@
 ---
 title: "Comparing SCEPTRE and Schraivogel method on Schraivogel data"
-author: "Gene; 2023-04-08"
+author: "Gene"
+date: "2023-04-08"
 output: pdf_document
 ---
 
 ```{r, message = FALSE, echo = FALSE}
 library(readr)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 library(cowplot)
 library(conflicted)
@@ -36,18 +38,34 @@ results_merged <- result_sceptre |>
   arrange(`Positive control`)
 ```
 
-I applied SCEPTRE (based on the new `sceptre` package) to the Schraivogel discovery pairs from chromosome 8, and collated the results with those of Schraivogel. The result is the following data frame:
-```{r}
+I applied SCEPTRE (based on the new `sceptre` package) to the Schraivogel discovery and positive control pairs from chromosome 8, and collated the results with those of Schraivogel:
+```{r, echo = FALSE}
 results_merged
 ```
 
-A few things immediately seem strange. There appear to be many pairs for which the SCEPTRE p-value is zero (in fact there are `r results_merged |> summarise(sum(p_value_sceptre == 0)) |> pull()` such pairs). In the meantime, the Schraivogel p-values for those pairs are not even significant. The signs and magnitudes of the log fold changes between the two methods do not line up very well either. 
+A few things immediately seem strange. There appear to be many pairs for which the SCEPTRE p-value is zero (in fact there are `r results_merged |> summarise(sum(p_value_sceptre == 0)) |> pull()` such pairs). In the meantime, the Schraivogel p-values for those pairs are not even significant. These pairs are not positive controls. The signs and magnitudes of the log fold changes between the two methods do not line up very well either. 
 
-Let's plot the two sets of p-values against one another:
+Let's first take a look at the p-value distributions for both methods:
+
+```{r, message = FALSE, fig.width = 6, fig.height = 2.5, fig.align='center', echo = FALSE}
+results_merged |>
+  pivot_longer(c(p_value_sceptre, p_value_schraivogel), 
+               names_to = "method", 
+               values_to = "p_value",
+               names_prefix = "p_value_") |>
+  ggplot(aes(x = p_value)) +
+  geom_histogram(color = "black", boundary = 0) +
+  facet_wrap(~method, scales = "free") + 
+  labs(x = "p-value")
+```
+
+The SCEPTRE p-values have a massive spike near zero, unlike the Schraivogel p-values. Next, let's plot the two sets of p-values against one another:
+
 
 ```{r, fig.width = 5.5, fig.height = 3, fig.align='center', echo = FALSE}
 plot_grid(
   results_merged |>
+    filter(p_value_schraivogel < 0.01 | row_number() %% 20 == 0 | `Positive control`) |>
     mutate(across(starts_with("p_value"), ~ pmax(., 1e-100))) |>
     ggplot(aes(x = p_value_sceptre, y = p_value_schraivogel, color = `Positive control`)) +
     geom_point() +
@@ -62,6 +80,7 @@ plot_grid(
     theme(legend.position = "bottom",
           plot.title = element_text(hjust = 0.5)),
   results_merged |>
+    filter(p_value_schraivogel < 0.05 | row_number() %% 10 == 0 | `Positive control`) |>
     mutate(across(starts_with("p_value"), ~ pmax(., 1e-10))) |>
     ggplot(aes(x = p_value_sceptre, y = p_value_schraivogel, color = `Positive control`)) +
     geom_point() +
@@ -79,12 +98,13 @@ plot_grid(
 )
 ```
 
-Note that the set of pairs considered includes not just the discovery pairs but a small number of positive control pairs, highlighted in red. We see that the p-values from the two methods are generally concordant for the positive control pairs, but apparently not concordant at all for the other pairs. This reminds me of a plot Kaishu made for the Papalexi data, comparing SCEPTRE and Seurat p-values. There's a long tail of SCEPTRE p-values that are much smaller than their Schraivogel method counterparts.
+We see that the p-values from the two methods are generally concordant for the positive control pairs, but apparently not concordant at all for the other pairs. This reminds me of a plot Kaishu made for the Papalexi data, comparing SCEPTRE and Seurat p-values. There's a long tail of SCEPTRE p-values that are much smaller than their Schraivogel method counterparts.
 
 Next, let's take a look at the effect sizes:
 
-```{r, fig.width = 3, fig.height = 3, fig.align='center'}
+```{r, fig.width = 3, fig.height = 3, fig.align='center', echo = FALSE}
 results_merged |>
+  filter(abs(logFC_schraivogel) > 0.1 | row_number() %% 10 == 0 | `Positive control`) |>
   mutate(across(starts_with("logFC"), ~ pmin(pmax(., -5), 5))) |>
   ggplot(aes(x = logFC_sceptre, y = logFC_schraivogel, color = `Positive control`)) +
   geom_point() +
