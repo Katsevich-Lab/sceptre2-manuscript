@@ -1,0 +1,99 @@
+---
+title: "Comparing SCEPTRE and Schraivogel method on Schraivogel data"
+author: "Gene; 2023-04-08"
+output: pdf_document
+---
+
+```{r, message = FALSE, echo = FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+library(conflicted)
+conflicted::conflicts_prefer(dplyr::filter)
+
+sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+output_dir <- paste0(sceptre2_dir, "results/schraivogel_analysis/")
+result_sceptre <- readRDS(
+  paste0(output_dir, "sceptre_schraivogel_chr_8_results.rds")
+)
+result_schraivogel <- readRDS(
+  paste0(output_dir, "schraivogel_schraivogel_chr_8_results.rds")
+)
+
+results_merged <- result_sceptre |> 
+  rename(p_value_sceptre = p_value, 
+         logFC_sceptre = log_2_fold_change) |>
+  select(response_id, grna_group, p_value_sceptre, logFC_sceptre) |>
+  left_join(result_schraivogel |> 
+              rename(p_value_schraivogel = pvalue,
+                     logFC_schraivogel = logFC), 
+            by = c("response_id", "grna_group")) |>
+  na.omit() |>
+  rowwise() |>
+  mutate(`Positive control` = response_id %in% stringr::str_split_1(grna_group, "-")) |>
+  ungroup() |>
+  arrange(`Positive control`)
+```
+
+I applied SCEPTRE (based on the new `sceptre` package) to the Schraivogel discovery pairs from chromosome 8, and collated the results with those of Schraivogel. The result is the following data frame:
+```{r}
+results_merged
+```
+
+A few things immediately seem strange. There appear to be many pairs for which the SCEPTRE p-value is zero (in fact there are `r results_merged |> summarise(sum(p_value_sceptre == 0)) |> pull()` such pairs). In the meantime, the Schraivogel p-values for those pairs are not even significant. The signs and magnitudes of the log fold changes between the two methods do not line up very well either. 
+
+Let's plot the two sets of p-values against one another:
+
+```{r, fig.width = 5.5, fig.height = 3, fig.align='center', echo = FALSE}
+plot_grid(
+  results_merged |>
+    mutate(across(starts_with("p_value"), ~ pmax(., 1e-100))) |>
+    ggplot(aes(x = p_value_sceptre, y = p_value_schraivogel, color = `Positive control`)) +
+    geom_point() +
+    geom_abline() +
+    scale_colour_manual(values = c("darkgray", "red")) + 
+    scale_x_log10() +
+    scale_y_log10() + 
+    labs(x = "SCEPTRE p-value", 
+         y = "Schraivogel p-value",
+         title = "Zoomed out") +
+    theme_bw(base_size = 9) +
+    theme(legend.position = "bottom",
+          plot.title = element_text(hjust = 0.5)),
+  results_merged |>
+    mutate(across(starts_with("p_value"), ~ pmax(., 1e-10))) |>
+    ggplot(aes(x = p_value_sceptre, y = p_value_schraivogel, color = `Positive control`)) +
+    geom_point() +
+    geom_abline() +
+    scale_colour_manual(values = c("darkgray", "red")) + 
+    scale_x_log10() +
+    scale_y_log10() + 
+    labs(x = "SCEPTRE p-value", 
+         y = "Schraivogel p-value",
+         title = "Zoomed in") +
+    theme_bw(base_size = 9) +
+    theme(legend.position = "bottom",
+          plot.title = element_text(hjust = 0.5)), 
+  nrow = 1
+)
+```
+
+Note that the set of pairs considered includes not just the discovery pairs but a small number of positive control pairs, highlighted in red. We see that the p-values from the two methods are generally concordant for the positive control pairs, but apparently not concordant at all for the other pairs. This reminds me of a plot Kaishu made for the Papalexi data, comparing SCEPTRE and Seurat p-values. There's a long tail of SCEPTRE p-values that are much smaller than their Schraivogel method counterparts.
+
+Next, let's take a look at the effect sizes:
+
+```{r, fig.width = 3, fig.height = 3, fig.align='center'}
+results_merged |>
+  mutate(across(starts_with("logFC"), ~ pmin(pmax(., -5), 5))) |>
+  ggplot(aes(x = logFC_sceptre, y = logFC_schraivogel, color = `Positive control`)) +
+  geom_point() +
+  geom_abline() +
+  scale_colour_manual(values = c("darkgray", "red")) + 
+  labs(x = "SCEPTRE log fold-change", 
+       y = "Schraivogel log fold-change") +
+  theme_bw(base_size = 9) +
+  theme(legend.position = "bottom")
+```
+
+It appears the log fold-changes are on different scales. If would be good to figure out the source of this discrepancy. Aside from the scaling issue, there seems not to be a good agreement between the estimated log fold-changes of the two methods. The cross-shaped pattern in this plot also reminds me of a plot Kaishu made for the Papalexi data, comparing SCEPTRE and Seurat log fold-changes.
