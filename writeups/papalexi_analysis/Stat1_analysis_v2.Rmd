@@ -1,7 +1,7 @@
 ---
 title: "STAT1 SCEPTRE vs Seurat in monocytes, with same QC"
 output: pdf_document
-date: "2023-04-04"
+date: "2023-04-05"
 header-includes:
 - \usepackage{diagbox}
 - \usepackage{multicol}
@@ -33,7 +33,7 @@ conflicts_prefer(base::intersect)
 
 # Introduction
 
-This is a followup analysis of Gene's `IRF1-analysis-v2` writeup, with two main differences: **The ChIP-seq data is from CD14+ monocytes rather than K562 and the Seurat QC is matched to that of SCEPTRE.** Here, we consider two ways of determining transcription factor target genes: those that are in the hTFtarget database and those that have at least one ChIP-seq peak within 5kb of their TSS. These two align reasonably well; see the table below.
+This is a followup analysis of Gene's `IRF1-analysis-v3` writeup, this time for STAT1. Here, we consider two ways of determining transcription factor target genes: those that are in the hTFtarget database and those that have at least one ChIP-seq peak within 5kb of their TSS. These two align reasonably well; see the table below.
 
 ```{r, message = FALSE}
 data_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
@@ -194,22 +194,23 @@ chipseq_scores |>
 Let's first look at how the SCEPTRE and Seurat discoveries align with each other.
 ```{r}
 genes_qc <- intersect(sceptre_results |> 
-                        filter(grna_group == "IRF1") |>
+                        filter(grna_group == "STAT1") |>
                         na.omit() |>
                         pull(response_id),
                       chipseq_scores |> pull(gene))
 
+
 q <- 0.1
 
-# apply BH correction to SCEPTRE IRF1 results
-sceptre_results_IRF1 <- sceptre_results |>
+# apply BH correction to SCEPTRE STAT1 results
+sceptre_results_STAT1 <- sceptre_results |>
   filter(grna_group == "STAT1", response_id %in% genes_qc) |>
   mutate(sceptre_discovery = p.adjust(p_value, method = "BH") <= q) |>
   select(response_id, sceptre_discovery) |>
   rename(gene = response_id)
 
-# apply BH correction to Seurat IRF1 results
-seurat_results_IRF1 <- seurat_results |>
+# apply BH correction to Seurat STAT1 results
+seurat_results_STAT1 <- seurat_results |>
   filter(grna_group == "STAT1", response_id %in% genes_qc) |>
   mutate(seurat_discovery = p.adjust(p_val, method = "BH") <= q) |>
   select(response_id, seurat_discovery) |>
@@ -218,8 +219,8 @@ seurat_results_IRF1 <- seurat_results |>
 # join with chipseq scores
 merged_results <- chipseq_scores |>
   filter(gene %in% genes_qc) |>
-  left_join(sceptre_results_IRF1, by = "gene") |>
-  left_join(seurat_results_IRF1, by = "gene")
+  left_join(sceptre_results_STAT1, by = "gene") |>
+  left_join(seurat_results_STAT1, by = "gene")
 ```
 
 ```{r, results='asis'}
@@ -233,7 +234,7 @@ merged_results |>
                where = "!htbp")
 ```
 
-This table suggests that SCEPTRE and Seurat results have decent, but imperfect, agreement. Also note that the total numbers of discoveries made by the two methods are nearly the same. Next, let's look at how the SCEPTRE and Seurat discoveries align with the ChIP-seq target genes (as identified by either the hTFtarget database or directly from the ChIP-seq data).
+This table suggests that SCEPTRE and Seurat results have decent, but imperfect, agreement. Also note that Seurat makes roughly 800 more discoveries than SCEPTRE. Next, let's look at how the SCEPTRE and Seurat discoveries align with the ChIP-seq target genes (as identified by either the hTFtarget database or directly from the ChIP-seq data).
 
 \newpage
 
@@ -286,10 +287,13 @@ merged_results |>
            where = "!htbp")
 ```
 
-The proportions are the proportion of `TRUE` values in each row or column. For example, 0.576 of the genes found by SCEPTRE are marked as IRF1 targets in the database (i.e. SCEPTRE has specificity 0.576). From these tables, we see that **SCEPTRE has slightly lower sensitivity and specificity than Seurat.** We can summarize each 2-by-2 table via its odds ratio (the p-values are all extremely small). The resulting odds ratios are shown below.
+The proportions are the proportion of `TRUE` values in each row or column. For example, 0.742 of the genes found by SCEPTRE are marked as STAT1 targets in the database (i.e. SCEPTRE has specificity 0.742). From these tables, we see that **SCEPTRE has slightly lower sensitivity and slightly higher specificity than Seurat.** We can summarize each 2-by-2 table via its p-value and odds ratio.
 
 ```{r, results = 'asis'}
 odds_ratios <- matrix(NA, nrow = 2, ncol = 2, 
+                      dimnames = list(ground_truth = c("database", "ChIP-seq"), 
+                                      method = c("SCEPTRE", "Seurat")))
+enrichment_pvals <- matrix(NA, nrow = 2, ncol = 2, 
                       dimnames = list(ground_truth = c("database", "ChIP-seq"), 
                                       method = c("SCEPTRE", "Seurat")))
 
@@ -299,11 +303,23 @@ odds_ratios["database", "SCEPTRE"] <- merged_results |>
   fisher.test() %>%
   `$`("estimate")
 
+enrichment_pvals["database", "SCEPTRE"] <- merged_results |> 
+  select(in_database, sceptre_discovery) |>
+  table() |>
+  fisher.test() %>%
+  `$`("p.value")
+
 odds_ratios["database", "Seurat"] <- merged_results |> 
   select(in_database, seurat_discovery) |>
   table() |>
   fisher.test() %>%
   `$`("estimate")
+
+enrichment_pvals["database", "Seurat"] <- merged_results |> 
+  select(in_database, seurat_discovery) |>
+  table() |>
+  fisher.test() %>%
+  `$`("p.value")
 
 odds_ratios["ChIP-seq", "SCEPTRE"] <- merged_results |> 
   select(binary_score, sceptre_discovery) |>
@@ -311,11 +327,23 @@ odds_ratios["ChIP-seq", "SCEPTRE"] <- merged_results |>
   fisher.test() %>%
   `$`("estimate")
 
+enrichment_pvals["ChIP-seq", "SCEPTRE"] <- merged_results |> 
+  select(binary_score, sceptre_discovery) |>
+  table() |>
+  fisher.test() %>%
+  `$`("p.value")
+
 odds_ratios["ChIP-seq", "Seurat"] <- merged_results |> 
   select(binary_score, seurat_discovery) |>
   table() |>
   fisher.test() %>%
   `$`("estimate")
+
+enrichment_pvals["ChIP-seq", "Seurat"] <- merged_results |> 
+  select(binary_score, seurat_discovery) |>
+  table() |>
+  fisher.test() %>%
+  `$`("p.value")
 
 odds_ratios |>
   round(3) |>
@@ -323,6 +351,23 @@ odds_ratios |>
            rowlabel="\\diagbox{Ground truth}{Method}", 
            file="",
            caption = "Enrichment odds ratios, comparing to database and our ChIP-seq target assignments.",
+           where = "!htbp")
+
+my_latexSN <- function(x){
+    x <- format(x)
+    x <- sedit(x, c("e+00", "e-0*", "e-*", "e+0*", "e+*"), c("", 
+        "$\\!\\times\\!10^{-*}$", "$\\!\\times\\!10^{-*}$", "$\\!\\times\\!10^{*}$", 
+        "$\\!\\times\\!10^{*}$"))
+    x
+}
+
+enrichment_pvals |> 
+  signif(2) |>
+  my_latexSN() |>
+  Hmisc::latex(booktabs = TRUE,
+           rowlabel="\\diagbox{Ground truth}{Method}", 
+           file="",
+           caption = "Enrichment p-values, comparing to database and our ChIP-seq target assignments.",
            where = "!htbp")
 ```
 
@@ -346,7 +391,9 @@ merged_results |>
   kable_styling(position = "center", latex_options = "HOLD_position")
 ```
 
-These results suggest that **there is nontrivial (roughly two-fold) enrichment of ChIP-seq signal in both the SCEPTRE and Seurat discoveries, presumably because CD14+ cells are a better match to THP1 cells. Unfortunately, the Seurat discoveries have slightly higher enrichment.** This result is somewhat contradictory to our results on control data, where SCEPTRE found fewer false positives and more true positives than Seurat.
+\vspace{2in}
+
+These results suggest that **there is moderate enrichment of ChIP-seq signal in both the SCEPTRE and Seurat discoveries, presumably because CD14+ cells are a better match to THP1 cells. The enrichment odds ratios for SCEPTRE are modestly higher than those of Seurat.**
 
 \newpage
 
@@ -385,7 +432,3 @@ cowplot::plot_grid(
 ```
 
 Again, we see some nontrivial enrichment for both SCEPTRE and Seurat, without a significant difference apparent between the two methods.
-
-
-
-
