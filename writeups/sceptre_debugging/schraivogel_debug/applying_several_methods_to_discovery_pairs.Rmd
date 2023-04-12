@@ -257,6 +257,23 @@ sum(schraivogel_mrpl13_p < .1/nrow(sceptre_exact_no_batch_res))
 
 These preliminary results indicate that we might be able to make a positive comparison between SCEPTRE and Seurat and the Schraivogel data (in favor of SCEPTRE).
 
+I check to see whether the (relative) expression of MRPL13 varies across batch.
+
+```{r, warning=FALSE}
+exp <- response_odm[["MRPL13",]] |> as.numeric()
+cell_covariates <- response_odm |> ondisc::get_cell_covariates()
+
+df <- data.frame( rel_exp =  exp/cell_covariates$n_umis,
+                  batch = cell_covariates$batch)
+ggplot(data = df, mapping = aes(x = batch, y = rel_exp)) +
+  geom_violin() +  geom_boxplot() + theme_bw() +
+  ylim(c(0.0, 0.05)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab("Batch") + ylab("Rel. expression")
+```
+
+We see clear variation in the expression of MRPL13 across batch. For example, the expression of MRPL13 appears to be especially high in batches 12 and 14.
+
 ### Discrepancy between our implementation of Schraivogel Method and the original Schraivogel results
 
 Our implementation of Schraivogel Method does not seem to recapitulate the original results. In fact, the divergence is pretty substantial and likely will affect our communication of the results.
@@ -282,6 +299,6 @@ schraivogel_res_us <- schraivogel_res_us |>
 to_plot <- rbind(schraivogel_res_us, schraivogel_res)
 
 ggplot(to_plot, mapping = aes(x = p_value)) +
-  facet_wrap(.~method, scales = "free_y", nrow = 1) +
+  facet_wrap(. ~ method, scales = "free_y", nrow = 1) +
   geom_histogram(bins = 40, col = "black") + theme_bw()
 ```
