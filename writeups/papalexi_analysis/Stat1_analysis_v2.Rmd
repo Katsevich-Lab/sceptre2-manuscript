@@ -21,6 +21,7 @@ library(biomaRt)
 library(GenomicRanges)
 library(kableExtra)
 library(Hmisc)
+library(varhandle)
 
 # resolve namespace conflicts
 library(conflicted)
@@ -92,6 +93,27 @@ TSS_info <-getBM(attributes=c("external_gene_name", "chromosome_name", "start_po
   select(gene, chr, TSS)
 ```
 
+
+```{r}
+# get binary score for each gene
+window_width_binary <- 5e3
+TSS <- GRanges(
+  seqnames = TSS_info$chr,
+  ranges = IRanges(start = TSS_info$TSS-window_width_binary, 
+                   end = TSS_info$TSS+window_width_binary),
+  gene = TSS_info$gene,
+  TSS = TSS_info$TSS)
+
+chipseq_scores_binary <-TSS |>
+  join_overlap_left(chipseq_data) |>
+  group_by(gene) |>
+  summarise(binary_score = any(!is.na(score))) |>
+  as_tibble()
+
+chr = varhandle::unfactor(TSS@seqnames@values)
+chip = list()
+
+```
 
 ```{r}
 # get binary score for each gene
