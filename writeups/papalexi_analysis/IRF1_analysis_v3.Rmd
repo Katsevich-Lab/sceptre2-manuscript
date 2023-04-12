@@ -60,7 +60,7 @@ colnames(chipseq_data) = c("chrom",'start_pos','end_pos',"pval","score",
 # read in genes from database
 database_genes <- read_table(paste0(
   data_dir,
-  "data/htftarget/IRF1.target.txt"
+  "data/htftarget/dataset_1767.IRF1.target.txt"
 )) |>
   suppressWarnings() |>
   pull(target_name)
@@ -73,6 +73,7 @@ chipseq_data = GRanges(
   score = chipseq_data$score,
   peak_position = chipseq_data$pos_max_peak)
 ```
+
 
 ```{r}
 # get TSS for each gene 
