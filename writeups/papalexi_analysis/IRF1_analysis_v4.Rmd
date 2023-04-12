@@ -1,5 +1,5 @@
 ---
-title: "IRF1 SCEPTRE vs Seurat in monocytes, with same QC"
+title: "IRF1 SCEPTRE vs Seurat in monocytes, Changing QC"
 output: pdf_document
 date: "2023-04-04"
 header-includes:
@@ -71,8 +71,16 @@ chipseq_data = GRanges(
   seqnames = chipseq_data$chrom,
   ranges = IRanges(start = chipseq_data$start_pos, end = chipseq_data$end_pos),
   score = chipseq_data$score,
+  pval = chipseq_data$pval,
   peak_position = chipseq_data$pos_max_peak)
 ```
+
+```{r}
+#hist(chipseq_data$pval)
+alpha = quantile(chipseq_data$pval,0.75)
+chipseq_data = chipseq_data%>%filter(pval < alpha)
+```
+
 
 
 ```{r}

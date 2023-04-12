@@ -1,5 +1,5 @@
 ---
-title: "IRF1 SCEPTRE vs Seurat in monocytes, with same QC"
+title: "TF SCEPTRE vs Seurat in monocytes, with same QC"
 output: pdf_document
 date: "2023-04-04"
 header-includes:
@@ -34,7 +34,7 @@ conflicts_prefer(base::intersect)
 This is a followup analysis of Gene's `IRF1-analysis-v2` writeup, with two main differences: **The ChIP-seq data is from CD14+ monocytes rather than K562 and the Seurat QC is matched to that of SCEPTRE.** Here, we consider two ways of determining transcription factor target genes: those that are in the hTFtarget database and those that have at least one ChIP-seq peak within 5kb of their TSS. These two align reasonably well; see the table below.
 
 ```{r, message = FALSE}
-TF_name = "BRD4"
+TF_name = "SMAD4"
 data_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
 # read in sceptre and seurat results
@@ -50,8 +50,8 @@ sceptre_results <- readRDS(sceptre_path)
 seurat_results <- readRDS(seurat_path)
 
 # read in K562 ChIP-seq data
-irf1_filename <- "GSM1057025_IRF1peak_B.txt"
-chipseq_fp <- paste0(data_dir, "data/chipseq/", irf1_filename)
+TF_filename <- "GSM1057025_IRF1peak_B.txt"
+chipseq_fp <- paste0(data_dir, "data/chipseq/", TF_filename)
 chipseq_data <- read.table(chipseq_fp) 
 colnames(chipseq_data) = c("chrom",'start_pos','end_pos',"pval","score",
                            "pos_max_peak","max_peak_height",
@@ -61,7 +61,7 @@ colnames(chipseq_data) = c("chrom",'start_pos','end_pos',"pval","score",
 # read in genes from database
 database_genes <- read_table(paste0(
   data_dir,
-  "data/htftarget/IRF1.target.txt"
+  "data/htftarget/",TF_name,".target.txt"
 )) |>
   suppressWarnings() |>
   pull(target_name)
@@ -170,15 +170,15 @@ genes_qc <- intersect(sceptre_results |>
 
 q <- 0.1
 
-# apply BH correction to SCEPTRE IRF1 results
-sceptre_results_IRF1 <- sceptre_results |>
+# apply BH correction to SCEPTRE TF results
+sceptre_results_TF <- sceptre_results |>
   filter(grna_group == TF_name, response_id %in% genes_qc) |>
   mutate(sceptre_discovery = p.adjust(p_value, method = "BH") <= q) |>
   select(response_id, sceptre_discovery) |>
   rename(gene = response_id)
 
-# apply BH correction to Seurat IRF1 results
-seurat_results_IRF1 <- seurat_results |>
+# apply BH correction to Seurat TF results
+seurat_results_TF <- seurat_results |>
   filter(grna_group == TF_name, response_id %in% genes_qc) |>
   mutate(seurat_discovery = p.adjust(p_val, method = "BH") <= q) |>
   select(response_id, seurat_discovery) |>
@@ -187,8 +187,8 @@ seurat_results_IRF1 <- seurat_results |>
 # join with chipseq scores
 merged_results <- chipseq_scores |>
   filter(gene %in% genes_qc) |>
-  left_join(sceptre_results_IRF1, by = "gene") |>
-  left_join(seurat_results_IRF1, by = "gene")
+  left_join(sceptre_results_TF, by = "gene") |>
+  left_join(seurat_results_TF, by = "gene")
 ```
 
 ```{r, results='asis'}
@@ -236,7 +236,7 @@ merged_results |>
 
 ```
 
-The proportions are the proportion of `TRUE` values in each row or column. For example, 0.576 of the genes found by SCEPTRE are marked as IRF1 targets in the database (i.e. SCEPTRE has specificity 0.576). From these tables, we see that **SCEPTRE has slightly lower sensitivity and specificity than Seurat.** We can summarize each 2-by-2 table via its odds ratio (the p-values are all extremely small). The resulting odds ratios are shown below.
+The proportions are the proportion of `TRUE` values in each row or column. For example, 0.576 of the genes found by SCEPTRE are marked as TF targets in the database (i.e. SCEPTRE has specificity 0.576). From these tables, we see that **SCEPTRE has slightly lower sensitivity and specificity than Seurat.** We can summarize each 2-by-2 table via its odds ratio (the p-values are all extremely small). The resulting odds ratios are shown below.
 
 ```{r, results = 'asis'}
 odds_ratios <- matrix(NA, nrow = 2, ncol = 2, 
