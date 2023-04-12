@@ -31,11 +31,16 @@ conflicts_prefer(base::intersect)
 
 # Introduction
 
-This is a followup analysis of Gene's `IRF1-analysis-v2` writeup, with two main differences: **The ChIP-seq data is from CD14+ monocytes rather than K562 and the Seurat QC is matched to that of SCEPTRE.** Here, we consider two ways of determining transcription factor target genes: those that are in the hTFtarget database and those that have at least one ChIP-seq peak within 5kb of their TSS. These two align reasonably well; see the table below.
+Here we analyze the performance of SCEPTRE and Seurat on the broad condition gene sets from the HTFtarget database. You can input the TF you wan tto analyze in the code chunk below.
 
-```{r, message = FALSE}
+```{r,echo = T}
+#get the TF name 
 #TF_names = c("STAT1","STAT2","BRD4","MYC","SMAD4","IRF1")
 TF_name = "SMAD4"
+
+```
+
+```{r, message = FALSE}
 data_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
 # read in sceptre and seurat results
