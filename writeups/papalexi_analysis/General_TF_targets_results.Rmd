@@ -31,7 +31,7 @@ conflicts_prefer(base::intersect)
 
 # Introduction
 
-This is a followup analysis of Gene's `IRF1-analysis-v2` writeup, with two main differences: **The ChIP-seq data is from CD14+ monocytes rather than K562 and the Seurat QC is matched to that of SCEPTRE.** Here, we consider two ways of determining transcription factor target genes: those that are in the hTFtarget database and those that have at least one ChIP-seq peak within 5kb of their TSS. These two align reasonably well; see the table below.
+This analysis aims to see if Seurat and SCEPTRE differ on finding general TF targets. I will create a table with the odds ratio and corresponding pvalues for each method across TFs. The results are below and show that while both methods perofrm similarly, SCEPTRE outperforms Seurat slightly on STAT1,IRF1,and SMAD4. 
 
 ```{r, message = FALSE}
 TF_name = "SMAD4"
