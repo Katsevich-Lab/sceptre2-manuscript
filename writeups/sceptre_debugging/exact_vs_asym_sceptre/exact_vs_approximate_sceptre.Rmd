@@ -3,19 +3,23 @@ title: "Exact vs. approximate sceptre"
 author: "Tim"
 date: "2023-04-11"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 6,
+                      fig.height = 3.5,
+                      fig.pos = "center")
+
 ```
 
 ## Comparing exact SCEPTRE and approximate SCEPTRE
 
-In this writeup I compare the "approximate" version of SCEPTRE to the "exact" version of SCEPTRE (henceforth "SCEPTRE-approximate" and "SCEPTRE-exact"). SCEPTRE-approximate is the version of SCEPTRE that currently is implemented in the `sceptre` package. SCEPTRE-approximate carries out the gene precomputation using the negative control cells only. SCEPTRE-exact, by contrast, carries out the gene precomputation using the *entire* set of cells (for a given gene-gRNA group pair). As Gene pointed out, SCEPTRE-approximate technically is an approximate permutation test, while SCEPTRE-exact is an exact permutation test. SCEPTRE-approximate and SCEPTRE-exact should produce similar p-values when the regression on the control cells matches the regression on the entire set of cells (which should hold under the null hypothesis when the number of cells is large).
+In this writeup I compare the "approximate" version of SCEPTRE to the "exact" version of SCEPTRE (henceforth "SCEPTRE-approximate" and "SCEPTRE-exact"). SCEPTRE-approximate is the version of SCEPTRE that currently is implemented in the `sceptre` package. SCEPTRE-approximate carries out the gene precomputation using the negative control cells only. SCEPTRE-exact, by contrast, carries out the gene precomputation using the *entire* set of cells (for a given gene-gRNA group pair). As Gene pointed out, SCEPTRE-approximate technically is an approximate permutation test, while SCEPTRE-exact is an exact permutation test. SCEPTRE-approximate and SCEPTRE-exact should produce similar p-values when the regression on the control cells yields a similar result to the regression on the entire set of cells (which should hold under the null hypothesis when the number of cells is large).
 
-To explore this issue empirically, I implemented SCEPTRE-exact in the SCEPTRE package. Note that this is an experimental feature that I implemented on a development branch; "properly" integrating the "exact full" test statistic into the `sceptre` software would take about a day.
+To explore this issue empirically, I implemented SCEPTRE-exact in the SCEPTRE package. Note that this is an experimental feature that I implemented on a development branch; "properly" integrating this functionality into the `sceptre` software would take about a day.
 
 ```{r}
  # load packages
@@ -87,11 +91,10 @@ plot_analysis_output <- function(res) {
   res <- res |> dplyr::mutate(p_value_approx = ifelse(p_value_approx == 0, 1e-200, p_value_approx))
   p1 <- ggplot(data = res, mapping = aes(x = p_value_exact, y = p_value_approx)) +
     geom_point() + theme_bw() + xlab("P-value (exact)") + ylab("P-value (approx)") +
-    ggtitle("Untransformed scale") + geom_abline(slope = 1, intercept = 0, col = "blue")
+    ggtitle("Untransformed scale") + geom_abline(slope = 1, intercept = 0, col = "blue") + ggplot2::scale_x_reverse() + ggplot2::scale_y_reverse()
   p2 <- ggplot(data = res, mapping = aes(x = p_value_exact, y = p_value_approx)) +
     geom_point() + theme_bw() + xlab("P-value (exact)") + ylab("P-value (approx)") +
-    ggtitle("Transformed scale") + ggplot2::scale_x_continuous(trans = sceptre:::revlog_trans(10)) + 
-        ggplot2::scale_y_continuous(trans = sceptre:::revlog_trans(10)) +
+    ggtitle("Transformed scale") + scale_x_continuous(trans = sceptre:::revlog_trans(10)) + scale_y_continuous(trans = sceptre:::revlog_trans(10)) +
     geom_abline(slope = 1, intercept = 0, col = "blue")
   return(cowplot::plot_grid(p1, p2, nrow = 1))
 }
@@ -118,7 +121,7 @@ I plot the SCEPTRE-approximate vs. SCEPTRE-exact p-values on an untransformed sc
 plot_analysis_output(papa_out$res)
 ```
 
-We see that the p-values coincide, especially in the tail. The SCEPTRE-approximate p-values tend to be slightly smaller (i.e., more significant) than their SCEPTRE-exact counterparts. The correlation between the p-values high high on both scales.
+We see that the p-values coincide, especially in the tail. The SCEPTRE-approximate p-values tend to be slightly smaller (i.e., more significant) than their SCEPTRE-exact counterparts. The correlation between the p-values is high on both scales.
 
 ```{r}
 cor(papa_out$res$p_value_approx, papa_out$res$p_value_exact)
@@ -132,7 +135,7 @@ Finally, I compare the execution time of SCEPTRE-exact and SCEPTRE-approximate.
 papa_out$exact_time[[3]]/papa_out$approx_time[[3]]
 ```
 
-SCEPTRE-exact is about 10% slower than SCEPTRE-approximate, which is not bad at all.
+SCEPTRE-exact has a similar running time to SCEPTRE-approximate.
 
 ### Frangieh IFN-gamma
 
@@ -164,7 +167,7 @@ SCEPTRE-exact is within 10% of the running time of SCEPTRE-approximate.
 
 ### Schraivogel: batch excluded as covariate
 
-Finally, I carry out this analysis on the Schraivogel chromosome 8 data. I sample twice as many pairs so that we can look further out into the tail.
+Next, I carry out this analysis on the Schraivogel chromosome 8 data. First, I apply SCEPTRE-approximate and SCEPTRE-exact to analyze the data with batch *excluded* as a covariate. I sample twice as many pairs so that we can look further out into the tail.
 
 ```{r}
 # schraivogel
@@ -189,9 +192,15 @@ cor(-log(schraivogel_out_no_batch$res$p_value_approx),
     -log(schraivogel_out_no_batch$res$p_value_exact))
 ```
 
-SCEPTRE-exact is about 7.5 times slower than SCEPTRE-approximate. SCEPTRE-exact is relatively slow on this dataset because each gene is paired to a relatively large number of gRNA groups. Thus, we save more compute by factoring out the precomputation at the level of the gene.
+SCEPTRE-exact is about 8 times slower than SCEPTRE-approximate. SCEPTRE-exact is relatively slow on this dataset because each gene is paired to a relatively large number of gRNA groups. Thus, we save more compute by factoring out the precomputation at the level of the gene.
+
+```{r}
+schraivogel_out_no_batch$exact_time[[3]]/schraivogel_out_no_batch$approx_time[[3]]
+```
 
 ### Schraivogel: batch included as covariate
+
+Finally, I apply SCEPTRE-exact and SCEPTRE-approximate to the Schraivogel chromosome 8 data with batch *included* as a covariate.
 
 ```{r}
 # schraivogel
@@ -210,4 +219,19 @@ if (!file.exists(fp)) {
 plot_analysis_output(schraivogel_out_with_batch$res)
 ```
 
-Whoah!!!
+Whoah! The results diverge substantially. In the bulk the two sets of p-values are weakly correlated.
+
+```{r}
+cor(schraivogel_out_with_batch$res$p_value_approx,
+    schraivogel_out_with_batch$res$p_value_exact)
+```
+
+And in the tail the approximate p-values are pretty much uniformly smaller than the bulk p-values. SCEPTRE-exact is about three times slower than SCEPTRE-approximate in this setting.
+
+```{r}
+schraivogel_out_with_batch$exact_time/schraivogel_out_with_batch$approx_time
+```
+
+### Conclusion
+
+SCEPTRE-exact and SCEPTRE-approximate yield similar p-values on the Papalexi data, Frangieh data, and Schraivogel data (when batch is excluded as a covariate). However, on the Schraivogel data with batch included as a covariate, the two methods diverge. As Gene pointed out, including batch as a covariate on the Schraivogel data causes the regression on the entire set of cells to diverge from the regression on the negative control cells, which presumably explains the discrepancy. We will need to determine how to update the `sceptre` method/package in light of these results.
