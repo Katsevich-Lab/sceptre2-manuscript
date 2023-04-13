@@ -16,14 +16,14 @@ conflicted::conflicts_prefer(dplyr::filter)
 
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 output_dir <- paste0(sceptre2_dir, "results/schraivogel_analysis/")
-result_sceptre <- readRDS(
+result_sceptre_2 <- readRDS(
   paste0(output_dir, "sceptre_schraivogel_chr_8_results.rds")
 )
 result_schraivogel <- readRDS(
   paste0(output_dir, "schraivogel_schraivogel_chr_8_results.rds")
 )
 
-results_merged <- result_sceptre |> 
+results_merged <- result_sceptre_2 |> 
   rename(p_value_sceptre = p_value, 
          logFC_sceptre = log_2_fold_change) |>
   select(response_id, grna_group, p_value_sceptre, logFC_sceptre) |>
