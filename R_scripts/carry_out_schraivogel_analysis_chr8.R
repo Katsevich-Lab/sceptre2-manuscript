@@ -55,7 +55,7 @@ grna_matrix <- grna_matrix
 rownames(grna_matrix) <- ondisc::get_feature_ids(grna_odm)
 covariate_data_frame <- gene_covariate_matrix
 grna_group_data_frame <- grna_groups
-formula_object <- ~log(n_umis) + log(n_nonzero) + batch
+formula_object <- ~log(n_umis) + log(n_nonzero) # + batch
 calibration_check <- FALSE
 response_grna_group_pairs <- schraivogel_results |> select(response_id, grna_group)
 
@@ -67,7 +67,8 @@ result_sceptre <- run_sceptre_lowmoi(
   grna_group_data_frame = grna_group_data_frame,
   formula_object = formula_object,
   response_grna_group_pairs = response_grna_group_pairs,
-  calibration_check = calibration_check
+  calibration_check = calibration_check, 
+  return_debugging_metrics = TRUE
 )
 
 # save the results
