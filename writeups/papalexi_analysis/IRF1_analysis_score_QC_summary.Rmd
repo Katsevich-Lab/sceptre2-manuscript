@@ -1,0 +1,226 @@
+---
+title: "IRF1 SCEPTRE vs Seurat With Score QC Summary"
+output: pdf_document
+date: "2023-04-04"
+header-includes:
+- \usepackage{diagbox}
+- \usepackage{multicol}
+- \usepackage{float}
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(fig.align = 'center', echo = FALSE)
+```
+
+```{r, message = FALSE, warning = FALSE, cache = FALSE}
+# load libraries
+library(tidyverse)
+library(plyranges)
+library(genomation)
+library(biomaRt)
+library(GenomicRanges)
+library(kableExtra)
+
+# resolve namespace conflicts
+library(conflicted)
+conflicts_prefer(dplyr::filter)
+conflicts_prefer(dplyr::select)
+conflicts_prefer(dplyr::rename)
+conflicts_prefer(base::intersect)
+```
+
+# Introduction
+
+In this writeup I will change the method of QC for the CHIP-seq data to be such that peaks are only called if they are in the top $\alpha$ percentile of peaks with respect to the score reported. I will return the odds ratios that SCEPTRE and Seurat give with respect to the post-QC chipseq data. For more information such as the number of discoveries, see "IRF1-analysis-score-QC-individual".
+
+```{r}
+#put whatever quantiles you want in character format
+alphas = c("0.1","0.25","0.5","0.75")
+```
+
+
+```{r, message = FALSE}
+data_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+
+# read in sceptre and seurat results
+sceptre_path <- paste0(
+  data_dir, "results/papalexi_analysis/",
+  "sceptre_full_mrna_results_with_effect_size.rds"
+)
+seurat_path <- paste0(
+  data_dir, "results/papalexi_analysis/",
+  "seurat_all_perturbations_results.rds"
+)
+sceptre_results <- readRDS(sceptre_path)
+seurat_results <- readRDS(seurat_path)
+
+# read in K562 ChIP-seq data
+irf1_filename <- "GSM1057025_IRF1peak_B.txt"
+chipseq_fp <- paste0(data_dir, "data/chipseq/", irf1_filename)
+chipseq_data <- read.table(chipseq_fp) 
+colnames(chipseq_data) = c("chrom",'start_pos','end_pos',"pval","score",
+                           "pos_max_peak","max_peak_height",
+                           "rel_pos_max_peak_height","peak_size","mid_point",
+                           "peak_to_mid_dist")
+
+# read in genes from database
+database_genes <- read_table(paste0(
+  data_dir,
+  "data/htftarget/dataset_1767.IRF1.target.txt"
+)) |>
+  suppressWarnings() |>
+  pull(target_name)
+```
+
+```{r}
+chipseq_data = GRanges(
+  seqnames = chipseq_data$chrom,
+  ranges = IRanges(start = chipseq_data$start_pos, end = chipseq_data$end_pos),
+  score = chipseq_data$score,
+  pval = chipseq_data$pval,
+  peak_position = chipseq_data$pos_max_peak)
+```
+
+```{r}
+# get TSS for each gene 
+gene_names <- sceptre_results |> pull(response_id) |> unique() |> as.character()
+ensembl <- useEnsembl(host = 'https://grch37.ensembl.org',
+                      biomart = 'ENSEMBL_MART_ENSEMBL', 
+                      dataset = "hsapiens_gene_ensembl")
+TSS_info <-getBM(attributes=c("external_gene_name", "chromosome_name", "start_position", 
+                       "end_position", "strand"),
+                 filters=c('external_gene_name'),
+                 value = gene_names, mart=ensembl) |>
+  filter(chromosome_name %in% c(1:22, "X", "Y")) |>
+  mutate(TSS = ifelse(strand == 1, start_position, end_position),
+         chromosome_name = paste0("chr", chromosome_name)) |>
+  rename(gene = external_gene_name, chr = chromosome_name) |>
+  select(gene, chr, TSS)
+```
+
+
+
+
+
+```{r}
+chipseq_data_copy = chipseq_data
+#hist(chipseq_data$pval)
+odds_ratios <- matrix(NA, nrow = length(alphas), ncol = 4, 
+                      dimnames = list(ground_truth = alphas, 
+          method = c("SCEPTRE", "Seurat","SCEPTRE-pval","Seurat-pval")))
+
+for(alpha in alphas){
+  score_quant = quantile(chipseq_data_copy$score,as.numeric(alpha))
+  chipseq_data = chipseq_data_copy%>%filter(score > score_quant)
+  
+  
+  # get binary score for each gene
+  window_width_binary <- 5e3
+  chipseq_scores_binary <- GRanges(
+    seqnames = TSS_info$chr,
+    ranges = IRanges(start = TSS_info$TSS-window_width_binary, 
+                     end = TSS_info$TSS+window_width_binary),
+    gene = TSS_info$gene,
+    TSS = TSS_info$TSS) |> 
+    join_overlap_left(chipseq_data) |>
+    group_by(gene) |>
+    summarise(binary_score = any(!is.na(score))) |>
+    as_tibble()
+  
+  # get linear score for each gene
+  window_width_linear <- 5e4
+  chipseq_scores_linear <- GRanges(
+    seqnames = TSS_info$chr,
+    ranges = IRanges(start = TSS_info$TSS-window_width_linear, 
+                     end = TSS_info$TSS+window_width_linear),
+    gene = TSS_info$gene,
+    TSS = TSS_info$TSS) |> 
+    join_overlap_left(chipseq_data) |>
+    group_by(gene) |>
+    summarise(linear_score = sum((window_width_linear - abs(TSS - peak_position))/
+                                   window_width_linear)) |>
+    as_tibble() |>
+    mutate(linear_score = ifelse(is.na(linear_score), 0, linear_score))
+  
+  
+  # join the two sets of chipseq scores, and add database information
+  chipseq_scores <- full_join(chipseq_scores_binary, 
+                              chipseq_scores_linear, 
+                              by = "gene") |>
+    mutate(in_database = gene %in% database_genes)
+  
+  
+  
+  
+  genes_qc <- intersect(sceptre_results |> 
+                          filter(grna_group == "IRF1") |>
+                          na.omit() |>
+                          pull(response_id),
+                        chipseq_scores |> pull(gene))
+  
+  q <- 0.1
+  
+  # apply BH correction to SCEPTRE IRF1 results
+  sceptre_results_IRF1 <- sceptre_results |>
+    filter(grna_group == "IRF1", response_id %in% genes_qc) |>
+    mutate(sceptre_discovery = p.adjust(p_value, method = "BH") <= q) |>
+    select(response_id, sceptre_discovery) |>
+    rename(gene = response_id)
+  
+  # apply BH correction to Seurat IRF1 results
+  seurat_results_IRF1 <- seurat_results |>
+    filter(grna_group == "IRF1", response_id %in% genes_qc) |>
+    mutate(seurat_discovery = p.adjust(p_val, method = "BH") <= q) |>
+    select(response_id, seurat_discovery) |>
+    rename(gene = response_id)
+  
+  # join with chipseq scores
+  merged_results <- chipseq_scores |>
+    filter(gene %in% genes_qc) |>
+    left_join(sceptre_results_IRF1, by = "gene") |>
+    left_join(seurat_results_IRF1, by = "gene")
+  
+  
+  
+  odds_ratios[alpha, "SCEPTRE"] <- merged_results |> 
+    select(binary_score, sceptre_discovery) |>
+    table() |>
+    fisher.test() %>%
+    `$`("estimate")
+  
+  odds_ratios[alpha, "Seurat"] <- merged_results |> 
+    select(binary_score, seurat_discovery) |>
+    table() |>
+    fisher.test() %>%
+    `$`("estimate")
+  
+  odds_ratios[alpha, "SCEPTRE-pval"] <- merged_results |> 
+    select(binary_score, sceptre_discovery) |>
+    table() |>
+    fisher.test() %>%
+    `$`("p.value")
+  
+  odds_ratios[alpha, "Seurat-pval"] <- merged_results |> 
+    select(binary_score, seurat_discovery) |>
+    table() |>
+    fisher.test() %>%
+    `$`("p.value")
+}
+
+
+```
+
+
+
+```{r,results = 'asis'}
+odds_ratios |>
+  round(3) |>
+  Hmisc::latex(booktabs = TRUE,
+           rowlabel="\\diagbox{Ground truth}{Method}", 
+           file="",
+           caption = "Enrichment odds ratios, comparing to ChIP-seq target assignments with changing quantile threshold",
+           where = "!htbp")
+```
+
+
+\newpage

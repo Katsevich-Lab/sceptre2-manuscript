@@ -1,5 +1,5 @@
 ---
-title: "IRF1 SCEPTRE vs Seurat in monocytes, with same QC"
+title: "IRF1 SCEPTRE vs Seurat With Pvalue QC Individual"
 output: pdf_document
 date: "2023-04-04"
 header-includes:
@@ -32,6 +32,12 @@ conflicts_prefer(base::intersect)
 # Introduction
 
 This is a followup analysis of Gene's `IRF1-analysis-v2` writeup, with two main differences: **The ChIP-seq data is from CD14+ monocytes rather than K562 and the Seurat QC is matched to that of SCEPTRE.** Here, we consider two ways of determining transcription factor target genes: those that are in the hTFtarget database and those that have at least one ChIP-seq peak within 5kb of their TSS. These two align reasonably well; see the table below.
+
+```{r}
+#pvalue quantile you want to filter by. 0.75 means that we are keeping the 
+#top 75 percent  of peaks sorted by pvalue
+quant = 0.75
+```
 
 ```{r, message = FALSE}
 data_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
@@ -71,9 +77,15 @@ chipseq_data = GRanges(
   seqnames = chipseq_data$chrom,
   ranges = IRanges(start = chipseq_data$start_pos, end = chipseq_data$end_pos),
   score = chipseq_data$score,
+  pval = chipseq_data$pval,
   peak_position = chipseq_data$pos_max_peak)
 ```
 
+```{r}
+#hist(chipseq_data$pval)
+alpha = quantile(chipseq_data$pval,1-quant)
+chipseq_data = chipseq_data%>%filter(pval < alpha)
+```
 
 ```{r}
 # get TSS for each gene 
@@ -300,66 +312,9 @@ odds_ratios |>
   Hmisc::latex(booktabs = TRUE,
            rowlabel="\\diagbox{Ground truth}{Method}", 
            file="",
-           caption = "Enrichment odds ratios, comparing to database and our ChIP-seq target assignments.",
+           caption = paste0("Enrichment odds ratios, comparing to database and our ChIP-seq target assignments with pvalue quantile threshold equal to ", quant),
            where = "!htbp")
 ```
 
-```{r, eval = FALSE}
-merged_results |> 
-  group_by(sceptre_discovery) |>
-  summarise(round(median(linear_score), 3)) |>
-  kable(booktabs = TRUE, 
-      linesep = "",
-      col.names = c("SCEPTRE discovery", "Median linear ChIP-seq score"),
-      caption = paste0("Comparing SCEPTRE discoveries to ChIP-seq linear scores.")) |>
-  kable_styling(position = "center", latex_options = "HOLD_position")
-
-merged_results |> 
-  group_by(seurat_discovery) |>
-  summarise(round(median(linear_score), 3)) |>
-  kable(booktabs = TRUE, 
-      linesep = "",
-      col.names = c("Seurat discovery", "Median linear ChIP-seq score"),
-      caption = paste0("Comparing Seurat discoveries to ChIP-seq linear scores.")) |>
-  kable_styling(position = "center", latex_options = "HOLD_position")
-```
-
-These results suggest that **there is nontrivial (roughly two-fold) enrichment of ChIP-seq signal in both the SCEPTRE and Seurat discoveries, presumably because CD14+ cells are a better match to THP1 cells. Unfortunately, the Seurat discoveries have slightly higher enrichment.** This result is somewhat contradictory to our results on control data, where SCEPTRE found fewer false positives and more true positives than Seurat.
 
 \newpage
-
-# Appendix
-
-Another way of measuring the amount of ChIP-seq signal near a gene is the linear score proposed by [Sikora-Wohlfeld et al, 2013](https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.1003342&type=printable). In this approach, the relative distances of ChIP-seq peaks to the TSS are summed, restricting attention to a 50kb window centered on the TSS. Below is the distribution of the linear IRF1 ChIP-seq scores across genes:
-
-```{r, fig.width = 4, fig.height = 3, message = FALSE}
-chipseq_scores |> 
-  ggplot(aes(x = linear_score)) +
-  geom_histogram(color = "black") +
-  labs(x = "ChIP-seq linear score") +
-  theme(axis.title.y = element_blank())
-```
-
-We see that there are modes at 0 (no peaks within the window width) and 1 (one peaks near the TSS). There is also a long right tail.
-
-Now, let's see the distributions of these linear scores for genes detected by SCEPTRE and Seurat.
-
-```{r, fig.width = 6, fig.height = 3}
-cowplot::plot_grid(
-  merged_results |>
-    ggplot(aes(x = sceptre_discovery, y = linear_score)) +
-    geom_violin(fill = "dodgerblue") +
-    geom_boxplot(width = 0.1, outlier.colour = NA, fill = NA) +
-    labs(x = "SCEPTRE discovery",
-         y = "ChIP-seq linear score"),
-  merged_results |>
-    ggplot(aes(x = seurat_discovery, y = linear_score)) +
-    geom_violin(fill = "dodgerblue") +
-    geom_boxplot(width = 0.1, outlier.colour = NA, fill = NA) +
-    labs(x = "Seurat discovery",
-         y = "ChIP-seq linear score"),
-  nrow = 1
-)
-```
-
-Again, we see some nontrivial enrichment for both SCEPTRE and Seurat, without a significant difference apparent between the two methods.

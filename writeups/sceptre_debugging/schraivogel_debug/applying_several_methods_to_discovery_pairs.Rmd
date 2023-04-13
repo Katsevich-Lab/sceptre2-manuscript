@@ -1,0 +1,304 @@
+---
+title: "Evaluating several methods on the Schraivogel discovery pairs"
+author: "Tim"
+date: "2023-04-10"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+I apply several methods to a subset of the Schraivogel discovery pairs: Schraivogel method, Seurat DE, and NB regression. NB regression is applied *without* batch as a covariate. I also apply four variants of SCEPTRE to the data: exact vs. approximate, and with vs. without batch included as a covariate. I notate these four variants as follows: SCEPTRE-exact-with-batch, SCEPTRE-exact-no-batch, SCEPTRE-approximate-with-batch, and SCEPTRE-approximate-no-batch. 
+
+```{r, echo=FALSE}
+# load packages
+library(ondisc)
+library(lowmoi)
+library(ggplot2)
+
+# load data
+LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+schraivogel_chr8_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR,
+                               "data/schraivogel/enhancer_screen_chr8/")
+# response info
+response_odm_fp <- paste0(schraivogel_chr8_dir, "gene/matrix.odm")
+response_metadata_fp <- paste0(schraivogel_chr8_dir, "gene/metadata_qc.rds")
+response_odm <- read_odm(odm_fp = response_odm_fp, metadata_fp = response_metadata_fp)
+
+# grna info
+grna_odm_fp <- paste0(schraivogel_chr8_dir, "grna_expression/matrix.odm")
+grna_metadata_fp <- paste0(schraivogel_chr8_dir, "grna_expression/metadata_qc.rds")
+grna_odm <- read_odm(odm_fp = grna_odm_fp, metadata_fp = grna_metadata_fp)
+```
+
+I load the SCEPTRE results that Gene generated on the Schraivogel discovery pairs.
+
+```{r}
+schraivogel_chr8_result_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR,
+                                      "results/schraivogel_analysis/")
+gk_sceptre_schraivogel_res <- readRDS(paste0(schraivogel_chr8_result_dir,
+                                             "sceptre_schraivogel_chr_8_results.rds"))
+gk_orig_schraivogel_res <- readRDS(paste0(schraivogel_chr8_result_dir,
+                                          "schraivogel_schraivogel_chr_8_results.rds"))
+```
+
+Many of the p-values are small. In fact, about 50\% of the p-values are less than 0.001, which seems a bit strange. Let us randomly sample 5,000 of the pairs for which SCEPTRE produces a p-value below 0.001.
+
+```{r}
+pairs_to_analyze <- gk_sceptre_schraivogel_res |>
+   dplyr::filter(p_value < 0.001) |>
+   dplyr::sample_n(5000) |>
+   dplyr::select(response_id, grna_group)
+```
+
+I subject these pairs to NB regression, Seurat DE, SCEPTRE-exact-with-batch, SCEPTRE-exact-no-batch, SCEPTRE-approximate-with-batch, and SCEPTRE-approximate-no-batch. These methods (especially Seurat DE) take some time to run. I use the original Schraivogel results for the Schraivogel method.
+
+```{r, echo=FALSE}
+# NB regression no batch
+fp <- paste0(schraivogel_chr8_result_dir, "nb_discovery_5000.rds")
+if (!file.exists(fp)) {
+nb_res <- nb_regression_w_covariates(response_odm = response_odm,
+                                     grna_odm = grna_odm,
+                                     response_grna_group_pairs = pairs_to_analyze)
+saveRDS(nb_res, fp)
+} else {
+  nb_res <- readRDS(fp)
+}
+pairs_to_analyze <- nb_res |> dplyr::select(response_id, grna_group)
+```
+
+
+```{r,echo=FALSE}
+# Seurat DE
+fp <- paste0(schraivogel_chr8_result_dir, "seurat_discovery_5000.rds")
+if (!file.exists(fp)) {
+  seurat_res <- seurat_de(response_odm = response_odm,
+                          grna_odm = grna_odm,
+                          response_grna_group_pairs = pairs_to_analyze)
+  saveRDS(seurat_res, fp)
+} else {
+  seurat_res <- readRDS(fp)
+}
+```
+
+
+```{r,echo=FALSE}
+# Schraivogel method
+#fp <- paste0(schraivogel_chr8_result_dir, "schraivogel_method_discovery_5000.rds")
+#if (!file.exists(fp)) {
+#  schraivogel_res <- schraivogel_method(response_odm = response_odm,
+#                                      grna_odm = grna_odm,
+#                                      response_grna_group_pairs = pairs_to_analyze)
+#  saveRDS(schraivogel_res, fp)
+#} else {
+#  schraivogel_res <- readRDS(fp)
+#}
+
+schraivogel_res <- gk_orig_schraivogel_res |>
+  dplyr::mutate(pair = paste0(response_id, grna_group)) |>
+  dplyr::filter(pair %in% paste0(pairs_to_analyze$response_id, pairs_to_analyze$grna_group)) |>
+  dplyr::select(response_id, grna_group, p_value = pvalue)
+```
+
+
+```{r,echo=FALSE}
+# sceptre approximate no batch 
+fp <- paste0(schraivogel_chr8_result_dir, "sceptre_approximate_no_batch_discovery_5000.rds")
+if (!file.exists(fp)) {
+  response_odm@misc$sceptre_formula <- formula(~log(response_n_umis) + log(response_n_nonzero))
+  sceptre_approximate_no_batch_res <- sceptre(response_odm = response_odm,
+                       grna_odm = grna_odm,
+                       response_grna_group_pairs = pairs_to_analyze,
+                       with_covariates = TRUE,
+                       test_stat = "full",
+                       print_progress = FALSE)
+  saveRDS(sceptre_approximate_no_batch_res, fp)
+} else {
+  sceptre_approximate_no_batch_res <- readRDS(fp)
+}
+```
+
+
+```{r,echo=FALSE}
+# sceptre approximate with batch 
+fp <- paste0(schraivogel_chr8_result_dir, "sceptre_approximate_with_batch_discovery_5000.rds")
+if (!file.exists(fp)) {
+  response_odm@misc$sceptre_formula <- formula(~log(response_n_umis) + log(response_n_nonzero) + batch)
+  sceptre_approximate_with_batch_res <- sceptre(response_odm = response_odm,
+                       grna_odm = grna_odm,
+                       response_grna_group_pairs = pairs_to_analyze,
+                       with_covariates = TRUE,
+                       test_stat = "full",
+                       print_progress = FALSE)
+  saveRDS(sceptre_approximate_with_batch_res, fp)
+} else {
+  sceptre_approximate_with_batch_res <- readRDS(fp)
+}
+```
+
+
+```{r,echo=FALSE}
+# sceptre exact no batch 
+fp <- paste0(schraivogel_chr8_result_dir, "sceptre_exact_no_batch_discovery_5000.rds")
+if (!file.exists(fp)) {
+  response_odm@misc$sceptre_formula <- formula(~log(response_n_umis) + log(response_n_nonzero))
+  sceptre_exact_no_batch_res <- sceptre(response_odm = response_odm,
+                       grna_odm = grna_odm,
+                       response_grna_group_pairs = pairs_to_analyze,
+                       with_covariates = TRUE,
+                       test_stat = "exact_full",
+                       print_progress = FALSE)
+  saveRDS(sceptre_exact_no_batch_res, fp)
+} else {
+  sceptre_exact_no_batch_res <- readRDS(fp)
+}
+```
+
+
+```{r,echo=FALSE}
+# sceptre exact with batch
+fp <- paste0(schraivogel_chr8_result_dir, "sceptre_exact_with_batch_discovery_5000.rds")
+if (!file.exists(fp)) {
+  response_odm@misc$sceptre_formula <- formula(~log(response_n_umis) + log(response_n_nonzero) + batch)
+  sceptre_exact_with_batch_res <- sceptre(response_odm = response_odm,
+                       grna_odm = grna_odm,
+                       response_grna_group_pairs = pairs_to_analyze,
+                       with_covariates = TRUE,
+                       test_stat = "exact_full",
+                       print_progress = FALSE)
+  saveRDS(sceptre_exact_with_batch_res, fp)
+} else {
+  sceptre_exact_with_batch_res <- readRDS(fp)
+}
+```
+
+```{r,echo=FALSE}
+nb_res <- nb_res |>
+  dplyr::mutate(method = "nb_reg", spikiness = "medium") 
+seurat_res <- seurat_res |>
+  dplyr::mutate(method = "seurat", spikiness = "medium")
+schraivogel_res <- schraivogel_res |>
+  dplyr::mutate(method = "schraivogel_method", spikiness = "low")
+sceptre_approximate_no_batch_res <- sceptre_approximate_no_batch_res |>
+  dplyr::mutate(method = "sceptre_approximate_no_batch", spikiness = "medium")
+sceptre_approximate_with_batch_res <- sceptre_approximate_with_batch_res |>
+  dplyr::mutate(method = "sceptre_approximate_with_batch", spikiness = "high")
+sceptre_exact_no_batch_res <- sceptre_exact_no_batch_res |>
+  dplyr::mutate(method = "sceptre_exact_no_batch", spikiness = "medium")
+sceptre_exact_with_batch_res <- sceptre_exact_with_batch_res |>
+  dplyr::mutate(method = "sceptre_exact_with_batch", spikiness = "low")
+combined_res <- rbind(nb_res, seurat_res, schraivogel_res,
+                      sceptre_approximate_with_batch_res,
+                      sceptre_approximate_no_batch_res,
+                      sceptre_exact_no_batch_res,
+                      sceptre_exact_with_batch_res)
+```
+
+I plot a histogram of the p-values outputted by each method. I color the histogram by "degree of spikiness" (as determined by me): high, medium, or low. SCEPTRE-approximate-with-batch is the spikiest near zero. Next, NB regression, SCEPTRE-approximate-no-batch, SCEPTRE-exact-no-batch, Schraivogel Method, and Seurat exhibit intermediate spikiness. Finally, SCEPTRE-exact-with-batch shows a low degree of spikiness. Still, the p-value distributions of SCEPTRE-exact-with-batch and Schraivogel method are rather dissimilar.
+
+```{r, fig.height=7, fig.width=7}
+ggplot(combined_res, mapping = aes(x = p_value, fill = spikiness)) +
+  facet_wrap(.~method, scales = "free_y", nrow = 4) +
+  geom_histogram(bins = 40, col = "black") + theme_bw()
+```
+
+SCEPTRE-approximate-with-batch likely is pathological. NB regression, SCEPTRE-approximate-no-batch, SCEPTRE-exact-no-batch, and Seurat produce roughly similar p-value distributions. Meanwhile, SCEPTRE-exact-with-batch and Schraivogel-method are more uniform. SCEPTRE-exact-with-batch is the only method (to my knowledge) that attempts to adjust for batch effects (aside from SCEPTRE-approximate-with-batch, which is pathological). This likely explains why SCEPTRE-exact-with-batch is more uniform than SCEPTRE-exact-no-batch, Seurat, and NB regression.
+
+The Schraivogel data likely contain batch effects. We had not picked up on these batch effects in the undercover analysis because nearly all NT gRNAs are in the same batch! However, batch effects seem to be rearing their head in the discovery analysis, leading to inflation. For example, consider the gene "MRPL13." SCEPTRE-exact-no-batch indicates that MRPL13 is associated with every single gRNA group tested except for one (at FWER level 0.1). As Gene has noted, it is biologically implausible that that a gene would be regulated by such a large number of gRNAs, so these results likely are an artifact of inflation (rather than reflective of real biology).
+
+```{r}
+sceptre_no_batch_mrpl13_p <- sceptre_exact_no_batch_res |>
+  dplyr::filter(response_id == "MRPL13") |>
+  dplyr::pull(p_value)
+sum(sceptre_no_batch_mrpl13_p < .1/nrow(sceptre_exact_no_batch_res))
+```
+
+Interestingly, Seurat also indicates that MRPL13 is associated with every gRNA group except for one. Thus, Seurat likely also is miscalibrated on the discovery pairs.
+
+```{r}
+seurat_mrpl13_p <- sceptre_exact_no_batch_res |>
+  dplyr::filter(response_id == "MRPL13") |>
+  dplyr::pull(p_value)
+sum(seurat_mrpl13_p < .1/nrow(sceptre_exact_no_batch_res))
+```
+
+In fact, the correlation between the SCEPTRE-exact-no-batch p-values and Seurat p-values is decent.
+
+```{r}
+to_plot <- dplyr::left_join(sceptre_exact_no_batch_res,
+                            seurat_res, by = c("response_id", "grna_group"),
+                            suffix = c("_sceptre_no_batch", "_seurat"))
+ggplot(data = to_plot |> dplyr::filter(p_value_sceptre_no_batch > 1e-30),
+       mapping = aes(x =p_value_sceptre_no_batch , y = p_value_seurat)) +
+  geom_point() + scale_x_continuous(trans = sceptre:::revlog_trans(10)) +
+  scale_y_continuous(trans = sceptre:::revlog_trans(10)) +
+  geom_abline(slope = 1, intercept = 0, col = "blue")
+```
+
+SCEPTRE-exact-with-batch, by contrast, indicates that MRPL13 is associated with *no* gRNA group tested (after a Bonferroni correction at level 0.1). This result seems much more biologically plausible.
+
+```{r}
+sceptre_no_batch_mrpl13_p <- sceptre_exact_with_batch_res |>
+  dplyr::filter(response_id == "MRPL13") |> dplyr::pull(p_value)
+sum(sceptre_no_batch_mrpl13_p < .1/nrow(sceptre_exact_no_batch_res))
+```
+
+The Schraivogel method agrees with SCEPTRE in this regard.
+
+```{r}
+schraivogel_mrpl13_p <- schraivogel_res |>
+   dplyr::filter(response_id == "MRPL13") |>
+  dplyr::pull(p_value)
+sum(schraivogel_mrpl13_p < .1/nrow(sceptre_exact_no_batch_res))
+```
+
+These preliminary results indicate that we might be able to make a positive comparison between SCEPTRE and Seurat and the Schraivogel data (in favor of SCEPTRE).
+
+I check to see whether the (relative) expression of MRPL13 varies across batch.
+
+```{r, warning=FALSE}
+exp <- response_odm[["MRPL13",]] |> as.numeric()
+cell_covariates <- response_odm |> ondisc::get_cell_covariates()
+
+df <- data.frame( rel_exp =  exp/cell_covariates$n_umis,
+                  batch = cell_covariates$batch)
+ggplot(data = df, mapping = aes(x = batch, y = rel_exp)) +
+  geom_violin() +  geom_boxplot() + theme_bw() +
+  ylim(c(0.0, 0.05)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab("Batch") + ylab("Rel. expression")
+```
+
+We see clear variation in the expression of MRPL13 across batch. For example, the expression of MRPL13 appears to be especially high in batches 12 and 14.
+
+### Discrepancy between our implementation of Schraivogel Method and the original Schraivogel results
+
+Our implementation of Schraivogel Method does not seem to recapitulate the original results. In fact, the divergence is pretty substantial and likely will affect our communication of the results.
+
+```{r,echo=FALSE}
+# Schraivogel method
+fp <- paste0(schraivogel_chr8_result_dir, "schraivogel_method_discovery_5000.rds")
+if (!file.exists(fp)) {
+  schraivogel_res_us <- schraivogel_method(response_odm = response_odm,
+                                      grna_odm = grna_odm,
+                                      response_grna_group_pairs = pairs_to_analyze)
+  saveRDS(schraivogel_res_us, fp)
+} else {
+  schraivogel_res_us <- readRDS(fp)
+}
+```
+
+I plot histograms of the original Schraivogel p-values and our Schraivogel p-values. Ours are spikier than the originals.
+
+```{r, fig.height=3, fig.width=5}
+schraivogel_res_us <- schraivogel_res_us |>
+  dplyr::mutate(method = "schraivogel_method_us", spikiness = "medium")
+to_plot <- rbind(schraivogel_res_us, schraivogel_res)
+
+ggplot(to_plot, mapping = aes(x = p_value)) +
+  facet_wrap(. ~ method, scales = "free_y", nrow = 1) +
+  geom_histogram(bins = 40, col = "black") + theme_bw()
+```
