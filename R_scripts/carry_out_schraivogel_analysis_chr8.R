@@ -47,7 +47,7 @@ schraivogel_results <- read_csv(schraivogel_results_fp) |>
          gene %in% get_feature_ids(gene_odm)) |> # genes that passed our QC
   mutate(grna_group = add_suffixes(replace_periods(perturbation))) |>
   rename(response_id = gene) |>
-  select(response_id, grna_group, pvalue, logFC)
+  select(response_id, grna_group, p_value = pvalue, logFC)
 
 # set arguments for SCEPTRE
 response_matrix <- gene_expression_matrix
@@ -55,15 +55,10 @@ grna_matrix <- grna_matrix
 rownames(grna_matrix) <- ondisc::get_feature_ids(grna_odm)
 covariate_data_frame <- gene_covariate_matrix
 
-# covariate_data_frame$batch <- factor(x = covariate_data_frame$batch ,
-#                                      levels = c("sample1", "sample2", "sample3", "sample4", "sample5", "sample6", "sample7", "sample8", "sample9", "sample10", "sample11", "sample12", "sample13", "sample14"),
-#                                      labels = c("b1", "b1", "b1", "b1", "b2", "b2", "b2", "b2", "b3", "b3", "b3", "b3", "b4", "b4"))
-
 grna_group_data_frame <- grna_groups
 formula_object <- ~log(n_umis) + log(n_nonzero) + batch
 calibration_check <- FALSE
 response_grna_group_pairs <- schraivogel_results |> select(response_id, grna_group)
-response_grna_group_pairs <- data.frame(response_id = "TATDN1", grna_group = "chr8:117742366-117742635")
 
 # run SCEPTRE
 result_sceptre <- run_sceptre_lowmoi(
@@ -73,31 +68,20 @@ result_sceptre <- run_sceptre_lowmoi(
   grna_group_data_frame = grna_group_data_frame,
   formula_object = formula_object,
   response_grna_group_pairs = response_grna_group_pairs,
-  calibration_check = FALSE
+  calibration_check = FALSE,
+  test_stat = "exact_full",
 )
 
-calibration_check_sceptre <- run_sceptre_lowmoi(
+result_sceptre_calibration <- run_sceptre_lowmoi(
   response_matrix = response_matrix,
   grna_matrix = grna_matrix,
   covariate_data_frame = covariate_data_frame,
   grna_group_data_frame = grna_group_data_frame,
   formula_object = formula_object,
   response_grna_group_pairs = response_grna_group_pairs,
-  calibration_group_size = 3,
   calibration_check = TRUE,
+  test_stat = "exact_full",
 )
-
- result_sceptre <- run_sceptre_lowmoi(
-  response_matrix = response_matrix,
-  grna_matrix = grna_matrix,
-  covariate_data_frame = covariate_data_frame,
-  grna_group_data_frame = grna_group_data_frame,
-  formula_object = formula_object,
-  response_grna_group_pairs = response_grna_group_pairs,
-  calibration_check = calibration_check,
-  return_debugging_metrics = TRUE,
-)
-
 
 # save the results
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")

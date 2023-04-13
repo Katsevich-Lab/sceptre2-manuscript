@@ -1,6 +1,6 @@
 ---
-title: "Comparing SCEPTRE and Schraivogel method on Schraivogel data"
-author: "Gene"
+title: "Comparing SCEPTRE and Schraivogel method on Schraivogel data (updated)"
+author: "Gene and Tim"
 date: "2023-04-08"
 output: pdf_document
 ---
@@ -28,14 +28,14 @@ results_merged <- result_sceptre |>
          logFC_sceptre = log_2_fold_change) |>
   select(response_id, grna_group, p_value_sceptre, logFC_sceptre) |>
   left_join(result_schraivogel |> 
-              rename(p_value_schraivogel = pvalue,
+              rename(p_value_schraivogel = p_value,
                      logFC_schraivogel = logFC), 
             by = c("response_id", "grna_group")) |>
   na.omit() |>
   rowwise() |>
-  mutate(`Positive control` = response_id %in% stringr::str_split_1(grna_group, "-")) |>
+  mutate(`Positive control` =  grepl(pattern = "-TSS$", x = grna_group)) |>
   ungroup() |>
-  arrange(`Positive control`)
+  arrange(desc(`Positive control`))
 ```
 
 I applied SCEPTRE (based on the new `sceptre` package) to the Schraivogel discovery and positive control pairs from chromosome 8, and collated the results with those of Schraivogel:
@@ -43,7 +43,9 @@ I applied SCEPTRE (based on the new `sceptre` package) to the Schraivogel discov
 results_merged
 ```
 
-A few things immediately seem strange. There appear to be many pairs for which the SCEPTRE p-value is zero (in fact there are `r results_merged |> summarise(sum(p_value_sceptre == 0)) |> pull()` such pairs). In the meantime, the Schraivogel p-values for those pairs are not even significant. These pairs are not positive controls. The signs and magnitudes of the log fold changes between the two methods do not line up very well either. 
+A few things immediately seem strange. There appear to be many pairs for which the SCEPTRE p-value is zero (in fact there are `r results_merged |> summarise(sum(p_value_sceptre == 0)) |> pull()` such pairs). In the meantime, the Schraivogel p-values for those pairs are not even significant. These pairs are not positive controls. The signs and magnitudes of the log fold changes between the two methods do not line up very well either.
+
+\textcolor{blue}{SCEPTRE no longer returns p-values equal to zero; the smallest p-values are on the order of 1e-75 and correspond to positive controls.}
 
 Let's first take a look at the p-value distributions for both methods:
 
@@ -61,6 +63,7 @@ results_merged |>
 
 The SCEPTRE p-values have a massive spike near zero, unlike the Schraivogel p-values. Next, let's plot the two sets of p-values against one another:
 
+\textcolor{blue}{There is no longer a massive spike near zero; the p-values are uniform, as would be expected in an enhancer-targeting screen.}
 
 ```{r, fig.width = 5.5, fig.height = 3, fig.align='center', echo = FALSE}
 plot_grid(
@@ -100,6 +103,8 @@ plot_grid(
 
 We see that the p-values from the two methods are generally concordant for the positive control pairs, but apparently not concordant at all for the other pairs. This reminds me of a plot Kaishu made for the Papalexi data, comparing SCEPTRE and Seurat p-values. There's a long tail of SCEPTRE p-values that are much smaller than their Schraivogel method counterparts.
 
+\textcolor{blue}{No longer the case.}
+
 Next, let's take a look at the effect sizes:
 
 ```{r, fig.width = 3, fig.height = 3, fig.align='center', echo = FALSE}
@@ -117,3 +122,5 @@ results_merged |>
 ```
 
 It appears the log fold-changes are on different scales. If would be good to figure out the source of this discrepancy. Aside from the scaling issue, there seems not to be a good agreement between the estimated log fold-changes of the two methods. The cross-shaped pattern in this plot also reminds me of a plot Kaishu made for the Papalexi data, comparing SCEPTRE and Seurat log fold-changes.
+
+\textcolor{blue}{It is still not totally clear to me why there is a cross shape; I'd have to look into how Schraivogel Method computes log fold changes.}

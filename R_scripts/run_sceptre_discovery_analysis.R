@@ -1,10 +1,9 @@
 #!/usr/bin/env Rscript
-
 # The purpose of this script is to: (1) run the (approximate) calibration check for Papalexi and Frangieh IFN-gamma and (2) run the trans discovery analysis for these two datasets. We time and profile the memory of all four analyses from within Linux.
 
 args <- commandArgs(trailingOnly = TRUE)
 
-dataset <- args[1] # "papalexi" or "frangieh"
+dataset <- args[1] # "papalexi" or "frangieh" or ""
 analysis_type <- args[2] # "calibration" or "discovery"
 
 cat(dataset); cat("\n")
