@@ -201,7 +201,7 @@ for(TF_name in TF_names){
 
 ```
 
-```{r}
+```{r, results='asis'}
 odds_ratios |>
   round(3) |>
   Hmisc::latex(booktabs = TRUE,
