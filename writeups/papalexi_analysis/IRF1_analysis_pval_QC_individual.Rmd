@@ -83,7 +83,7 @@ chipseq_data = GRanges(
 
 ```{r}
 #hist(chipseq_data$pval)
-alpha = quantile(chipseq_data$pval,quant)
+alpha = quantile(chipseq_data$pval,1-quant)
 chipseq_data = chipseq_data%>%filter(pval < alpha)
 ```
 

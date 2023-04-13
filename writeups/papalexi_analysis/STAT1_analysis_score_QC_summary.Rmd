@@ -212,13 +212,13 @@ for(alpha in alphas){
 
 
 
-```{r}
+```{r,results = 'asis'}
 odds_ratios |>
   round(3) |>
   Hmisc::latex(booktabs = TRUE,
            rowlabel="\\diagbox{Ground truth}{Method}", 
            file="",
-           caption = "Enrichment odds ratios, comparing to ChIP-seq target assignments with changing pvalue quantile threshold",
+           caption = "Enrichment odds ratios, comparing to ChIP-seq target assignments with changing quantile threshold",
            where = "!htbp")
 ```
 

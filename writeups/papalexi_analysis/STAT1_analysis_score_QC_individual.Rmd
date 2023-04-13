@@ -309,7 +309,7 @@ odds_ratios["ChIP-seq", "Seurat"] <- merged_results |>
 
 odds_ratios |>
   round(3) |>
-  Hmisc::latex(booktabs = TRUE,
+  Hmisc::latex(booktabs = FALSE,
            rowlabel="\\diagbox{Ground truth}{Method}", 
            file="",
            caption = paste0("Enrichment odds ratios, comparing to database and our ChIP-seq target assignments with pvalue quantile threshold equal to ", quant),
