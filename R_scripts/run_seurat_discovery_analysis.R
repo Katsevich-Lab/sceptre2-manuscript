@@ -18,8 +18,8 @@ grna_groups_to_keep <- grna_odm |>
   dplyr::filter(count >= 3) |>
   dplyr::pull(target)
 grna_groups_to_keep <- grna_groups_to_keep[grna_groups_to_keep != "non-targeting"]
-response_grna_group_pairs <- expand.grid(response_id = grna_groups_to_keep,
-                                         grna_group = ondisc::get_feature_ids(response_odm))
+response_grna_group_pairs <- expand.grid(response_id = ondisc::get_feature_ids(response_odm),
+                                         grna_group = grna_groups_to_keep)
 
 # run the method
 res <- seurat_de(response_odm = response_odm,
