@@ -8,7 +8,7 @@ library(lowmoi)
 response_odm <- lowmoi::load_dataset_modality(dataset_name)
 grna_dataset_name <- lowmoi::get_grna_dataset_name(dataset_name, "assignment")
 grna_odm <- lowmoi::load_dataset_modality(grna_dataset_name)
-response_grna_group_pairs <- generate_all_pairs(response_odm, grna_odm) |> dplyr::sample_n(3)
+response_grna_group_pairs <- generate_all_pairs(response_odm, grna_odm)
 res <- seurat_de(response_odm = response_odm,
                  grna_odm = grna_odm,
                  response_grna_group_pairs = response_grna_group_pairs)
