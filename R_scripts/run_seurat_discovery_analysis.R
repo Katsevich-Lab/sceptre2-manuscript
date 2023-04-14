@@ -5,28 +5,28 @@ LOCAL_SCEPTRE2_DATA_DIR <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 library(ondisc)
 library(lowmoi)
 
+# load the response ODM and gRNA ODM
 response_odm <- lowmoi::load_dataset_modality(dataset_name)
 grna_dataset_name <- lowmoi::get_grna_dataset_name(dataset_name, "assignment")
 grna_odm <- lowmoi::load_dataset_modality(grna_dataset_name)
-response_grna_group_pairs <- generate_all_pairs(response_odm, grna_odm)
 
-sample_size_df <- readRDS(paste0(LOCAL_SCEPTRE2_DATA_DIR,
-                                 "results/dataset_sample_sizes/n_nonzero_cells_per_grna.rds")) |>
-  dplyr::filter(dataset_concat == dataset_name)
-ex_feat <- as.character(unique(sample_size_df$feature_id)[1])
-x <- sample_size_df |>
-  dplyr::filter(feature_id == ex_feat) |>
+# generate the pairs to analyze
+grna_groups_to_keep <- grna_odm |>
+  ondisc::get_feature_covariates() |>
   dplyr::group_by(target) |>
-  dplyr::summarize(count = sum(n_cells)) |>
-  dplyr::filter(count >= 7)
+  dplyr::summarize(count = sum(n_nonzero)) |>
+  dplyr::filter(count >= 3) |>
+  dplyr::pull(target)
+grna_groups_to_keep <- grna_groups_to_keep[grna_groups_to_keep != "non-targeting"]
+response_grna_group_pairs <- expand.grid(response_id = grna_groups_to_keep,
+                                         grna_group = ondisc::get_feature_ids(response_odm))
 
+# run the method
 res <- seurat_de(response_odm = response_odm,
                  grna_odm = grna_odm,
                  response_grna_group_pairs = response_grna_group_pairs)
 
-
-
-# save result
+# save the result
 f_name <- paste0("seurat_", gsub(pattern = "/", x = dataset_name, fixed = TRUE, replacement = "_"), "_res.rds")
 result_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/discovery_analyses/")
 saveRDS(object = res, file = paste0(result_dir, f_name))
