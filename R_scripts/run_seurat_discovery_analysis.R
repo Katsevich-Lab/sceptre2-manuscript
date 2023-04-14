@@ -15,7 +15,7 @@ grna_groups_to_keep <- grna_odm |>
   ondisc::get_feature_covariates() |>
   dplyr::group_by(target) |>
   dplyr::summarize(count = sum(n_nonzero)) |>
-  dplyr::filter(count >= 3) |>
+  dplyr::filter(count >= 5) |>
   dplyr::pull(target)
 grna_groups_to_keep <- grna_groups_to_keep[grna_groups_to_keep != "non-targeting"]
 response_grna_group_pairs <- expand.grid(response_id = ondisc::get_feature_ids(response_odm),
