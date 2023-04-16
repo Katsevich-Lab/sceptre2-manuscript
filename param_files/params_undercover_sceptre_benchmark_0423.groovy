@@ -24,7 +24,7 @@ col_names = ["sceptre_approximate_poisson",
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[x, 8, 8, 8], // frangieh/co_culture/gene
+[8, 8, 8, 8], // frangieh/co_culture/gene
 [8, 8, 8, 8], // frangieh/control/gene
 [8, 8, 8, 8], // frangieh/ifn_gamma/gene
 [6, 6, 6, 6], // papalexi/eccite_screen/gene
@@ -53,5 +53,5 @@ optional_args = [
 "", // sceptre_approximate_poisson
 "", // sceptre_exact_poisson
 "", // sceptre_approximate_nb
-"", // sceptre_exact_nb
+"" // sceptre_exact_nb
 ]
