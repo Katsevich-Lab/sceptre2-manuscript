@@ -1,0 +1,173 @@
+---
+title: "Benchmarking SCEPTRE"
+author: "Tim"
+date: "2023-04-17"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+library(katlabutils)
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
+source(shared_fig_script)
+
+```
+
+In this document I evaluate the results of SCEPTRE on the negative and positive control data. I apply four versions of SCEPTRE: exact vs. approximate, and Poisson vs. negative binomial (NB) regression. (The exact version of SCEPTRE uses the entire set of cells for the precomputation, while the approximate version of SCEPTRE uses the NT cells only.) In all cases I fit skew-normal to the resampling distribution to obtain a more accurate p-value. Note that this is the first time that we have evaluated SCEPTRE with the skew-normal module on all datasets.
+
+## Negative control results
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/sceptre_benchmark_0423.rds")) |>
+  na.omit() |>
+  dplyr::mutate(dataset = forcats::fct_recode(dataset,
+                                             schraivogel_enh = "schraivogel/enhancer_screen_chr11/gene",
+                                             schraivogel_enh = "schraivogel/enhancer_screen_chr8/gene"))
+
+analyze_dataset <- function(undercover_res, dataset) {
+  undercover_res_sub <- undercover_res |>
+    dplyr::filter(dataset == !!dataset)
+  
+  p <- ggplot2::ggplot(data = undercover_res_sub,
+                mapping = ggplot2::aes(y = p_value, col = method)) +
+  stat_qq_points(ymin = 1e-8, alpha = 0.9) +
+    stat_qq_band() +
+    ggplot2::scale_x_continuous(trans = revlog_trans(10)) +
+    ggplot2::scale_y_continuous(trans = revlog_trans(10)) +
+    ggplot2::labs(x = "Expected null p-value", y = "Observed p-value") +
+    ggplot2::geom_abline(col = "black") +
+  theme_bw()
+  
+  n_reject_df <- undercover_res_sub |>
+    dplyr::group_by(method) |>
+    dplyr::summarize(n_reject = sum(p_value < 0.1/dplyr::n()))
+  
+  plot(p)
+  print(n_reject_df)
+}
+```
+
+For each dataset, I plot the results of each version of SCEPTRE on a transformed QQ-plot. I also print the number of Bonferroni rejections at level 0.1.
+
+### Frangieh Co-Culture
+
+```{r, fig.width=9, fig.height=5}
+analyze_dataset(undercover_res = undercover_res,
+                dataset = "frangieh/co_culture/gene")
+```
+
+### Frangieh IFN-gamma
+
+```{r, fig.width=9, fig.height=5}
+analyze_dataset(undercover_res = undercover_res,
+                dataset = "frangieh/ifn_gamma/gene")
+```
+
+### Frangieh Control
+
+```{r, fig.width=9, fig.height=5}
+analyze_dataset(undercover_res = undercover_res,
+                dataset = "frangieh/control/gene")
+```
+
+### Simulated experiment
+
+```{r, fig.width=9, fig.height=5}
+analyze_dataset(undercover_res = undercover_res,
+                dataset = "simulated/experiment_1/gene")
+```
+
+### Schraivogel Enhancer
+
+```{r, fig.width=9, fig.height=5}
+analyze_dataset(undercover_res = undercover_res,
+                dataset = "schraivogel_enh")
+```
+
+### Papalexi Gene
+
+```{r, fig.width=9, fig.height=5}
+analyze_dataset(undercover_res = undercover_res,
+                dataset = "papalexi/eccite_screen/gene")
+```
+
+### Papalexi Protein
+
+```{r, fig.width=9, fig.height=5}
+analyze_dataset(undercover_res = undercover_res,
+                dataset = "papalexi/eccite_screen/protein")
+```
+
+### Conclusions
+
+The four (asymptotic) versions of SCEPTRE analyzed here are nearly identical.
+
+Relative to the finite-sample version of SCEPTRE, the results do not change much. The calibration of SCEPTRE on the Frangieh data improves slightly, going from 1 to 0 false rejections. On the other hand, the calibration of SCEPTRE on the Schraivogel data degrades slightly, going from 2 to 3 false rejections.
+
+## Positive control results
+
+The number of rejections that each version of SCEPTRE makes on the positive control data at level 1e-5 (the same as we currently use in the paper) is as follows.
+
+```{r}
+pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/sceptre_benchmark_0423.rds"))
+pc_res |> na.omit() |>
+    group_by(dataset, method) |>
+    summarize(n_pc_reject = sum(p_value < 1e-5)) |>
+  print(n = 40)
+```
+
+I plot the number of rejections that each method makes on the positive control pairs of each dataset, varying the rejection threshold over the set \{ 1e-3, 1e-4, 1e-5, 1e-6, 1e-7 \}.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE} 
+reject_threshes <- c(1e-3, 1e-4, 1e-5, 1e-6, 1e-7)
+
+make_barplot <- function(pc_res, reject_thresh) {
+pc_res |> na.omit() |>
+    group_by(dataset, method) |>
+    summarize(n_pc_reject = sum(p_value < reject_thresh)) |>
+    ggplot(aes(x = method, y = n_pc_reject, fill = method)) +
+    geom_col(col = "black") +
+    facet_wrap(dataset ~ ., scales = "free_y") +
+    ylab("N discoveries") +
+    xlab("method") +
+    theme(legend.title = element_blank(),
+          legend.position = "bottom",
+          axis.text.x = element_blank())
+}
+```
+
+First, let us see how many rejections that each method makes at a threshold of 1e-3.
+
+```{r, warning=FALSE, message=FALSE, fig.width=9, fig.height=5}
+make_barplot(pc_res, 1e-3)
+```
+
+Next, we use a threshold of 1e-4.
+
+```{r, warning=FALSE, message=FALSE, fig.width=9, fig.height=5}
+make_barplot(pc_res, 1e-4)
+```
+
+Now, 1e-5.
+
+```{r, warning=FALSE, message=FALSE, fig.width=9, fig.height=5}
+make_barplot(pc_res, 1e-5)
+```
+
+After this, 1e-6.
+
+```{r, warning=FALSE, message=FALSE, fig.width=9, fig.height=5}
+make_barplot(pc_res, 1e-6)
+```
+
+Finally, 1e-7.
+
+```{r,  warning=FALSE, message=FALSE, fig.width=9, fig.height=5}
+make_barplot(pc_res, 1e-7)
+```
+
+Each version of SCEPTRE essentially makes the same number of rejections on each dataset using each threshold. The skew-normal versions of SCEPTRE are somewhat less powerful than the finite-sample version of SCEPTRE. However, the skew-normal versions of SCEPTRE are still more powerful than the competing methods.

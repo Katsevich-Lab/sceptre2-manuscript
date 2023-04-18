@@ -1,0 +1,142 @@
+Apr-17 16:29:18.581 [main] DEBUG nextflow.cli.Launcher - $> nextflow run pc-grna-pipeline -r main --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/params_pc_sceptre_benchmark_0423.groovy --grna_modality assignment --result_dir /Users/timbarry/research_offsite/projects/sceptre2//results/positive_control_analysis --result_file_name sceptre_benchmark_0423.rds --trial true
+Apr-17 16:29:18.689 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.04.3
+Apr-17 16:29:19.729 [main] DEBUG nextflow.scm.AssetManager - Listing projects in folder: /Users/timbarry/.nextflow/assets
+Apr-17 16:29:19.749 [main] DEBUG nextflow.scm.AssetManager - Project manifest does not exist: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/nextflow.config (No such file or directory)
+Apr-17 16:29:19.753 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-17 16:29:19.771 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-17 16:29:20.188 [main] DEBUG nextflow.scm.AssetManager - WARN: Failed to check remote Git revision
+org.eclipse.jgit.api.errors.TransportException: https://github.com/Katsevich-Lab/pc-grna-pipeline.git: cannot open git-upload-pack
+	at org.eclipse.jgit.api.LsRemoteCommand.execute(LsRemoteCommand.java:222)
+	at org.eclipse.jgit.api.LsRemoteCommand.call(LsRemoteCommand.java:161)
+	at nextflow.scm.AssetManager.getRemoteCommitId(AssetManager.groovy:1013)
+	at nextflow.scm.AssetManager.checkRemoteStatus0(AssetManager.groovy:1024)
+	at nextflow.scm.AssetManager.checkRemoteStatus(AssetManager.groovy:1042)
+	at nextflow.cli.CmdRun.getScriptFile0(CmdRun.groovy:488)
+	at nextflow.cli.CmdRun.getScriptFile(CmdRun.groovy:410)
+	at nextflow.cli.CmdRun.run(CmdRun.groovy:287)
+	at nextflow.cli.Launcher.run(Launcher.groovy:480)
+	at nextflow.cli.Launcher.main(Launcher.groovy:639)
+Caused by: org.eclipse.jgit.errors.TransportException: https://github.com/Katsevich-Lab/pc-grna-pipeline.git: cannot open git-upload-pack
+	at org.eclipse.jgit.transport.TransportHttp.connect(TransportHttp.java:600)
+	at org.eclipse.jgit.transport.TransportHttp.openFetch(TransportHttp.java:362)
+	at org.eclipse.jgit.api.LsRemoteCommand.execute(LsRemoteCommand.java:200)
+	... 9 common frames omitted
+Caused by: java.net.UnknownHostException: github.com
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:184)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:607)
+	at sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:666)
+	at sun.net.NetworkClient.doConnect(NetworkClient.java:175)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:463)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:558)
+	at sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:264)
+	at sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:367)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:191)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1205)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1056)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:177)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1570)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1498)
+	at java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:480)
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:352)
+	at org.eclipse.jgit.transport.http.JDKHttpConnection.getResponseCode(JDKHttpConnection.java:115)
+	at org.eclipse.jgit.util.HttpSupport.response(HttpSupport.java:207)
+	at org.eclipse.jgit.transport.TransportHttp.connect(TransportHttp.java:514)
+	... 11 common frames omitted
+Apr-17 16:29:20.210 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Apr-17 16:29:20.212 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Apr-17 16:29:20.228 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-17 16:29:20.305 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 by global default
+Apr-17 16:29:20.306 [main] INFO  nextflow.cli.CmdRun - Launching `https://github.com/Katsevich-Lab/pc-grna-pipeline` [lethal_koch] DSL2 - revision: 3b32510807 [main]
+Apr-17 16:29:20.334 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins; core-plugins: nf-amazon@1.7.2,nf-azure@0.13.2,nf-console@1.0.3,nf-ga4gh@1.0.3,nf-google@1.1.4,nf-sqldb@0.4.0,nf-tower@1.4.0
+Apr-17 16:29:20.337 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-17 16:29:20.356 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-17 16:29:20.358 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-17 16:29:20.363 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-17 16:29:20.372 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-17 16:29:20.476 [main] DEBUG nextflow.Session - Session uuid: d74548a0-02b0-46d1-8269-a4133be025e7
+Apr-17 16:29:20.476 [main] DEBUG nextflow.Session - Run name: lethal_koch
+Apr-17 16:29:20.476 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-17 16:29:20.500 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.04.3 build 5703
+  Created: 18-05-2022 19:22 UTC (15:22 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.10 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 50656@Tims-MacBook-Pro-2021.local [127.0.0.1]
+  CPUs: 8 - Mem: 16 GB (2.4 GB) - Swap: 2 GB (1.2 GB)
+Apr-17 16:29:20.521 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Apr-17 16:29:20.551 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-17 16:29:20.572 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-17 16:29:20.655 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Apr-17 16:29:20.680 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Apr-17 16:29:20.809 [main] DEBUG nextflow.Session - Session start invoked
+Apr-17 16:29:21.733 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-17 16:29:22.163 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-17 16:29:22.164 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-17 16:29:22.172 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Apr-17 16:29:22.183 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Apr-17 16:29:22.420 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-17 16:29:22.420 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-17 16:29:22.445 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-17 16:29:22.445 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-17 16:29:22.451 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: combine_results, run_method, obtain_pc_pairs
+Apr-17 16:29:22.452 [main] DEBUG nextflow.Session - Ignite dataflow network (5)
+Apr-17 16:29:22.453 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > obtain_pc_pairs
+Apr-17 16:29:22.454 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > run_method
+Apr-17 16:29:22.455 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > combine_results
+Apr-17 16:29:22.455 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Apr-17 16:29:22.455 [main] DEBUG nextflow.Session - Session await
+Apr-17 16:29:22.557 [Actor Thread 9] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/bin/get_pc_pairs.R
+Apr-17 16:29:22.634 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-17 16:29:22.640 [Task submitter] INFO  nextflow.Session - [e8/12c740] Submitted process > obtain_pc_pairs
+Apr-17 16:29:23.047 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: obtain_pc_pairs; status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/e8/12c74045beff54b5d214871c70897e]
+Apr-17 16:29:23.138 [Actor Thread 1] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/bin/run_method.R
+Apr-17 16:29:23.156 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-17 16:29:23.156 [Task submitter] INFO  nextflow.Session - [cc/98391f] Submitted process > run_method (frangieh/control/gene+sceptre_exact_poisson)
+Apr-17 16:29:23.175 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-17 16:29:23.178 [Task submitter] INFO  nextflow.Session - [2f/13b722] Submitted process > run_method (frangieh/co_culture/gene+sceptre_approximate_nb)
+Apr-17 16:29:28.639 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 7; name: run_method (frangieh/control/gene+sceptre_exact_poisson); status: COMPLETED; exit: 1; error: -; workDir: /Users/timbarry/research_offsite/work/cc/98391f6e0be998f4ec43a8bcf3b52e]
+Apr-17 16:29:28.644 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-17 16:29:28.644 [Task submitter] INFO  nextflow.Session - [ca/541ab9] Submitted process > run_method (frangieh/co_culture/gene+sceptre_approximate_poisson)
+Apr-17 16:29:28.684 [Task monitor] ERROR nextflow.processor.TaskProcessor - Error executing process > 'run_method (frangieh/control/gene+sceptre_exact_poisson)'
+
+Caused by:
+  Process `run_method (frangieh/control/gene+sceptre_exact_poisson)` terminated with an error exit status (1)
+
+Command executed:
+
+  run_method.R  frangieh/control/gene 0 sceptre_exact_poisson assignment true
+
+Command exit status:
+  1
+
+Command output:
+  (empty)
+
+Command error:
+  Error in sceptre_exact_poisson(response_odm = new("covariate_ondisc_matrix",  : 
+    could not find function "sceptre_exact_poisson"
+  Calls: do.call
+  Execution halted
+
+Work dir:
+  /Users/timbarry/research_offsite/work/cc/98391f6e0be998f4ec43a8bcf3b52e
+
+Tip: view the complete command output by changing to the process work dir and entering the command `cat .command.out`
+Apr-17 16:29:28.690 [Task monitor] DEBUG nextflow.Session - Session aborted -- Cause: Process `run_method (frangieh/control/gene+sceptre_exact_poisson)` terminated with an error exit status (1)
+Apr-17 16:29:28.721 [Task monitor] DEBUG nextflow.Session - The following nodes are still active:
+[process] combine_results
+  status=ACTIVE
+  port 0: (value) OPEN  ; channel: raw_result
+  port 1: (cntrl) -     ; channel: $
+
+Apr-17 16:29:28.724 [main] DEBUG nextflow.Session - Session await > all process finished
+Apr-17 16:29:28.724 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Apr-17 16:29:28.738 [main] WARN  n.processor.TaskPollingMonitor - Killing running tasks (2)
+Apr-17 16:29:28.753 [main] DEBUG nextflow.executor.LocalTaskHandler - Unable to kill run_method (frangieh/co_culture/gene+sceptre_approximate_nb) -- command: kill -TERM 50729; exit: 1 
+ bash: line 0: kill: (50729) - No such process
+
+Apr-17 16:29:28.765 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=1; failedCount=1; ignoredCount=0; cachedCount=0; pendingCount=25; submittedCount=1; runningCount=-1; retriesCount=0; abortedCount=2; succeedDuration=335ms; failedDuration=5.4s; cachedDuration=0ms;loadCpus=-1; loadMemory=0; peakRunning=2; peakCpus=2; peakMemory=16 GB; ]
+Apr-17 16:29:28.925 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Apr-17 16:29:28.938 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
