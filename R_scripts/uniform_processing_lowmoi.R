@@ -148,14 +148,21 @@ for (paper in papers) {
     mm_odm_sub_proc@global_misc[["moi"]] <- "low"
     save_multimodal_odm(multimodal_odm = mm_odm_sub_proc,
                         multimodal_metadata_fp = multimodal_metadata_fp)
-
-    # vi. write the positive control pairs (at the level of the paper-dataset)
+    
+    # vi. write trans pairs
     grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
     gene_modality <- mm_odm_sub_proc |> get_modality("gene")
     grna_feature_df <- grna_assignment_modality |>
       ondisc::get_feature_covariates() |>
       dplyr::filter(n_nonzero >= 10) # require each individual gRNA to have at least 10 expressed cells
-
+    grna_groups_to_keep <- grna_groups_to_keep[grna_groups_to_keep != "non-targeting"]
+    for (modality in remaining_modalities) {
+      modality_odm <- get_modality(mm_odm_sub, modality)
+      feats_to_keep <- get_highly_expressed_features(modality_odm, FRAC_EXPRESSED_TRHESH)
+      
+    }
+    
+    # vii. write the positive control pairs (at the level of the paper-dataset)
     if (paper %in% c("frangieh", "papalexi")) {
       # grouped pairs
       targets <- intersect(grna_feature_df |> dplyr::pull(target),

@@ -4,15 +4,11 @@ sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "res
 sample_size_df <- readRDS(paste0(sceptre2_results_dir, "dataset_sample_sizes/n_nonzero_cells_per_grna.rds"))
 
 # undercover res grp = 1
-undercover_res <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1.rds")) |>
-  dplyr::filter(method != "sceptre")
-undercover_res_extra <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_our_methods.rds"))
-undercover_res <- rbind(undercover_res, undercover_res_extra)
+undercover_res <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_0423.rds"))
 undercover_res_processed <- process_undercover_result(undercover_res, sample_size_df) |>
-  mutate(p_value = ifelse(p_value <= 0, 1e-8, p_value))
-saveRDS(undercover_res_processed, paste0(sceptre2_results_dir,
-                                         "undercover_grna_analysis/undercover_result_grp_1_processed.rds"))
-rm(list = c("undercover_res", "undercover_res_extra", "undercover_res_processed"))
+  mutate(p_value = ifelse(p_value <= 0, 1e-50, p_value))
+saveRDS(object = undercover_res_processed, 
+        paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds"))
 
 # resampling results
 resampling_res <- readRDS(paste0(sceptre2_results_dir,
@@ -21,7 +17,7 @@ resampling_res_processed <- process_undercover_result(resampling_res, sample_siz
 saveRDS(object = resampling_res_processed, paste0(sceptre2_results_dir,
                                                   "resampling_distributions/seurat_resampling_at_scale_processed.rds"))
 
-# pc results
+# pc results (UPDATE)
 rm(list = c("resampling_res", "resampling_res_processed"))
 pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results.rds"))
 min_p <- pc_res |> filter(method == "sceptre", p_value > 0) |> pull(p_value) |> min()
