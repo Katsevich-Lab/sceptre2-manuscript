@@ -37,8 +37,8 @@ data_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
 # read in sceptre and seurat results
 sceptre_path <- paste0(
-  data_dir, "results/papalexi_analysis/",
-  "sceptre_full_mrna_results_with_effect_size.rds"
+  data_dir, "results/discovery_analyses/",
+  "papalexi_gene_discovery_res.rds"
 )
 seurat_path <- paste0(
   data_dir, "results/papalexi_analysis/",
