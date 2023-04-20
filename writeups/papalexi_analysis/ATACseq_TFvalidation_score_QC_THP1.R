@@ -9,6 +9,7 @@ library(biomaRt)
 library(kableExtra)
 library(varhandle)
 
+#score QC to use
 alpha = 0.90
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 data_dir <- sceptre2_dir
@@ -118,7 +119,9 @@ for(TF in TFs){
   cat(sprintf("%s targets %s genes.\n", TF, length(target_genes)))
 }
 
+#save targets as rds file
+target_fp = paste0(
+  data_dir, "results/papalexi_analysis/",
+  "ATACseq_TF_targets_score_QC_",100*alpha,".rds")
 
-
-
-
+saveRDS(TF_targets,target_fp)
