@@ -1,5 +1,7 @@
 library(GenomicRanges)
+library(dplyr)
 library(plyranges)
+library(readr)
 
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 atac_filename <- "GSE205033_allpeaks_read.counts.rpkm.threshold.csv"
@@ -46,7 +48,7 @@ atac_data <- read_csv(atac_data_fp) |>
 atac_GR <- GRanges(
   seqnames = atac_data$chrom,
   ranges = IRanges(start = atac_data$chromStart, end = atac_data$chromEnd)
-) |>
+)
 
 # TF motif data
 jaspar_tf_info <- readRDS(paste0(sceptre2_dir, "/data/jaspar/jaspar_tf_info.rds"))
