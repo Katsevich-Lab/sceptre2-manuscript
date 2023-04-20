@@ -10,6 +10,7 @@ library(tidyverse)
 library(katlabutils)
 library(cowplot)
 library(ondisc)
+conflict_prefer(name = "filter", winner = "dplyr")
 
 # set colors (not loaded by)
 bio_rep_cols <- c("R1" = "firebrick3", "R2" = "navy", "R3" = "purple3")
@@ -25,7 +26,7 @@ shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"),
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
-                                 "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
+                                 "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds")) |>
   filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF)
 resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_resampling_at_scale_processed.rds")) |>
@@ -125,7 +126,7 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
   geom_hline(yintercept = 1) +
   my_theme +
   theme(legend.position = c(0.1, 0.67),
-        legend.key.size = unit(0.35, 'cm'),
+        legend.key.size = unit(0.4, 'cm'),
         legend.title = element_blank(),
         legend.margin=margin(t = -0.5, unit='cm')) +
   scale_color_continuous(name = "Log(N treatment cells + 1)") +
@@ -164,12 +165,12 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
 # PANNEL c
 ##########
 # filter for seurat and NB reg (with cov) on Frangieh IFN gamma; add column for pass stringent QC
-my_labels <- c("Seurat De (w/ strict QC)", "Seurat De (w/o strict QC)")
+my_labels <- c("Seurat De (standard filtering)", "Seurat De (extreme filtering)")
 undercover_res_sub <- undercover_res |>
   filter(method %in% c("seurat_de"),
          dataset == "frangieh_ifn_gamma_gene") |>
-  mutate(pass_stringent_qc = (n_nonzero_treatment >= 30 & n_nonzero_control >= 30)) |>
-  mutate(Method = paste0(Method, ifelse(pass_stringent_qc, " (w/ strict QC)", " (w/o strict QC)"))) |>
+  mutate(pass_stringent_qc = (n_nonzero_treatment >= 35 & n_nonzero_control >= 35)) |>
+  mutate(Method = paste0(Method, ifelse(pass_stringent_qc, " (extreme filtering)", " (standard filtering)"))) |>
   mutate(Method = fct_relevel(Method,
                               my_labels))
 # compute the minimum number across method-QC status pairs
@@ -191,7 +192,7 @@ p_c <- ggplot(data = to_plot_c, mapping = aes(y = p_value, col = Method)) +
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.3, 0.75),
+        legend.position = c(0.35, 0.8),
         legend.margin=margin(t = -0.5, unit='cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,
@@ -278,8 +279,8 @@ p_d <- gridExtra::grid.arrange(p_d1, p_d2, nrow = 1,
 undercover_res_sub <- undercover_res |>
   filter(method %in% c("nb_regression_w_covariates", "nb_regression_no_covariates"),
          dataset == "papalexi_eccite_screen_gene",
-         n_nonzero_treatment >= 30,
-         n_nonzero_control >= 30) |>
+         n_nonzero_treatment >= 7,
+         n_nonzero_control >= 7) |>
   mutate(Method = fct_recode(Method,
                              "NB Reg (w/ covariates)" = "Nb Regression W Covariates",
                              "NB Reg (w/o covariates)" = "Nb Regression No Covariates"))
@@ -294,7 +295,7 @@ p_e <- undercover_res_sub |>
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.3, 0.75),
+        legend.position = c(0.35, 0.75),
         legend.margin=margin(t = -0.5, unit = 'cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,

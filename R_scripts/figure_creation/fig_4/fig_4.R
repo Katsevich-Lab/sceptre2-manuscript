@@ -1,118 +1,358 @@
+#################################################################
+# Load packages and resolve namespace conflicts
+#################################################################
+
+# Load packages
 library(tidyverse)
 library(katlabutils)
-library(cowplot)
-library(ondisc)
+library(ggpubr)
+library(grid)
+library(gridExtra)
+library(gtable)
 
-# load functions and data
-shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
+# Resolve namespace conflicts
+conflicts_prefer(dplyr::filter)
+
+#################################################################
+# Set analysis parameters
+#################################################################
+
+reject_thresh <- 1e-5   # threshold for rejection of positive controls
+alpha <- 0.1            # target FWER level for negative controls
+max_false_reject <- 50  # maximum false rejections to display power
+
+#################################################################
+# Load results
+#################################################################
+
+# source shared figure script
+shared_fig_script <- paste0(
+  .get_config_path("LOCAL_CODE_DIR"), 
+  "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R"
+)
 source(shared_fig_script)
-result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
-undercover_res <- readRDS(paste0(result_dir,
-                                 "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
-  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
-         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF,
-         method %in% c("sceptre", "seurat_de")) |>
-  mutate(Method = fct_recode(Method,
-                             "SCEPTRE" = "Sceptre")) |>
-  mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf))
 
-########################################################
-# PANNELS A-D: SCEPTRE vs. Seurat De on several datasets
-########################################################
-my_values <- my_cols[names(my_cols) %in% c("Seurat De", "SCEPTRE")]
-get_plots_for_dataset <- function(df_sub, tit, print_legend, legend_position = c(0.45, 0.85)) {
-p_qq <- ggplot(data = df_sub,
-               mapping = aes(y = p_value, col = Method)) +
-    stat_qq_points(ymin = 1e-8, size = 0.85) +
-    stat_qq_band() +
-    scale_x_continuous(trans = revlog_trans(10)) +
-    scale_y_continuous(trans = revlog_trans(10)) +
-    labs(x = "Expected null p-value", y = "Observed p-value") +
-    geom_abline(col = "black") +
-    ggtitle(tit) +
-    scale_color_manual(values = my_values)
-    
-  if (print_legend) {
-    p_qq <- p_qq +
-      my_theme +
-      theme(legend.title = element_blank(),
-            legend.position = legend_position,
-            legend.text = element_text(size = 11),
-            legend.margin = margin(t = 0, unit = 'cm')) +
-      guides(color = guide_legend(
-        keywidth = 0.0,
-        keyheight = 0.2,
-        default.unit = "inch",
-        override.aes = list(size = 2.5)))
-  } else {
-    p_qq <- p_qq + my_theme_no_legend
-  }
-  
-  n_bonf_rej <- df_sub |> compute_n_bonf_rejections()
-  max_reject <- max(n_bonf_rej$n_reject)
-  
-  breaks_v <-  seq(0, max_reject, by = if (max_reject >= 7) 2 else 1)
-  p_bar <- n_bonf_rej |>
-    ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
-    ggplot2::geom_col(col = "black") +
-    ylab("N Bonferoni rejections") +
-    xlab("Method") + my_theme_no_legend +
-    theme(axis.text.x = element_blank(),
-          plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = 5.5, unit = "pt")) +
-    scale_y_continuous(breaks = breaks_v, expand = c(0, 0)) +
-    ggtitle("") +
-    scale_fill_manual(values = my_values)
-  
-  return(list(p_qq = p_qq, p_bar = p_bar))
+# directory with results
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+# results of undercover analysis
+undercover_res <- readRDS(paste0(
+  result_dir,
+  "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds"
+)) |>
+  filter(
+    n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+    n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF
+  ) |>
+  mutate(Method = forcats::fct_recode(Method,
+    "SCEPTRE" = "Sceptre",
+    "t-test" = "Liscovitch Method",
+    "MAST" = "Schraivogel Method",
+    "KS test" = "Weissman Method",
+    "MIMOSCA" = "Mimosca"
+  )) |>
+  mutate(dataset_rename = forcats::fct_recode(dataset_rename,
+    "Frangieh (Co Culture)" = "Frangieh Co Culture Gene",
+    "Frangieh (Control)" = "Frangieh Control Gene",
+    "Frangieh (IFN-\u03B3)" = "Frangieh Ifn Gamma Gene",
+    "Papalexi (Gene)" = "Papalexi Eccite Screen Gene",
+    "Papalexi (Protein)" = "Papalexi Eccite Screen Protein",
+    "Schraivogel" = "Schraivogel Enhancer Screen",
+    "Simulated" = "Simulated Experiment 1 Gene"
+  ))
+# results of positive control analysis
+pc_res <- readRDS(paste0(
+  result_dir,
+  "positive_control_analysis/pc_results_processed.rds"
+)) |>
+  mutate(Method = forcats::fct_recode(Method,
+    "SCEPTRE" = "Sceptre",
+    "t-test" = "Liscovitch Method",
+    "MAST" = "Schraivogel Method",
+    "KS test" = "Weissman Method",
+    "MIMOSCA" = "Mimosca"
+  )) |>
+  mutate(dataset_rename = forcats::fct_recode(dataset_rename,
+    "Frangieh (Co Culture)" = "Frangieh Co Culture Gene",
+    "Frangieh (Control)" = "Frangieh Control Gene",
+    "Frangieh (IFN-\u03B3)" = "Frangieh Ifn Gamma Gene",
+    "Papalexi (Gene)" = "Papalexi Eccite Screen Gene",
+    "Papalexi (Protein)" = "Papalexi Eccite Screen Protein",
+    "Schraivogel" = "Schraivogel Enhancer Screen"
+  ))
+
+#################################################################
+# Process negative control results into final table
+#################################################################
+n_false_rejections <- undercover_res |>
+  filter(!(Method %in% c(c("Nb Regression No Covariates", 
+                           "Nb Regression W Covariates", 
+                           "Sceptre No Covariates")))) |>
+  group_by(dataset_rename, Method) |>
+  summarize(n_false_reject = sum(p_value < alpha/n()),
+                   Method = Method[1],
+            `NT pairs` = n(), 
+            .groups = "drop")
+
+n_false_rejections_tab <- n_false_rejections |>
+  pivot_wider(names_from = Method, values_from = n_false_reject) |>
+  relocate("SCEPTRE", .after = "dataset_rename") |>
+  relocate(`NT pairs`, .after = `KS test`) |>
+  rename(Dataset = dataset_rename)
+
+n_false_rejections_tab <- n_false_rejections_tab |>
+  mutate(across(everything(), as.character)) |>
+  bind_rows(
+    n_false_rejections_tab |>
+      summarise(across(-c(Dataset, `NT pairs`), mean)) |>
+      mutate(Dataset = "Average") |>
+      mutate(across(-Dataset, function(x)(as.character(round(x, 1)))))
+  )  |>
+  mutate(`NT pairs` = ifelse(is.na(`NT pairs`), "", `NT pairs`))
+
+#################################################################
+# Process positive control results
+#################################################################
+
+n_true_rejections_tab <- pc_res |>
+  filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+         n_control >= N_NONZERO_CONTROL_CUTOFF) |>
+  group_by(dataset_rename, Method) |>
+  summarize(n_pc_reject = sum(p_value < reject_thresh),
+            `PC pairs` = n(),
+            Method = Method[1], 
+            .groups = "drop") |>
+  group_by(dataset_rename) |>
+  left_join(n_false_rejections,
+            by = c("dataset_rename", "Method")) |>
+  mutate(n_pc_reject = ifelse(n_false_reject <= max_false_reject, 
+                              as.character(n_pc_reject), 
+                              "-")) |>
+  select(dataset_rename, Method, n_pc_reject, `PC pairs`) |>
+  pivot_wider(names_from = Method, values_from = n_pc_reject) |>
+  relocate("SCEPTRE", .after = "dataset_rename") |>
+  relocate(`PC pairs`, .after = `KS test`) |>
+  rename(Dataset = dataset_rename)
+
+#################################################################
+# Helper code for tables
+#################################################################
+
+# From https://cran.r-project.org/web/packages/gridExtra/vignettes/tableGrob.html
+find_cell <- function(table, row, col, name="core-fg"){
+  l <- table$layout
+  which(l$t==row & l$l==col & l$name==name)
 }
 
-# 1.
-papa_plots <- get_plots_for_dataset(undercover_res |> filter(dataset == "papalexi_eccite_screen_gene"),
-                                    "Papalexi (gene) neg. controls",
-                                    print_legend = FALSE)
-# 2.
-papa_protein_plots <- get_plots_for_dataset(undercover_res |>
-                                              filter(dataset == "papalexi_eccite_screen_protein",
-                                                     method %in% c("sceptre", "seurat_de")),
-                                            "Papalexi (protein) neg. controls",
-                                            print_legend = FALSE)
-# 3.
-ifn_gama_plots <- get_plots_for_dataset(undercover_res |>
-                                          filter(dataset == "frangieh_ifn_gamma_gene"),
-                                        "Frangieh (IFN-\u03B3) neg. controls",
-                                        print_legend = TRUE,
-                                        legend_position = c(0.25, 0.86))
-# 4.
-co_culture_plots <- get_plots_for_dataset(undercover_res |>
-                                            filter(dataset == "frangieh_co_culture_gene",
-                                                   method %in% c("sceptre", "seurat_de")),
-                                            "Frangieh (co culture) neg. controls",
-                                          print_legend = FALSE)
+# set the theme for the table
+table_theme <- ttheme_default(core=list(fg_params=list(hjust=1, x=0.9)),
+                      base_size = 10)
 
-# 5.
-control_plots <- get_plots_for_dataset(undercover_res |> 
-                                         filter(dataset == "frangieh_control_gene",
-                                                method %in% c("sceptre", "seurat_de")),
-                                       "Frangieh (control) neg. controls",
-                                       print_legend = FALSE)
-# 6
-enh_screen <- get_plots_for_dataset(undercover_res |> 
-                                      filter(dataset == "schraivogel_enhancer_screen",
-                                             method %in% c("sceptre", "seurat_de")),
-                                    "Schraivogel neg. controls",
-                                    print_legend = FALSE)
 
-fig <- cowplot::plot_grid(ifn_gama_plots$p_qq, ifn_gama_plots$p_bar,
-                          co_culture_plots$p_qq, co_culture_plots$p_bar,
-                          control_plots$p_qq, control_plots$p_bar,
-                          papa_plots$p_qq, papa_plots$p_bar,
-                          papa_protein_plots$p_qq, papa_protein_plots$p_bar,
-                          enh_screen$p_qq, enh_screen$p_bar,
-                          labels = c("a", "", "b", "", "c", "", "d", "", "e", "", "f", ""),
-                          rel_widths = c(0.38, 0.12, 0.38, 0.12),
-                          ncol = 4, nrow = 3, align = "h")
+#################################################################
+# Format Type-I error table
+#################################################################
 
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_4/fig_4.png")
-ggsave(filename = to_save_fp, plot = fig, device = "png",
-       scale = 1.1, width = 7, height = 7, dpi = 330)
+# create gtable for negative control table
+nt_table_g <- tableGrob(n_false_rejections_tab, theme = table_theme, rows = NULL)
+  
+# add bold font for lowest numbers of false rejections
+nt_table_g$grobs[find_cell(nt_table_g, 2, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 3, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 3, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 4, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 5, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 5, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 6, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 6, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 6, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 7, 5, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 8, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 8, 6, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 8, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 9, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+
+# add line separating the average row from the rest
+nt_table_g <- gtable_add_grob(nt_table_g,
+                              grobs = segmentsGrob(
+                                x0 = unit(0,"npc"),
+                                y0 = unit(0,"npc"),
+                                x1 = unit(1,"npc"),
+                                y1 = unit(0,"npc"),
+                                gp = gpar(lwd = 4.0)),
+                              t = 8, b = 8, l = 1, r = 8)
+
+# add line separating the NT pairs column from the rest
+nt_table_g <- gtable_add_grob(nt_table_g,
+                              grobs = segmentsGrob( 
+                                x0 = unit(0,"npc"),
+                                y0 = unit(0,"npc"),
+                                x1 = unit(0,"npc"),
+                                y1 = unit(1,"npc"),
+                                gp = gpar(lwd = 4.0)),
+                              t = 8, b = 1, l = 8, r = 8)
+
+# add line separating the dataset column from the rest
+nt_table_g <- gtable_add_grob(nt_table_g,
+                              grobs = segmentsGrob( 
+                                x0 = unit(0,"npc"),
+                                y0 = unit(0,"npc"),
+                                x1 = unit(0,"npc"),
+                                y1 = unit(1,"npc"),
+                                gp = gpar(lwd = 4.0)),
+                              t = 9, b = 1, l = 2, r = 2)
+
+# add title to the table
+title <- textGrob("Number of false positives",gp=gpar(fontsize=12))
+padding <- unit(5,"mm")
+nt_table_g <- gtable_add_rows(
+  nt_table_g, 
+  heights = grobHeight(title) + padding,
+  pos = 0)
+nt_table_g <- gtable_add_grob(
+  nt_table_g, 
+  title, 
+  1, 1, 1, ncol(nt_table_g))
+
+# left-justify the first column
+id <- which(grepl("core-fg", nt_table_g$layout$name ) & nt_table_g$layout$l == 1 )
+for (i in id) {
+  nt_table_g$grobs[[i]]$x <- unit(0.05, "npc")
+  nt_table_g$grobs[[i]]$hjust <- 0
+}
+
+#################################################################
+# Format power table
+#################################################################
+
+# create gtable for positive control table
+pc_table_g <- tableGrob(n_true_rejections_tab, theme = table_theme, rows = NULL)
+
+# add bold font for highest numbers of true rejections
+pc_table_g$grobs[find_cell(pc_table_g, 2, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 3, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 4, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 5, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 6, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 6, 3, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 6, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 6, 5, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 6, 6, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 6, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+pc_table_g$grobs[find_cell(pc_table_g, 7, 3, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+
+# add line separating the PC pairs column from the rest
+pc_table_g <- gtable_add_grob(pc_table_g,
+                grobs = segmentsGrob( 
+                  x0 = unit(0,"npc"),
+                  y0 = unit(0,"npc"),
+                  x1 = unit(0,"npc"),
+                  y1 = unit(1,"npc"),
+                  gp = gpar(lwd = 4.0)),
+                t = 7, b = 1, l = 8, r = 8)
+
+# add line separating the dataset column from the rest
+pc_table_g <- gtable_add_grob(pc_table_g,
+                              grobs = segmentsGrob( 
+                                x0 = unit(0,"npc"),
+                                y0 = unit(0,"npc"),
+                                x1 = unit(0,"npc"),
+                                y1 = unit(1,"npc"),
+                                gp = gpar(lwd = 4.0)),
+                              t = 7, b = 1, l = 2, r = 2)
+
+# add title
+title <- textGrob("Number of true positives",gp=gpar(fontsize=12))
+padding <- unit(5,"mm")
+pc_table_g <- gtable_add_rows(
+  pc_table_g, 
+  heights = grobHeight(title) + padding,
+  pos = 0)
+pc_table_g <- gtable_add_grob(
+  pc_table_g, 
+  title, 
+  1, 1, 1, ncol(pc_table_g))
+
+# left justify the first column
+id <- which(grepl("core-fg", pc_table_g$layout$name ) & pc_table_g$layout$l == 1 )
+for (i in id) {
+  pc_table_g$grobs[[i]]$x <- unit(0.05, "npc")
+  pc_table_g$grobs[[i]]$hjust <- 0
+}
+
+#################################################################
+# Create QQ plots
+#################################################################
+
+# read colors from my_cols
+my_values <- my_cols[names(my_cols) %in% c("Seurat De", "SCEPTRE")]
+
+# Frangieh QQ plot
+qq_frangieh <- undercover_res |>
+  mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf)) |>
+  filter(dataset == "frangieh_control_gene",
+         method %in% c("sceptre", "seurat_de")) |> 
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-9, size = 0.85) +
+  stat_qq_band() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black") +
+  # ggtitle("Frangieh (IFN-\u03B3) neg. controls") +
+  ggtitle("Frangieh (Control) neg. controls") +
+  scale_color_manual(values = my_values) + 
+  my_theme +
+  theme(legend.title = element_blank(),
+          legend.position = c(0.25, 0.86),
+          legend.text = element_text(size = 11),
+          legend.margin = margin(t = 0, unit = 'cm')) +
+  guides(color = guide_legend(
+      keywidth = 0.0,
+      keyheight = 0.2,
+      default.unit = "inch",
+      override.aes = list(size = 2.5)))
+
+# Papalexi QQ plot
+qq_papalexi <- undercover_res |>
+  mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf)) |>
+  filter(dataset == "papalexi_eccite_screen_gene",
+         method %in% c("sceptre", "seurat_de")) |> 
+  ggplot(mapping = aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-9, size = 0.85) +
+  stat_qq_band() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black") +
+  ggtitle("Papalexi (gene) neg. controls") +
+  scale_color_manual(values = my_values) + 
+  my_theme_no_legend
+
+#################################################################
+# Put the pieces together and save
+#################################################################
+
+# put the pieces together
+final_plot <- ggarrange(
+  ggarrange(qq_frangieh, qq_papalexi, nrow = 1),
+  as_ggplot(nt_table_g),
+  as_ggplot(pc_table_g),
+  labels = "auto", 
+  heights = c(1.2, 1, 0.8),
+  ncol = 1
+)
+
+# define the file path
+fig_4_filename <- paste0(
+  .get_config_path("LOCAL_CODE_DIR"),
+  "sceptre2-manuscript/R_scripts/figure_creation/fig_4/fig_4.png"
+)
+
+# save the figure
+ggsave(filename = fig_4_filename, 
+       plot = final_plot, 
+       device = "png", 
+       width = 6.5,
+       height = 8,
+       bg = "white")
