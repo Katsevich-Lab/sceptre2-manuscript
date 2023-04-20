@@ -308,7 +308,7 @@ odds_ratios["ChIP-seq", "Seurat"] <- merged_results |>
   `$`("estimate")
 
 odds_ratios |>
-  round(3) |>
+  signif(3) |>
   Hmisc::latex(booktabs = TRUE,
            rowlabel="\\diagbox{Ground truth}{Method}", 
            file="",
