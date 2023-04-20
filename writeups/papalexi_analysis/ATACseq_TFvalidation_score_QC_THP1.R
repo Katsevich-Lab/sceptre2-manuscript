@@ -13,6 +13,7 @@ library(varhandle)
 alpha = 0.90
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 data_dir <- sceptre2_dir
+atac_dir <- paste0(sceptre2_dir, "/data/ATACseq")
 
 # read in sceptre and seurat results
 sceptre_path <- paste0(
@@ -60,8 +61,10 @@ TSS_GR <- GRanges(
   TSS = TSS_info$TSS)
 
 # ATAC-seq data
+#get filepath
+atac_fp = paste0(atac_dir,"/HP1_PMA_ctrl_TLR4_1hr%.bw")
 atac_data = readBigwig(
-  file = paste0(data_dir,"ATACseq/HP1_PMA_ctrl_TLR4_1hr%.bw"),
+  file = paste0(atac_fp),
   chrom = NULL,
   chromstart = 1,
   chromend = .Machine$integer.max,
@@ -81,11 +84,18 @@ atac_GR <- GRanges(
 )
 
 # TF motif data
+#get gene list
+genes = as.data.frame(TSS_GR)
+genes = unique(genes$gene)
+#read jaspar association table
 jaspar_tf_info <- readRDS(paste0(sceptre2_dir, "/data/jaspar/jaspar_tf_info_papalexi.rds"))
 TFs <- jaspar_tf_info |> pull(name) |> unique()
-#initialize empty list
-TF_targets <- vector(mode='list', length=length(TFs)+1)
-names(TF_targets) = c(TFs,alpha)
+#initialize empty matrix
+TF_targets = matrix(0,length(genes),length(TFs))
+colnames(TF_targets) = TFs
+rownames(TF_targets) = genes
+TF_targets = as.data.frame(TF_targets)
+#iterate over each TF
 for(TF in TFs){
   matrix_ids <- jaspar_tf_info |> 
     filter(name == TF) |>
@@ -115,7 +125,7 @@ for(TF in TFs){
     as.data.frame() |>
     pull(gene)
   
-  TF_targets[[TF]] = target_genes
+  TF_targets[[TF]] = as.integer(rownames(TF_targets)%in%target_genes)
   cat(sprintf("%s targets %s genes.\n", TF, length(target_genes)))
 }
 
