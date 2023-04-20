@@ -152,6 +152,7 @@ jaspar_tf_info |>
 
 
 ##### Download ATAC seq data (THP-1 Cells with LPS Stimulation)
+#hg19 
 options(timeout=5000)
 # directory for ATAC-seq data
 atac_dir <- paste0(sceptre2_dir, "/data/ATACseq")
@@ -171,6 +172,7 @@ download.file(url = fileurl,
 
 
 ############### Download JASPAR TF binding sites for papalexi dara ###########################
+#note that for THP1 cells, we use hg19 rather than hg38
 options(timeout=7000)
 jaspar_dir <- paste0(sceptre2_dir, "/data/jaspar")
 dir.create(jaspar_dir)
