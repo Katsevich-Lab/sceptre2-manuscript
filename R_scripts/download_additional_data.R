@@ -87,5 +87,60 @@ url <- paste0(chromhmm_url, filename)
 download.file(url = url, destfile = destfile)
 R.utils::gunzip(destfile,overwrite = T)
 
-http://bioinfo.life.hust.edu.cn/hTFtarget/static/hTFtarget/tmp_files/targets/dataset_3390.STAT1.target.txt.gz
-https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSM1057011&format=file&file=GSM1057011%5FSTAT1peak%5FB%2Etxt%2Egz
+# http://bioinfo.life.hust.edu.cn/hTFtarget/static/hTFtarget/tmp_files/targets/dataset_3390.STAT1.target.txt.gz
+# https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSM1057011&format=file&file=GSM1057011%5FSTAT1peak%5FB%2Etxt%2Egz
+
+############### Download ATAC-seq peaks for 2686 melanoma ###########################
+
+# directory for ChIP-seq data
+atacseq_dir <- paste0(sceptre2_dir, "/data/atacseq")
+dir.create(atacseq_dir)
+filename <- "GSE205033_allpeaks_read.counts.rpkm.threshold.csv.gz"
+destfile <- paste0(atacseq_dir, "/", filename)
+download.file(url = paste0("https://ftp.ncbi.nlm.nih.gov/geo/series/GSE205nnn/GSE205033/suppl/", filename),
+              destfile = destfile)
+R.utils::gunzip(destfile, overwrite = T)
+
+############### Download JASPAR TF binding sites ###########################
+
+jaspar_dir <- paste0(sceptre2_dir, "/data/jaspar")
+dir.create(jaspar_dir)
+
+jaspar_tf_info <- lapply(
+  1:2,
+  function(page) (rba_jaspar_collections_matrices(collection = "CORE", 
+                                                  page = as.numeric(page), 
+                                                  only_last_version = TRUE) %>% 
+                    `$`(results) |> 
+                    as_tibble() |> 
+                    select(matrix_id, name))
+) |>
+  data.table::rbindlist() |>
+  as_tibble()
+
+frangieh_dir <- .get_config_path("LOCAL_FRANGIEH_2021_DATA_DIR")
+frangieh_targets <- readxl::read_excel(path = paste0(frangieh_dir, "raw/supp_tables/41588_2021_779_MOESM3_ESM.xlsx"), 
+                                       sheet = 1,
+                                       skip = 2) |>
+  rowwise() |>
+  na.omit() |>
+  filter(!grepl("SITE", `Guide Name`)) |>
+  mutate(target = stringr::str_split_1(`Guide Name`, "_")[1]) |>
+  pull(target) |>
+  unique()
+
+matrix_ids <- jaspar_tf_info |>
+  filter(name %in% frangieh_targets) |>
+  pull(matrix_id)
+
+jaspar_tf_info |>
+  filter(name %in% frangieh_targets) |>
+  saveRDS(paste0(jaspar_dir, "/jaspar_tf_info.rds"))
+  
+for(matrix_id in matrix_ids){
+  filename <- paste0(matrix_id, ".tsv.gz")
+  destfile <- paste0(jaspar_dir, "/", filename)
+  download.file(url = paste0("http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/", filename),
+                destfile = destfile)
+  R.utils::gunzip(destfile, overwrite = T)  
+}
