@@ -3,7 +3,7 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 
-dataset <- args[1] # "papalexi" or "frangieh" or ""
+dataset <- args[1] # "papalexi" or "frangieh"
 analysis_type <- args[2] # "calibration" or "discovery"
 
 cat(dataset); cat("\n")
@@ -17,8 +17,8 @@ if (dataset == "papalexi") {
   objects_fp <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/papalexi/eccite_screen/r_objects.rds")
   f_name <- paste0("papalexi_gene_", analysis_type, "_res.rds")
 } else {
-  objects_fp <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/frangieh/ifn_gamma/r_objects.rds")
-  f_name <- paste0("frangieh_ifn_gamma_", analysis_type, "_res.rds")
+  objects_fp <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/frangieh/control/r_objects.rds")
+  f_name <- paste0("frangieh_control_", analysis_type, "_res.rds")
 }
 
 calibration_check <- analysis_type == "calibration"

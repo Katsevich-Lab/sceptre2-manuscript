@@ -151,17 +151,33 @@ for (paper in papers) {
     
     # vi. write trans pairs
     grna_assignment_modality <- mm_odm_sub_proc |> get_modality("grna_assignment")
-    gene_modality <- mm_odm_sub_proc |> get_modality("gene")
     grna_feature_df <- grna_assignment_modality |>
       ondisc::get_feature_covariates() |>
       dplyr::filter(n_nonzero >= 10) # require each individual gRNA to have at least 10 expressed cells
+    grna_groups_to_keep <- unique(grna_feature_df$target)
     grna_groups_to_keep <- grna_groups_to_keep[grna_groups_to_keep != "non-targeting"]
     for (modality in remaining_modalities) {
       modality_odm <- get_modality(mm_odm_sub, modality)
       feats_to_keep <- get_highly_expressed_features(modality_odm, FRAC_EXPRESSED_TRHESH)
-      
+      trans_pairs <- expand.grid(response_id = feats_to_keep,
+                                 grna_group = grna_groups_to_keep) |>
+        dplyr::arrange(grna_group)
+      saveRDS(object = trans_pairs, file = paste0(paper_dir, dataset, "/", modality, "/trans_pairs_grouped.rds"))
+      if (paper == "frangieh" && dataset == "control" && modality == "gene") {
+        tf_pairs <- trans_pairs |>
+          dplyr::filter(grna_group %in% c("E2F1", "FOS", "IRF3", "IRF4", "KLF4", "MYC", "SMAD3",
+                                          "SMAD4", "SOX4", "STAT1", "STAT3", "TFAP2A", "TP53"))
+        saveRDS(object = tf_pairs, file = paste0(paper_dir, dataset, "/", modality, "/tf_pairs_grouped.rds"))  
+      }
+      if (paper == "papalexi" && dataset == "eccite_screen" && modality == "gene") {
+        tf_pairs <- trans_pairs |>
+          dplyr::filter(grna_group %in% c("ATF2", "ETV7", "IRF1", "IRF7", "MYC", "NFKBIA", "POU2F2", 
+                                          "SMAD4", "SPI1", "STAT1", "STAT2", "STAT3", "STAT5A"))
+        saveRDS(object = tf_pairs, file = paste0(paper_dir, dataset, "/", modality, "/tf_pairs_grouped.rds"))
+      }
     }
     
+    gene_modality <- mm_odm_sub_proc |> get_modality("gene")
     # vii. write the positive control pairs (at the level of the paper-dataset)
     if (paper %in% c("frangieh", "papalexi")) {
       # grouped pairs

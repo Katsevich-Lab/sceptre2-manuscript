@@ -5,20 +5,20 @@
 # replication of the full discovery analyses.
 #####################################################################################
 
-####################
-# FRANGIEH IFN-GAMMA
-####################
+##################
+# FRANGIEH CONTROL
+##################
 LOCAL_SCEPTRE2_DATA_DIR <-.get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
-ifn_gamma_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/frangieh/ifn_gamma/")
+control_dir <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "data/frangieh/control/")
 
 # gene info
-gene_odm_fp <- paste0(ifn_gamma_dir, "gene/matrix.odm")
+gene_odm_fp <- paste0(control_dir, "gene/matrix.odm")
 
 # grna info
-grna_odm_fp <- paste0(ifn_gamma_dir, "grna_assignment/matrix.odm")
+grna_odm_fp <- paste0(control_dir, "grna_assignment/matrix.odm")
 
 # mm odm metadata fp
-mm_metadata_fp <- paste0(ifn_gamma_dir, "multimodal_metadata.rds")
+mm_metadata_fp <- paste0(control_dir, "multimodal_metadata.rds")
 
 # construct mm odm
 mm_odm <- ondisc::read_multimodal_odm(odm_fps = c(gene_odm_fp, grna_odm_fp),
@@ -57,7 +57,7 @@ l <- list(response_matrix = response_matrix,
           formula_object = formula_object, 
           response_grna_group_pairs = response_grna_group_pairs)
 
-dir_to_save <- paste0(ifn_gamma_dir)
+dir_to_save <- paste0(control_dir)
 file_to_save <- paste0(dir_to_save, "r_objects.rds")
 saveRDS(object = l, file = file_to_save)
 
