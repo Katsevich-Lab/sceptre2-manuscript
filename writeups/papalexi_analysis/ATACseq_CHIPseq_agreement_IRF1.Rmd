@@ -1,0 +1,166 @@
+---
+title: "IRF1 SCEPTRE vs Seurat With Pvalue QC Individual"
+output: pdf_document
+date: "2023-04-04"
+header-includes:
+- \usepackage{diagbox}
+- \usepackage{multicol}
+- \usepackage{float}
+---
+
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(fig.align = 'center', echo = FALSE)
+```
+```{r, message = FALSE, warning = FALSE, cache = FALSE}
+# load libraries
+library(tidyverse)
+library(plyranges)
+library(genomation)
+library(biomaRt)
+library(GenomicRanges)
+library(kableExtra)
+
+# resolve namespace conflicts
+library(conflicted)
+conflicts_prefer(dplyr::filter)
+conflicts_prefer(dplyr::select)
+conflicts_prefer(dplyr::rename)
+conflicts_prefer(base::intersect)
+```
+
+```{r}
+#pvalue quantile you want to filter by. 0.75 means that we are keeping the 
+#top 75 percent  of peaks sorted by pvalue
+quant = 0.75
+score_QC = 0.9
+```
+
+```{r, message = FALSE}
+TF = "IRF1"
+data_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+
+
+# read in K562 ChIP-seq data
+irf1_filename <- "GSM1057025_IRF1peak_B.txt"
+chipseq_fp <- paste0(data_dir, "data/chipseq/", irf1_filename)
+chipseq_data <- read.table(chipseq_fp) 
+colnames(chipseq_data) = c("chrom",'start_pos','end_pos',"pval","score",
+                           "pos_max_peak","max_peak_height",
+                           "rel_pos_max_peak_height","peak_size","mid_point",
+                           "peak_to_mid_dist")
+
+atac_path = paste0(data_dir, "results/papalexi_analysis/",
+  "ATACseq_TF_targets_score_QC_",100*score_QC,".rds")
+
+atac_target_genes = readRDS(atac_path)
+
+# read in genes from ATAC-seq
+database_genes <- rownames(atac_target_genes)[atac_target_genes[[TF]]==1]
+```
+```{r}
+chipseq_data = GRanges(
+  seqnames = chipseq_data$chrom,
+  ranges = IRanges(start = chipseq_data$start_pos, end = chipseq_data$end_pos),
+  score = chipseq_data$score,
+  pval = chipseq_data$pval,
+  peak_position = chipseq_data$pos_max_peak)
+```
+
+```{r}
+#hist(chipseq_data$pval)
+alpha = quantile(chipseq_data$pval,1-quant)
+chipseq_data = chipseq_data%>%filter(pval < alpha)
+```
+
+```{r}
+# get TSS for each gene 
+gene_names <- rownames(atac_target_genes) |> as.character()
+ensembl <- useEnsembl(host = 'https://grch37.ensembl.org',
+                      biomart = 'ENSEMBL_MART_ENSEMBL', 
+                      dataset = "hsapiens_gene_ensembl")
+TSS_info <-getBM(attributes=c("external_gene_name", "chromosome_name", "start_position", 
+                       "end_position", "strand"),
+                 filters=c('external_gene_name'),
+                 value = gene_names, mart=ensembl) |>
+  filter(chromosome_name %in% c(1:22, "X", "Y")) |>
+  mutate(TSS = ifelse(strand == 1, start_position, end_position),
+         chromosome_name = paste0("chr", chromosome_name)) |>
+  rename(gene = external_gene_name, chr = chromosome_name) |>
+  select(gene, chr, TSS)
+```
+
+
+```{r}
+# get binary score for each gene
+window_width_binary <- 5e3
+chipseq_scores_binary <- GRanges(
+  seqnames = TSS_info$chr,
+  ranges = IRanges(start = TSS_info$TSS-window_width_binary, 
+                   end = TSS_info$TSS+window_width_binary),
+  gene = TSS_info$gene,
+  TSS = TSS_info$TSS) |> 
+  join_overlap_left(chipseq_data) |>
+  group_by(gene) |>
+  summarise(binary_score = any(!is.na(score))) |>
+  as_tibble()
+
+# get linear score for each gene
+window_width_linear <- 5e4
+chipseq_scores_linear <- GRanges(
+  seqnames = TSS_info$chr,
+  ranges = IRanges(start = TSS_info$TSS-window_width_linear, 
+                   end = TSS_info$TSS+window_width_linear),
+  gene = TSS_info$gene,
+  TSS = TSS_info$TSS) |> 
+  join_overlap_left(chipseq_data) |>
+  group_by(gene) |>
+  summarise(linear_score = sum((window_width_linear - abs(TSS - peak_position))/
+                                 window_width_linear)) |>
+  as_tibble() |>
+  mutate(linear_score = ifelse(is.na(linear_score), 0, linear_score))
+```
+
+```{r}
+# join the two sets of chipseq scores, and add ATAC-seq information
+chipseq_scores <- full_join(chipseq_scores_binary, 
+                            chipseq_scores_linear, 
+                            by = "gene") |>
+  mutate(in_database = gene %in% database_genes)
+```
+
+```{r, results = "asis"}
+chipseq_scores |> 
+  select(in_database, binary_score) |>
+  table() |>
+  Hmisc::latex(booktabs = TRUE,
+               rowlabel="\\diagbox{ATAC-seq}{ChIP-seq}", 
+               file="",
+               caption = "Comparing target genes identified based on ATAC-seq and based directly on ChIP-seq data (at least one peak within 5kb).",
+               where = "!htbp")
+```
+
+```{r, fig.width = 4, fig.height = 3}
+chipseq_scores |> 
+  group_by(in_database) |>
+  summarise(round(mean(binary_score), 3)) |>
+  kable(booktabs = TRUE, 
+        linesep = "",
+        col.names = c("In ATAC-seq", "Mean binary score"),
+        caption = paste0("Comparing ChIP-seq binary score to ATAC-seq.")) |>
+  kable_styling(position = "center", latex_options = "HOLD_position")
+
+chipseq_scores |> 
+  group_by(in_database) |>
+  summarise(round(median(linear_score), 3)) |>
+  kable(booktabs = TRUE, 
+        linesep = "",
+        col.names = c("In ATAC-seq", "Median linear score"),
+        caption = paste0("Comparing ChIP-seq linear score to ATAC-seq.")) |>
+  kable_styling(position = "center", latex_options = "HOLD_position")
+
+chipseq_scores |> 
+  ggplot(aes(x = in_database, y = linear_score)) +
+  geom_violin(fill = "dodgerblue") +
+  labs(x = "In ATAC-seq", y = "Linear score")
+```

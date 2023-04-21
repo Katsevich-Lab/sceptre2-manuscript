@@ -10,7 +10,7 @@ library(kableExtra)
 library(varhandle)
 
 #score QC to use
-alpha = 0.90
+alpha = 0.50
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 data_dir <- sceptre2_dir
 atac_dir <- paste0(sceptre2_dir, "/data/ATACseq")

@@ -54,6 +54,7 @@ seurat_path <- paste0(
 sceptre_results <- readRDS(sceptre_path)
 seurat_results <- readRDS(seurat_path)
 
+
 # read in K562 ChIP-seq data
 STAT1_filename <- "GSM1057011_STAT1peak_B.txt"
 chipseq_fp <- paste0(data_dir, "data/chipseq/", STAT1_filename)
