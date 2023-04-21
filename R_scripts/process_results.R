@@ -1,5 +1,7 @@
 library(lowmoi)
 library(tidyverse)
+conflicts_prefer(dplyr::filter)
+
 sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 sample_size_df <- readRDS(paste0(sceptre2_results_dir, "dataset_sample_sizes/n_nonzero_cells_per_grna.rds"))
 
@@ -17,11 +19,15 @@ resampling_res_processed <- process_undercover_result(resampling_res, sample_siz
 saveRDS(object = resampling_res_processed, paste0(sceptre2_results_dir,
                                                   "resampling_distributions/seurat_resampling_at_scale_processed.rds"))
 
-# pc results (UPDATE)
-rm(list = c("resampling_res", "resampling_res_processed"))
-pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results.rds"))
-min_p <- pc_res |> filter(method == "sceptre", p_value > 0) |> pull(p_value) |> min()
-pc_res_processed <- process_pc_result(pc_res, sample_size_df) |>
-  mutate(p_value = ifelse(p_value <= 0, min_p, p_value))
+# pc result
+pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_0423.rds"))
+pc_res_processed <- process_pc_result(pc_res, sample_size_df)
 saveRDS(object = pc_res_processed,
         file = paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_processed.rds"))
+
+# discovery results
+disc_res <- readRDS(paste0(sceptre2_results_dir, "discovery_analyses/discovery_results_0423.rds"))
+disc_res_processed <- process_pc_result(pc_res = disc_res,
+                                        sample_size_df = sample_size_df)
+saveRDS(object = disc_res_processed,
+        file = paste0(sceptre2_results_dir, "discovery_analyses/discovery_results_0423_processed.rds"))
