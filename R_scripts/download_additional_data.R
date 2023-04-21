@@ -1,6 +1,7 @@
 library(tibble)
 library(tidyr)
 library(tidyverse)
+library(rbioapi)
 
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
@@ -137,10 +138,74 @@ jaspar_tf_info |>
   filter(name %in% frangieh_targets) |>
   saveRDS(paste0(jaspar_dir, "/jaspar_tf_info.rds"))
   
+ for(matrix_id in matrix_ids){
+   filename <- paste0(matrix_id, ".tsv.gz")
+   destfile <- paste0(jaspar_dir, "/", filename)
+   download.file(url = paste0("http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/", filename),
+                 destfile = destfile)
+   R.utils::gunzip(destfile, overwrite = T)  
+ }
+
+
+
+
+
+
+##### Download ATAC seq data (THP-1 Cells with LPS Stimulation)
+#hg19 
+options(timeout=5000)
+# directory for ATAC-seq data
+atac_dir <- paste0(sceptre2_dir, "/data/ATACseq")
+dir.create(atac_dir)
+
+acc_num = "GSM4425563"
+geo_url = "https://www.ncbi.nlm.nih.gov/geo/download/?acc="
+
+destfile = paste0(atac_dir,"/HP1_PMA_ctrl_TLR4_1hr%.bw")
+
+fileurl = paste0(geo_url,acc_num,"&format=file&file=",acc_num,"_ATAC-seq_THP1_PMA_ctrl_TLR4_1hr.bw")
+download.file(url = fileurl,
+              destfile = destfile)
+
+
+
+
+
+############### Download JASPAR TF binding sites for papalexi dara ###########################
+#note that for THP1 cells, we use hg19 rather than hg38
+options(timeout=7000)
+jaspar_dir <- paste0(sceptre2_dir, "/data/jaspar")
+dir.create(jaspar_dir)
+
+jaspar_tf_info <- lapply(
+  1:2,
+  function(page) (rba_jaspar_collections_matrices(collection = "CORE", 
+                                                  page = as.numeric(page), 
+                                                  only_last_version = TRUE) %>% 
+                    `$`(results) |> 
+                    as_tibble() |> 
+                    select(matrix_id, name))
+) |>
+  data.table::rbindlist() |>
+  as_tibble()
+
+jaspar_tf_info = jaspar_tf_info%>%mutate(name = toupper(name))
+
+papalexi_targets = c("IRF1","STAT1","STAT2","STAT3","SMAD4","BRD4","SPI1","MYC")
+
+matrix_ids <- jaspar_tf_info |>
+  filter(name %in% papalexi_targets) |>
+  pull(matrix_id)
+
+jaspar_tf_info |>
+  filter(name %in% papalexi_targets) |>
+  saveRDS(paste0(jaspar_dir, "/jaspar_tf_info_papalexi.rds"))
+
 for(matrix_id in matrix_ids){
   filename <- paste0(matrix_id, ".tsv.gz")
-  destfile <- paste0(jaspar_dir, "/", filename)
-  download.file(url = paste0("http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/", filename),
+  filename_hg19 <- paste0(matrix_id,"_hg19", ".tsv.gz")
+  destfile <- paste0(jaspar_dir, "/", filename_hg19)
+  download.file(url = paste0("http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg19/", filename),
                 destfile = destfile)
   R.utils::gunzip(destfile, overwrite = T)  
 }
