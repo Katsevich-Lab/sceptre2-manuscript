@@ -29,6 +29,9 @@ conflicts_prefer(dplyr::rename)
 conflicts_prefer(base::intersect)
 ```
 
+# Goal
+
+Here I will compare the odds ratios for discoveries made by SCEPTRE and Seurat with the ground truth being the TF targets found by ATACseq. 
 
 ```{r,echo = FALSE}
 score_QC = 0.9

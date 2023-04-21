@@ -29,6 +29,13 @@ conflicts_prefer(dplyr::rename)
 conflicts_prefer(base::intersect)
 ```
 
+
+# Goal 
+
+I will compare the agreement between the TF targets found by CHIPseq and by ATACseq in IRF1. I will comapre both the linear and binary scores.
+
+
+
 ```{r}
 #pvalue quantile you want to filter by. 0.75 means that we are keeping the 
 #top 75 percent  of peaks sorted by pvalue
