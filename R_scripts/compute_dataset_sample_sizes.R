@@ -74,7 +74,7 @@ df <- lapply(papers, function(paper) {
       }) |> data.table::rbindlist() |>
       dplyr::mutate(dataset = factor(dataset))
     y <- dplyr::left_join(x, grna_target_df, by = "grna_id") |>
-      dplyr::mutate(target = factor(target))
+      dplyr::mutate(grna_group = factor(target))
   }) |> data.table::rbindlist() |>
     dplyr::mutate(paper = factor(paper))
 }) |> data.table::rbindlist()
@@ -82,4 +82,12 @@ df <- lapply(papers, function(paper) {
 to_save_fp <- paste0(sceptre2_sample_sizes_dir, "n_nonzero_cells_per_grna.rds")
 dataset_concat <- paste0(df$paper, "/", df$dataset, "/", df$modality) |> factor()
 df <- df |> dplyr::mutate(dataset_concat = dataset_concat)
+saveRDS(object = df, file = to_save_fp)
+
+# modify the data frame slightly
+df <- readRDS(to_save_fp)
+df$modality <- NULL
+df$dataset <- NULL
+df$paper <- NULL
+df <- df |> dplyr::rename(grna_group = target, dataset = dataset_concat, response_id = feature_id)
 saveRDS(object = df, file = to_save_fp)
