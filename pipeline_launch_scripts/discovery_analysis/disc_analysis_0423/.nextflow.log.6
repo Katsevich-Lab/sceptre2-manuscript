@@ -1,0 +1,53 @@
+Apr-20 22:15:32.365 [main] DEBUG nextflow.cli.Launcher - $> nextflow run pc-grna-pipeline -r main --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/params_discovery_0423.groovy --grna_modality assignment --result_dir /Users/timbarry/research_offsite/projects/sceptre2//results/discovery_analyses --result_file_name discovery_results_0423.rds --trial false --pairs_file tf_pairs_grouped.rds
+Apr-20 22:15:32.475 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.04.3
+Apr-20 22:15:33.278 [main] DEBUG nextflow.scm.AssetManager - Listing projects in folder: /Users/timbarry/.nextflow/assets
+Apr-20 22:15:33.286 [main] DEBUG nextflow.scm.AssetManager - Project manifest does not exist: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/nextflow.config (No such file or directory)
+Apr-20 22:15:33.289 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-20 22:15:33.301 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-20 22:15:33.921 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Apr-20 22:15:33.922 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Apr-20 22:15:33.932 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-20 22:15:33.993 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 by global default
+Apr-20 22:15:33.994 [main] INFO  nextflow.cli.CmdRun - Launching `https://github.com/Katsevich-Lab/pc-grna-pipeline` [special_monod] DSL2 - revision: 86411d8d36 [main]
+Apr-20 22:15:34.008 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins; core-plugins: nf-amazon@1.7.2,nf-azure@0.13.2,nf-console@1.0.3,nf-ga4gh@1.0.3,nf-google@1.1.4,nf-sqldb@0.4.0,nf-tower@1.4.0
+Apr-20 22:15:34.009 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-20 22:15:34.020 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-20 22:15:34.021 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-20 22:15:34.025 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-20 22:15:34.034 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-20 22:15:34.093 [main] DEBUG nextflow.Session - Session uuid: 518d2d2b-dcdb-4fc2-980d-5508db8987c0
+Apr-20 22:15:34.093 [main] DEBUG nextflow.Session - Run name: special_monod
+Apr-20 22:15:34.093 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-20 22:15:34.240 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.04.3 build 5703
+  Created: 18-05-2022 19:22 UTC (15:22 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.10 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 18061@Tims-MacBook-Pro-2021.local [127.0.0.1]
+  CPUs: 8 - Mem: 16 GB (790.2 MB) - Swap: 0 (0)
+Apr-20 22:15:34.251 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Apr-20 22:15:34.268 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-20 22:15:34.279 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-20 22:15:34.328 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Apr-20 22:15:34.339 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Apr-20 22:15:34.401 [main] DEBUG nextflow.Session - Session start invoked
+Apr-20 22:15:35.136 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-20 22:15:35.284 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-20 22:15:35.284 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-20 22:15:35.289 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Apr-20 22:15:35.295 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Apr-20 22:15:35.472 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: combine_results, run_method, obtain_pc_pairs
+Apr-20 22:15:35.473 [main] DEBUG nextflow.Session - Ignite dataflow network (3)
+Apr-20 22:15:35.474 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > obtain_pc_pairs
+Apr-20 22:15:35.474 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Apr-20 22:15:35.474 [main] DEBUG nextflow.Session - Session await
+Apr-20 22:15:35.556 [Actor Thread 9] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/bin/get_pc_pairs.R
+Apr-20 22:15:35.621 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-20 22:15:35.626 [Task submitter] INFO  nextflow.Session - [4c/8a84ca] Submitted process > obtain_pc_pairs
+Apr-20 22:15:35.946 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: obtain_pc_pairs; status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/4c/8a84caade07bc9fd353143026ff0f7]
+Apr-20 22:15:35.964 [main] DEBUG nextflow.Session - Session await > all process finished
+Apr-20 22:15:35.966 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Apr-20 22:15:35.990 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=1; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=230ms; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=1; peakCpus=1; peakMemory=2 GB; ]
+Apr-20 22:15:36.076 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Apr-20 22:15:36.087 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

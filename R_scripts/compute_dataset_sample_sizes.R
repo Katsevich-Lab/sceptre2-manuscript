@@ -35,9 +35,7 @@ df <- lapply(papers, function(paper) {
     cellwise_grna_assignments <- grna_assign_modality |>
       get_cell_covariates() |>
       dplyr::pull(assigned_grna) 
-    
-    cellwise_grna_assignments_2 <- lowmoi:::get_grna_assignments_via_max_op(grna_assign_modality)      
-    
+
     # NOT A SUBSET OF ROW NAMES OF FEATURE COVARIATES OF GRNA ASSIGN MODALITY
     unique_grnas <- unique(cellwise_grna_assignments)
     grna_tbl <- lapply(unique_grnas, function(grna) {

@@ -7,4 +7,5 @@ nextflow run pc-grna-pipeline -r main \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"/results/discovery_analyses" \
  --result_file_name "discovery_results_0423.rds" \
  --trial "false" \
- --discovery "true"
+ --pairs_file "tf_pairs_grouped.rds"
+ 
