@@ -189,9 +189,10 @@ jaspar_tf_info <- lapply(
   data.table::rbindlist() |>
   as_tibble()
 
-jaspar_tf_info = jaspar_tf_info%>%mutate(name = toupper(name))
+jaspar_tf_info <- jaspar_tf_info %>% 
+  mutate(name = toupper(name)) # we might be picking up mouse TFs here
 
-papalexi_targets = c("IRF1","STAT1","STAT2","STAT3","SMAD4","BRD4","SPI1","MYC")
+papalexi_targets <- c("IRF1","STAT1","STAT2","STAT3","SMAD4","BRD4","SPI1","MYC")
 
 matrix_ids <- jaspar_tf_info |>
   filter(name %in% papalexi_targets) |>
