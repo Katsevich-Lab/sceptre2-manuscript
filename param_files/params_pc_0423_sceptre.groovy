@@ -1,18 +1,12 @@
-data_method_pairs_indiv = ["frangieh/co_culture/gene": ["mimosca", "schraivogel_method"],
-                           "frangieh/control/gene": ["mimosca", "schraivogel_method"],
-                           "frangieh/ifn_gamma/gene": ["mimosca", "schraivogel_method"],
-                           "papalexi/eccite_screen/gene": ["mimosca", "schraivogel_method"],
-                           "papalexi/eccite_screen/protein": ["mimosca", "schraivogel_method"],
-                           "schraivogel/enhancer_screen_chr11/gene": ["mimosca", "schraivogel_method"],
-                           "schraivogel/enhancer_screen_chr8/gene": ["mimosca", "schraivogel_method"]
-]
-data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method", "weissman_method"],
-                             "frangieh/control/gene": ["seurat_de", "liscovitch_method", "weissman_method"],
-                             "frangieh/ifn_gamma/gene": ["seurat_de", "liscovitch_method", "weissman_method"],
-                             "papalexi/eccite_screen/gene": ["seurat_de", "liscovitch_method", "weissman_method"],
-                             "papalexi/eccite_screen/protein": ["seurat_de", "liscovitch_method", "weissman_method"],
-                             "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method", "weissman_method"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "weissman_method"]
+data_method_pairs_indiv = []
+
+data_method_pairs_grouped = ["frangieh/co_culture/gene": ["sceptre"],
+                             "frangieh/control/gene": ["sceptre"],
+                             "frangieh/ifn_gamma/gene": ["sceptre"],
+                             "papalexi/eccite_screen/gene": ["sceptre"],
+                             "papalexi/eccite_screen/protein": ["sceptre"],
+                             "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
+                             "schraivogel/enhancer_screen_chr8/gene": ["sceptre"]
                             ]
                             
 row_names = ["frangieh/co_culture/gene",

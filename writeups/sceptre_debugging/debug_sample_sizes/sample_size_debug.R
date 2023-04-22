@@ -1,3 +1,6 @@
+#############
+# SCHRAIVOGEL
+#############
 response_odm <- load_dataset_modality("schraivogel/enhancer_screen_chr11/gene")
 grna_odm <- load_dataset_modality("schraivogel/enhancer_screen_chr11/grna_assignment")
 
@@ -39,3 +42,33 @@ res <- sceptre::run_sceptre_lowmoi(response_matrix = response_mat,
                             calibration_check = FALSE)
 
 # ALL AGREE: SOMETHING IS WRONG WITH THE SAMPLE SIZE DF OR THE FUNCTION TO COMPUTE SAMPLE SIZES USING THIS DF
+response_odm <- load_dataset_modality("schraivogel/enhancer_screen_chr11/gene")
+grna_odm <- load_dataset_modality("schraivogel/enhancer_screen_chr11/grna_assignment")
+
+##########
+# PAPALEXI
+##########
+response_odm <- load_dataset_modality("papalexi/eccite_screen/gene")
+grna_odm <- load_dataset_modality("papalexi/eccite_screen/grna_assignment")
+expression_vector <- response_odm[["WIPF3",]] |> as.numeric()
+response_mat <- response_odm[[seq(1, nrow(response_odm))]]
+rownames(response_mat) <- ondisc::get_feature_ids(response_odm)
+expression_vector_2 <- response_mat["WIPF3",]
+response_mat <- sceptre:::set_matrix_accessibility(matrix_in = response_mat, make_row_accessible = TRUE)
+expression_vector_3 <- sceptre:::load_csr_row(j = response_mat@j,
+                                              p = response_mat@p,
+                                              x = response_mat@x,
+                                              row_idx = which(rownames(response_mat) == "WIPF3"),
+                                              n_cells = ncol(response_mat))
+
+# strategy 2: get target assignments via sceptre
+#grna_matrix <- grna_odm[[seq(1, nrow(grna_odm)),]]
+#feature_df <- grna_odm |> ondisc::get_feature_covariates()
+#rownames(grna_matrix) <- rownames(feature_df)
+#grna_group_df <- data.frame(grna_id = rownames(feature_df),
+#                            grna_group = feature_df$target)
+#grna_assignments <- sceptre:::assign_grnas_to_cells_lowmoi_v2(grna_matrix = grna_matrix,
+#                                                              grna_group_data_frame = grna_group_df,
+#                                                              calibration_check = TRUE,
+#                                                              n_calibration_pairs = NULL)
+#nt1_idxs <- grna_assignments$all_nt_idxs[grna_assignments$indiv_nt_grna_idxs$NTg1]

@@ -1,4 +1,12 @@
-data_method_pairs = ["papalexi/eccite_screen/gene": ["sceptre"]]
+data_method_pairs = ["frangieh/co_culture/gene": ["sceptre"],
+                     "frangieh/control/gene": ["sceptre"],
+                     "frangieh/ifn_gamma/gene": ["sceptre", "sceptre_no_covariates"],
+                     "papalexi/eccite_screen/gene": ["sceptre", "sceptre_no_covariates"],
+                     "papalexi/eccite_screen/protein": ["sceptre"],
+                     "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
+                     "schraivogel/enhancer_screen_chr8/gene": ["sceptre"],
+                     "simulated/experiment_1/gene": ["sceptre"]
+                     ]
                      
 // FIRST, define the row and column names of the below matrices and vectors
 row_names = ["frangieh/co_culture/gene",
