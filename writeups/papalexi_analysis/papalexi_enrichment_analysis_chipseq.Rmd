@@ -1,7 +1,7 @@
 ---
-title: "Frangieh enrichment analysis"
+title: "Papalexi enrichment analysis (ChIP-seq)"
 output: pdf_document
-date: "2023-04-21"
+date: "2023-04-22"
 ---
 
 ```{r, message = FALSE, echo = FALSE}
@@ -27,14 +27,14 @@ method_results_fp <- paste0(
 )
 TF_targets_fp <- paste0(
   sceptre2_dir, 
-  "results/discovery_analyses/TF_targets_frangieh_atacseq.rds"
+  "results/discovery_analyses/TF_targets_papalexi_chipseq.rds"
 )
 method_results <- readRDS(method_results_fp) |> as_tibble()
 TF_targets <- readRDS(TF_targets_fp) |> unique()
 
 # join method results with TF targets, apply BH at level q
 method_results <- method_results |> 
-  filter(dataset_rename == "Frangieh Control Gene",
+  filter(dataset_rename == "Papalexi Eccite Screen Gene",
          n_control >= N_NONZERO_CNTRL_THRESH,
          n_treatment >= N_NONZERO_TRT_THRESH) |> 
   rename(gene = response_id, TF = grna_group) |> 
@@ -58,7 +58,11 @@ results <- method_results |>
   summarise(num_rejections = sum(rejection),
             odds_ratio = my.fisher.test(target, rejection)$estimate,
             pvalue = my.fisher.test(target, rejection)$p.value, 
-            .groups = "drop")
+            .groups = "drop") |>
+  bind_rows(TF_targets |> 
+    group_by(TF) |>
+    summarise(num_rejections = sum(target)) |>
+    mutate(Method = "Truth", odds_ratio = NA, pvalue = NA))
 ```
 
 ```{r, echo = FALSE}
@@ -90,19 +94,14 @@ results <- results |>
   mutate(Method = factor(Method, levels = my_methods))
 ```
 
-Below are the numbers of rejections, odds ratio, and p-values for each method and each TF. On the whole, the results are underwhelming. SCEPTRE makes a large number of discoveries only on MYC. For that TF, its p-value is not significant, but nearly so. On the other hand, the Liscovitch method does better on MYC. Note that the odds ratios and/or p-values for the some of the methods are infinite or undefined due to degeneracies. Often these have to do with having a very small number of discoveries, though for MIMOSCA, sometimes it finds all genes associated with the TF. 
+Below are the numbers of rejections, odds ratio, and p-values for each method and each TF. (We'll need to update these results when the SCEPTRE p-values are recomputed.)
 
-```{r, fig.width = 9, fig.height = 8.5, echo = FALSE, warning = FALSE}
+```{r, fig.width = 9, fig.height = 3.5, echo = FALSE, warning = FALSE}
 p_rejections <- results |>
-  bind_rows(TF_targets |> 
-    group_by(TF) |>
-    summarise(num_rejections = sum(target)) |>
-    mutate(Method = "Truth")
-  ) |>
   mutate(Method = factor(Method, levels = my_methods)) |>
   ggplot(aes(x = num_rejections, y = TF, fill = Method)) +
   geom_col(position = "dodge", color = "black") + 
-  scale_x_continuous(trans = "log1p", breaks = c(0, 1, 10, 100, 1000)) +
+  scale_x_continuous(trans = "log10", breaks = c(1, 10, 100, 1000)) +
   scale_fill_manual(values = my_values) +
   theme(legend.position = "bottom",
         legend.title = element_blank()) + 
@@ -113,7 +112,7 @@ p_odds_ratios <- results |>
   ggplot(aes(x = odds_ratio, y = TF, fill = Method)) +
   geom_col(position = "dodge", color = "black") + 
   geom_vline(xintercept = 1, linetype = "dashed") +
-  scale_x_continuous(trans = "log1p", breaks = c(0, 1, 2, 5, 10)) +
+  scale_x_continuous(breaks = c(0, 1, 2, 3, 4)) +
   scale_fill_manual(values = my_values) +
   theme(legend.position = "none") + 
   labs(x = "Odds ratio",
@@ -124,7 +123,7 @@ p_pvalues <- results |>
   geom_col(position = "dodge", color = "black") + 
   geom_vline(xintercept = 0.05, linetype = "dashed") +
   scale_x_continuous(trans = katlabutils::revlog_trans(),
-                     breaks = c(1, 0.05, 0.01, 0.001)) +
+                     breaks = c(1e-20, 1e-40, 1e-60)) +
   scale_fill_manual(values = my_values) +
   theme(legend.position = "") +
   labs(x = "p-value",
@@ -137,5 +136,5 @@ plot_grid(plot_grid(p_rejections + theme(legend.position = "none"),
           get_legend(p_rejections),
           ncol = 1,
           axis = "tlrb",
-          rel_heights = c(1, 0.1))
+          rel_heights = c(1, 0.2))
 ```

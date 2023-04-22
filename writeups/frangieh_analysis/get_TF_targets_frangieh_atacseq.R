@@ -43,7 +43,7 @@ method_results_fp <- paste0(
 jaspar_tf_info_fp <- paste0(sceptre2_dir, "/data/jaspar/jaspar_tf_info.rds")
 output_fp <- paste0(
   sceptre2_dir, 
-  "results/discovery_analyses/TF_targets_2686.rds"
+  "results/discovery_analyses/TF_targets_frangieh_atacseq.rds"
 )
 
 ###########################################################
