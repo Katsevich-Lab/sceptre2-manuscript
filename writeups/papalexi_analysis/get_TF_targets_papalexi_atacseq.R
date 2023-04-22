@@ -29,7 +29,7 @@ conflicted::conflicts_prefer(base::intersect)
 # set analysis parameters
 ###########################################################
 JASPAR_THRESH <- 0.75
-ATAC_THRESH <- 0.75
+ATAC_THRESH <- 0.9
 PROMOTER_WINDOW_WIDTH <- 5e3
 
 ###########################################################

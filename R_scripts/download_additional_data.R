@@ -15,7 +15,6 @@ metadata_table <-
     1057011,"Stat1","Monocytes","IFNg24h","hg19",3390,T
     )
 
-
 # directory for ChIP-seq data
 chipseq_dir <- paste0(sceptre2_dir, "/data/chipseq")
 dir.create(chipseq_dir)
@@ -23,11 +22,6 @@ dir.create(chipseq_dir)
 # directory for hTFtarget data
 htftarget_dir <- paste0(sceptre2_dir, "/data/htftarget")
 dir.create(htftarget_dir)
-
-# directory for hTFtarget data
-chromhmm_dir <- paste0(sceptre2_dir, "data/ChromHMM")
-dir.create(chromhmm_dir)
-
 
 for(j in c(1:nrow(metadata_table))){
   geo_id <- metadata_table$geo_id[j]
@@ -69,32 +63,7 @@ for(j in c(1:nrow(metadata_table))){
   
 }
 
-############### Download ChromHMM data for Monocytes ###########################
-
-chromhmm_url <- "https://www.encodeproject.org/files/"
-ID = "ENCFF269WBG"
-filename = paste0(ID,"/@@download/",ID,".bed.gz")
-destfile <- paste0(chromhmm_dir, "/", ID,".bed.gz")
-url <- paste0(chromhmm_url, filename)
-download.file(url = url, destfile = destfile)
-R.utils::gunzip(destfile,overwrite = T)
-
-############### Download ChromHMM data for K562 ###########################
-
-chromhmm_url <- "https://www.encodeproject.org/files/"
-ID = "ENCFF163QUM"
-filename = paste0(ID,"/@@download/",ID,".bed.gz")
-destfile <- paste0(chromhmm_dir, "/", ID,".bed.gz")
-url <- paste0(chromhmm_url, filename)
-download.file(url = url, destfile = destfile)
-R.utils::gunzip(destfile,overwrite = T)
-
-# http://bioinfo.life.hust.edu.cn/hTFtarget/static/hTFtarget/tmp_files/targets/dataset_3390.STAT1.target.txt.gz
-# https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSM1057011&format=file&file=GSM1057011%5FSTAT1peak%5FB%2Etxt%2Egz
-
 ############### Download ATAC-seq peaks for 2686 melanoma ###########################
-
-# directory for ChIP-seq data
 atacseq_dir <- paste0(sceptre2_dir, "/data/atacseq")
 dir.create(atacseq_dir)
 filename <- "GSE205033_allpeaks_read.counts.rpkm.threshold.csv.gz"
@@ -105,7 +74,6 @@ R.utils::gunzip(destfile, overwrite = T)
 
 
 ##### Download ATAC seq data (THP-1 Cells with LPS Stimulation)
-#hg19 
 filename <- "GSM4425563_ATAC-seq_THP1_PMA_ctrl_TLR4_1hr.bw"
 destfile <- paste0(atacseq_dir, "/", filename)
 fileurl <- paste0(
@@ -191,7 +159,9 @@ papalexi_targets <- read_excel(
   path = paste0(papalexi_dir, "raw/41588_2021_778_MOESM4_ESM.xlsx"),
   sheet = 1
 ) |>
-  mutate(`Target gene name` = ifelse(`Target gene name` == "NFKB1A", "NFKBIA", `Target gene name`)) |>
+  mutate(`Target gene name` = ifelse(`Target gene name` == "NFKB1A", 
+                                     "NFKBIA", 
+                                     `Target gene name`)) |>
   pull(`Target gene name`)
 
 # get matrix IDs for TFs targeted by Papalexi
