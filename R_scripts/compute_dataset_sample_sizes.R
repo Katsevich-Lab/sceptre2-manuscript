@@ -80,14 +80,10 @@ df <- lapply(papers, function(paper) {
 }) |> data.table::rbindlist()
 
 to_save_fp <- paste0(sceptre2_sample_sizes_dir, "n_nonzero_cells_per_grna.rds")
-dataset_concat <- paste0(df$paper, "/", df$dataset, "/", df$modality) |> factor()
-df <- df |> dplyr::mutate(dataset_concat = dataset_concat)
-saveRDS(object = df, file = to_save_fp)
-
-# modify the data frame slightly
-df <- readRDS(to_save_fp)
+full_dataset <- paste0(df$paper, "/", df$dataset, "/", df$modality) |> factor()
+df$dataset <- full_dataset
 df$modality <- NULL
-df$dataset <- NULL
 df$paper <- NULL
-df <- df |> dplyr::rename(grna_group = target, dataset = dataset_concat, response_id = feature_id)
+
+df <- df |> dplyr::rename(response_id = feature_id)
 saveRDS(object = df, file = to_save_fp)
