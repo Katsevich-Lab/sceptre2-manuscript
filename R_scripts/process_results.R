@@ -7,6 +7,8 @@ sample_size_df <- readRDS(paste0(sceptre2_results_dir, "dataset_sample_sizes/n_n
 
 # undercover res grp = 1
 undercover_res <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_0423.rds"))
+sceptre_undercover_res <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_sceptre_0423.rds"))
+undercover_res <- rbind(undercover_res, sceptre_undercover_res)
 undercover_res_processed <- process_undercover_result(undercover_res, sample_size_df)
 saveRDS(object = undercover_res_processed, 
         paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds"))
@@ -20,6 +22,7 @@ saveRDS(object = resampling_res_processed, paste0(sceptre2_results_dir,
 
 # pc result
 pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_0423.rds"))
+
 pc_res_processed <- process_pc_result(pc_res, sample_size_df)
 saveRDS(object = pc_res_processed,
         file = paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_processed.rds"))
