@@ -1,6 +1,7 @@
 library(tibble)
 library(tidyr)
 library(tidyverse)
+library(readxl)
 library(rbioapi)
 
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
@@ -14,7 +15,6 @@ metadata_table <-
     1057011,"Stat1","Monocytes","IFNg24h","hg19",3390,T
     )
 
-
 # directory for ChIP-seq data
 chipseq_dir <- paste0(sceptre2_dir, "/data/chipseq")
 dir.create(chipseq_dir)
@@ -22,11 +22,6 @@ dir.create(chipseq_dir)
 # directory for hTFtarget data
 htftarget_dir <- paste0(sceptre2_dir, "/data/htftarget")
 dir.create(htftarget_dir)
-
-# directory for hTFtarget data
-chromhmm_dir <- paste0(sceptre2_dir, "data/ChromHMM")
-dir.create(chromhmm_dir)
-
 
 for(j in c(1:nrow(metadata_table))){
   geo_id <- metadata_table$geo_id[j]
@@ -68,32 +63,7 @@ for(j in c(1:nrow(metadata_table))){
   
 }
 
-############### Download ChromHMM data for Monocytes ###########################
-
-chromhmm_url <- "https://www.encodeproject.org/files/"
-ID = "ENCFF269WBG"
-filename = paste0(ID,"/@@download/",ID,".bed.gz")
-destfile <- paste0(chromhmm_dir, "/", ID,".bed.gz")
-url <- paste0(chromhmm_url, filename)
-download.file(url = url, destfile = destfile)
-R.utils::gunzip(destfile,overwrite = T)
-
-############### Download ChromHMM data for K562 ###########################
-
-chromhmm_url <- "https://www.encodeproject.org/files/"
-ID = "ENCFF163QUM"
-filename = paste0(ID,"/@@download/",ID,".bed.gz")
-destfile <- paste0(chromhmm_dir, "/", ID,".bed.gz")
-url <- paste0(chromhmm_url, filename)
-download.file(url = url, destfile = destfile)
-R.utils::gunzip(destfile,overwrite = T)
-
-# http://bioinfo.life.hust.edu.cn/hTFtarget/static/hTFtarget/tmp_files/targets/dataset_3390.STAT1.target.txt.gz
-# https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSM1057011&format=file&file=GSM1057011%5FSTAT1peak%5FB%2Etxt%2Egz
-
 ############### Download ATAC-seq peaks for 2686 melanoma ###########################
-
-# directory for ChIP-seq data
 atacseq_dir <- paste0(sceptre2_dir, "/data/atacseq")
 dir.create(atacseq_dir)
 filename <- "GSE205033_allpeaks_read.counts.rpkm.threshold.csv.gz"
@@ -102,27 +72,57 @@ download.file(url = paste0("https://ftp.ncbi.nlm.nih.gov/geo/series/GSE205nnn/GS
               destfile = destfile)
 R.utils::gunzip(destfile, overwrite = T)
 
+
+##### Download ATAC seq data (THP-1 Cells with LPS Stimulation)
+filename <- "GSM4425563_ATAC-seq_THP1_PMA_ctrl_TLR4_1hr.bw"
+destfile <- paste0(atacseq_dir, "/", filename)
+fileurl <- paste0(
+  "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSM4425563&format=file&file=",
+  filename
+)
+download.file(url = fileurl, destfile = destfile)
+
 ############### Download JASPAR TF binding sites ###########################
 
+# create directory for JASPAR TF data
 jaspar_dir <- paste0(sceptre2_dir, "/data/jaspar")
 dir.create(jaspar_dir)
 
+# download mapping between TFs and matrix IDs
 jaspar_tf_info <- lapply(
-  1:2,
+  1:3,
   function(page) (rba_jaspar_collections_matrices(collection = "CORE", 
                                                   page = as.numeric(page), 
-                                                  only_last_version = TRUE) %>% 
+                                                  only_last_version = FALSE) %>% 
                     `$`(results) |> 
-                    as_tibble() |> 
-                    select(matrix_id, name))
+                    as_tibble()) 
 ) |>
   data.table::rbindlist() |>
-  as_tibble()
+  as_tibble() |>
+  group_by(base_id, name) |>
+  filter(version == max(version)) |>
+  ungroup() |>
+  select(matrix_id, name) |>
+  mutate(name = case_when(
+    name == "STAT1::STAT2" ~ "STAT2",
+    name == "NFKB1" ~ "NFKBIA",
+    .default = name
+  ),
+  matrix_id = ifelse(matrix_id == "MA0080.5", "MA0080.6", matrix_id))
+
+saveRDS(jaspar_tf_info, paste0(jaspar_dir, "/jaspar_tf_info.rds"))
+
+# download binding sites for TFs targeted in Frangieh 
+# (note that for 2686 cells, we use hg38 rather than hg19)
 
 frangieh_dir <- .get_config_path("LOCAL_FRANGIEH_2021_DATA_DIR")
-frangieh_targets <- readxl::read_excel(path = paste0(frangieh_dir, "raw/supp_tables/41588_2021_779_MOESM3_ESM.xlsx"), 
-                                       sheet = 1,
-                                       skip = 2) |>
+
+# get list of genes targeted by Frangieh
+frangieh_targets <- read_excel(
+  path = paste0(frangieh_dir, "raw/supp_tables/41588_2021_779_MOESM3_ESM.xlsx"),
+  sheet = 1,
+  skip = 2
+) |>
   rowwise() |>
   na.omit() |>
   filter(!grepl("SITE", `Guide Name`)) |>
@@ -130,83 +130,60 @@ frangieh_targets <- readxl::read_excel(path = paste0(frangieh_dir, "raw/supp_tab
   pull(target) |>
   unique()
 
+# get matrix IDs for TFs targeted by Papalexi
 matrix_ids <- jaspar_tf_info |>
   filter(name %in% frangieh_targets) |>
   pull(matrix_id)
 
-jaspar_tf_info |>
-  filter(name %in% frangieh_targets) |>
-  saveRDS(paste0(jaspar_dir, "/jaspar_tf_info.rds"))
-  
- for(matrix_id in matrix_ids){
-   filename <- paste0(matrix_id, ".tsv.gz")
-   destfile <- paste0(jaspar_dir, "/", filename)
-   download.file(url = paste0("http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/", filename),
-                 destfile = destfile)
-   R.utils::gunzip(destfile, overwrite = T)  
- }
+# for each matrix ID, download the corresponding binding sites
+for (matrix_id in matrix_ids) {
+  filename <- paste0(matrix_id, ".tsv.gz")
+  destfile <- paste0(jaspar_dir, "/", filename)
+  download.file(
+    url = paste0(
+      "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/", 
+      filename
+    ),
+    destfile = destfile
+  )
+  R.utils::gunzip(destfile, overwrite = T)
+}
 
+# download binding sites for TFs targeted in Papalexi 
+# (note that for THP1 cells, we use hg19 rather than hg38)
 
+papalexi_dir <- .get_config_path("LOCAL_PAPALEXI_2021_DATA_DIR")
 
-
-
-
-##### Download ATAC seq data (THP-1 Cells with LPS Stimulation)
-#hg19 
-options(timeout=5000)
-# directory for ATAC-seq data
-atac_dir <- paste0(sceptre2_dir, "/data/ATACseq")
-dir.create(atac_dir)
-
-acc_num = "GSM4425563"
-geo_url = "https://www.ncbi.nlm.nih.gov/geo/download/?acc="
-
-destfile = paste0(atac_dir,"/HP1_PMA_ctrl_TLR4_1hr%.bw")
-
-fileurl = paste0(geo_url,acc_num,"&format=file&file=",acc_num,"_ATAC-seq_THP1_PMA_ctrl_TLR4_1hr.bw")
-download.file(url = fileurl,
-              destfile = destfile)
-
-
-
-
-
-############### Download JASPAR TF binding sites for papalexi dara ###########################
-#note that for THP1 cells, we use hg19 rather than hg38
-options(timeout=7000)
-jaspar_dir <- paste0(sceptre2_dir, "/data/jaspar")
-dir.create(jaspar_dir)
-
-jaspar_tf_info <- lapply(
-  1:2,
-  function(page) (rba_jaspar_collections_matrices(collection = "CORE", 
-                                                  page = as.numeric(page), 
-                                                  only_last_version = TRUE) %>% 
-                    `$`(results) |> 
-                    as_tibble() |> 
-                    select(matrix_id, name))
+# get list of genes targeted by Papalexi
+papalexi_targets <- read_excel(
+  path = paste0(papalexi_dir, "raw/41588_2021_778_MOESM4_ESM.xlsx"),
+  sheet = 1
 ) |>
-  data.table::rbindlist() |>
-  as_tibble()
+  mutate(`Target gene name` = ifelse(`Target gene name` == "NFKB1A", 
+                                     "NFKBIA", 
+                                     `Target gene name`)) |>
+  pull(`Target gene name`)
 
-jaspar_tf_info <- jaspar_tf_info %>% 
-  mutate(name = toupper(name)) # we might be picking up mouse TFs here
-
-papalexi_targets <- c("IRF1","STAT1","STAT2","STAT3","SMAD4","BRD4","SPI1","MYC")
-
+# get matrix IDs for TFs targeted by Papalexi
 matrix_ids <- jaspar_tf_info |>
   filter(name %in% papalexi_targets) |>
   pull(matrix_id)
 
-jaspar_tf_info |>
-  filter(name %in% papalexi_targets) |>
-  saveRDS(paste0(jaspar_dir, "/jaspar_tf_info_papalexi.rds"))
-
+# for each matrix ID, download the corresponding binding sites
 for(matrix_id in matrix_ids){
   filename <- paste0(matrix_id, ".tsv.gz")
   filename_hg19 <- paste0(matrix_id,"_hg19", ".tsv.gz")
   destfile <- paste0(jaspar_dir, "/", filename_hg19)
-  download.file(url = paste0("http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg19/", filename),
-                destfile = destfile)
+  # for some reason the IRF1 binding sites are available in year 2020 but not 2022
+  year <- if(matrix_id == "MA0050.2") 2020 else 2022 
+  download.file(
+    url = paste0(
+      "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/",
+      year,
+      "/hg19/",
+      filename
+    ),
+    destfile = destfile
+  )
   R.utils::gunzip(destfile, overwrite = T)  
 }

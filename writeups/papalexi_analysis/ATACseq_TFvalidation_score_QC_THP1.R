@@ -62,7 +62,7 @@ TSS_GR <- GRanges(
 
 # ATAC-seq data
 #get filepath
-atac_fp = paste0(atac_dir,"/HP1_PMA_ctrl_TLR4_1hr%.bw")
+atac_fp = paste0(atac_dir,"/GSM4425563_ATAC-seq_THP1_PMA_ctrl_TLR4_1hr.bw")
 atac_data = readBigwig(
   file = paste0(atac_fp),
   chrom = NULL,
