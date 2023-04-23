@@ -1,0 +1,54 @@
+Apr-23 15:48:26.139 [main] DEBUG nextflow.cli.Launcher - $> nextflow run pc-grna-pipeline -r main --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/params_pc_sceptre_0423.groovy --grna_modality assignment --result_dir /Users/timbarry/research_offsite/projects/sceptre2//results/positive_control_analysis --result_file_name pc_results_sceptre_0423.rds --trial false --pairs_file pos_control_pairs_grouped.rds
+Apr-23 15:48:26.245 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.04.3
+Apr-23 15:48:27.025 [main] DEBUG nextflow.scm.AssetManager - Listing projects in folder: /Users/timbarry/.nextflow/assets
+Apr-23 15:48:27.033 [main] DEBUG nextflow.scm.AssetManager - Project manifest does not exist: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/nextflow.config (No such file or directory)
+Apr-23 15:48:27.036 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-23 15:48:27.048 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-23 15:48:27.667 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Apr-23 15:48:27.669 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Apr-23 15:48:27.679 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-23 15:48:27.734 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 by global default
+Apr-23 15:48:27.735 [main] INFO  nextflow.cli.CmdRun - Launching `https://github.com/Katsevich-Lab/pc-grna-pipeline` [suspicious_wescoff] DSL2 - revision: fe82fa3724 [main]
+Apr-23 15:48:27.748 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins; core-plugins: nf-amazon@1.7.2,nf-azure@0.13.2,nf-console@1.0.3,nf-ga4gh@1.0.3,nf-google@1.1.4,nf-sqldb@0.4.0,nf-tower@1.4.0
+Apr-23 15:48:27.750 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-23 15:48:27.760 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-23 15:48:27.761 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-23 15:48:27.764 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-23 15:48:27.773 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-23 15:48:27.825 [main] DEBUG nextflow.Session - Session uuid: b7a14738-d679-4663-b54a-07b562493b03
+Apr-23 15:48:27.825 [main] DEBUG nextflow.Session - Run name: suspicious_wescoff
+Apr-23 15:48:27.826 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-23 15:48:27.841 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.04.3 build 5703
+  Created: 18-05-2022 19:22 UTC (15:22 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.10 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 73893@Tims-MacBook-Pro-2021.local [127.0.0.1]
+  CPUs: 8 - Mem: 16 GB (2.4 GB) - Swap: 1 GB (803.2 MB)
+Apr-23 15:48:27.853 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Apr-23 15:48:27.871 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-23 15:48:27.882 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-23 15:48:27.928 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Apr-23 15:48:27.939 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Apr-23 15:48:28.012 [main] DEBUG nextflow.Session - Session start invoked
+Apr-23 15:48:28.770 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-23 15:48:28.777 [main] DEBUG nextflow.Session - Session aborted -- Cause: /Users/timbarry/research_code/sceptre2-manuscript/param_files/params_pc_sceptre_0423.groovy (/Users/timbarry/research_code/sceptre2-manuscript/param_files/params_pc_sceptre_0423.groovy)
+Apr-23 15:48:28.788 [main] ERROR nextflow.cli.Launcher - /Users/timbarry/research_code/sceptre2-manuscript/param_files/params_pc_sceptre_0423.groovy (/Users/timbarry/research_code/sceptre2-manuscript/param_files/params_pc_sceptre_0423.groovy)
+java.io.FileNotFoundException: /Users/timbarry/research_code/sceptre2-manuscript/param_files/params_pc_sceptre_0423.groovy (/Users/timbarry/research_code/sceptre2-manuscript/param_files/params_pc_sceptre_0423.groovy)
+	at groovy.lang.GroovyCodeSource.<init>(GroovyCodeSource.java:108)
+	at groovy.lang.GroovyShell.evaluate(GroovyShell.java:470)
+	at groovy.lang.Script.evaluate(Script.java:237)
+	at groovy.lang.Script$evaluate.callCurrent(Unknown Source)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallCurrent(CallSiteArray.java:51)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:171)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:185)
+	at Script_b68c757f.runScript(Script_b68c757f:3)
+	at nextflow.script.BaseScript.runDsl2(BaseScript.groovy:170)
+	at nextflow.script.BaseScript.run(BaseScript.groovy:217)
+	at nextflow.script.ScriptParser.runScript(ScriptParser.groovy:220)
+	at nextflow.script.ScriptRunner.run(ScriptRunner.groovy:212)
+	at nextflow.script.ScriptRunner.execute(ScriptRunner.groovy:120)
+	at nextflow.cli.CmdRun.run(CmdRun.groovy:337)
+	at nextflow.cli.Launcher.run(Launcher.groovy:480)
+	at nextflow.cli.Launcher.main(Launcher.groovy:639)

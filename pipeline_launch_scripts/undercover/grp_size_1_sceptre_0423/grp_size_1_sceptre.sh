@@ -5,7 +5,7 @@ nextflow pull https://github.com/Katsevich-Lab/undercover-grna-pipeline
 
 # run pipeline
 nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
- --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/params_undercover_sceptre_0423.groovy" \
+ --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/undercover/params_undercover_sceptre_0423.groovy" \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/undercover_grna_analysis" \
  --result_file_name "undercover_result_grp_1_sceptre_0423.rds" \
  --grna_modality "assignment" \

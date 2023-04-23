@@ -158,6 +158,7 @@ nt_table_g <- tableGrob(n_false_rejections_tab, theme = table_theme, rows = NULL
   
 # add bold font for lowest numbers of false rejections
 nt_table_g$grobs[find_cell(nt_table_g, 2, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+nt_table_g$grobs[find_cell(nt_table_g, 3, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
 nt_table_g$grobs[find_cell(nt_table_g, 3, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
 nt_table_g$grobs[find_cell(nt_table_g, 3, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
 nt_table_g$grobs[find_cell(nt_table_g, 4, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
@@ -290,17 +291,17 @@ my_values <- my_cols[names(my_cols) %in% c("Seurat De", "SCEPTRE")]
 # Frangieh QQ plot
 qq_frangieh <- undercover_res |>
   mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf)) |>
-  filter(dataset == "frangieh_control_gene",
+  filter(dataset == "frangieh_ifn_gamma_gene",
          method %in% c("sceptre", "seurat_de")) |> 
   ggplot(mapping = aes(y = p_value, col = Method)) +
-  stat_qq_points(ymin = 1e-9, size = 0.85) +
+  stat_qq_points(ymin = 1e-10, size = 0.85) +
   stat_qq_band() +
   scale_x_continuous(trans = revlog_trans(10)) +
   scale_y_continuous(trans = revlog_trans(10)) +
   labs(x = "Expected null p-value", y = "Observed p-value") +
   geom_abline(col = "black") +
   # ggtitle("Frangieh (IFN-\u03B3) neg. controls") +
-  ggtitle("Frangieh (Control) neg. controls") +
+  ggtitle("Frangieh (IFN-\u03B3) neg. controls") +
   scale_color_manual(values = my_values) + 
   my_theme +
   theme(legend.title = element_blank(),
@@ -351,7 +352,7 @@ fig_4_filename <- paste0(
 
 # save the figure
 ggsave(filename = fig_4_filename, 
-       plot = final_plot, 
+       plot = final_plot,
        device = "png", 
        width = 6.5,
        height = 8,

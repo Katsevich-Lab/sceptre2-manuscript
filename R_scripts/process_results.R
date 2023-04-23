@@ -1,7 +1,6 @@
 library(lowmoi)
 library(tidyverse)
 conflicts_prefer(dplyr::filter)
-
 sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 sample_size_df <- readRDS(paste0(sceptre2_results_dir, "dataset_sample_sizes/n_nonzero_cells_per_grna.rds"))
 
@@ -22,7 +21,8 @@ saveRDS(object = resampling_res_processed, paste0(sceptre2_results_dir,
 
 # pc result
 pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_0423.rds"))
-
+sceptre_pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_sceptre_0423.rds"))
+pc_res <- rbind(pc_res, sceptre_pc_res)
 pc_res_processed <- process_pc_result(pc_res, sample_size_df)
 saveRDS(object = pc_res_processed,
         file = paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_processed.rds"))
