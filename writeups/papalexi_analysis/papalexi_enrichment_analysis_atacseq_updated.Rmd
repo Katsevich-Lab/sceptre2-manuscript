@@ -1,5 +1,5 @@
 ---
-title: "Papalexi enrichment analysis (ChIP-seq)"
+title: "Papalexi enrichment analysis (ATAC-seq)"
 output: pdf_document
 date: "2023-04-22"
 ---
@@ -27,7 +27,7 @@ method_results_fp <- paste0(
 )
 TF_targets_fp <- paste0(
   sceptre2_dir, 
-  "results/discovery_analyses/TF_targets_papalexi_chipseq.rds"
+  "results/discovery_analyses/TF_targets_papalexi_atacseq.rds"
 )
 method_results <- readRDS(method_results_fp) |> as_tibble()
 TF_targets <- readRDS(TF_targets_fp) |> unique()
@@ -49,7 +49,7 @@ my.fisher.test <- function(x, y){
   if(length(unique(x)) == 1 | length(unique(y)) == 1){
     list(p.value = NA, estimate = NA)
   } else{
-    fisher.test(x,y)
+    fisher.test(x, y, alternative = "greater")
   }
 }
 
@@ -96,12 +96,12 @@ results <- results |>
 
 Below are the numbers of rejections, odds ratio, and p-values for each method and each TF. (We'll need to update these results when the SCEPTRE p-values are recomputed.)
 
-```{r, fig.width = 9, fig.height = 3.5, echo = FALSE, warning = FALSE}
+```{r, fig.width = 9, fig.height = 8.5, echo = FALSE, warning = FALSE}
 p_rejections <- results |>
   mutate(Method = factor(Method, levels = my_methods)) |>
   ggplot(aes(x = num_rejections, y = TF, fill = Method)) +
   geom_col(position = "dodge", color = "black") + 
-  scale_x_continuous(trans = "log10", breaks = c(1, 10, 100, 1000)) +
+  scale_x_continuous(trans = "log1p", breaks = c(0, 1, 10, 100, 1000)) +
   scale_fill_manual(values = my_values) +
   theme(legend.position = "bottom",
         legend.title = element_blank()) + 
@@ -112,7 +112,7 @@ p_odds_ratios <- results |>
   ggplot(aes(x = odds_ratio, y = TF, fill = Method)) +
   geom_col(position = "dodge", color = "black") + 
   geom_vline(xintercept = 1, linetype = "dashed") +
-  scale_x_continuous(breaks = c(0, 1, 2, 3, 4)) +
+  scale_x_continuous(breaks = c(0, 1, 2, 4, 8)) +
   scale_fill_manual(values = my_values) +
   theme(legend.position = "none") + 
   labs(x = "Odds ratio",
@@ -123,7 +123,7 @@ p_pvalues <- results |>
   geom_col(position = "dodge", color = "black") + 
   geom_vline(xintercept = 0.05, linetype = "dashed") +
   scale_x_continuous(trans = katlabutils::revlog_trans(),
-                     breaks = c(1e-20, 1e-40, 1e-60)) +
+                     breaks = c(1e-5, 1e-10, 1e-20)) +
   scale_fill_manual(values = my_values) +
   theme(legend.position = "") +
   labs(x = "p-value",
@@ -136,5 +136,5 @@ plot_grid(plot_grid(p_rejections + theme(legend.position = "none"),
           get_legend(p_rejections),
           ncol = 1,
           axis = "tlrb",
-          rel_heights = c(1, 0.2))
+          rel_heights = c(1, 0.1))
 ```
