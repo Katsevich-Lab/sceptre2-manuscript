@@ -16,7 +16,7 @@ col_names = ["sceptre",
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
-[8, 23,  9, 45, 26, 34], // frangieh/control/gene
+[8, 28,  9, 45, 26, 34], // frangieh/control/gene
 [6, 18,  6,  6, 19, 22]  // papalexi/eccite_screen/gene
 ]
 // sceptre, schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method
