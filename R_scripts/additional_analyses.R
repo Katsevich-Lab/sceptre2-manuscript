@@ -11,8 +11,7 @@ N_GENES <- 1000
 datasets <- c("frangieh/ifn_gamma",
               "frangieh/co_culture",
               "frangieh/control",
-              "papalexi/eccite_screen",
-              "simulated/experiment_1")
+              "papalexi/eccite_screen")
 
 res <- lapply(X = datasets, FUN = function(dataset) {
   mm <- lowmoi::load_dataset_multimodal(paper_fp = dataset, offsite_dir = sceptre2_dir)
