@@ -1,0 +1,26 @@
+---
+title: "Comparing old and new SCEPTRE results"
+author: "Tim"
+date: "2023-04-24"
+output: html_document
+---
+
+```{r}
+setwd("/Users/timbarry/Desktop/")
+
+sceptre_new <- readRDS("disc_analysis_sceptre_0423.rds") |>
+  dplyr::filter(dataset == "papalexi/eccite_screen/gene")
+sceptre_old <- readRDS("discovery_results_0423.rds") |>
+  dplyr::filter(method == "sceptre",
+                dataset == "papalexi/eccite_screen/gene")
+
+# convert factors to characters
+sceptre_new$response_id <- as.character(sceptre_new$response_id)
+sceptre_new$grna_group <- as.character(sceptre_new$grna_group)
+
+sceptre_old$response_id <- as.character(sceptre_old$response_id)
+sceptre_old$grna_group <- as.character(sceptre_old$grna_group)
+
+sceptre_new |> dplyr::arrange(response_id, grna_group) |> head(10)
+sceptre_old |> dplyr::arrange(response_id, grna_group) |> head(10)
+```
