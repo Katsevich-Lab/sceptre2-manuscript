@@ -184,15 +184,7 @@ for (paper in papers) {
       targets <- intersect(grna_feature_df |> dplyr::pull(target),
                            gene_modality |> ondisc::get_feature_ids())
       pc_pairs <- data.frame(grna_group = targets, response_id = targets)
-
-      # ungrouped pairs
-      ungroup_map <- data.frame(grna_id = row.names(grna_feature_df),
-                                grna_group = grna_feature_df$target)
-      ungroup_pc_pairs <- dplyr::left_join(ungroup_map, pc_pairs, by = "grna_group") |>
-        na.omit() |>
-        dplyr::select(grna_id, response_id)
       saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_grouped.rds"))
-      saveRDS(ungroup_pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_single.rds"))
     }
 
     if (paper == "schraivogel") {
@@ -207,12 +199,7 @@ for (paper in papers) {
         dplyr::distinct() |>
         na.omit()
       rownames(pc_pairs) <- NULL
-
-      # next, ungrouped pairs
-      ungroup_pc_pairs <- data.frame(grna_id = row.names(ungroup_pairs_all),
-                                     response_id = ungroup_pairs_all$known_effect)
       saveRDS(pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_grouped.rds"))
-      saveRDS(ungroup_pc_pairs, file = paste0(paper_dir, dataset, "/gene/pos_control_pairs_single.rds"))
     }
 
     # finally, do the papalexi protein data
@@ -223,8 +210,6 @@ for (paper in papers) {
         get_feature_covariates() |>
         dplyr::filter(!is.na(known_protein_effect),
                n_nonzero > 0)
-      pos_control_ungroup <- data.frame(grna_group = row.names(x),
-                                        response_id = x$known_protein_effect)
       pos_control_group <- x |>
         dplyr::select(target, known_protein_effect) |>
         dplyr::distinct() |>
@@ -233,8 +218,6 @@ for (paper in papers) {
 
       saveRDS(pos_control_group,
               file = paste0(paper_dir, dataset, "/protein/pos_control_pairs_grouped.rds"))
-      saveRDS(pos_control_ungroup,
-              file = paste0(paper_dir, dataset, "/protein/pos_control_pairs_single.rds"))
     }
   }
 }
