@@ -126,15 +126,9 @@ for (paper in papers) {
         modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs_protein[[paper]]
         modality_odm@misc[["sceptre_formula"]] <- sceptre_formula_objs_protein[[paper]]
       } else {
-        if (dataset %in% c("enhancer_screen_chr11", "enhancer_screen_chr8") && paper == "schraivogel") { # special case: dataset is schraivogel/enhancer_screen_chr11 or schraivogel/enhancer_screen_chr8
-          modality_odm@misc[["mimosca_formula"]] <- formula(~ n_nonzero + n_umis + 0)
-          modality_odm@misc[["nb_regression_formula"]] <- "~ offset(log(n_umis)) + log(n_nonzero)"
-          modality_odm@misc[["sceptre_formula"]] <- formula(~ log(response_n_umis) + log(response_n_nonzero))
-        } else {
           modality_odm@misc[["mimosca_formula"]] <- mimosca_formula_objs[[paper]]
           modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs[[paper]]
           modality_odm@misc[["sceptre_formula"]] <- sceptre_formula_objs[[paper]]
-        }
       }
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }
