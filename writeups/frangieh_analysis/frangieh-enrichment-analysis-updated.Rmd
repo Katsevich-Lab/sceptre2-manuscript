@@ -40,6 +40,7 @@ method_results <- method_results |>
   rename(gene = response_id, TF = grna_group) |> 
   inner_join(TF_targets, by = c("gene", "TF")) |>
   group_by(TF, Method) |>
+#  group_by(Method)
   mutate(rejection = p.adjust(p_value, method = "fdr") <= q) |>
   ungroup()
 
@@ -56,6 +57,8 @@ my.fisher.test <- function(x, y){
 results <- method_results |> 
   group_by(TF, Method) |>
   summarise(num_rejections = sum(rejection),
+            fdp = sum(rejection & !target)/max(1, sum(rejection)),
+            power = sum(rejection & target)/sum(target),
             odds_ratio = my.fisher.test(target, rejection)$estimate,
             pvalue = my.fisher.test(target, rejection)$p.value, 
             .groups = "drop")
@@ -92,7 +95,7 @@ results <- results |>
 
 Below are the numbers of rejections, odds ratio, and p-values for each method and each TF. On the whole, the results are underwhelming. SCEPTRE makes a large number of discoveries only on MYC. For that TF, its p-value is not significant, but nearly so. On the other hand, the Liscovitch method does better on MYC. Note that the odds ratios and/or p-values for the some of the methods are infinite or undefined due to degeneracies. Often these have to do with having a very small number of discoveries, though for MIMOSCA, sometimes it finds all genes associated with the TF. 
 
-```{r, fig.width = 9, fig.height = 8.5, echo = FALSE, warning = FALSE}
+```{r, fig.width = 11, fig.height = 8.5, echo = FALSE, warning = FALSE}
 p_rejections <- results |>
   bind_rows(TF_targets |> 
     group_by(TF) |>
@@ -108,6 +111,24 @@ p_rejections <- results |>
         legend.title = element_blank()) + 
   labs(x = "Number of rejections", 
        y = "TF")
+
+p_fdp <- results |>
+  ggplot(aes(x = fdp, y = TF, fill = Method)) +
+  geom_col(position = "dodge", color = "black") + 
+  geom_vline(xintercept = 0.05, linetype = "dashed") +
+  scale_x_continuous(limits = c(0,1)) +
+  scale_fill_manual(values = my_values) +
+  theme(legend.position = "none") + 
+  labs(x = "FDP",
+       y = NULL)
+
+p_power <- results |>
+  ggplot(aes(x = power, y = TF, fill = Method)) +
+  geom_col(position = "dodge", color = "black") + 
+  scale_fill_manual(values = my_values) +
+  theme(legend.position = "") +
+  labs(x = "Power",
+       y = NULL)
 
 p_odds_ratios <- results |>
   ggplot(aes(x = odds_ratio, y = TF, fill = Method)) +
@@ -131,6 +152,8 @@ p_pvalues <- results |>
        y = NULL)
 
 plot_grid(plot_grid(p_rejections + theme(legend.position = "none"), 
+          p_fdp,
+          p_power,
           p_odds_ratios, 
           p_pvalues, 
           nrow = 1),
