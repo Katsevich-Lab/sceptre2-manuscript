@@ -3,8 +3,11 @@ set.seed(4)
 
 # Randomly generate data: First, randomly sample gene-specific mean and size parameters from gamma distribution.
 # Then, for each gene, randomly sample from an NB distribution.
-sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+###########
+# DATASET 1
+###########
 
+sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 # define hyperparameters
 N_GENES <- 5000
 N_GRNAS <- 30
@@ -71,3 +74,15 @@ convert_assign_list_to_sparse_odm(cell_barcodes = cell_barcodes,
                                   odm_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_assignment/matrix.odm"),
                                   metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_assignment/metadata_orig.rds"),
                                   features_metadata_df = grna_tbl)
+
+
+###########
+# DATASET 1
+###########
+rm(list = ls())
+sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+# define hyperparameters
+N_GENES <- 1000
+N_CELLS <- 20000
+N_GRNAS <- 2
+

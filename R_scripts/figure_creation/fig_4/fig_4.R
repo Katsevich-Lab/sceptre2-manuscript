@@ -49,7 +49,9 @@ undercover_res <- readRDS(paste0(
     "t-test" = "Liscovitch Method",
     "MAST" = "Schraivogel Method",
     "KS test" = "Weissman Method",
-    "MIMOSCA" = "Mimosca"
+    "MIMOSCA" = "Mimosca",
+    "Seurat-Wilcox" = "Seurat De",
+    "Seurat-NB" = "Seurat De Nb"
   )) |>
   mutate(dataset_rename = forcats::fct_recode(dataset_rename,
     "Frangieh (Co Culture)" = "Frangieh Co Culture Gene",
@@ -286,13 +288,13 @@ for (i in id) {
 #################################################################
 
 # read colors from my_cols
-my_values <- my_cols[names(my_cols) %in% c("Seurat De", "SCEPTRE")]
+my_values <- my_cols[names(my_cols) %in% c("Seurat-Wilcox", "Seurat-NB", "SCEPTRE")]
 
 # Frangieh QQ plot
 qq_frangieh <- undercover_res |>
-  mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf)) |>
+  mutate(Method = fct_relevel(Method, "Seurat-Wilcox", "SCEPTRE", after = Inf)) |>
   filter(dataset == "frangieh_ifn_gamma_gene",
-         method %in% c("sceptre", "seurat_de")) |> 
+         method %in% c("sceptre", "seurat_de", "seurat_de_nb")) |> 
   ggplot(mapping = aes(y = p_value, col = Method)) +
   stat_qq_points(ymin = 1e-10, size = 0.85) +
   stat_qq_band() +
@@ -316,9 +318,9 @@ qq_frangieh <- undercover_res |>
 
 # Papalexi QQ plot
 qq_papalexi <- undercover_res |>
-  mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf)) |>
+  mutate(Method = fct_relevel(Method, "Seurat-Wilcox", "SCEPTRE", after = Inf)) |>
   filter(dataset == "papalexi_eccite_screen_gene",
-         method %in% c("sceptre", "seurat_de")) |> 
+         method %in% c("sceptre", "seurat_de", "seurat_de_nb")) |> 
   ggplot(mapping = aes(y = p_value, col = Method)) +
   stat_qq_points(ymin = 1e-9, size = 0.85) +
   stat_qq_band() +

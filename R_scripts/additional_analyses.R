@@ -60,6 +60,7 @@ res <- lapply(X = datasets, FUN = function(dataset) {
       fit_nb <- glm(formula = my_formula,
                     family = MASS::neg.bin(curr_theta),
                     data = curr_data_matrix)
+      logLik(fit_nb)[[1]]/length(expression)
       fit_p <- pchisq(fit_nb$deviance,
                       df = fit_nb$df.residual,
                       lower.tail = FALSE)
@@ -79,6 +80,34 @@ res <- res |>
   as.data.frame()
 saveRDS(object = res,
         file = paste0(result_dir, "extra_analyses/goodness_of_fit_tests.rds"))
+
+# simulated
+N_GENES <- 1000
+N_CELLS <- 15000
+theta <- 20
+mu <- 500
+m <- rnbinom(N_GENES * N_CELLS, size = theta, mu = mu) |> matrix(ncol = N_GENES)
+thetas <- sapply(X = seq(1, N_GENES), FUN = function(i) {
+  print(paste0("Working on gene ", i))
+  df <- data.frame(expression = m[seq(1, N_CELLS/2 - 1) ,i])
+  lowmoi:::estimate_size(df = df, formula = expression ~ 1)
+})
+
+fit_ps <- sapply(X = seq(1, N_GENES), FUN = function(i) {
+  print(paste0("Working on gene ", i))
+  curr_theta <- thetas[i]
+  expression <- m[seq(N_CELLS/2, N_CELLS), i]
+  fit_nb <- glm(formula = expression ~ 1,
+                family = MASS::neg.bin(theta))
+  # log_lik <- logLik(fit_nb)[[1]]/length(expression)
+  fit_p <- pchisq(fit_nb$deviance,
+                  df = fit_nb$df.residual,
+                  lower.tail = FALSE)
+  c(log_lik, fit_p)
+})
+res <- data.frame(p = fit_ps, dataset = "simulated")
+saveRDS(object = res,
+        file = paste0(result_dir, "extra_analyses/goodness_of_fit_tests_simulated.rds"))
 
 ################################################################################
 # Testing for association between gRNA presence/absence and biological replicate

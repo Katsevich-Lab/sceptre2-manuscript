@@ -34,6 +34,7 @@ resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_re
 fisher_exact_p <- readRDS(paste0(result_dir, "extra_analyses/papalexi_grna_confounding_tests.rds"))
 nb_gof_tests <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests.rds")) |>
   mutate(theta = NULL)
+nb_simulated_gof_test <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests_simulated.rds"))
 
 ##########
 # PANNEL a
@@ -308,6 +309,8 @@ p_e <- undercover_res_sub |>
 ##########
 # PANNEL F
 ##########
+nb_gof_tests <- rbind(nb_gof_tests |> dplyr::select(p, dataset),
+                      nb_simulated_gof_test)
 n_to_samp <- nb_gof_tests |>
   group_by(dataset) |>
   summarize(count = n()) |>
