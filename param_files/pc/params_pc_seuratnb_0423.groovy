@@ -1,12 +1,12 @@
 data_method_pairs_indiv = []
 
-data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seuratnb"],
-                             "frangieh/control/gene": ["seuratnb"],
-                             "frangieh/ifn_gamma/gene": ["seuratnb"],
-                             "papalexi/eccite_screen/gene": ["seuratnb"],
-                             "papalexi/eccite_screen/protein": ["seuratnb"],
-                             "schraivogel/enhancer_screen_chr11/gene": ["seuratnb"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["seuratnb"]
+data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de_nb"],
+                             "frangieh/control/gene": ["seurat_de_nb"],
+                             "frangieh/ifn_gamma/gene": ["seurat_de_nb"],
+                             "papalexi/eccite_screen/gene": ["seurat_de_nb"],
+                             "papalexi/eccite_screen/protein": ["seurat_de_nb"],
+                             "schraivogel/enhancer_screen_chr11/gene": ["seurat_de_nb"],
+                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de_nb"]
                             ]
                             
 row_names = ["frangieh/co_culture/gene",
@@ -23,7 +23,7 @@ col_names = ["schraivogel_method",
              "mimosca",
              "weissman_method",
              "sceptre",
-             "seuratnb"]
+             "seurat_de_nb"]
 
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
@@ -35,7 +35,7 @@ data_method_ram_matrix = [
                          [6,  12, 12, 18,  6, 8, 12], // schraivogel/enhancer_screen_chr11/gene
                          [8,  14, 14, 21,  6, 8, 14], // schraivogel/enhancer_screen_chr8/gene
                          ]
-// schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre, seuratnb
+// schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre, seurat_de_nb
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
@@ -47,7 +47,7 @@ data_method_queue_matrix = [
                            ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
                            ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr8/gene
                            ]
-// schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre, seuratnb
+// schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre, seurat_de_nb
 
 // FOURTH, define an ordered list of optional arguments to each of the methods (Should be strings of the form "arg1=value1;arg2=value2;arg3=value3")
 optional_args = [
@@ -57,5 +57,5 @@ optional_args = [
 "", // mimosca
 "", // weissman_method
 "", // sceptre
-""  // seuratnb
+""  // seurat_de_nb
 ]
