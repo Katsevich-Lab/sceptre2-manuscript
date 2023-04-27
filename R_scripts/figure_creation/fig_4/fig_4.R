@@ -66,13 +66,17 @@ undercover_res <- readRDS(paste0(
 pc_res <- readRDS(paste0(
   result_dir,
   "positive_control_analysis/pc_results_processed.rds"
-)) |>
+)) |> 
+  dplyr::filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+                n_control >= N_NONZERO_CONTROL_CUTOFF) |>
   mutate(Method = forcats::fct_recode(Method,
     "SCEPTRE" = "Sceptre",
     "t-test" = "Liscovitch Method",
     "MAST" = "Schraivogel Method",
     "KS test" = "Weissman Method",
-    "MIMOSCA" = "Mimosca"
+    "MIMOSCA" = "Mimosca",
+    "Seurat-Wilcox" = "Seurat De",
+    "Seurat-NB" = "Seurat De Nb"
   )) |>
   mutate(dataset_rename = forcats::fct_recode(dataset_rename,
     "Frangieh (Co Culture)" = "Frangieh Co Culture Gene",
@@ -111,7 +115,11 @@ n_false_rejections_tab <- n_false_rejections_tab |>
       mutate(across(-Dataset, function(x)(as.character(round(x, 1)))))
   )  |>
   mutate(`NT pairs` = ifelse(is.na(`NT pairs`), "", `NT pairs`))
-
+ n_false_rejections_tab <- n_false_rejections_tab[,c("Dataset", "SCEPTRE", "Seurat-Wilcox", "Seurat-NB", "t-test", "MAST", "KS test", "MIMOSCA", "NT pairs")]
+ colnames(n_false_rejections_tab)[colnames(n_false_rejections_tab) == "Seurat-Wilcox"] <- "Seurat-\nWilcox"
+ colnames(n_false_rejections_tab)[colnames(n_false_rejections_tab) == "Seurat-NB"] <- "Seurat-\nNB"
+ colnames(n_false_rejections_tab)[colnames(n_false_rejections_tab) == "NT pairs"] <- "NT\npairs"
+ 
 #################################################################
 # Process positive control results
 #################################################################
@@ -135,7 +143,12 @@ n_true_rejections_tab <- pc_res |>
   relocate("SCEPTRE", .after = "dataset_rename") |>
   relocate(`PC pairs`, .after = `KS test`) |>
   rename(Dataset = dataset_rename)
-
+ 
+ n_true_rejections_tab <- n_true_rejections_tab[,c("Dataset", "SCEPTRE", "Seurat-Wilcox", "Seurat-NB", "t-test", "MAST", "KS test", "MIMOSCA", "PC pairs")]
+ colnames(n_true_rejections_tab)[colnames(n_true_rejections_tab) == "Seurat-Wilcox"] <- "Seurat-\nWilcox"
+ colnames(n_true_rejections_tab)[colnames(n_true_rejections_tab) == "Seurat-NB"] <- "Seurat-\nNB"
+ colnames(n_true_rejections_tab)[colnames(n_true_rejections_tab) == "PC pairs"] <- "PC\npairs"
+ 
 #################################################################
 # Helper code for tables
 #################################################################
@@ -159,23 +172,15 @@ table_theme <- ttheme_default(core=list(fg_params=list(hjust=1, x=0.9)),
 nt_table_g <- tableGrob(n_false_rejections_tab, theme = table_theme, rows = NULL)
   
 # add bold font for lowest numbers of false rejections
-nt_table_g$grobs[find_cell(nt_table_g, 2, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 3, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 3, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 3, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 4, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 5, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 5, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 6, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 6, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 6, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 7, 5, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 8, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 8, 6, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 8, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-nt_table_g$grobs[find_cell(nt_table_g, 9, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+for (row_idx in seq(1, nrow(n_false_rejections_tab))) {
+  row <- as.integer(n_false_rejections_tab[row_idx, seq(2, 8L)])
+  col_idxs <- which(row == min(row))
+  for (col_idx in col_idxs) {
+    nt_table_g$grobs[find_cell(nt_table_g, row_idx + 1L, col_idx + 1L, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+  }
+}
 
-# add line separating the average row from the rest
+# add horizontal line separating the average row from the rest
 nt_table_g <- gtable_add_grob(nt_table_g,
                               grobs = segmentsGrob(
                                 x0 = unit(0,"npc"),
@@ -183,9 +188,9 @@ nt_table_g <- gtable_add_grob(nt_table_g,
                                 x1 = unit(1,"npc"),
                                 y1 = unit(0,"npc"),
                                 gp = gpar(lwd = 4.0)),
-                              t = 8, b = 8, l = 1, r = 8)
+                              t = 8, b = 8, l = 1, r = 9)
 
-# add line separating the NT pairs column from the rest
+# add vertical line separating the NT pairs column from the rest
 nt_table_g <- gtable_add_grob(nt_table_g,
                               grobs = segmentsGrob( 
                                 x0 = unit(0,"npc"),
@@ -193,9 +198,9 @@ nt_table_g <- gtable_add_grob(nt_table_g,
                                 x1 = unit(0,"npc"),
                                 y1 = unit(1,"npc"),
                                 gp = gpar(lwd = 4.0)),
-                              t = 8, b = 1, l = 8, r = 8)
+                              t = 8, b = 1, l = 9, r = 9)
 
-# add line separating the dataset column from the rest
+# add vertical line separating the dataset column from the rest
 nt_table_g <- gtable_add_grob(nt_table_g,
                               grobs = segmentsGrob( 
                                 x0 = unit(0,"npc"),
@@ -231,18 +236,15 @@ for (i in id) {
 # create gtable for positive control table
 pc_table_g <- tableGrob(n_true_rejections_tab, theme = table_theme, rows = NULL)
 
-# add bold font for highest numbers of true rejections
-pc_table_g$grobs[find_cell(pc_table_g, 2, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 3, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 4, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 5, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 6, 2, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 6, 3, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 6, 4, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 6, 5, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 6, 6, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 6, 7, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
-pc_table_g$grobs[find_cell(pc_table_g, 7, 3, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+# add bold font for lowest numbers of false rejections
+for (row_idx in seq(1, nrow(n_true_rejections_tab))) {
+  row <- as.integer(n_true_rejections_tab[row_idx, seq(2, 8L)])
+  row[is.na(row)] <- 0L
+  col_idxs <- which(row == max(row))
+  for (col_idx in col_idxs) {
+    pc_table_g$grobs[find_cell(pc_table_g, row_idx + 1L, col_idx + 1L, "core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+  }
+}
 
 # add line separating the PC pairs column from the rest
 pc_table_g <- gtable_add_grob(pc_table_g,
@@ -252,7 +254,7 @@ pc_table_g <- gtable_add_grob(pc_table_g,
                   x1 = unit(0,"npc"),
                   y1 = unit(1,"npc"),
                   gp = gpar(lwd = 4.0)),
-                t = 7, b = 1, l = 8, r = 8)
+                t = 7, b = 1, l = 9, r = 9)
 
 # add line separating the dataset column from the rest
 pc_table_g <- gtable_add_grob(pc_table_g,
@@ -356,6 +358,6 @@ fig_4_filename <- paste0(
 ggsave(filename = fig_4_filename, 
        plot = final_plot,
        device = "png", 
-       width = 6.5,
-       height = 8,
+       width = 7,
+       height = 8.5,
        bg = "white")

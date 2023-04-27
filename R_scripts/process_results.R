@@ -19,12 +19,11 @@ resampling_res <- readRDS(paste0(sceptre2_results_dir,
 resampling_res_processed <- process_undercover_result(resampling_res, sample_size_df)
 saveRDS(object = resampling_res_processed, paste0(sceptre2_results_dir,
                                                   "resampling_distributions/seurat_resampling_at_scale_processed.rds"))
-
 # pc result
 pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_0423.rds"))
-sceptre_pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_sceptre_0423.rds"))
-pc_res <- rbind(pc_res, sceptre_pc_res)
-pc_res_processed <- process_pc_result(pc_res, sample_size_df)
+seuratnb_pc_res <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_seuratnb_0423.rds"))
+pc_res <- rbind(pc_res, seuratnb_pc_res)
+pc_res_processed <- suppressWarnings(process_pc_result(pc_res, sample_size_df))
 saveRDS(object = pc_res_processed,
         file = paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_processed.rds"))
 

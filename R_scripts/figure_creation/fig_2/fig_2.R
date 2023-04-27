@@ -34,7 +34,6 @@ resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_re
 fisher_exact_p <- readRDS(paste0(result_dir, "extra_analyses/papalexi_grna_confounding_tests.rds"))
 nb_gof_tests <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests.rds")) |>
   mutate(theta = NULL)
-nb_simulated_gof_test <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests_simulated.rds"))
 
 ##########
 # PANNEL a
@@ -102,8 +101,8 @@ p_a <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density),
   scale_y_continuous(expand = expansion(mult = c(0.0, .01))) +
   geom_line(aes(x = z_grid, y = density, col = "N(0,1) density"),
             data = density_df, linewidth = 0.7) +
-  ggtitle("Permutation distribution of MW statistic") +
-  xlab("Permuted MW statistic") +
+  ggtitle("Permutation distribution of Wilcox. statistic") +
+  xlab("Permuted Wilcox. statistic") +
   scale_color_manual(values = c("N(0,1) density" = "purple3")) +
   scale_fill_manual(values = c("Permutation distribution" = "lightgrey"))
   
@@ -129,9 +128,9 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
   theme(legend.position = c(0.1, 0.67),
         legend.key.size = unit(0.4, 'cm'),
         legend.title = element_blank(),
-        legend.margin=margin(t = -0.5, unit='cm')) +
+        legend.margin=margin(t = -0.3, unit='cm')) +
   scale_color_continuous(name = "Log(N treatment cells + 1)") +
-  ggtitle("Inflation of MW p-values") +
+  ggtitle("Inflation of Wilcox. p-values") +
   annotate("text", x = 0.014, y = 9.5, label = "Log(N treatment cells with expression + 1)", size = 3) +
   # annotate pair 1
   geom_segment(aes(x = pairs_to_annotate[1,"ks_stat"],
@@ -166,14 +165,13 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
 # PANNEL c
 ##########
 # filter for seurat and NB reg (with cov) on Frangieh IFN gamma; add column for pass stringent QC
-my_labels <- c("Seurat De (standard filtering)", "Seurat De (extreme filtering)")
+my_labels <- c("Seurat-Wilcox (standard filtering)", "Seurat-Wilcox (extreme filtering)")
 undercover_res_sub <- undercover_res |>
   filter(method %in% c("seurat_de"),
          dataset == "frangieh_ifn_gamma_gene") |>
   mutate(pass_stringent_qc = (n_nonzero_treatment >= 35 & n_nonzero_control >= 35)) |>
   mutate(Method = paste0(Method, ifelse(pass_stringent_qc, " (extreme filtering)", " (standard filtering)"))) |>
-  mutate(Method = fct_relevel(Method,
-                              my_labels))
+  mutate(Method = fct_relevel(Method, my_labels))
 # compute the minimum number across method-QC status pairs
 n_to_sample <- undercover_res_sub |>
   group_by(Method) |>
@@ -193,8 +191,9 @@ p_c <- ggplot(data = to_plot_c, mapping = aes(y = p_value, col = Method)) +
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.35, 0.8),
-        legend.margin=margin(t = -0.5, unit='cm')) +
+        legend.position = c(0.35, 0.83),
+        legend.margin=margin(t = -0.5,
+                             r = -0.5, unit = 'cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,
     keyheight = 0.15,
@@ -277,15 +276,12 @@ p_d <- gridExtra::grid.arrange(p_d1, p_d2, nrow = 1,
 ###########
 # PANNEL E
 ###########
+my_labels <- c("NB regression (w/ covariates)", "NB regression (no covariates)")
 undercover_res_sub <- undercover_res |>
   filter(method %in% c("nb_regression_w_covariates", "nb_regression_no_covariates"),
          dataset == "papalexi_eccite_screen_gene",
-         n_nonzero_treatment >= 7,
-         n_nonzero_control >= 7) |>
-  mutate(Method = fct_recode(Method,
-                             "NB Reg (w/ covariates)" = "Nb Regression W Covariates",
-                             "NB Reg (w/o covariates)" = "Nb Regression No Covariates"))
-my_labels <- c("NB Reg (w/o covariates)", "NB Reg (w/ covariates)")
+         n_nonzero_treatment >= 15,
+         n_nonzero_control >= 15)
 p_e <- undercover_res_sub |>
   ggplot(aes(y = p_value, col = Method)) +
   stat_qq_points(ymin = 1e-8, size = 0.8) +
@@ -296,7 +292,7 @@ p_e <- undercover_res_sub |>
   geom_abline(col = "black") +
   my_theme +
   theme(legend.title= element_blank(),
-        legend.position = c(0.35, 0.75),
+        legend.position = c(0.38, 0.75),
         legend.margin=margin(t = -0.5, unit = 'cm')) +
   guides(color = guide_legend(
     keywidth = 0.0,
@@ -309,8 +305,6 @@ p_e <- undercover_res_sub |>
 ##########
 # PANNEL F
 ##########
-nb_gof_tests <- rbind(nb_gof_tests |> dplyr::select(p, dataset),
-                      nb_simulated_gof_test)
 n_to_samp <- nb_gof_tests |>
   group_by(dataset) |>
   summarize(count = n()) |>

@@ -11,37 +11,8 @@ result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
                                  "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds")) |>
   filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
-         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF) |>
-  mutate(Method = forcats::fct_recode(Method,
-                                      "SCEPTRE" = "Sceptre",
-                                      "t-test" = "Liscovitch Method",
-                                      "MAST" = "Schraivogel Method",
-                                      "KS test" = "Weissman Method",
-                                      "MIMOSCA" = "Mimosca"
-  ))
-
+         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF)
 alpha <- 0.1
-
-my_cols <- c("Weissman Method" = "purple3",
-             "Weissman Meth." = "purple3",
-             "KS test" = "purple3",
-             "Schraivogel Method" = "aquamarine4", 
-             "Schraivogel Meth." = "aquamarine4",
-             "MAST" = "aquamarine4",
-             "Mimosca" = "palevioletred3",
-             "MIMOSCA" = "palevioletred3",
-             "Liscovitch Method" = "navy",
-             "Liscovitch Meth." = "navy",
-             "t-test" = "navy",
-             "Seurat De" = "dodgerblue3",
-             "Seurat De (w/ strict QC)" = "dodgerblue4",
-             "Seurat De (w/o strict QC)" = "dodgerblue",
-             "NB Reg (w/o covariates)" = "darkgoldenrod3",
-             "NB Reg (w/ covariates)" = "darkgoldenrod4",
-             "NB Regression" = "goldenrod3",
-             "SCEPTRE" = "firebrick3",
-             "SCEPTRE (w/o covariates)" = "dodgerblue",
-             "Permutation test" = "slategray4")
 
 # The following plot (the letters are rows):
 # a) three empty columns for undercover schematic
@@ -52,13 +23,14 @@ my_cols <- c("Weissman Method" = "purple3",
 # d) same as above, but with simulated OR Schraivogel enhancer screen
 # restricting attention to pairs with >= 10 treatment cells and > 10 control cells in all cases
 
-make_figure_row <- function(dataset, name, print_legend) {
-  my_methods <- c("KS test", "MAST", "MIMOSCA", "t-test", "Seurat De")
+make_figure_row <- function(dataset, print_legend) {
+  my_methods <- c("KS test", "MAST", "MIMOSCA", "t-test", "Seurat-Wilcox", "Seurat-NB")
   my_values <- my_cols[names(my_cols) %in% my_methods]
   
   df_sub <- undercover_res |>
     filter(dataset == !!dataset,
-           Method %in% my_methods)
+           Method %in% my_methods) |>
+    dplyr::arrange(Method)
   
   bonf_thresh <- alpha/(nrow(df_sub)/length(my_methods))
   
@@ -76,8 +48,8 @@ make_figure_row <- function(dataset, name, print_legend) {
     p2 <- p2 +
       my_theme +
       theme(legend.title = element_blank(),
-            legend.position = c(0.78, 0.22),
-            legend.text=element_text(size = 9),
+            legend.position = c(0.78, 0.2),
+            legend.text=element_text(size = 8.0),
             legend.margin=margin(t = 0, unit='cm'),
             legend.background = element_blank()) +
       guides(color = guide_legend(
@@ -112,12 +84,11 @@ r0 <- ggplot() +
   ggtitle("Undercover gRNA calibration assessment") +
   theme(plot.title = element_text(hjust = 0.5, size=11))
 
-r1 <- make_figure_row(dataset = "papalexi_eccite_screen_gene", name = "Papalexi gene modality", print_legend = TRUE)
+r1 <- make_figure_row(dataset = "papalexi_eccite_screen_gene", print_legend = TRUE)
+r2 <- make_figure_row(dataset = "frangieh_ifn_gamma_gene", print_legend = FALSE)
 
 fig <- plot_grid(r1, r2, nrow = 1)
-
-
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                      "sceptre2-manuscript/R_scripts/figure_creation/fig_1/fig_1_bottom.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png",
-       scale = 1.1, width = 7, height = 2, dpi = 330)
+       scale = 1.1, width = 7, height = 2.25, dpi = 330)
