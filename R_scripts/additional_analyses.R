@@ -99,12 +99,12 @@ fit_ps <- sapply(X = seq(1, N_GENES), FUN = function(i) {
   expression <- m[seq(N_CELLS/2, N_CELLS), i]
   fit_nb <- glm(formula = expression ~ 1,
                 family = MASS::neg.bin(theta))
-  # log_lik <- logLik(fit_nb)[[1]]/length(expression)
   fit_p <- pchisq(fit_nb$deviance,
                   df = fit_nb$df.residual,
                   lower.tail = FALSE)
   c(log_lik, fit_p)
 })
+
 res <- data.frame(p = fit_ps, dataset = "simulated")
 saveRDS(object = res,
         file = paste0(result_dir, "extra_analyses/goodness_of_fit_tests_simulated.rds"))
