@@ -13,7 +13,7 @@ make_qq_plot <- function(result_matrix, tit, w_legend = FALSE) {
   p0 <- as.data.frame(result_matrix) |>
     tidyr::pivot_longer(cols = c("p_theory", "p_camp", "p_perm"),
                         names_to = "Method", values_to = "p_value") |>
-    mutate(Method = fct_recode(Method, "NB Regression" = "p_theory",
+    mutate(Method = fct_recode(Method, "NB regression (w/ covariates)" = "p_theory",
                                "SCEPTRE" = "p_camp",
                                "Permutation test" = "p_perm")) |>
     mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf)) |>
@@ -33,8 +33,11 @@ make_qq_plot <- function(result_matrix, tit, w_legend = FALSE) {
     scale_color_manual(values = my_cols)
   
   if (w_legend) {
-    p <- p0 + theme(legend.position = c(0.75, 0.2),
-                    legend.title = element_blank())
+    p <- p0 + theme(legend.position = c(0.7, 0.15),
+                    legend.title = element_blank(),
+                    legend.key.size = unit(0.35, 'cm'),
+                    legend.margin = margin(t = -0.5, unit = 'cm')
+                    )
   } else {
     p <- p0 + theme(legend.position = "none")
   }

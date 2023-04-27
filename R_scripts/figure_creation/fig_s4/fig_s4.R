@@ -6,17 +6,13 @@ library(ondisc)
 # load functions and data
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
-result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/undercover_grna_analysis/")
 undercover_res <- readRDS(paste0(result_dir,
-                                 "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
+                                 "undercover_result_grp_1_0423_processed.rds")) |>
   filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF,
-         method %in% c("sceptre", "sceptre_no_covariates", "nb_regression_w_covariates")) |>
-  mutate(Method = fct_recode(Method,
-                             "SCEPTRE" = "Sceptre",
-                             "SCEPTRE (w/o covariates)" = "Sceptre No Covariates",
-                             "NB Regression" = "Nb Regression W Covariates"))
-my_values <- my_cols[names(my_cols) %in% c("SCEPTRE", "SCEPTRE (w/o covariates)", "NB Regression")]
+         Method %in% c("SCEPTRE", "SCEPTRE (no covariates)", "NB regression (w/ covariates)"))
+my_values <- my_cols[names(my_cols) %in% c("SCEPTRE", "SCEPTRE (no covariates)", "NB regression (w/ covariates)")]
 
 
 get_plots_for_dataset <- function(df_sub, tit, print_legend, legend_position = c(0.45, 0.85)) {
@@ -28,12 +24,7 @@ get_plots_for_dataset <- function(df_sub, tit, print_legend, legend_position = c
     labs(x = "Expected null p-value", y = "Observed p-value") +
     geom_abline(col = "black") +
     ggtitle(tit) +
-    scale_color_manual(values = my_values,
-                       drop = FALSE,
-                       breaks = c("SCEPTRE",
-                                  "Seurat De",
-                                  "SCEPTRE (w/o covariates)",
-                                  "NB Regression"))
+    scale_color_manual(values = my_values)
   
   if (print_legend) {
     p_qq <- p_qq +
@@ -44,7 +35,7 @@ get_plots_for_dataset <- function(df_sub, tit, print_legend, legend_position = c
             legend.margin=margin(t = 0, unit='cm')) +
       guides(color = guide_legend(
         keywidth = 0.0,
-        keyheight = 0.2,
+        keyheight = 0.1,
         default.unit = "inch",
         override.aes = list(size = 2.5)))
   } else {
@@ -81,7 +72,7 @@ ifn_gama_plots <- get_plots_for_dataset(undercover_res |>
 papa_plots <- get_plots_for_dataset(undercover_res |> filter(dataset == "papalexi_eccite_screen_gene"),
                                     "Papalexi (gene) neg. controls",
                                     print_legend = TRUE,
-                                    legend_position = c(0.38, 0.8))
+                                    legend_position = c(0.38, 0.83))
 
 fig <- cowplot::plot_grid(papa_plots$p_qq, papa_plots$p_bar,
                           ifn_gama_plots$p_qq, ifn_gama_plots$p_bar,
