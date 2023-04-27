@@ -7,11 +7,9 @@ library(cowplot)
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
-undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_1_processed.rds")) |>
-  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
-         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF) |>
-  mutate(Method = fct_recode(Method, "SCEPTRE" = "Sceptre"),
-         Method = fct_relevel(Method, "SCEPTRE", after = Inf))
+undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds")) |>
+  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF, n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF) |>
+  mutate(Method = fct_relevel(Method, "SCEPTRE", after = Inf))
 
 # The following plot (the letters are rows):
 # a) three empty columns for undercover schematic
@@ -23,7 +21,7 @@ undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercove
 # restricting attention to pairs with >= 10 treatment cells and > 10 control cells in all cases
 
 make_figure_row <- function(dataset, name, print_legend, legend_posit = "bottom") {
-  my_methods <- c("Weissman Method", "Schraivogel Method", "Mimosca", "Liscovitch Method", "Seurat De", "SCEPTRE")
+  my_methods <- c("KS test", "MAST", "MIMOSCA", "t-test", "Seurat-Wilcox", "Seurat-NB", "SCEPTRE")
   my_values <- my_cols[names(my_cols) %in% my_methods]
   
   df_sub <- undercover_res |>

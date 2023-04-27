@@ -43,57 +43,21 @@ undercover_res <- readRDS(paste0(
   filter(
     n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
     n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF
-  ) |>
-  mutate(Method = forcats::fct_recode(Method,
-    "SCEPTRE" = "Sceptre",
-    "t-test" = "Liscovitch Method",
-    "MAST" = "Schraivogel Method",
-    "KS test" = "Weissman Method",
-    "MIMOSCA" = "Mimosca",
-    "Seurat-Wilcox" = "Seurat De",
-    "Seurat-NB" = "Seurat De Nb"
-  )) |>
-  mutate(dataset_rename = forcats::fct_recode(dataset_rename,
-    "Frangieh (Co Culture)" = "Frangieh Co Culture Gene",
-    "Frangieh (Control)" = "Frangieh Control Gene",
-    "Frangieh (IFN-\u03B3)" = "Frangieh Ifn Gamma Gene",
-    "Papalexi (Gene)" = "Papalexi Eccite Screen Gene",
-    "Papalexi (Protein)" = "Papalexi Eccite Screen Protein",
-    "Schraivogel" = "Schraivogel Enhancer Screen",
-    "Simulated" = "Simulated Experiment 1 Gene"
-  ))
+  )
 # results of positive control analysis
 pc_res <- readRDS(paste0(
   result_dir,
   "positive_control_analysis/pc_results_processed.rds"
 )) |> 
   dplyr::filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
-                n_control >= N_NONZERO_CONTROL_CUTOFF) |>
-  mutate(Method = forcats::fct_recode(Method,
-    "SCEPTRE" = "Sceptre",
-    "t-test" = "Liscovitch Method",
-    "MAST" = "Schraivogel Method",
-    "KS test" = "Weissman Method",
-    "MIMOSCA" = "Mimosca",
-    "Seurat-Wilcox" = "Seurat De",
-    "Seurat-NB" = "Seurat De Nb"
-  )) |>
-  mutate(dataset_rename = forcats::fct_recode(dataset_rename,
-    "Frangieh (Co Culture)" = "Frangieh Co Culture Gene",
-    "Frangieh (Control)" = "Frangieh Control Gene",
-    "Frangieh (IFN-\u03B3)" = "Frangieh Ifn Gamma Gene",
-    "Papalexi (Gene)" = "Papalexi Eccite Screen Gene",
-    "Papalexi (Protein)" = "Papalexi Eccite Screen Protein",
-    "Schraivogel" = "Schraivogel Enhancer Screen"
-  ))
-
+                n_control >= N_NONZERO_CONTROL_CUTOFF)
 #################################################################
 # Process negative control results into final table
 #################################################################
 n_false_rejections <- undercover_res |>
-  filter(!(Method %in% c(c("Nb Regression No Covariates", 
-                           "Nb Regression W Covariates", 
-                           "Sceptre No Covariates")))) |>
+  filter(!(Method %in% c(c("NB regression (no covariates)", 
+                           "NB regression (w/ covariates)", 
+                           "SCEPTRE (no covariates)")))) |>
   group_by(dataset_rename, Method) |>
   summarize(n_false_reject = sum(p_value < alpha/n()),
                    Method = Method[1],
