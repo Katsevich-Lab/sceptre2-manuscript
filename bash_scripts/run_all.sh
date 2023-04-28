@@ -7,9 +7,9 @@
 #   - Java version 8 or higher
 #   - Nextflow version 21.10.6 or higher
 
-#######################################
+###############
 # PART 1: SETUP
-#######################################
+###############
 
 # 1. install required Python packages
 bash install_python_packages.sh
@@ -36,11 +36,12 @@ Rscript ../R_scripts/uniform_processing_lowmoi.R
 # 8. compute dataset sample sizes
 Rscript ../R_scripts/compute_dataset_sample_sizes.R
 
-########################################
-# PART 2: RUNNING THE NEXTFLOW PIPELINES
-########################################
-# Undercover results for group size = 1, all methods and datasets
-qsub ../pipeline_launch_scripts/undercover/grp_size_1/grp_size_1.sh
+#####################################
+# PART 2: RUN THE NEXTFLOW PIPELINES
+####################################
+# 9. Undercover analysis
+# qsub ../pipeline_launch_scripts/undercover/grp_size_1/grp_size_1.sh
+bash ../pipeline_launch_scripts/undercover/grp_size_1_0523/grp_size_1.sh
 
 # Positive control results
 
