@@ -1,5 +1,5 @@
 # print message
-print("Installing all required R packages...")
+print("Installing required R packages...")
 
 # pacman package for easy package handling
 if (!require("pacman")) {
@@ -7,20 +7,20 @@ if (!require("pacman")) {
 }
 library(pacman)
 
-# CRAN
-p_install(readr, force = FALSE)
-p_install(dplyr, force = FALSE)
-p_install(readxl, force = FALSE)
-p_install(Seurat, force = FALSE)
-p_install(R.utils, force = FALSE)
-p_install(purrr, force = FALSE)
-p_install(RCurl, force = FALSE)
-p_install(GenomicRanges, force = FALSE)
+# CRAN/Bioc
+packs <- c("tidyverse", "readxl", "Seurat", "R.utils", "RCurl", "GenomicRanges",
+           "MASS", "data.table", "rbioapi", "VGAM", "reticulate", "statmod",
+           "SummarizedExperiment", "MAST")
 
-# GitHub
-devtools::install_github("timothy-barry/ondisc")
-devtools::install_github('satijalab/seurat-data')
-if (system.file(package = "lowmoi") == "") {
-  devtools::install_git("git@github.com:Katsevich-Lab/lowmoi.git",
-                        upgrade = "never")
-}
+for (pack in packs) p_install(pack)
+
+# Github
+github_packs <- c("katsevich-lab/lowmoi",
+                  "timothy-barry/ondisc",
+                  "katsevich-lab/sceptre",
+                  "katsevich-lab/katlabutils",
+                  "katsevich-lab/sceptre",
+                  "timothy-barry/sceptre2",
+                  "satijalab/seurat-data")
+
+for (pack in github_packs) p_install_gh(pack)
