@@ -1,0 +1,56 @@
+Apr-28 16:05:32.941 [main] DEBUG nextflow.cli.Launcher - $> nextflow run pc-grna-pipeline -r main --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/pc/params_pc_0523.groovy --grna_modality assignment --result_dir /Users/timbarry/research_offsite/projects/sceptre2//results/positive_control_analysis --result_file_name pc_results_0523.rds --trial false --pairs_file pos_control_pairs_grouped.rds
+Apr-28 16:05:33.027 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.04.3
+Apr-28 16:05:33.767 [main] DEBUG nextflow.scm.AssetManager - Listing projects in folder: /Users/timbarry/.nextflow/assets
+Apr-28 16:05:33.782 [main] DEBUG nextflow.scm.AssetManager - Project manifest does not exist: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/nextflow.config (No such file or directory)
+Apr-28 16:05:33.785 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-28 16:05:33.798 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-28 16:05:34.467 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Apr-28 16:05:34.468 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Apr-28 16:05:34.478 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-28 16:05:34.542 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 by global default
+Apr-28 16:05:34.542 [main] INFO  nextflow.cli.CmdRun - Launching `https://github.com/Katsevich-Lab/pc-grna-pipeline` [kickass_kare] DSL2 - revision: f46e91ebca [main]
+Apr-28 16:05:34.562 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins; core-plugins: nf-amazon@1.7.2,nf-azure@0.13.2,nf-console@1.0.3,nf-ga4gh@1.0.3,nf-google@1.1.4,nf-sqldb@0.4.0,nf-tower@1.4.0
+Apr-28 16:05:34.565 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-28 16:05:34.581 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-28 16:05:34.583 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-28 16:05:34.588 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-28 16:05:34.597 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-28 16:05:34.655 [main] DEBUG nextflow.Session - Session uuid: fbabe72a-bb3b-4179-a985-e7e43c93dc90
+Apr-28 16:05:34.655 [main] DEBUG nextflow.Session - Run name: kickass_kare
+Apr-28 16:05:34.656 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-28 16:05:35.007 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.04.3 build 5703
+  Created: 18-05-2022 19:22 UTC (15:22 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.10 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 65045@Tims-MacBook-Pro-2021.local [172.25.0.200]
+  CPUs: 8 - Mem: 16 GB (2.7 GB) - Swap: 2 GB (1.7 GB)
+Apr-28 16:05:35.023 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Apr-28 16:05:35.040 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-28 16:05:35.052 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-28 16:05:35.105 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Apr-28 16:05:35.117 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Apr-28 16:05:35.189 [main] DEBUG nextflow.Session - Session start invoked
+Apr-28 16:05:35.855 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-28 16:05:35.863 [main] DEBUG nextflow.Session - Session aborted -- Cause: Data-method pair file does not exist.
+Apr-28 16:05:35.874 [main] ERROR nextflow.cli.Launcher - @unknown
+java.lang.Exception: Data-method pair file does not exist.
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+	at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:72)
+	at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:105)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallConstructor(CallSiteArray.java:59)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:263)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:277)
+	at Script_71d3bf88.runScript(Script_71d3bf88:4)
+	at nextflow.script.BaseScript.runDsl2(BaseScript.groovy:170)
+	at nextflow.script.BaseScript.run(BaseScript.groovy:217)
+	at nextflow.script.ScriptParser.runScript(ScriptParser.groovy:220)
+	at nextflow.script.ScriptRunner.run(ScriptRunner.groovy:212)
+	at nextflow.script.ScriptRunner.execute(ScriptRunner.groovy:120)
+	at nextflow.cli.CmdRun.run(CmdRun.groovy:337)
+	at nextflow.cli.Launcher.run(Launcher.groovy:480)
+	at nextflow.cli.Launcher.main(Launcher.groovy:639)

@@ -1,0 +1,93 @@
+Apr-28 16:08:09.124 [main] DEBUG nextflow.cli.Launcher - $> nextflow run pc-grna-pipeline -r main --data_method_pair_file /Users/timbarry/research_code//sceptre2-manuscript/param_files/pc/params_pc_0523.groovy --grna_modality assignment --result_dir /Users/timbarry/research_offsite/projects/sceptre2//results/positive_control_analysis --result_file_name pc_results_0523.rds --trial false --pairs_file pos_control_pairs_grouped.rds
+Apr-28 16:08:09.242 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 22.04.3
+Apr-28 16:08:10.017 [main] DEBUG nextflow.scm.AssetManager - Listing projects in folder: /Users/timbarry/.nextflow/assets
+Apr-28 16:08:10.026 [main] DEBUG nextflow.scm.AssetManager - Project manifest does not exist: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/nextflow.config (No such file or directory)
+Apr-28 16:08:10.029 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-28 16:08:10.042 [main] DEBUG nextflow.scm.AssetManager - Git config: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/.git/config; branch: master; remote: origin; url: https://github.com/Katsevich-Lab/pc-grna-pipeline.git
+Apr-28 16:08:10.724 [main] DEBUG nextflow.config.ConfigBuilder - Found config home: /Users/timbarry/.nextflow/config
+Apr-28 16:08:10.725 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /Users/timbarry/.nextflow/config
+Apr-28 16:08:10.736 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Apr-28 16:08:10.798 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 by global default
+Apr-28 16:08:10.798 [main] INFO  nextflow.cli.CmdRun - Launching `https://github.com/Katsevich-Lab/pc-grna-pipeline` [elegant_descartes] DSL2 - revision: f46e91ebca [main]
+Apr-28 16:08:10.814 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; plugins-dir=/Users/timbarry/.nextflow/plugins; core-plugins: nf-amazon@1.7.2,nf-azure@0.13.2,nf-console@1.0.3,nf-ga4gh@1.0.3,nf-google@1.1.4,nf-sqldb@0.4.0,nf-tower@1.4.0
+Apr-28 16:08:10.816 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Apr-28 16:08:10.831 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Apr-28 16:08:10.833 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Apr-28 16:08:10.839 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Apr-28 16:08:10.851 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Apr-28 16:08:10.916 [main] DEBUG nextflow.Session - Session uuid: e4479ceb-9c65-4b76-b49c-d99bc1b8b325
+Apr-28 16:08:10.916 [main] DEBUG nextflow.Session - Run name: elegant_descartes
+Apr-28 16:08:10.916 [main] DEBUG nextflow.Session - Executor pool size: 8
+Apr-28 16:08:11.267 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 22.04.3 build 5703
+  Created: 18-05-2022 19:22 UTC (15:22 EDT)
+  System: Mac OS X 10.16
+  Runtime: Groovy 3.0.10 on OpenJDK 64-Bit Server VM 1.8.0_242-b08
+  Encoding: UTF-8 (UTF-8)
+  Process: 65220@Tims-MacBook-Pro-2021.local [172.25.0.200]
+  CPUs: 8 - Mem: 16 GB (2.7 GB) - Swap: 2 GB (1.7 GB)
+Apr-28 16:08:11.284 [main] DEBUG nextflow.Session - Work-dir: /Users/timbarry/research_offsite/work [Mac OS X]
+Apr-28 16:08:11.304 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Apr-28 16:08:11.317 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Apr-28 16:08:11.371 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Apr-28 16:08:11.383 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 9; maxThreads: 1000
+Apr-28 16:08:11.462 [main] DEBUG nextflow.Session - Session start invoked
+Apr-28 16:08:12.247 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Apr-28 16:08:12.427 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-28 16:08:12.428 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-28 16:08:12.433 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Apr-28 16:08:12.439 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=8; memory=16 GB; capacity=8; pollInterval=100ms; dumpInterval=5m
+Apr-28 16:08:12.625 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-28 16:08:12.625 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-28 16:08:12.646 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Apr-28 16:08:12.646 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Apr-28 16:08:12.650 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: combine_results, run_method, obtain_pc_pairs
+Apr-28 16:08:12.650 [main] DEBUG nextflow.Session - Ignite dataflow network (5)
+Apr-28 16:08:12.652 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > obtain_pc_pairs
+Apr-28 16:08:12.653 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > run_method
+Apr-28 16:08:12.654 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > combine_results
+Apr-28 16:08:12.654 [main] DEBUG nextflow.script.ScriptRunner - > Await termination 
+Apr-28 16:08:12.654 [main] DEBUG nextflow.Session - Session await
+Apr-28 16:08:12.746 [Actor Thread 9] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/bin/get_pc_pairs.R
+Apr-28 16:08:12.823 [Task submitter] DEBUG nextflow.executor.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Apr-28 16:08:12.827 [Task submitter] INFO  nextflow.Session - [d7/a4dab8] Submitted process > obtain_pc_pairs
+Apr-28 16:08:13.150 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: obtain_pc_pairs; status: COMPLETED; exit: 0; error: -; workDir: /Users/timbarry/research_offsite/work/d7/a4dab8c62b025ad93ce1d51feca30c]
+Apr-28 16:08:13.194 [Actor Thread 12] WARN  nextflow.script.ScriptBinding - Access to undefined parameter `grouped` -- Initialise it to a default value eg. `params.grouped = some_value`
+Apr-28 16:08:13.256 [Actor Thread 12] DEBUG nextflow.util.CacheHelper - Hash asset file sha-256: /Users/timbarry/.nextflow/assets/Katsevich-Lab/pc-grna-pipeline/bin/run_method.R
+Apr-28 16:08:13.276 [Task submitter] DEBUG nextflow.processor.TaskRun - Unable to dump error of process 'run_method (frangieh/co_culture/gene+schraivogel_method)' -- Cause: java.nio.file.NoSuchFileException: /Users/timbarry/research_offsite/work/a9/bb7fc24e383883c84c6c6628b64ade/.command.log
+Apr-28 16:08:13.277 [Task submitter] ERROR nextflow.processor.TaskProcessor - Error executing process > 'run_method (frangieh/co_culture/gene+schraivogel_method)'
+
+Caused by:
+  Process requirement exceed available memory -- req: 34 GB; avail: 16 GB
+
+Command executed:
+
+  run_method.R frangieh/co_culture/gene 3 schraivogel_method assignment pos_control_pairs_grouped.rds false null
+
+Command exit status:
+  -
+
+Command output:
+  (empty)
+
+Work dir:
+  /Users/timbarry/research_offsite/work/a9/bb7fc24e383883c84c6c6628b64ade
+
+Tip: when you have fixed the problem you can continue the execution adding the option `-resume` to the run command line
+Apr-28 16:08:13.282 [Task submitter] DEBUG nextflow.Session - Session aborted -- Cause: Process requirement exceed available memory -- req: 34 GB; avail: 16 GB
+Apr-28 16:08:13.309 [Task submitter] DEBUG nextflow.Session - The following nodes are still active:
+[process] run_method
+  status=ACTIVE
+  port 0: (queue) OPEN  ; channel: -
+  port 1: (cntrl) -     ; channel: $
+
+[process] combine_results
+  status=ACTIVE
+  port 0: (value) OPEN  ; channel: raw_result
+  port 1: (cntrl) -     ; channel: $
+
+Apr-28 16:08:13.311 [main] DEBUG nextflow.Session - Session await > all process finished
+Apr-28 16:08:13.311 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Apr-28 16:08:13.325 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=1; failedCount=1; ignoredCount=0; cachedCount=0; pendingCount=23; submittedCount=0; runningCount=-1; retriesCount=0; abortedCount=0; succeedDuration=292ms; failedDuration=0ms; cachedDuration=0ms;loadCpus=-1; loadMemory=0; peakRunning=1; peakCpus=1; peakMemory=2 GB; ]
+Apr-28 16:08:13.495 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Apr-28 16:08:13.504 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye

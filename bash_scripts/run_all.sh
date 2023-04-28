@@ -36,20 +36,25 @@ Rscript ../R_scripts/uniform_processing_lowmoi.R
 # 8. compute dataset sample sizes
 Rscript ../R_scripts/compute_dataset_sample_sizes.R
 
-#####################################
+####################################
 # PART 2: RUN THE NEXTFLOW PIPELINES
 ####################################
 # 9. Undercover analysis
-# qsub ../pipeline_launch_scripts/undercover/grp_size_1/grp_size_1.sh
-bash ../pipeline_launch_scripts/undercover/grp_size_1_0523/grp_size_1.sh
+qsub ../pipeline_launch_scripts/undercover/grp_size_1_0523/grp_size_1.sh
 
-# Positive control results
+# 10. Positive control analysis
+qsub ../pipeline_launch_scripts/positive_control/pc_0523/pc_analysis.sh
+
+# 11. MW resampling statistics analysis
 
 
-# MW Resampling results
+####################################
+# PART 3: RUN THE AUXILIARY ANALYSES 
+####################################
 
-#######################################
+
+########################
 # PART 3: MAKING FIGURES
-#######################################
+########################
 # process the results
 Rscript ../R_scripts/process_results.R
