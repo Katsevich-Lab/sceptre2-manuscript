@@ -92,3 +92,5 @@ to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                      "sceptre2-manuscript/R_scripts/figure_creation/fig_1/fig_1_bottom.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png",
        scale = 1.1, width = 7, height = 2.25, dpi = 330)
+
+
