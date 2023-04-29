@@ -7,5 +7,5 @@ nextflow run pc-grna-pipeline -r main \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"/results/positive_control_analysis" \
  --result_file_name "pc_results_0523.rds" \
  --trial "false" \
- --pairs_file "pos_control_pairs_grouped.rds"
- 
+ --pairs_file "pos_control_pairs_grouped.rds" \
+ --grouped "true"

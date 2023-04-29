@@ -5,13 +5,10 @@ sceptre2_results_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "res
 sample_size_df <- readRDS(paste0(sceptre2_results_dir, "dataset_sample_sizes/n_nonzero_cells_per_grna.rds"))
 
 # undercover res grp = 1
-undercover_res <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_0423.rds"))
-sceptre_undercover_res <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_sceptre_0423.rds"))
-seuratnb_undercover_res <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_seuratnb_0423.rds"))
-undercover_res <- rbind(undercover_res, sceptre_undercover_res, seuratnb_undercover_res)
+undercover_res <- readRDS(paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_0523.rds"))
 undercover_res_processed <- process_undercover_result(undercover_res, sample_size_df)
 saveRDS(object = undercover_res_processed, 
-        paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds"))
+        paste0(sceptre2_results_dir, "undercover_grna_analysis/undercover_result_grp_1_0523_processed.rds"))
 
 # resampling results
 resampling_res <- readRDS(paste0(sceptre2_results_dir,
