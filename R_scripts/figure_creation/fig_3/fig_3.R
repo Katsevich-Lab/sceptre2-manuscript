@@ -1,8 +1,8 @@
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                             "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
-source(shared_fig_script)
 library(sn)
 library(tidyverse)
+source(shared_fig_script)
 conflict_prefer("filter", "dplyr")
 
 xi <- 0
@@ -71,4 +71,3 @@ panel_d <- tibble(z = null_z) |>
 ggsave(filename = paste0(.get_config_path("LOCAL_CODE_DIR"),
                          "sceptre2-manuscript/R_scripts/figure_creation/fig_3/figure_3d.png"),
        plot = panel_d, device = "png", width = 3, height = 2.25)
-

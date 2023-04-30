@@ -51,10 +51,24 @@ qsub ../pipeline_launch_scripts/positive_control/pc_0523/pc_analysis.sh
 ####################################
 # PART 3: RUN THE AUXILIARY ANALYSES 
 ####################################
+# 12. run the extra analyses required for Figure 2 (and associated supplementary figures)
+Rscript ../R_scripts/fig_2_analyses.R
+
+# 13. 
+
+
+#####################################
+# PART 4: RUN THE LAPTOP BENCHMARKING
+#####################################
 
 
 ########################
-# PART 3: MAKING FIGURES
+# PART 5: MAKE THE FIGURES
 ########################
+# Create the components used in each figure
+Rscript ../R_scripts/figure_creation/fig_1/fig_1.R # fig 1
+
+Rscript ../R_scripts/figure_creation/fig_3/fig_3.R # fig 3
+
 # process the results
 Rscript ../R_scripts/process_results.R

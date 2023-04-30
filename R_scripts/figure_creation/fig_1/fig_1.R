@@ -9,7 +9,7 @@ shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manusc
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
-                                 "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds")) |>
+                                 "undercover_grna_analysis/undercover_result_grp_1_0523_processed.rds")) |>
   filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF)
 alpha <- 0.1
@@ -92,5 +92,3 @@ to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                      "sceptre2-manuscript/R_scripts/figure_creation/fig_1/fig_1_bottom.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png",
        scale = 1.1, width = 7, height = 2.25, dpi = 330)
-
-
