@@ -5,7 +5,7 @@ nextflow pull https://github.com/Katsevich-Lab/undercover-grna-pipeline
 
 # run pipeline
 nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
- --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/params_seurat_resampling.groovy" \
+ --data_method_pair_file $LOCAL_CODE_DIR"/sceptre2-manuscript/param_files/resampling/params_seurat_resampling.groovy" \
  --result_dir $LOCAL_SCEPTRE2_DATA_DIR"results/resampling_distributions" \
  --result_file_name "seurat_resampling_at_scale.rds" \
  --grna_modality "assignment" \
