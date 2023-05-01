@@ -38,7 +38,7 @@ result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 # results of undercover analysis
 undercover_res <- readRDS(paste0(
   result_dir,
-  "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds"
+  "undercover_grna_analysis/undercover_result_grp_1_0523_processed.rds"
 )) |>
   filter(
     n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
@@ -47,7 +47,7 @@ undercover_res <- readRDS(paste0(
 # results of positive control analysis
 pc_res <- readRDS(paste0(
   result_dir,
-  "positive_control_analysis/pc_results_processed.rds"
+  "positive_control_analysis/pc_results_0523_processed.rds"
 )) |> 
   dplyr::filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
                 n_control >= N_NONZERO_CONTROL_CUTOFF)
@@ -126,7 +126,6 @@ find_cell <- function(table, row, col, name="core-fg"){
 # set the theme for the table
 table_theme <- ttheme_default(core=list(fg_params=list(hjust=1, x=0.9)),
                       base_size = 10)
-
 
 #################################################################
 # Format Type-I error table
