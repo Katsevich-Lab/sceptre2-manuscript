@@ -1,4 +1,5 @@
-conflicts_prefer(dplyr::filter)
+library(ggplot2)
+library(katlabutils)
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), 
                             "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
@@ -6,19 +7,12 @@ source(shared_fig_script)
 # directory with results
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 
-# define binning function
-bin <- function(x, n_bins) {
-  cut(x, breaks = quantile(x = x, probs = seq(0, 1, 1/n_bins)),
-      include.lowest = TRUE,
-      right = FALSE)
-}
-
 # results of undercover analysis
 undercover_res <- readRDS(paste0(result_dir,
                                 "undercover_grna_analysis/undercover_result_grp_1_0523_processed.rds")) |>
-  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+  dplyr::filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF) |>
-  filter(!(Method %in% c("NB regression (no covariates)", 
+  dplyr::filter(!(Method %in% c("NB regression (no covariates)", 
                            "NB regression (w/ covariates)", 
                            "SCEPTRE (no covariates)"))) |>
   dplyr::mutate(Method = forcats::fct_relevel(Method, "SCEPTRE", after = Inf)) |>

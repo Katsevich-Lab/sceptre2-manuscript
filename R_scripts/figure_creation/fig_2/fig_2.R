@@ -32,8 +32,6 @@ undercover_res <- readRDS(paste0(result_dir,
 resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_resampling_at_scale_processed.rds")) |>
   mutate(p_rat = p_emp/p_value)
 fisher_exact_p <- readRDS(paste0(result_dir, "extra_analyses/papalexi_grna_confounding_tests.rds"))
-nb_gof_tests <- readRDS(paste0(result_dir, "extra_analyses/goodness_of_fit_tests.rds")) |>
-  mutate(theta = NULL)
 
 ##########
 # PANNEL a
@@ -105,7 +103,6 @@ p_a <- ggplot() + geom_histogram(aes(x = z_null, y = after_stat(density),
   xlab("Permuted Wilcox. statistic") +
   scale_color_manual(values = c("N(0,1) density" = "purple3")) +
   scale_fill_manual(values = c("Permutation distribution" = "lightgrey"))
-  
 
 ##########
 # PANNEL b
@@ -120,8 +117,6 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
   scale_y_log10() +
   scale_x_log10() +
   ylab(expression(italic(p)[ratio]*" = "*italic(p)[exact]/italic(p)[asymptotic])) +
-  # ylab(bquote(p[ratio] = p[exact] / p[asymptotic])) +
-  # paste0(expression(italic(p)[ratio]), " = ", expression(italic(p)[exact]/italic(p)[asymptotic]))) +
   xlab("KS statistic") +
   geom_hline(yintercept = 1) +
   my_theme +
@@ -129,7 +124,6 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
         legend.key.size = unit(0.4, 'cm'),
         legend.title = element_blank(),
         legend.margin=margin(t = -0.3, unit='cm')) +
-  scale_color_continuous(name = "Log(N treatment cells + 1)") +
   ggtitle("Inflation of Wilcox. p-values") +
   annotate("text", x = 0.014, y = 9.5, label = "Log(N treatment cells with expression + 1)", size = 3) +
   # annotate pair 1
@@ -160,29 +154,26 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
            size = 3) +
   scale_color_gradient(low = "mediumpurple3",
                        high = "navy")
-
-##########
-# PANNEL c
-##########
-# filter for seurat and NB reg (with cov) on Frangieh IFN gamma; add column for pass stringent QC
-my_labels <- c("Seurat-Wilcox (standard filtering)", "Seurat-Wilcox (extreme filtering)")
-undercover_res_sub <- undercover_res |>
-  filter(method %in% c("seurat_de"),
+##############
+# New pannel c
+##############
+pannel_c_cols <- c("darkorchid4", "dodgerblue4", "dodgerblue3", "dodgerblue1", "deepskyblue") 
+frangieh_binned_undercover <- undercover_res |>
+  filter(method == "seurat_de",
          dataset == "frangieh_ifn_gamma_gene") |>
-  mutate(pass_stringent_qc = (n_nonzero_treatment >= 35 & n_nonzero_control >= 35)) |>
-  mutate(Method = paste0(Method, ifelse(pass_stringent_qc, " (extreme filtering)", " (standard filtering)"))) |>
-  mutate(Method = fct_relevel(Method, my_labels))
-# compute the minimum number across method-QC status pairs
-n_to_sample <- undercover_res_sub |>
-  group_by(Method) |>
+  dplyr::mutate(n_nonzero_trt_bin = bin(n_nonzero_treatment, 5))
+# compute the minimum number of pairs per bin
+n_to_sample <- frangieh_binned_undercover |>
+  group_by(n_nonzero_trt_bin) |>
   summarize(count = n()) |>
   pull(count) |> min()
 # downsample
 set.seed(1)
-to_plot_c <- undercover_res_sub |>
-   group_by(Method) |>
-   sample_n(n_to_sample)
-p_c <- ggplot(data = to_plot_c, mapping = aes(y = p_value, col = Method)) +
+to_plot_c <- frangieh_binned_undercover |>
+  group_by(n_nonzero_trt_bin) |>
+  sample_n(n_to_sample)
+p_c <- ggplot(data = to_plot_c |> dplyr::arrange(n_nonzero_trt_bin),
+              mapping = aes(y = p_value, col = n_nonzero_trt_bin)) +
   stat_qq_points(ymin = 1e-8, size = 0.8) +
   stat_qq_band() +
   scale_x_continuous(trans = revlog_trans(10)) +
@@ -190,17 +181,17 @@ p_c <- ggplot(data = to_plot_c, mapping = aes(y = p_value, col = Method)) +
   labs(x = "Expected null p-value", y = "Observed p-value") +
   geom_abline(col = "black") +
   my_theme +
-  theme(legend.title= element_blank(),
-        legend.position = c(0.35, 0.83),
-        legend.margin=margin(t = -0.5,
-                             r = -0.5, unit = 'cm')) +
+  annotate("text", x = 2e-2, y = 1e-7, label = "N treatment cells with expression", size = 3) +
+  theme(legend.position=c(0.12, 0.55),
+        legend.margin=margin(t = -0.5, r = -0.5, unit = 'cm'),
+        legend.title = element_blank()) +
   guides(color = guide_legend(
     keywidth = 0.0,
     keyheight = 0.15,
     default.unit = "inch",
     override.aes = list(size = 2.5))) +
-  scale_color_manual(values = my_cols[names(my_cols) %in% my_labels]) +
-  ggtitle("Frangieh IFN-\u03B3 negative control pairs")
+  scale_color_manual(values = pannel_c_cols, name = "N treatment cells with nonzero expression") +
+  ggtitle("Wilcox. calibration on Frangieh IFN-\u03B3")
 
 ##########
 # PANNEL d
@@ -305,42 +296,48 @@ p_e <- undercover_res_sub |>
 ##########
 # PANNEL F
 ##########
-n_to_samp <- nb_gof_tests |>
-  group_by(dataset) |>
+pannel_f_cols <- RColorBrewer::brewer.pal(6, "YlOrRd")[seq(6,2)]
+frangieh_binned_undercover <- undercover_res |> 
+  filter(method == "nb_regression_w_covariates",
+         dataset == "frangieh_ifn_gamma_gene") |>
+  dplyr::mutate(n_nonzero_trt_bin = bin(n_nonzero_treatment, 5))
+# compute the minimum number of pairs per bin
+n_to_sample <- frangieh_binned_undercover |>
+  group_by(n_nonzero_trt_bin) |>
   summarize(count = n()) |>
   pull(count) |> min()
-to_plot_f <- nb_gof_tests |>
-  group_by(dataset) |>
-  sample_n(n_to_samp)
-
-p_f <- to_plot_f |>
-  ggplot(aes(y = p, col = dataset)) +
-  stat_qq_points(ymin = 1e-8, size = 1) +
-  scale_x_reverse() +
-  scale_y_reverse() +
+# downsample
+set.seed(1)
+to_plot_f <- frangieh_binned_undercover |>
+  group_by(n_nonzero_trt_bin) |>
+  sample_n(n_to_sample)
+p_f <- ggplot(data = to_plot_f |> dplyr::arrange(n_nonzero_trt_bin),
+              mapping = aes(y = p_value, col = n_nonzero_trt_bin)) +
+  stat_qq_points(ymin = 1e-8, size = 0.8) +
+  stat_qq_band() +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
   labs(x = "Expected null p-value", y = "Observed p-value") +
   geom_abline(col = "black") +
   my_theme +
-  theme(legend.position = c(0.7, 0.17),
-        legend.margin=margin(t = -0.5, unit='cm'),
-        legend.title= element_blank(),) +
+  annotate("text", x = 2e-2, y = 1e-7, label = "N treatment cells with expression", size = 3) +
+  theme(legend.position=c(0.12, 0.55),
+        legend.margin=margin(t = -0.5, r = -0.5, unit = 'cm'),
+        legend.title = element_blank()) +
   guides(color = guide_legend(
     keywidth = 0.0,
     keyheight = 0.15,
     default.unit = "inch",
     override.aes = list(size = 2.5))) +
-  ggtitle("NB regression model misspecification") +
-  scale_color_manual(values = dataset_cols,
-                     labels = c("Frangieh (co culture)",
-                                "Frangieh (control)",
-                                "Frangieh (Frangieh IFN-\u03B3)",
-                                "Papalexi (gene modality)"))
+  scale_color_manual(values = pannel_f_cols, name = "N treatment cells with nonzero expression") +
+  ggtitle("NB reg. calibration on Frangieh IFN-\u03B3")
+
 ############
 # CREATE FIG
 ############
 fig <- cowplot::plot_grid(p_a, p_b,
-                          p_c, p_d,
-                          p_e, p_f, ncol = 2, labels = "auto", align = "vh", axis = "l")
+                          p_c, p_f,
+                          p_d, p_e, ncol = 2, labels = "auto", align = "vh", axis = "l")
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                      "sceptre2-manuscript/R_scripts/figure_creation/fig_2/fig_2.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png",

@@ -38,3 +38,11 @@ compute_n_bonf_rejections <- function(undercover_res, alpha = 0.1) {
 
 N_NONZERO_TREATMENT_CUTOFF <- 7
 N_NONZERO_CONTROL_CUTOFF <- 7
+
+
+# define binning function
+bin <- function(x, n_bins) {
+  cut(x, breaks = quantile(x = x, probs = seq(0, 1, 1/n_bins)),
+      include.lowest = TRUE,
+      right = FALSE)
+}
