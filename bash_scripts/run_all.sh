@@ -82,6 +82,8 @@ Rscript ../R_scripts/figure_creation/fig_5/fig_5.R
 # fig s1-s3
 Rscript ../R_scripts/figure_creation/fig_s1_s3/fig_s1_s3.R
 # fig s4
-Rscript ../R_scripts/figure_creation/fig_s4/fig_s4.R
+
 # fig s5
 Rscript ../R_scripts/figure_creation/fig_s5/fig_s5.R
+# fig s6
+Rscript ../R_scripts/figure_creation/fig_s6/fig_s6.R

@@ -1,39 +1,70 @@
-library(tidyverse)
-library(katlabutils)
-library(cowplot)
-
-# Load scripts and results
-shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
+conflicts_prefer(dplyr::filter)
+shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), 
+                            "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
-extra_analyses_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/")
 
-grna_res <- readRDS(paste0(extra_analyses_dir, "papalexi_grna_confounding_tests.rds"))
-gene_res <- readRDS(paste0(extra_analyses_dir, "papalex_gene_confounding_tests.rds"))
+# directory with results
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 
-p1 <- ggplot(data = data.frame(p_value = grna_res),
-             mapping = aes(y = p_value)) +
-  stat_qq_points(ymin = 1e-8) +
+# define binning function
+bin <- function(x, n_bins) {
+  cut(x, breaks = quantile(x = x, probs = seq(0, 1, 1/n_bins)),
+      include.lowest = TRUE,
+      right = FALSE)
+}
+
+# results of undercover analysis
+undercover_res <- readRDS(paste0(result_dir,
+                                "undercover_grna_analysis/undercover_result_grp_1_0523_processed.rds")) |>
+  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF) |>
+  filter(!(Method %in% c("NB regression (no covariates)", 
+                           "NB regression (w/ covariates)", 
+                           "SCEPTRE (no covariates)"))) |>
+  dplyr::mutate(Method = forcats::fct_relevel(Method, "SCEPTRE", after = Inf)) |>
+  dplyr::filter(dataset %in% c("frangieh_ifn_gamma_gene", "papalexi_eccite_screen_gene"))
+
+# for two of the datasets, cut the effective sample size into four intervals; then, plot each method, faceting by effective sample size
+undercover_res_w_bin <- undercover_res |>
+  dplyr::group_by(dataset) |>
+  dplyr::mutate(n_nonzero_trt_bin = bin(n_nonzero_treatment, 4L))
+my_methods <- c("KS test", "MAST", "MIMOSCA", "t-test", "Seurat-Wilcox", "Seurat-NB", "SCEPTRE")
+my_values <- my_cols[names(my_cols) %in% my_methods]
+
+p_frangieh <- ggplot(data = undercover_res_w_bin |>
+                       dplyr::filter(dataset == "frangieh_ifn_gamma_gene"),
+                     mapping = aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-8, size = 0.55) +
   stat_qq_band() +
-  scale_x_reverse() +
-  scale_y_reverse() +
+  facet_grid(n_nonzero_trt_bin ~ dataset_rename) +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
   labs(x = "Expected null p-value", y = "Observed p-value") +
-  geom_abline(col = "black") +
-  my_theme +
-  ggtitle("gRNA presence/absence")
+  geom_abline(col = "black") + 
+  scale_color_manual(values = my_values) +
+  my_theme_no_legend
 
-p2 <- ggplot(data = data.frame(p_value = gene_res),
-             mapping = aes(y = p_value)) +
-  stat_qq_points(ymin = 1e-8, size = 0.8) +
+p_papalexi <- ggplot(data = undercover_res_w_bin |>
+                       dplyr::filter(dataset == "papalexi_eccite_screen_gene"),
+                     mapping = aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-8, size = 0.55) +
   stat_qq_band() +
-  scale_x_reverse() +
-  scale_y_reverse() +
+  facet_grid(n_nonzero_trt_bin ~ dataset_rename) +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
   labs(x = "Expected null p-value", y = "Observed p-value") +
-  geom_abline(col = "black") +
-  my_theme +
-  ggtitle("Gene expression")
+  geom_abline(col = "black") + 
+  scale_color_manual(values = my_values) +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 9),
+        legend.margin = margin(t = 0, unit = "cm")) +
+  guides(color = guide_legend(
+    override.aes = list(size = 2.5)))
+legend <- cowplot::get_legend(p_papalexi)
+p_papalexi <- p_papalexi + my_theme_no_legend + ylab("")
+p_combined <- cowplot::plot_grid(cowplot::plot_grid(p_frangieh, p_papalexi, ncol = 2),
+                                 legend, rel_heights = c(0.93, 0.07), nrow = 2)
 
-p_out <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, labels = "auto")
-
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s4/fig_s4.png")
-ggsave(filename = to_save_fp, plot = p_out, device = "png", scale = 1.2, width = 6, height = 2.5, dpi = 330)
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s4/fig_s4.png")
+ggsave(filename = to_save_fp, plot = p_combined, device = "png", scale = 1.1, width = 6.5, height = 7.0, dpi = 330)

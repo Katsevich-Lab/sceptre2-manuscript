@@ -16,7 +16,6 @@ conflicts_prefer(dplyr::filter)
 #################################################################
 # Set analysis parameters
 #################################################################
-
 reject_thresh <- 1e-5   # threshold for rejection of positive controls
 alpha <- 0.1            # target FWER level for negative controls
 max_false_reject <- 50  # maximum false rejections to display power
