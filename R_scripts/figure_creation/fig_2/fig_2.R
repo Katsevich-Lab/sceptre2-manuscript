@@ -26,7 +26,7 @@ shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"),
 source(shared_fig_script)
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 undercover_res <- readRDS(paste0(result_dir,
-                                 "undercover_grna_analysis/undercover_result_grp_1_0423_processed.rds")) |>
+                                 "undercover_grna_analysis/undercover_result_grp_1_0523_processed.rds")) |>
   filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF)
 resampling_res <- readRDS(paste0(result_dir, "resampling_distributions/seurat_resampling_at_scale_processed.rds")) |>

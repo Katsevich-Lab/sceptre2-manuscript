@@ -2,8 +2,8 @@ library(sceptre)
 library(ggplot2)
 fig_5_new_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_5_new/")
 papa_result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/discovery_analyses/")
-calibration_result <- readRDS(paste0(papa_result_dir, "papalexi_calibration_res.rds"))
-discovery_result <- readRDS(paste0(papa_result_dir, "papalexi_discovery_res.rds"))
+calibration_result <- readRDS(paste0(papa_result_dir, "papalexi_gene_calibration_res.rds"))
+discovery_result <- readRDS(paste0(papa_result_dir, "papalexi_gene_discovery_res.rds"))
 
 # plot calibration result
 calibration_plots <- plot_calibration_result(calibration_result = calibration_result, return_indiv_plots = TRUE)
@@ -33,10 +33,3 @@ ggsave(filename = paste0(fig_5_new_dir, "comparison_plot.png"), plot = compariso
        device = "png", scale = 1.2, width = 2.5, height = 2, dpi = 330)
 ggsave(filename = paste0(fig_5_new_dir, "volcano_plot.png"), plot = volcano_plot,
        device = "png", scale = 1.2, width = 2.5, height = 2, dpi = 330)
-
-# frangieh
-#calibration_result <- readRDS(paste0(papa_result_dir, "frangieh_control_calibration_res.rds"))
-#plot_calibration_result(calibration_result)
-#discovery_result <- readRDS("frangieh_discovery_res.rds")
-#compare_calibration_and_discovery_results(calibration_result, discovery_result)
-#nrow(calibration_result)
