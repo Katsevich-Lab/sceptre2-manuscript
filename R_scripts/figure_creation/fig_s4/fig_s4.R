@@ -52,9 +52,10 @@ p_papalexi <- ggplot(data = undercover_res_w_bin |>
   theme(legend.title = element_blank(),
         legend.position = "bottom",
         legend.text = element_text(size = 9),
-        legend.margin = margin(t = 0, unit = "cm")) +
+        legend.margin = margin(t = 0, unit = "cm"),
+        legend.key=element_blank()) +
   guides(color = guide_legend(
-    override.aes = list(size = 2.5)))
+    override.aes = list(size = 2.5, fill = NA)))
 legend <- cowplot::get_legend(p_papalexi)
 p_papalexi <- p_papalexi + my_theme_no_legend + ylab("")
 p_combined <- cowplot::plot_grid(cowplot::plot_grid(p_frangieh, p_papalexi, ncol = 2),
