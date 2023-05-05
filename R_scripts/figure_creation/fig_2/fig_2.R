@@ -336,8 +336,8 @@ p_f <- ggplot(data = to_plot_f |> dplyr::arrange(n_nonzero_trt_bin),
 # CREATE FIG
 ############
 fig <- cowplot::plot_grid(p_a, p_b,
-                          p_c, p_f,
-                          p_d, p_e, ncol = 2, labels = "auto", align = "vh", axis = "l")
+                          p_c, p_d,
+                          p_e, p_f, ncol = 2, labels = "auto", align = "vh", axis = "l")
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
                      "sceptre2-manuscript/R_scripts/figure_creation/fig_2/fig_2.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png",
