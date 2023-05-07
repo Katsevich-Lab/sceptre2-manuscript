@@ -1,86 +1,65 @@
-library(tidyverse)
+library(ggplot2)
 library(katlabutils)
-library(cowplot)
-library(ondisc)
-
-# load functions and data
-shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
+shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), 
+                            "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
-result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/undercover_grna_analysis/")
+
+# directory with results
+result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
+
+# results of undercover analysis
 undercover_res <- readRDS(paste0(result_dir,
-                                 "undercover_result_grp_1_0423_processed.rds")) |>
-  filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
-         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF,
-         Method %in% c("SCEPTRE", "SCEPTRE (no covariates)", "NB regression (w/ covariates)"))
-my_values <- my_cols[names(my_cols) %in% c("SCEPTRE", "SCEPTRE (no covariates)", "NB regression (w/ covariates)")]
+                                "undercover_grna_analysis/undercover_result_grp_1_0523_processed.rds")) |>
+  dplyr::filter(n_nonzero_treatment >= N_NONZERO_TREATMENT_CUTOFF,
+         n_nonzero_control >= N_NONZERO_CONTROL_CUTOFF) |>
+  dplyr::filter(!(Method %in% c("NB regression (no covariates)", 
+                           "NB regression (w/ covariates)", 
+                           "SCEPTRE (no covariates)"))) |>
+  dplyr::mutate(Method = forcats::fct_relevel(Method, "SCEPTRE", after = Inf)) |>
+  dplyr::filter(dataset %in% c("frangieh_ifn_gamma_gene", "papalexi_eccite_screen_gene"))
 
+# for two of the datasets, cut the effective sample size into four intervals; then, plot each method, faceting by effective sample size
+undercover_res_w_bin <- undercover_res |>
+  dplyr::group_by(dataset) |>
+  dplyr::mutate(n_nonzero_trt_bin = bin(n_nonzero_treatment, 4L))
+my_methods <- c("KS test", "MAST", "MIMOSCA", "t-test", "Seurat-Wilcox", "Seurat-NB", "SCEPTRE")
+my_values <- my_cols[names(my_cols) %in% my_methods]
 
-get_plots_for_dataset <- function(df_sub, tit, print_legend, legend_position = c(0.45, 0.85)) {
-  p_qq <- ggplot(data = df_sub, mapping = aes(y = p_value, col = Method)) +
-    stat_qq_points(ymin = 1e-8, size = 0.85) +
-    stat_qq_band() +
-    scale_x_continuous(trans = revlog_trans(10)) +
-    scale_y_continuous(trans = revlog_trans(10)) +
-    labs(x = "Expected null p-value", y = "Observed p-value") +
-    geom_abline(col = "black") +
-    ggtitle(tit) +
-    scale_color_manual(values = my_values)
-  
-  if (print_legend) {
-    p_qq <- p_qq +
-      my_theme +
-      theme(legend.title= element_blank(),
-            legend.position = legend_position,
-            legend.text=element_text(size = 9),
-            legend.margin=margin(t = 0, unit='cm')) +
-      guides(color = guide_legend(
-        keywidth = 0.0,
-        keyheight = 0.1,
-        default.unit = "inch",
-        override.aes = list(size = 2.5)))
-  } else {
-    p_qq <- p_qq + my_theme_no_legend
-  }
-  
-  n_bonf_rej <- df_sub |>
-    compute_n_bonf_rejections()
-  max_reject <- max(n_bonf_rej$n_reject)
-  n_bonf_rej <- n_bonf_rej |>
-    mutate(n_reject = ifelse(n_reject == 0, max_reject/50, n_reject))
-  
-  breaks_v <-  seq(0, max_reject, by = if (max_reject >= 7) 5 else 1)
-  p_bar <- n_bonf_rej |> ggplot2::ggplot(ggplot2::aes(x = Method, y = n_reject, fill = Method)) +
-    ggplot2::geom_col(col = "black") +
-    ylab("N Bonferoni rejections") +
-    xlab("Method") + my_theme_no_legend +
-    theme(axis.text.x = element_blank(),
-          plot.margin = margin(t = 5.5, r = 5.5, b = 5.5, l = 5.5, unit = "pt")) +
-    scale_y_continuous(breaks = breaks_v, expand = c(0, 0)) +
-    ggtitle("") +
-    scale_fill_manual(values = my_values)
-  
-  return(list(p_qq = p_qq, p_bar = p_bar))
-}
+p_frangieh <- ggplot(data = undercover_res_w_bin |>
+                       dplyr::filter(dataset == "frangieh_ifn_gamma_gene"),
+                     mapping = aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-8, size = 0.55) +
+  stat_qq_band() +
+  facet_grid(n_nonzero_trt_bin ~ dataset_rename) +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black") + 
+  scale_color_manual(values = my_values) +
+  my_theme_no_legend
 
-# 1.
-ifn_gama_plots <- get_plots_for_dataset(undercover_res |>
-                                          filter(dataset == "frangieh_ifn_gamma_gene"),
-                                        "Frangieh (IFN-\u03B3) neg. controls",
-                                        print_legend = FALSE)
+p_papalexi <- ggplot(data = undercover_res_w_bin |>
+                       dplyr::filter(dataset == "papalexi_eccite_screen_gene"),
+                     mapping = aes(y = p_value, col = Method)) +
+  stat_qq_points(ymin = 1e-8, size = 0.55) +
+  stat_qq_band() +
+  facet_grid(n_nonzero_trt_bin ~ dataset_rename) +
+  scale_x_continuous(trans = revlog_trans(10)) +
+  scale_y_continuous(trans = revlog_trans(10)) +
+  labs(x = "Expected null p-value", y = "Observed p-value") +
+  geom_abline(col = "black") + 
+  scale_color_manual(values = my_values) +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 9),
+        legend.margin = margin(t = 0, unit = "cm"),
+        legend.key=element_blank()) +
+  guides(color = guide_legend(
+    override.aes = list(size = 2.5, fill = NA)))
+legend <- cowplot::get_legend(p_papalexi)
+p_papalexi <- p_papalexi + my_theme_no_legend + ylab("")
+p_combined <- cowplot::plot_grid(cowplot::plot_grid(p_frangieh, p_papalexi, ncol = 2),
+                                 legend, rel_heights = c(0.93, 0.07), nrow = 2)
 
-# 2.
-papa_plots <- get_plots_for_dataset(undercover_res |> filter(dataset == "papalexi_eccite_screen_gene"),
-                                    "Papalexi (gene) neg. controls",
-                                    print_legend = TRUE,
-                                    legend_position = c(0.38, 0.83))
-
-fig <- cowplot::plot_grid(papa_plots$p_qq, papa_plots$p_bar,
-                          ifn_gama_plots$p_qq, ifn_gama_plots$p_bar,
-                          labels = c("a", "", "b", "", "c", "", "d", "", "e", "", "f", ""),
-                          rel_widths = c(.75, 0.25),
-                          ncol = 2, nrow = 2, align = "h")
-
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s4/fig_s4.png")
-ggsave(filename = to_save_fp, plot = fig, device = "png",
-       scale = 1.1, width = 4.0, height = 5, dpi = 330)
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s4/fig_s4.png")
+ggsave(filename = to_save_fp, plot = p_combined, device = "png", scale = 1.1, width = 6.5, height = 7.0, dpi = 330)

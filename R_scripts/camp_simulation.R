@@ -12,7 +12,7 @@ grna_targets <- lowmoi::get_target_assignments_via_max_op(grna_odm)
 
 # 2. get the gRNA group info
 my_grna <- "CUL3"
-grna_group_info <- sceptre2:::get_grna_group_info(grna_group_assignments = grna_targets,
+grna_group_info <- lowmoi:::get_grna_group_info(grna_group_assignments = grna_targets,
                                                   input_grna_groups = my_grna)
 idxs <- c(grna_group_info$grna_specific_idxs[[my_grna]],
           grna_group_info$grna_specific_idxs[["non-targeting"]])
@@ -57,28 +57,28 @@ run_simulation <- function(Y, idx_mat, Z, theta_hypothesized, n_sim = NULL, retu
       
       # extract z-scores
       if (i == 1 || !approx) {
-        z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
-                                                                        working_resid = fit$residuals,
-                                                                        w = fit$weights,
-                                                                        index_mat = idx_mat)
+        z_scores <- lowmoi:::run_glm_perm_score_test_with_ingredients(Z = Z,
+                                                                      working_resid = fit$residuals,
+                                                                      w = fit$weights,
+                                                                      index_mat = idx_mat)
         z_star <- z_scores[1]
         z_null <- z_scores[-1]
       } else {
-        z_star <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
-                                                                      working_resid = fit$residuals,
-                                                                      w = fit$weights,
-                                                                      index_mat = idx_mat[,1,drop = FALSE])
+        z_star <- lowmoi:::run_glm_perm_score_test_with_ingredients(Z = Z,
+                                                                    working_resid = fit$residuals,
+                                                                    w = fit$weights,
+                                                                    index_mat = idx_mat[,1,drop = FALSE])
       }
 
       # compute theoretical and empirical p-values
       p_theory <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
-      p_camp <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
+      p_camp <- lowmoi:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
       
       # finally, compute permutation
-      ts <- sceptre2:::low_level_permutation_test(y = y, index_mat = idx_mat)
+      ts <- lowmoi:::low_level_permutation_test(y = y, index_mat = idx_mat)
       t_star <- ts[1]
       t_null <- ts[-1]
-      p_perm <- sceptre2:::compute_empirical_p_value(t_star, t_null, "both")
+      p_perm <- lowmoi:::compute_empirical_p_value(t_star, t_null, "both")
       out_m[i,] <- c(p_theory = p_theory, p_camp = p_camp, p_perm = p_perm)
       if (i == 1) {
         resamp_dist[["camp_null"]] <- z_null
@@ -168,10 +168,10 @@ if (FALSE) {
   
   
   # 3. get null z-scores
-  z_score_time <- microbenchmark(z_scores <- sceptre2:::run_glm_perm_score_test_with_ingredients(Z = Z,
-                                                                                                 working_resid = fit$residuals,
-                                                                                                 w = fit$weights,
-                                                                                                 index_mat = idx_mat), times = 30, unit = "s") |> summary()
+  z_score_time <- microbenchmark(z_scores <- lowmoi:::run_glm_perm_score_test_with_ingredients(Z = Z,
+                                                                                               working_resid = fit$residuals,
+                                                                                               w = fit$weights,
+                                                                                               index_mat = idx_mat), times = 30, unit = "s") |> summary()
   z_star <- z_scores[1]
   z_null <- z_scores[-1]
   ks.test(z_scores, pnorm)
@@ -179,7 +179,7 @@ if (FALSE) {
   abline(v = z_star)
   
   p_theoretical <- 2 * pnorm(q = -abs(z_star), lower.tail = TRUE)
-  p_perm <- sceptre2:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
+  p_perm <- lowmoi:::compute_empirical_p_value(z_star = z_star, z_null = z_null, "both")
   
   # put the times into a data frame
   time_df <- data.frame(time = c(random_idx_time[["median"]], glm_time[["median"]], z_score_time[["median"]]),

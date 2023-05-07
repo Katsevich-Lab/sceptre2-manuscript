@@ -20,7 +20,6 @@ github_packs <- c("katsevich-lab/lowmoi",
                   "katsevich-lab/sceptre",
                   "katsevich-lab/katlabutils",
                   "katsevich-lab/sceptre",
-                  "timothy-barry/sceptre2",
                   "satijalab/seurat-data")
 
 for (pack in github_packs) p_install_gh(pack)
