@@ -22,3 +22,12 @@ resampling_res <- readRDS(paste0(sceptre2_results_dir,
 resampling_res_processed <- suppressWarnings(process_undercover_result(resampling_res, sample_size_df))
 saveRDS(object = resampling_res_processed, paste0(sceptre2_results_dir,
                                                   "resampling_distributions/seurat_resampling_at_scale_processed.rds"))
+
+# singleton discovery result
+singleton_discovery_res <- readRDS(paste0(sceptre2_results_dir,
+                                          "discovery_analyses/discovery_results_singleton_0523.rds")) |>
+  dplyr::rename("grna_id" = "grna_group")
+singleton_discovery_res_processed <- suppressWarnings(process_pc_result(singleton_discovery_res,
+                                                                        sample_size_df, singleton = TRUE))
+saveRDS(object = singleton_discovery_res_processed, paste0(sceptre2_results_dir,
+                                                           "discovery_analyses/discovery_results_singleton_processed_0523.rds"))
