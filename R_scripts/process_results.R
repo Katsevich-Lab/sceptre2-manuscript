@@ -16,6 +16,12 @@ pc_res_processed <- suppressWarnings(process_pc_result(pc_res, sample_size_df))
 saveRDS(object = pc_res_processed,
         file = paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_0523_processed.rds"))
 
+pc_res_sceptre_unfiltered <- readRDS(paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_sceptre_unfiltered_0523.rds"))
+pc_res_sceptre_unfiltered_processed <- suppressWarnings(process_pc_result(pc_res_sceptre_unfiltered, sample_size_df))
+saveRDS(object = pc_res_sceptre_unfiltered_processed,
+        file = paste0(sceptre2_results_dir, "positive_control_analysis/pc_results_sceptre_unfiltered_0523_processed.rds"))
+
+
 # resampling results
 resampling_res <- readRDS(paste0(sceptre2_results_dir,
                                  "resampling_distributions/seurat_resampling_at_scale.rds"))
