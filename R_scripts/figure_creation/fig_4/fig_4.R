@@ -302,10 +302,11 @@ qq_papalexi <- undercover_res |>
 
 # put the pieces together
 final_plot <- ggarrange(
-  ggarrange(qq_frangieh, qq_papalexi, nrow = 1),
+  # ggarrange(qq_frangieh, qq_papalexi, nrow = 1),
+  cowplot::plot_grid(qq_frangieh, qq_papalexi, nrow = 1, labels = c("a", "b")),
   as_ggplot(nt_table_g),
   as_ggplot(pc_table_g),
-  labels = "auto", 
+  labels = c("", "c", "d"), 
   heights = c(1.2, 1, 0.8),
   ncol = 1
 )
