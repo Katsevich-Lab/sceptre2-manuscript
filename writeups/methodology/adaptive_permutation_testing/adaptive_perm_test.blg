@@ -1,5 +1,0 @@
-[0] Config.pm:302> INFO - This is Biber 2.11
-[0] Config.pm:305> INFO - Logfile is 'adaptive_perm_test.blg'
-[35] biber-darwin:313> INFO - === Sun Dec  4, 2022, 15:45:16
-[201] Utils.pm:209> ERROR - Cannot find control file 'adaptive_perm_test.bcf'! - Did latex run successfully on your .tex file before you ran biber?
-[201] Biber.pm:114> INFO - ERRORS: 1
