@@ -125,7 +125,7 @@ p_b <- ggplot(data = resampling_res |> filter(p_rat < 10, p_rat > 1e-3, n_nonzer
         legend.title = element_blank(),
         legend.margin=margin(t = -0.3, unit='cm')) +
   ggtitle("Inflation of Wilcox. p-values") +
-  annotate("text", x = 0.014, y = 9.5, label = "Log(N treatment cells with expression + 1)", size = 3) +
+  annotate("text", x = 0.007, y = 9.5, label = "Log(Effective sample size + 1)", size = 3) +
   # annotate pair 1
   geom_segment(aes(x = pairs_to_annotate[1,"ks_stat"],
                    xend = pairs_to_annotate[1,"ks_stat"],
@@ -181,7 +181,7 @@ p_c <- ggplot(data = to_plot_c |> dplyr::arrange(n_nonzero_trt_bin),
   labs(x = "Expected null p-value", y = "Observed p-value") +
   geom_abline(col = "black") +
   my_theme +
-  annotate("text", x = 2e-2, y = 1e-7, label = "N treatment cells with expression", size = 3) +
+  annotate("text", x = 9e-2, y = 1e-7, label = "Effective sample size", size = 3) +
   theme(legend.position=c(0.12, 0.55),
         legend.margin=margin(t = -0.5, r = -0.5, unit = 'cm'),
         legend.title = element_blank()) +
@@ -271,8 +271,8 @@ my_labels <- c("NB regression (w/ covariates)", "NB regression (no covariates)")
 undercover_res_sub <- undercover_res |>
   filter(method %in% c("nb_regression_w_covariates", "nb_regression_no_covariates"),
          dataset == "papalexi_eccite_screen_gene",
-         n_nonzero_treatment >= 15,
-         n_nonzero_control >= 15)
+         n_nonzero_treatment >= 10,
+         n_nonzero_control >= 10)
 p_e <- undercover_res_sub |>
   ggplot(aes(y = p_value, col = Method)) +
   stat_qq_points(ymin = 1e-8, size = 0.8) +
@@ -320,7 +320,7 @@ p_f <- ggplot(data = to_plot_f |> dplyr::arrange(n_nonzero_trt_bin),
   labs(x = "Expected null p-value", y = "Observed p-value") +
   geom_abline(col = "black") +
   my_theme +
-  annotate("text", x = 2e-2, y = 1e-7, label = "N treatment cells with expression", size = 3) +
+  annotate("text", x = 9e-2, y = 1e-7, label = "Effective sample size", size = 3) +
   theme(legend.position=c(0.12, 0.55),
         legend.margin=margin(t = -0.5, r = -0.5, unit = 'cm'),
         legend.title = element_blank()) +
