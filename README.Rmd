@@ -171,7 +171,7 @@ Rscript ../R_scripts/get_dataset_statistical_details.R
 
 # Create the figures
 
-The final step is to create the figures. Issue the following commands.
+The final step is to create the figures. To do so issue the following commands.
 
 ```         
 # fig 1
@@ -197,3 +197,9 @@ Rscript ../R_scripts/figure_creation/fig_s7/fig_s7.R
 ```
 
 The script `bash/run_all.sh` runs the entire analysis from start to finish, from downloading and processing the raw data to creating the figures.
+
+Contact the authors if you seek help with reproducing an aspect of the analysis.
+
+-   Timothy (Tim) Barry: tbarry2\@andrew.cmu.edu
+
+-   Eugene (Gene) Katsevich: ekatsevi\@wharton.upenn.edu

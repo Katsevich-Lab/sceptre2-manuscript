@@ -94,9 +94,9 @@ Add the following commands to your `.Rprofile`.
 
 # Set up the analyses
 
-Navigate the `bash_scripts` directory of the `sceptre2-manuscript`
-repository. Execute the following command to create a Python virtual
-environment “called `py/lowmoi-venv`” and download the necessary Python
+Navigate to the `bash_scripts` subdirectory of the `sceptre2-manuscript`
+directory. Execute the following command to create a Python virtual
+environment called `py/lowmoi-venv` and download the necessary Python
 packages.
 
     cd bash_scripts
@@ -110,7 +110,7 @@ Next, install the required R packages.
     Rscript ../R_scripts/install_R_packages.R
 
 Finally, complete the rest of the setup, which consists of initializing
-the directory structure of the SCEPTRE2 data directory, initializing
+the directory structure of the SCEPTRE2 data directory, initializing the
 symbolic links, creating the synthetic data, performing quality control
 on the data, and computing sample sizes. The following code takes about
 20 minutes to execute.
@@ -189,7 +189,8 @@ fairly small and thus do not necessitate Nextflow pipelines.
 
 # Create the figures
 
-The final step is to create the figures. Issue the following commands.
+The final step is to create the figures. To do so issue the following
+commands.
 
     # fig 1
     Rscript ../R_scripts/figure_creation/fig_1/fig_1.R
@@ -215,3 +216,10 @@ The final step is to create the figures. Issue the following commands.
 The script `bash/run_all.sh` runs the entire analysis from start to
 finish, from downloading and processing the raw data to creating the
 figures.
+
+Contact the authors if you seek help with reproducing an aspect of the
+analysis.
+
+- Timothy (Tim) Barry: tbarry2@andrew.cmu.edu
+
+- Eugene (Gene) Katsevich: ekatsevi@wharton.upenn.edu
