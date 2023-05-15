@@ -50,23 +50,23 @@ qsub ../pipeline_launch_scripts/resampling_distributions/seurat_at_scale/seurat_
 # 12. Unfiltered SCEPTRE positive control analysis
 qsub ../pipeline_launch_scripts/positive_control/sceptre_unfiltered_pc_0523/pc_analysis.sh
 
-# 12. Process the Nextflow pipeline results
+# 13 Process the Nextflow pipeline results
 Rscript ../R_scripts/process_results.R
 
 ####################################
 # PART 3: RUN THE AUXILIARY ANALYSES
 ####################################
-# 13. run the analyses for figure s4
+# 14. run the analyses for figure s4
 Rscript ../R_scripts/fig_s4_analyses.R
 
-# 14. run the analyses for figure 5
+# 15. run the analyses for figure 5
 Rscript ../R_scripts/save_datasets_as_r_objects.R
 bash run_discovery_analyses.sh
 
-# 15. run the analysis for supplementary figure s5
+# 16. run the analysis for supplementary figure s5
 Rscript ../R_scripts/camp_simulation.R
 
-# 16. compute the dataset statistical details
+# 17. compute the dataset statistical details
 Rscript ../R_scripts/get_dataset_statistical_details.R
 
 ##########################
@@ -75,7 +75,7 @@ Rscript ../R_scripts/get_dataset_statistical_details.R
 # fig 1
 Rscript ../R_scripts/figure_creation/fig_1/fig_1.R
 # fig 2
-Rscript ../R_scripts/figure_creation/fig_2/fig_2.R # UPDATE!
+Rscript ../R_scripts/figure_creation/fig_2/fig_2.R
 # fig 3
 Rscript ../R_scripts/figure_creation/fig_3/fig_3.R
 # fig 4
