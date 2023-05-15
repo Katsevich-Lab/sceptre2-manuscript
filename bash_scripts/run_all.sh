@@ -47,11 +47,14 @@ qsub ../pipeline_launch_scripts/positive_control/pc_0523/pc_analysis.sh
 # 11. MW resampling statistics analysis
 qsub ../pipeline_launch_scripts/resampling_distributions/seurat_at_scale/seurat_at_scale.sh
 
+# 12. Unfiltered SCEPTRE positive control analysis
+qsub ../pipeline_launch_scripts/positive_control/sceptre_unfiltered_pc_0523/pc_analysis.sh
+
 # 12. Process the Nextflow pipeline results
 Rscript ../R_scripts/process_results.R
 
 ####################################
-# PART 3: RUN THE AUXILIARY ANALYSES 
+# PART 3: RUN THE AUXILIARY ANALYSES
 ####################################
 # 13. run the analyses for figure s4
 Rscript ../R_scripts/fig_s4_analyses.R
@@ -87,3 +90,5 @@ Rscript ../R_scripts/figure_creation/fig_s4/fig_s4.R
 Rscript ../R_scripts/figure_creation/fig_s5/fig_s5.R
 # fig s6
 Rscript ../R_scripts/figure_creation/fig_s6/fig_s6.R
+# fig s7
+Rscript ../R_scripts/figure_creation/fig_s7/fig_s7.R

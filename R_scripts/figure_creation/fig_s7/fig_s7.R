@@ -3,12 +3,11 @@ pc_res <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"),
   readRDS() |> na.omit()
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), 
                             "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
-source(shared_fig_script)
-
 library(ggplot2)
 library(dplyr)
 library(katlabutils)
 library(cowplot)
+source(shared_fig_script)
 reject_thresh <- 1e-5 
 conflicts_prefer(dplyr::filter)
 N_NONZERO_TREATMENT_CUTOFF <- 7
