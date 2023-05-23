@@ -26,5 +26,5 @@ data_method_queue_matrix = [
 
 optional_args = [
 "", // sceptre_orig
-"use_batch:FALSE"  // weissman_method
+"use_batch=FALSE"  // weissman_method
 ]
