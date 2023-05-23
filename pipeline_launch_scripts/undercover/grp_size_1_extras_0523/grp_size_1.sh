@@ -14,6 +14,7 @@ nextflow run Katsevich-Lab/undercover-grna-pipeline -r main \
  --partition_count "1" \
  --is_partition_count_frac "false" \
  -profile standard \
+ -genes_to_subsample 10 \
  -with-trace
 
 # is_partition_count_frac = false for trial
