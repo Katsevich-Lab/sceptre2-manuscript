@@ -1,0 +1,3 @@
+task_id	name	status	exit	time	realtime
+1	obtain_dataset_ntc_tuples	COMPLETED	0	-	9s
+3	run_method (papalexi/eccite_screen/gene+weissman_method)	FAILED	-	-	-
