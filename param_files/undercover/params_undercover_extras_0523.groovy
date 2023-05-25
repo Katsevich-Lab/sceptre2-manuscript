@@ -10,7 +10,7 @@ col_names = ["sceptre_orig",
              "weissman_method"]
 
 data_method_ram_matrix = [
-[15, 53], // frangieh/ifn_gamma/gene
+[30, 53], // frangieh/ifn_gamma/gene
 [15, 22],  // papalexi/eccite_screen/gene
 [15, 5]   // papalexi/eccite_screen/protein
 ]
