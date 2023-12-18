@@ -5,8 +5,7 @@ Timothy Barry, Kaishu Mason, Kathryn Roeder, Eugene Katsevich
 
 This repository contains code to reproduce all analyses reported in the
 paper “Robust differential expression testing for single-cell CRISPR
-screens at low multiplicty of infection” by Barry et al. 2023. This
-document provides instructions for reproducing the analyses.
+screens at low multiplicty of infection” by Barry et al. 2023.
 
 <!-- Data documentation is available [here](https://github.com/Katsevich-Lab/sceptre2-manuscript/blob/main/docs/data_doc.pdf). -->
 
