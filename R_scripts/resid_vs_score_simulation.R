@@ -2,6 +2,9 @@
 # NB regression model with two covariates
 # over draws, randomly vary (1) size parameter and (2) treatment coefficient (null vs. alternative)
 
+source(paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R"))
+set.seed(5)
+
 library(camp)
 library(katlabutils)
 conflicts_prefer(dplyr::filter)
@@ -125,7 +128,10 @@ p1 <- ggplot(m, aes(x = p_resid, y = p_lrt, col = label)) +
   xlab("p (perm. test w/ residual statistic)") +
   ylab("p (GLM likelihood ratio test)") +
   scale_color_manual(values = cols) +
-  theme(legend.position = "bottom", legend.title = element_blank())
+  my_theme +
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  ggtitle("Residual statistic")
+  
 legend <- get_legend(p1)
 p1 <- p1 + theme(legend.position = "none")
 
@@ -137,6 +143,10 @@ p2 <- ggplot(m, aes(x = p_score, y = p_lrt, col = null_true)) +
   geom_abline(slope = 1, intercept = 0) +
   xlab("p (perm. test w/ score statistic)") +
   ylab("p (GLM likelihood ratio test)") +
-  scale_color_manual(values = cols) + theme(legend.position = "none")
+  scale_color_manual(values = cols) + my_theme_no_legend +
+  ggtitle("Score statistic")
 
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/figs_revision/resid_vs_score_simulation.png")
 p_final <- plot_grid(plot_grid(p1, p2, nrow = 1), legend, nrow = 2, rel_heights = c(0.9, 0.1))
+ggsave(plot = p_final, filename = to_save_fp, device = "png",
+       scale = 0.9, width = 6.5, height = 3.5, dpi = 330)
