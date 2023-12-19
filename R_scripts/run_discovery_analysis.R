@@ -32,7 +32,6 @@ res <- run_sceptre_lowmoi(response_matrix = l$response_matrix,
                           formula_object = l$formula_object,
                           response_grna_group_pairs = l$response_grna_group_pairs,
                           calibration_check = calibration_check)
-
 gc() |> invisible()
 
 

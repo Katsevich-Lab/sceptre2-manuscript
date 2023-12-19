@@ -33,4 +33,3 @@ python -m pip install matplotlib
 python -m pip install seaborn
 python -m pip install numexpr
 python -m pip install requests
-

@@ -1,6 +1,6 @@
 library(ondisc)
 sceptre2_data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
-papers <- c("frangieh", "liscovitch",  "papalexi", "schraivogel", "simulated")
+papers <- c("frangieh",  "papalexi", "schraivogel", "simulated")
 
 # This script performs cell-wise QC, among other operations, on low MOI data.
 # We (i) restrict attention to cells that received a single grna (as determined by the original authors) and
