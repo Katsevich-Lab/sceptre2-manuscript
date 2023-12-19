@@ -90,8 +90,8 @@ m <- m |>
                 null_true = (null_true == 1))
 
 # fit linear models
-fit_score <- lm(formula = p_score_trans ~ p_lrt_trans + 0, data = m)
-fit_resid <- lm(formula = p_resid_trans ~ p_lrt_trans + 0, data = m)
+fit_score <- lm(formula = p_score_trans ~ p_lrt_trans, data = m)
+fit_resid <- lm(formula = p_resid_trans ~ p_lrt_trans, data = m)
 
 # apply bh
 fdr_level <- 0.1
@@ -119,6 +119,7 @@ time_result_df <- m |> select(resid_time, score_time) |>
 cols <- c("deepskyblue4", "firebrick2")
 m <- m |> mutate(label = factor(x = null_true, levels = c(FALSE, TRUE),
                                 labels = c("Alternative true", "Null true")))
+
 p1 <- ggplot(m, aes(x = p_resid, y = p_lrt, col = label)) + 
   geom_point(size = 0.9) +
   theme_bw() +
