@@ -69,6 +69,9 @@ Rscript ../R_scripts/camp_simulation.R
 # 17. compute the dataset statistical details
 Rscript ../R_scripts/get_dataset_statistical_details.R
 
+# 18. run residual vs score statistic simulation
+Rscript ../run_resid_vs_score_simulation.R
+
 ##########################
 # PART 5: MAKE THE FIGURES
 ##########################

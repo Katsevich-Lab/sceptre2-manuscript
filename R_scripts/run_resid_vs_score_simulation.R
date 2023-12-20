@@ -1,10 +1,7 @@
 # simulation study # 2: comparing score statistic to mean over residuals statistic
 # NB regression model with two covariates
 # over draws, randomly vary (1) size parameter and (2) treatment coefficient (null vs. alternative)
-
-source(paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R"))
 set.seed(5)
-
 library(camp)
 library(katlabutils)
 conflicts_prefer(dplyr::filter)
@@ -82,21 +79,17 @@ for (i in seq(1, n_rep)) {
              score_time = glm_fit_time + score_time)
 }
 
-# process result data frame
+# process result data frame and save
 m <- m |>
   dplyr::mutate(p_resid_trans = -log(p_resid),
                 p_score_trans = -log(p_score),
                 p_lrt_trans = -log(p_lrt),
                 null_true = (null_true == 1))
 
-# fit linear models
-fit_score <- lm(formula = p_score_trans ~ p_lrt_trans, data = m)
-fit_resid <- lm(formula = p_resid_trans ~ p_lrt_trans, data = m)
-
 # apply bh
 fdr_level <- 0.1
 n_nonnull <- sum(!m$null_true)
-statistical_result_df <- m |> select(p_resid, p_score, p_lrt, null_true) |> 
+summary_df <- m |> select(p_resid, p_score, p_lrt, null_true) |> 
   pivot_longer(cols = c("p_resid", "p_score", "p_lrt"),
                names_to = "method", values_to = "p_val") |>
   group_by(method) |>
@@ -115,39 +108,6 @@ time_result_df <- m |> select(resid_time, score_time) |>
             upper_ci = m_resid_time + 1.96 * sd(time)/sqrt(n_rep),
             lower_ci = m_resid_time - 1.96 * sd(time)/sqrt(n_rep))
 
-# make plots
-cols <- c("deepskyblue4", "firebrick2")
-m <- m |> mutate(label = factor(x = null_true, levels = c(FALSE, TRUE),
-                                labels = c("Alternative true", "Null true")))
-
-p1 <- ggplot(m, aes(x = p_resid, y = p_lrt, col = label)) + 
-  geom_point(size = 0.9) +
-  theme_bw() +
-  scale_x_continuous(trans = revlog_trans(base = 10)) +
-  scale_y_continuous(trans = revlog_trans(base = 10)) +
-  geom_abline(slope = 1, intercept = 0) +
-  xlab("p (perm. test w/ residual statistic)") +
-  ylab("p (GLM likelihood ratio test)") +
-  scale_color_manual(values = cols) +
-  my_theme +
-  theme(legend.position = "bottom", legend.title = element_blank()) +
-  ggtitle("Residual statistic")
-  
-legend <- get_legend(p1)
-p1 <- p1 + theme(legend.position = "none")
-
-p2 <- ggplot(m, aes(x = p_score, y = p_lrt, col = null_true)) + 
-  geom_point(size = 0.9) +
-  theme_bw() +
-  scale_x_continuous(trans = revlog_trans(base = 10)) +
-  scale_y_continuous(trans = revlog_trans(base = 10)) +
-  geom_abline(slope = 1, intercept = 0) +
-  xlab("p (perm. test w/ score statistic)") +
-  ylab("p (GLM likelihood ratio test)") +
-  scale_color_manual(values = cols) + my_theme_no_legend +
-  ggtitle("Score statistic")
-
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/figs_revision/resid_vs_score_simulation.png")
-p_final <- plot_grid(plot_grid(p1, p2, nrow = 1), legend, nrow = 2, rel_heights = c(0.9, 0.1))
-ggsave(plot = p_final, filename = to_save_fp, device = "png",
-       scale = 0.9, width = 6.5, height = 3.5, dpi = 330)
+f_p <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/score_vs_resid_sim.rds")
+to_save <- list(result_df = m, summary_df = summary_df, time_result_df = time_result_df)
+saveRDS(object = to_save, file = f_p)
