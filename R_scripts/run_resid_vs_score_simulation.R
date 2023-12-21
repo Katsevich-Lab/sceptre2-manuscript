@@ -1,6 +1,8 @@
 # simulation study # 2: comparing score statistic to mean over residuals statistic
 # NB regression model with two covariates over draws, randomly vary (1) size parameter
 # and (2) treatment coefficient (null vs. alternative).
+args <- commandArgs(trailingOnly = TRUE)
+
 library(camp)
 library(tidyverse)
 library(rlecuyer)
