@@ -52,14 +52,14 @@ sceptre_object <- sceptre_object |> run_qc(p_mito_threshold = 0.1)
 # run the calibration check
 calibration_check_time <- system.time(
   sceptre_object <- sceptre_object |>
-    run_calibration_check(parallel = TRUE, n_processors = 3) 
+    run_calibration_check(parallel = TRUE, n_processors = 4) 
 )[["elapsed"]]
 # run the positive control analysis
-sceptre_object <- sceptre_object |> run_power_check(parallel = TRUE, n_processors = 3)
+sceptre_object <- sceptre_object |> run_power_check(parallel = TRUE, n_processors = 4)
 # run the discovery analysis
 discovery_analysis_time <- system.time(
   sceptre_object <- sceptre_object |>
-    run_discovery_analysis(parallel = TRUE, n_processors = 3)
+    run_discovery_analysis(parallel = TRUE, n_processors = 4)
 )[["elapsed"]]
 
 # obtain the calibration check and discovery analysis results

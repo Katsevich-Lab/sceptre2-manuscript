@@ -1,8 +1,6 @@
-####################################################################
-# The purpose of figures s8 and s9 is to compare the score statistic
-# against the residual test statistic on real and simulated data.
-####################################################################
-# load packages
+###########################
+# PLOT 2: REAL DATA RESULTS
+###########################
 library(tidyverse); conflicts_prefer(dplyr::filter)
 library(katlabutils)
 library(cowplot)
@@ -12,58 +10,11 @@ source(paste0(.get_config_path("LOCAL_CODE_DIR"),
               "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R"))
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
-############################
-# PLOT 1: SIMULATION RESULTS
-############################
-# load simulation result, do basic preprocessing
-simulation_result <- paste0(sceptre2_dir, "results/extra_analyses/score_vs_resid_sim.rds") |> readRDS()
-cols <- c("deepskyblue4", "firebrick2")
-simulation_result <- simulation_result$result_df |>
-  mutate(label = factor(x = null_true, levels = c(FALSE, TRUE),
-                        labels = c("Alternative true", "Null true")))
-
-fit_1 <- lm(p_lrt_trans ~ p_resid_trans, data = simulation_result)
-p1 <- ggplot(simulation_result, aes(x = p_resid, y = p_lrt, col = label)) + 
-  geom_point(size = 0.9) +
-  theme_bw() +
-  scale_x_continuous(trans = revlog_trans(base = 10)) +
-  scale_y_continuous(trans = revlog_trans(base = 10)) +
-  geom_abline(slope = 1, intercept = 0) +
-  xlab("p (perm. test w/ residual statistic)") +
-  ylab("p (GLM-based LRT)") +
-  scale_color_manual(values = cols) +
-  theme(legend.position = "bottom", legend.title = element_blank()) +
-  geom_abline(intercept = fit_1$coefficients[1], slope = fit_1$coefficients[2],
-              col = "darkorange", linetype = "dashed")
-legend <- get_legend(p1)
-p1 <- p1 + my_theme_no_legend
-
-fit_2 <- lm(p_lrt_trans ~ p_score_trans, data = simulation_result)
-p2 <- ggplot(simulation_result, aes(x = p_score, y = p_lrt, col = null_true)) + 
-  geom_point(size = 0.9) +
-  theme_bw() +
-  scale_x_continuous(trans = revlog_trans(base = 10)) +
-  scale_y_continuous(trans = revlog_trans(base = 10)) +
-  geom_abline(slope = 1, intercept = 0) +
-  xlab("p (perm. test w/ score statistic)") +
-  ylab("p (GLM-based LRT)") +
-  scale_color_manual(values = cols) + my_theme_no_legend +
-  geom_abline(intercept = fit_2$coefficients[1], slope = fit_2$coefficients[2],
-              col = "darkorange", linetype = "dashed")
-p_final <- plot_grid(plot_grid(p1, p2, nrow = 1, labels = "auto"), legend, nrow = 2, rel_heights = c(0.9, 0.1))
-to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s8_s9/fig_s8.png")
-ggsave(plot = p_final, filename = to_save_fp, device = "png",
-       scale = 0.9, width = 6.5, height = 3.5, dpi = 330)
-
-###########################
-# PLOT 2: REAL DATA RESULTS
-###########################
 # function for analyzing discovery results
 analyze_discovery_results <- function(dataset) {
   # set file paths
-  full_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/", dataset, "_full_stat")
-  resid_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/", dataset, "_resid_stat")
+  full_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/with_qc/", dataset, "_full_stat")
+  resid_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/with_qc/", dataset, "_resid_stat")
   
   # define several functions
   # define several functions
@@ -91,30 +42,34 @@ analyze_discovery_results <- function(dataset) {
   # load combined data frames
   combined_calib_check_df <- obtain_combined_df("run_calibration_check", full_base_dir, resid_base_dir)
   combined_power_check_df <- obtain_combined_df("run_power_check", full_base_dir, resid_base_dir)
-  combined_discovery_analysis_df <- obtain_combined_df("run_discovery_analysis", full_base_dir, resid_base_dir)
-
+  combined_discovery_analysis_df <- obtain_combined_df("run_discovery_analysis", full_base_dir, resid_base_dir) |>
+    dplyr::filter(response_id != grna_target)
+  
   # create plot
+  my_breaks <- 10^(seq(from = 0, to = -6, by = -2))
   p1 <- ggplot(clip_result_df(combined_calib_check_df),
                aes(y = p_value_full_stat, x = p_value_resid_stat)) +
-    geom_point(size = 0.9, col = "indianred2", alpha = 0.7) +
+    geom_point(size = 0.7, col = "indianred2", alpha = 0.7) +
     theme_bw() +
-    scale_x_continuous(trans = revlog_trans(base = 10)) +
-    scale_y_continuous(trans = revlog_trans(base = 10)) +
+    scale_x_continuous(trans = revlog_trans(base = 10), breaks = my_breaks) +
+    scale_y_continuous(trans = revlog_trans(base = 10), breaks = my_breaks) +
     geom_abline(slope = 1, intercept = 0) +
-    ylab("p (score statistic)") +
-    xlab("p (resid statistic)") +
+    ylab("p (perm. score statistic)") +
+    xlab("p (perm. resid statistic)") +
     my_theme +
     ggtitle("Negative control pairs")
   
-  p2 <- ggplot(combined_power_check_df |> na.omit(),
+  my_breaks <- 10^(seq(from = 0, to = -200, by = -20))
+  p2 <- ggplot(combined_power_check_df |> na.omit() |>
+                 filter(p_value_full_stat > 1e-100, p_value_resid_stat > 1e-100),
                aes(y = p_value_full_stat, x = p_value_resid_stat)) +
-    geom_point(col = "mediumseagreen") +
+    geom_point(size = 0.9, col = "mediumseagreen") +
     theme_bw() +
-    scale_x_continuous(trans = revlog_trans(base = 10)) +
-    scale_y_continuous(trans = revlog_trans(base = 10)) +
+    scale_x_continuous(trans = revlog_trans(base = 10), breaks = my_breaks) +
+    scale_y_continuous(trans = revlog_trans(base = 10), breaks = my_breaks) +
     geom_abline(slope = 1, intercept = 0) +
-    ylab("p (score statistic)") +
-    xlab("p (resid statistic)") +
+    ylab("p (perm. score statistic)") +
+    xlab("p (perm. resid statistic)") +
     my_theme +
     ggtitle("Positive control pairs")
   
@@ -123,11 +78,11 @@ analyze_discovery_results <- function(dataset) {
                aes(x = p_value_resid_stat, y = p_value_full_stat)) +
     geom_point(size = 0.9, col = "dodgerblue3", alpha = 0.7) +
     theme_bw() +
-    scale_x_continuous(trans = revlog_trans(base = 10)) +
-    scale_y_continuous(trans = revlog_trans(base = 10)) +
+    scale_x_continuous(trans = revlog_trans(base = 10), breaks = my_breaks) +
+    scale_y_continuous(trans = revlog_trans(base = 10), breaks = my_breaks) +
     geom_abline(slope = 1, intercept = 0) +
-    xlab("p (resid statistic)") +
-    ylab("p (score statistic)") +
+    xlab("p (perm. resid statistic)") +
+    ylab("p (perm. score statistic)") +
     my_theme +
     ggtitle("Discovery pairs")
   
@@ -151,7 +106,7 @@ analyze_discovery_results <- function(dataset) {
       reframe(percent_change = 100 * (n_reject[method == "p_value_full_stat"]/n_reject[method == "p_value_resid_stat"] - 1))
     return(list(n_rejections_df = n_rejections_df, percent_change_df = percent_change_df))    
   }
-
+  
   # obtain the running times
   resid_running_time <- readRDS(paste0(resid_base_dir, "/running_times.rds"))/(60^2)
   full_running_time <- readRDS(paste0(full_base_dir, "/running_times.rds"))/(60^2)
@@ -159,15 +114,21 @@ analyze_discovery_results <- function(dataset) {
   rownames(running_time_matrix) <- c("calibration_check", "discovery_analysis")
   colnames(running_time_matrix) <- c("resid", "full")
   
+  # determine proportion of pairs for which score yields smaller p-value than residuals
+  frac_score_more_signif <- combined_power_check_df |> na.omit() |>
+    mutate(p_value_full_stat < 0.05, p_value_resid_stat < 0.05) |>
+    mutate(score_more_signif = p_value_full_stat < p_value_resid_stat) |>
+    pull(score_more_signif) |> mean()
+  
   # return all
   list(plot = p_final, running_time_matrix = running_time_matrix,
        n_rejections_calib = comute_n_rejections(combined_calib_check_df),
-       n_rejections_discovery = comute_n_rejections(combined_discovery_analysis_df))
+       n_rejections_discovery = comute_n_rejections(combined_discovery_analysis_df),
+       frac_score_more_signif = frac_score_more_signif)
 }
 
 papalexi_res <- analyze_discovery_results("papalexi")
 frangieh_res <- analyze_discovery_results("frangieh")
-
-#to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-#                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s8_s9/fig_s9.png")
-#ggsave(filename = to_save_fp, plot = p_final, device = "png", width = 6, height = 5, dpi = 330)
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s9/fig_s9.png")
+ggsave(filename = to_save_fp, plot = frangieh_res$plot, device = "png", scale = 1.0, width = 6.5, height = 5.25, dpi = 330)
