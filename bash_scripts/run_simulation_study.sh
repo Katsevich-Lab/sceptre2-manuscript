@@ -1,0 +1,1 @@
+qsub -q short.q -t 1-500 run_simulation_study_helper.sh

@@ -1,12 +1,17 @@
 # simulation study # 2: comparing score statistic to mean over residuals statistic
-# NB regression model with two covariates
-# over draws, randomly vary (1) size parameter and (2) treatment coefficient (null vs. alternative)
-set.seed(5)
+# NB regression model with two covariates over draws, randomly vary (1) size parameter
+# and (2) treatment coefficient (null vs. alternative).
 library(camp)
-library(katlabutils)
-conflicts_prefer(dplyr::filter)
 library(tidyverse)
-library(cowplot)
+library(rlecuyer)
+n_outer_rep <- 500
+proc_id <- as.integer(args[1])
+
+# seed setting
+.lec.SetPackageSeed(4) |> invisible()
+snames <- as.character(seq(1, n_outer_rep))
+.lec.CreateStream(snames) |> invisible()
+.lec.CurrentStream(snames[proc_id]) |> invisible()
 
 # define the parameters that control the simulation
 gamma <- c(-0.6, 0.8, 0.9)
@@ -31,13 +36,17 @@ covariate_matrix_intercept_free_x_free <- covariate_matrix[,c(-1, -4)]
 permutations <- permute_bernoulli_treatment_vector(x)
 
 # generate results matrix
-m <- as.data.frame(matrix(nrow = n_rep, ncol = 6))
-colnames(m) <- c("p_resid", "p_score", "p_lrt", "null_true", "resid_time", "score_time")
+colnames <- c("p_resid", "p_score", "p_lrt", "null_true", "resid_time", "score_time", "lrt_time")
+m <- as.data.frame(matrix(nrow = n_rep, ncol = 7))
+colnames(m) <- colnames
+
+# sample the runs under the alternative hypothesis
+null_idxs <- sample(seq(1, n_rep), size = frac_null * n_rep) |> sort()
 
 for (i in seq(1, n_rep)) {
   if (i %% 5 == 0) print(i)
   theta <- runif(1, 0.1, 5)
-  null_true <- as.logical(rbinom(1, 1, frac_null))
+  null_true <- i %in% null_idxs
   beta <- c(0.9, 0.1, 0.3, if (null_true) 0.0 else 0.1)
   family_object <- MASS::negative.binomial(theta = theta)
   y <- generate_glm_data(
@@ -68,46 +77,58 @@ for (i in seq(1, n_rep)) {
   })[["elapsed"]]
   
   # compute a standard GLM Wald p-value
-  fit_full <- glm(
-    y ~ covariate_matrix_intercept_free,
-    family = family_object,
-  )
-  lrt_test <- anova(fit_reduced, fit_full, test = "Chisq")
-  p_lrt <- lrt_test$`Pr(>Chi)`[2]
-  m[i,] <- c(p_resid = p_resid, p_score = p_score, p_lrt = p_lrt,
-             null_true = null_true, resid_time = glm_fit_time + resid_time,
-             score_time = glm_fit_time + score_time)
+  lrt_time <- system.time({
+    fit_full <- glm(
+      y ~ covariate_matrix_intercept_free,
+      family = family_object,
+    )
+    lrt_test <- anova(fit_reduced, fit_full, test = "Chisq")
+    p_lrt <- lrt_test$`Pr(>Chi)`[2]
+  })[["elapsed"]]
+  
+  m[i,] <- c(p_resid = p_resid,
+             p_score = p_score,
+             p_lrt = p_lrt,
+             null_true = null_true,
+             resid_time = glm_fit_time + resid_time,
+             score_time = glm_fit_time + score_time,
+             lrt_time = glm_fit_time + lrt_time)
 }
+LOCAL_SCEPTRE2_DATA_DIR <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
+dir_to_save <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/extra_analyses/resid_vs_score_sim/")
+if (!dir.exists(dir_to_save)) dir.create(dir_to_save, recursive = TRUE)
+saveRDS(object = m,
+        file = paste0(dir_to_save, "raw_result_", proc_id, ".rds"))
 
-# process result data frame and save
-m <- m |>
-  dplyr::mutate(p_resid_trans = -log(p_resid),
-                p_score_trans = -log(p_score),
-                p_lrt_trans = -log(p_lrt),
-                null_true = (null_true == 1))
-
-# apply bh
-fdr_level <- 0.1
-n_nonnull <- sum(!m$null_true)
-summary_df <- m |> select(p_resid, p_score, p_lrt, null_true) |> 
-  pivot_longer(cols = c("p_resid", "p_score", "p_lrt"),
-               names_to = "method", values_to = "p_val") |>
-  group_by(method) |>
-  mutate(p_adj = p.adjust(p_val, method = "BH"), signif = p_adj < fdr_level) |>
-  filter(signif) |>
-  summarize(n_total_discoveries = dplyr::n(),
-            n_false_discoveries = sum(null_true))
-
-# assess mean running time
-time_result_df <- m |> select(resid_time, score_time) |>
-  pivot_longer(cols = c("resid_time", "score_time"),
-               names_to = "method", values_to = "time") |>
-  group_by(method) |>
-  summarize(m_resid_time = mean(time), 
-            m_score_time = mean(time),
-            upper_ci = m_resid_time + 1.96 * sd(time)/sqrt(n_rep),
-            lower_ci = m_resid_time - 1.96 * sd(time)/sqrt(n_rep))
-
-f_p <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/score_vs_resid_sim.rds")
-to_save <- list(result_df = m, summary_df = summary_df, time_result_df = time_result_df)
-saveRDS(object = to_save, file = f_p)
+if (FALSE) {
+  # process result data frame and save
+  m <- m |>
+    dplyr::mutate(p_resid_trans = -log(p_resid),
+                  p_score_trans = -log(p_score),
+                  p_lrt_trans = -log(p_lrt),
+                  null_true = (null_true == 1))
+  # apply bh
+  fdr_level <- 0.1
+  n_nonnull <- sum(!m$null_true)
+  summary_df <- m |> select(p_resid, p_score, p_lrt, null_true) |> 
+    pivot_longer(cols = c("p_resid", "p_score", "p_lrt"),
+                 names_to = "method", values_to = "p_val") |>
+    group_by(method) |>
+    mutate(p_adj = p.adjust(p_val, method = "BH"), signif = p_adj < fdr_level) |>
+    filter(signif) |>
+    summarize(n_total_discoveries = dplyr::n(),
+              n_false_discoveries = sum(null_true))
+  
+  # assess mean running time
+  time_result_df <- m |> select(resid_time, score_time, lrt_time) |>
+    pivot_longer(cols = c("resid_time", "score_time", "lrt_time"),
+                 names_to = "method", values_to = "time") |>
+    group_by(method) |>
+    summarize(m_time = mean(time), 
+              upper_ci = m_time + 1.96 * sd(time)/sqrt(n_rep),
+              lower_ci = m_time - 1.96 * sd(time)/sqrt(n_rep))
+  
+  f_p <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/score_vs_resid_sim.rds")
+  to_save <- list(result_df = m, summary_df = summary_df, time_result_df = time_result_df)
+  saveRDS(object = to_save, file = f_p) 
+}
