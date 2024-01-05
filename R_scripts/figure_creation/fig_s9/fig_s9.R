@@ -11,12 +11,11 @@ source(paste0(.get_config_path("LOCAL_CODE_DIR"),
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
 # function for analyzing discovery results
-analyze_discovery_results <- function(dataset) {
+analyze_discovery_results <- function(dataset, with_qc = TRUE) {
   # set file paths
-  full_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/with_qc/", dataset, "_full_stat")
-  resid_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/with_qc/", dataset, "_resid_stat")
+  full_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/", if (with_qc) "with_qc/" else "no_qc/", dataset, "_full_stat")
+  resid_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/", if (with_qc) "with_qc/" else "no_qc/", dataset, "_resid_stat")
   
-  # define several functions
   # define several functions
   join_result_dfs <- function(full_stat_df, resid_stat_df) {
     signif_present <- "significant" %in% colnames(full_stat_df)

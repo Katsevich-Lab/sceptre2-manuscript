@@ -68,7 +68,7 @@ for (i in seq(1, n_rep)) {
   
   # run residual precomputation and compute residual p-value
   resid_time <- system.time({
-    precomputation_residual <- run_resid_precomputation(fit_reduced)
+    precomputation_residual <- run_resid_precomputation(fit_reduced, type = "standardized")
     p_resid <- run_perm_test_resid_stat_binary_trt(permutations, precomputation_residual)$p
   })[["elapsed"]]
   
@@ -96,6 +96,7 @@ for (i in seq(1, n_rep)) {
              score_time = glm_fit_time + score_time,
              lrt_time = glm_fit_time + lrt_time)
 }
+
 LOCAL_SCEPTRE2_DATA_DIR <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 dir_to_save <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/extra_analyses/resid_vs_score_sim/")
 if (!dir.exists(dir_to_save)) dir.create(dir_to_save, recursive = TRUE)

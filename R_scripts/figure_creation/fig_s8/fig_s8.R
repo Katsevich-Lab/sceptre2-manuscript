@@ -39,9 +39,11 @@ stat_summary_df <- result_df |> select(p_resid, p_score, p_lrt, null_true, proc_
   filter(signif) |>
   summarize(n_total_discoveries = dplyr::n(),
             n_false_discoveries = sum(null_true),
-            fdp = n_false_discoveries/n_total_discoveries) |>
-  summarize(mean_fdp = mean(fdp),
-            mean_n_discoveries = mean(n_total_discoveries))
+            fdp = n_false_discoveries/n_total_discoveries)
+
+stat_summary_df |> dplyr::filter(proc_id == 7)
+stat_summary_df |> summarize(mean_fdp = mean(fdp),
+                             mean_n_discoveries = mean(n_total_discoveries))
 time_summary_df <- result_df |> select(resid_time, score_time, lrt_time) |>
   pivot_longer(cols = c("resid_time", "score_time", "lrt_time"),
                names_to = "method", values_to = "time") |>
