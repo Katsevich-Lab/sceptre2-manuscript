@@ -4,49 +4,52 @@ library(dplyr)
 library(tidyr)
 set.seed(4)
 
-# define a set of sparsity levels
+# define variables describing experiment
 prob_perts <- c(0.001, 0.01, 0.05, 0.1, 0.5)
 n_rep_per_setting <- 50
+n_trt_vect <- 1000
+n <- 100000
+family_object <- MASS::negative.binomial(5)
 
 # sapply over prob_perts
 res <- sapply(prob_perts, function(prob_pert) {
-  n_rep <- 1000
-  n <- 100000
-  x <- rbinom(n = n, size = 1, prob = prob_pert)
-  z <- MASS::mvrnorm(n = n, mu = c(-0.5, 0.5), Sigma = toeplitz(c(1, 0.5)))
-  family_object <- MASS::negative.binomial(5)
-  design_matrix <- cbind(x, z)
-  y <- generate_glm_data(
-    design_matrix = design_matrix,
-    coefficients = c(0.6, 0.1, 0.1, 0.3),
-    family_object = family_object,
-    add_intercept = TRUE
-  )
-  # fit the model
-  fit <- glm(
-    y ~ design_matrix[,-x],
-    family = family_object,
-  )
-  # obtain the permuted treatment vectors
-  trt_idxs <- which(x == 1) - 1L
-  s <- length(trt_idxs)
-  m <- matrix(data = rep(x, n_rep), ncol = 1000)
-  # compute the z-score using eigen decomp
+  # generate the treatment idxs
+  m <- matrix(data = rbinom(n_trt_vect * n, size = 1, prob_pert),
+              nrow = n, ncol = n_trt_vect)
+  trt_idxs <- apply(X = m, MARGIN = 2, FUN = function(col) which(col == 1) - 1L)
+  
+  # iterate over reps per setting
   out <- sapply(seq(1, n_rep_per_setting), FUN = function(rep_id) {
+    z <- MASS::mvrnorm(n = n, mu = c(-0.5, 0.5), Sigma = toeplitz(c(1, 0.5)))
+    y <- generate_glm_data(
+      design_matrix = z,
+      coefficients = c(0.6, 0.1, 0.3),
+      family_object = family_object,
+      add_intercept = TRUE
+    )
+    # fit the model
+    fit <- glm(
+      y ~ z, family = family_object
+    )
+    
+    # compute the z-scores using eigen decomp
     eigen_time <- system.time({
       precomputation_score <- run_score_stat_precomputation(fit)
-      for (i in seq(1, n_rep)) {
+      for (i in seq(1, n_trt_vect)) {
         z_eigen <- camp:::compute_observed_full_statistic(a = precomputation_score$a,
                                                           w = precomputation_score$w,
                                                           D = precomputation_score$D,
-                                                          s = s,
-                                                          trt_idxs = trt_idxs)   
+                                                          s = length(trt_idxs[[i]]),
+                                                          trt_idxs = trt_idxs[[i]])   
       }
     })
-    # compute the z-score using statmod (i.e., QR decomp)
+    
+    # compute the z-scores using statmod
     statmod_time <- system.time({
       statmod_z <- statmod::glm.scoretest(fit = fit, x2 = m, dispersion = 1)
     })
+      
+    # output results
     c(statmod_time = statmod_time[["elapsed"]],
       eigen_time = eigen_time[["elapsed"]],
       prob_pert = prob_pert,
