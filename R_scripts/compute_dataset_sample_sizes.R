@@ -87,3 +87,30 @@ df$paper <- NULL
 
 df <- df |> dplyr::rename(response_id = feature_id)
 saveRDS(object = df, file = to_save_fp)
+
+
+###################################################################
+# Second: compute the fraction of cells that is nonzero per dataset
+###################################################################
+df <- lapply(papers, function(paper) {
+  print(paste0("paper: ", paper))
+  paper_dir <- paste0(sceptre2_data_dir, paper, "/")
+  datasets <- list.files(paper_dir)
+  lapply(X = datasets, FUN = function(dataset) {
+    print(paste0("paper: ", paper, " dataset: ", dataset))
+    paper_fp <- paste0(paper, "/", dataset)
+    mm_odm <- lowmoi::load_dataset_multimodal(paper_fp = paper_fp,
+                                              offsite_dir = .get_config_path("LOCAL_SCEPTRE2_DATA_DIR"))
+    modalities <- names(mm_odm@modalities)
+    remaining_modalities <- modalities[!(modalities %in% c("grna_assignment", "grna_expression"))]
+    lapply(X = remaining_modalities, FUN = function(modality) {
+      print(paste0("Working on modality ", modality))
+      curr_modality <- get_modality(mm_odm, modality)
+      mat <- curr_modality[[seq(1, nrow(curr_modality)),]]
+      data.frame(prop_zero = 1 - length(mat@x)/(nrow(mat) * ncol(mat)),
+                 paper = paper, dataset = dataset, modality = modality)
+    })
+  })
+}) |> unlist(recursive = FALSE) |> unlist(recursive = FALSE) |> data.table::rbindlist()
+to_save_fp <- paste0(sceptre2_sample_sizes_dir, "frac_entries_zero.rds")
+saveRDS(object = df, file = to_save_fp)
