@@ -1,12 +1,11 @@
 library(ondisc)
 set.seed(4)
 
-# Randomly generate data: First, randomly sample gene-specific mean and size parameters from gamma distribution.
-# Then, for each gene, randomly sample from an NB distribution.
 ###########
 # DATASET 1
 ###########
-
+# Randomly generate data: First, randomly sample gene-specific mean and size parameters from gamma distribution.
+# Then, for each gene, randomly sample from an NB distribution.
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 # define hyperparameters
 N_GENES <- 5000
@@ -20,6 +19,20 @@ gene_ids <- paste0("gene-", seq(1, N_GENES))
 grna_ids <- c(paste0("NTC-", seq(1, N_NTC_GRNAS)),
               paste0("GENE-TARGET-", seq(1, N_GRNAS -  N_NTC_GRNAS)))
 
+########################
+# NEGATIVE CONTROL PAIRS
+########################
+# create grna expression matrix
+grna_assignments <- sample(x = seq(1, N_GRNAS), size = N_CELLS, replace = TRUE)
+grna_expression_mat <- sapply(X = grna_assignments, FUN = function(i) {
+  out <- numeric(length = N_GRNAS)
+  out[i] <- max(1, rpois(1, 100))
+  return(out)
+})
+all(colSums(grna_expression_mat >= 1) == 1)
+rownames(grna_expression_mat) <- grna_ids
+colnames(grna_expression_mat) <- cell_barcodes
+
 # create gene expression matrix
 mus <- rgamma(n = N_GENES, shape = 0.5, rate = 2)
 thetas <- runif(n = N_GENES, min = 1, max = 25)
@@ -28,21 +41,6 @@ gene_expression_mat <- sapply(X = seq(1, N_GENES), FUN = function(i) {
 }) |> t()
 rownames(gene_expression_mat) <- gene_ids
 colnames(gene_expression_mat) <- cell_barcodes
-
-# create grna expression matrix
-grna_assignments <- sample(x = seq(1, N_GRNAS), size = N_CELLS, replace = TRUE)
-grna_expression_mat <- sapply(X = grna_assignments, FUN = function(i) {
- out <- numeric(length = N_GRNAS)
- out[i] <- max(1, rpois(1, 100))
- return(out)
-})
-all(colSums(grna_expression_mat >= 1) == 1)
-rownames(grna_expression_mat) <- grna_ids
-colnames(grna_expression_mat) <- cell_barcodes
-
-# perform quality control on the gene expression matrix
-# frac_cells_expressed <- rowMeans(gene_expression_mat >= 1)
-# gene_expression_mat <- gene_expression_mat[frac_cells_expressed > 0.005,]
 
 # initialize ODM objects
 to_save_fp_gene <- paste0(sceptre2_dir, "data/simulated/experiment_1/gene/matrix.odm")
@@ -74,3 +72,43 @@ convert_assign_list_to_sparse_odm(cell_barcodes = cell_barcodes,
                                   odm_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_assignment/matrix.odm"),
                                   metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_assignment/metadata_orig.rds"),
                                   features_metadata_df = grna_tbl)
+
+########################
+# POSITIVE CONTROL PAIRS
+########################
+# set the number of grnas
+N_PC_GRNAS <- 25
+N_GRNAS <- N_PC_GRNAS + 5
+N_GENES <- N_GRNAS
+N_CELLS <- 10000
+grna_assignments <- sample(x = seq(1, N_GRNAS), size = N_CELLS, replace = TRUE)
+mu_0s <- rgamma(n = N_GENES, shape = 2, rate = 0.5)
+mu_1s <- rgamma(n = N_GENES, shape = 2, rate = 0.5)
+thetas <- runif(n = N_GENES, min = 1, max = 25)
+
+# generate the gene expression matrix
+gene_expression_mat_2 <- sapply(X = seq(1, N_GENES), FUN = function(i) {
+  alt_cell_idxs <- which(grna_assignments == i)
+  null_cell_idxs <- which(grna_assignments != i)
+  y_null <- MASS::rnegbin(length(null_cell_idxs), mu_0s[i], thetas[i])
+  y_alt <- MASS::rnegbin(length(alt_cell_idxs), mu_1s[i], thetas[i])
+  y <- integer(N_CELLS)
+  y[null_cell_idxs] <- y_null
+  y[alt_cell_idxs] <- y_alt
+  return(y)
+}) |> t()
+
+# generate the gRNA expression matrix
+grna_expression_mat <- sapply(X = grna_assignments, FUN = function(i) {
+  out <- numeric(length = N_GRNAS)
+  out[i] <- max(1, rpois(1, 100))
+  return(out)
+})
+
+# generate the gene ids and cell barcodes
+# generate cell names, gene names, and grna names
+cell_barcodes <- paste0("cell-", seq(1, N_CELLS))
+gene_ids <- paste0("gene-", seq(1, N_GENES))
+grna_ids <- c(paste0("GENE-TARGET-", seq(1, N_PC_GRNAS)),
+              paste0("NTC-", seq(N_PC_GRNAS + 1, N_GRNAS))
+              )

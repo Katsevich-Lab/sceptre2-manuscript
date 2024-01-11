@@ -86,8 +86,8 @@ n_false_rejections_tab <- n_false_rejections_tab |>
 #################################################################
 # Process positive control results
 #################################################################
-
 n_true_rejections_tab <- pc_res |>
+  filter(!(grna_group %in% c("GATA1-enh", "MYC-enh", "ZFPM2-enh"))) |>  # remove enhancer targets
   filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_control >= N_NONZERO_CONTROL_CUTOFF) |>
   group_by(dataset_rename, Method) |>
@@ -117,7 +117,7 @@ n_true_rejections_tab <- pc_res |>
 #################################################################
 
 # From https://cran.r-project.org/web/packages/gridExtra/vignettes/tableGrob.html
-find_cell <- function(table, row, col, name="core-fg"){
+find_cell <- function(table, row, col, name = "core-fg"){
   l <- table$layout
   which(l$t==row & l$l==col & l$name==name)
 }
@@ -262,8 +262,8 @@ qq_frangieh <- undercover_res |>
   ggplot(mapping = aes(y = p_value, col = Method)) +
   stat_qq_points(ymin = 1e-10, size = 0.85) +
   stat_qq_band() +
-  scale_x_continuous(trans = revlog_trans(10)) +
-  scale_y_continuous(trans = revlog_trans(10)) +
+  scale_x_continuous(trans = revlog_trans(10), breaks = c(1e-1, 1e-3, 1e-5)) +
+  scale_y_continuous(trans = revlog_trans(10), breaks = c(1e-2, 1e-5, 1e-8)) +
   labs(x = "Expected null p-value", y = "Observed p-value") +
   geom_abline(col = "black") +
   # ggtitle("Frangieh (IFN-\u03B3) neg. controls") +
@@ -288,8 +288,8 @@ qq_papalexi <- undercover_res |>
   ggplot(mapping = aes(y = p_value, col = Method)) +
   stat_qq_points(ymin = 1e-9, size = 0.85) +
   stat_qq_band() +
-  scale_x_continuous(trans = revlog_trans(10)) +
-  scale_y_continuous(trans = revlog_trans(10)) +
+  scale_x_continuous(trans = revlog_trans(10), breaks = c(1e-0, 1e-2, 1e-4)) +
+  scale_y_continuous(trans = revlog_trans(10), breaks = c(1e-1, 1e-4, 1e-7)) +
   labs(x = "Expected null p-value", y = "Observed p-value") +
   geom_abline(col = "black") +
   ggtitle("Papalexi (gene) neg. controls") +

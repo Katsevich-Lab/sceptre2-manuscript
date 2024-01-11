@@ -57,9 +57,14 @@ source ~/.research_config
 #          |- grna_expression
 #          |- grna_assignment
 #   |- simulated
-#      |- gene
-#      |- grna_expression
-#      |- grna_assignment
+#      |- experiment_1
+#         |- gene
+#         |- grna_expression
+#         |- grna_assignment
+#      |- experiment_2
+#         |- gene
+#         |- grna_expression
+#         |- grna_assignment
 #   |- gasperini
 #      |- gene
 #      |- grna_expression
@@ -107,6 +112,9 @@ mkdir -p $sceptre2_data_dir"schraivogel/ground_truth_tapseq/gene" \
  $sceptre2_data_dir"simulated/experiment_1/gene" \
  $sceptre2_data_dir"simulated/experiment_1/grna_expression" \
  $sceptre2_data_dir"simulated/experiment_1/grna_assignment" \
+ $sceptre2_data_dir"simulated/experiment_2/gene" \
+ $sceptre2_data_dir"simulated/experiment_2/grna_expression" \
+ $sceptre2_data_dir"simulated/experiment_2/grna_assignment" \
  $sceptre2_dir"results/undercover_grna_analysis" \
  $sceptre2_dir"results/positive_control_analysis" \
  $sceptre2_dir"results/dataset_sample_sizes" \
