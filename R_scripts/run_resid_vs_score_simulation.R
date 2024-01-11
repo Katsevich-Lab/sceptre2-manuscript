@@ -57,27 +57,27 @@ for (i in seq(1, n_rep)) {
     family_object = family_object,
     add_intercept = FALSE
   )
-  
+
   # fit the reduced GLM
   glm_fit_time <- system.time(
     fit_reduced <- glm(
       y ~ covariate_matrix_intercept_free_x_free,
       family = family_object,
-    ) 
+    )
   )[["elapsed"]]
-  
+
   # run residual precomputation and compute residual p-value
   resid_time <- system.time({
-    precomputation_residual <- run_resid_precomputation(fit_reduced, type = "standardized")
+    precomputation_residual <- run_resid_precomputation(fit_reduced)
     p_resid <- run_perm_test_resid_stat_binary_trt(permutations, precomputation_residual)$p
   })[["elapsed"]]
-  
+
   # run score precomputation and comptue score p-value
   score_time <- system.time({
     precomputation_score <- run_score_stat_precomputation(fit_reduced)
     p_score <- run_perm_test_score_stat_binary_trt(permutations, precomputation_score)$p
   })[["elapsed"]]
-  
+
   # compute a standard GLM Wald p-value
   lrt_time <- system.time({
     fit_full <- glm(
@@ -87,7 +87,7 @@ for (i in seq(1, n_rep)) {
     lrt_test <- anova(fit_reduced, fit_full, test = "Chisq")
     p_lrt <- lrt_test$`Pr(>Chi)`[2]
   })[["elapsed"]]
-  
+
   m[i,] <- c(p_resid = p_resid,
              p_score = p_score,
              p_lrt = p_lrt,
@@ -113,7 +113,7 @@ if (FALSE) {
   # apply bh
   fdr_level <- 0.1
   n_nonnull <- sum(!m$null_true)
-  summary_df <- m |> select(p_resid, p_score, p_lrt, null_true) |> 
+  summary_df <- m |> select(p_resid, p_score, p_lrt, null_true) |>
     pivot_longer(cols = c("p_resid", "p_score", "p_lrt"),
                  names_to = "method", values_to = "p_val") |>
     group_by(method) |>
@@ -121,17 +121,17 @@ if (FALSE) {
     filter(signif) |>
     summarize(n_total_discoveries = dplyr::n(),
               n_false_discoveries = sum(null_true))
-  
+
   # assess mean running time
   time_result_df <- m |> select(resid_time, score_time, lrt_time) |>
     pivot_longer(cols = c("resid_time", "score_time", "lrt_time"),
                  names_to = "method", values_to = "time") |>
     group_by(method) |>
-    summarize(m_time = mean(time), 
+    summarize(m_time = mean(time),
               upper_ci = m_time + 1.96 * sd(time)/sqrt(n_rep),
               lower_ci = m_time - 1.96 * sd(time)/sqrt(n_rep))
-  
+
   f_p <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/score_vs_resid_sim.rds")
   to_save <- list(result_df = m, summary_df = summary_df, time_result_df = time_result_df)
-  saveRDS(object = to_save, file = f_p) 
+  saveRDS(object = to_save, file = f_p)
 }
