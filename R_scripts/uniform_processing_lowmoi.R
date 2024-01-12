@@ -80,8 +80,8 @@ for (paper in papers) {
     grna_assign_modality <- get_modality(mm_odm_sub, "grna_assignment")
     grna_assign_mat <- lowmoi::load_whole_odm(grna_assign_modality)
     assigned_grna <- apply(X = grna_assign_mat,
-                              MARGIN = 2,
-                              FUN = function(col) names(which.max(col))) |> unname()
+                           MARGIN = 2,
+                           FUN = function(col) names(which.max(col))) |> unname()
     grna_assign_modality <- grna_assign_modality |>
       mutate_cell_covariates(assigned_grna = assigned_grna)
     if (paper == "schraivogel") {
