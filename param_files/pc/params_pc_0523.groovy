@@ -4,7 +4,8 @@ data_method_pairs_indiv = ["frangieh/co_culture/gene": ["mimosca", "schraivogel_
                            "papalexi/eccite_screen/gene": ["mimosca", "schraivogel_method"],
                            "papalexi/eccite_screen/protein": ["mimosca", "schraivogel_method"],
                            "schraivogel/enhancer_screen_chr11/gene": ["mimosca", "schraivogel_method"],
-                           "schraivogel/enhancer_screen_chr8/gene": ["mimosca", "schraivogel_method"]
+                           "schraivogel/enhancer_screen_chr8/gene": ["mimosca", "schraivogel_method"],
+                           "simulated/experiment_2/gene": ["mimosca", "schraivogel_method"]
 ]
 data_method_pairs_grouped = ["frangieh/co_culture/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
                              "frangieh/control/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
@@ -12,7 +13,8 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["sceptre", "seurat_de"
                              "papalexi/eccite_screen/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
                              "papalexi/eccite_screen/protein": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
                              "schraivogel/enhancer_screen_chr11/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"]
+                             "schraivogel/enhancer_screen_chr8/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
+                             "simulated/experiment_2/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"]
                             ]
                             
 row_names = ["frangieh/co_culture/gene",
@@ -52,6 +54,7 @@ data_method_queue_matrix = [
                            ["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // papalexi/eccite_screen/protein
                            ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
                            ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr8/gene
+                           ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"] // simulated/experiment_2/gene
                            ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre, seurat_de_nb
 
