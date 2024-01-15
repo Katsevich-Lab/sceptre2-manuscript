@@ -173,7 +173,7 @@ for (paper in papers) {
     
     gene_modality <- mm_odm_sub_proc |> get_modality("gene")
     # vii. write the positive control pairs (at the level of the paper-dataset)
-    if (paper %in% c("frangieh", "papalexi")) {
+    if (paper %in% c("frangieh", "papalexi", "simulated")) {
       # grouped pairs
       targets <- intersect(grna_feature_df |> dplyr::pull(target),
                            gene_modality |> ondisc::get_feature_ids())
