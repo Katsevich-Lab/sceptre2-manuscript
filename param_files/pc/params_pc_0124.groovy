@@ -16,7 +16,6 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["sceptre", "seurat_de"
                              "schraivogel/enhancer_screen_chr8/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
                              "simulated/experiment_2/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"]
                             ]
-                            
 row_names = ["frangieh/co_culture/gene",
              "frangieh/control/gene",
              "frangieh/ifn_gamma/gene",
@@ -24,7 +23,7 @@ row_names = ["frangieh/co_culture/gene",
              "papalexi/eccite_screen/protein",
              "schraivogel/enhancer_screen_chr11/gene",
              "schraivogel/enhancer_screen_chr8/gene",
-             "simulated/experiment_1/gene"]
+             "simulated/experiment_2/gene"]
 col_names = ["schraivogel_method",
              "seurat_de",
              "liscovitch_method",
@@ -36,12 +35,13 @@ col_names = ["schraivogel_method",
 // SECOND, define a matrix indicating the amount of RAM to request for each dataset-method pair
 data_method_ram_matrix = [
                          [34, 13, 13, 35, 49, 8, 13], // frangieh/co_culture/gene
-                         [23,  9, 45, 26, 34, 8, 9], // frangieh/control/gene
+                         [23,  9, 45, 26, 34, 8, 9],  // frangieh/control/gene
                          [36, 13, 13, 34, 53, 8, 13], // frangieh/ifn_gamma/gene
-                         [18,  6,  6, 19, 22, 6, 6], // papalexi/eccite_screen/gene
-                         [2,   1,  1,  5,  1, 4, 1], // papalexi/eccite_screen/protein
+                         [18,  6,  6, 19, 22, 6, 6],  // papalexi/eccite_screen/gene
+                         [2,   1,  1,  5,  1, 4, 1],  // papalexi/eccite_screen/protein
                          [6,  12, 12, 18,  6, 8, 12], // schraivogel/enhancer_screen_chr11/gene
                          [8,  14, 14, 21,  6, 8, 14], // schraivogel/enhancer_screen_chr8/gene
+                         [8,  14, 14, 21,  6, 8, 14]  // simulated/experiment_2/gene
                          ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre, seurat_de_nb
 
@@ -54,7 +54,7 @@ data_method_queue_matrix = [
                            ["short.q", "short.q", "short.q", "short.q", "short.q", "short.q", "short.q"], // papalexi/eccite_screen/protein
                            ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr11/gene
                            ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"], // schraivogel/enhancer_screen_chr8/gene
-                           ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"] // simulated/experiment_2/gene
+                           ["short.q", "short.q", "short.q", "all.q",   "short.q", "short.q", "short.q"]  // simulated/experiment_2/gene
                            ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre, seurat_de_nb
 
