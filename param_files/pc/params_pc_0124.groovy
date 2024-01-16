@@ -25,7 +25,7 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de"],
                              "papalexi/eccite_screen/gene": ["seurat_de"],
                              "papalexi/eccite_screen/protein": ["seurat_de"],
                              "schraivogel/enhancer_screen_chr11/gene": ["seurat_de"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de"]
+                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de"],
                              "simulated/experiment_2/gene": ["seurat_de"]
                             ]
 
