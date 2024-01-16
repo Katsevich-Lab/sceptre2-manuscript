@@ -1,11 +1,11 @@
-data_method_pairs_indiv = ["frangieh/co_culture/gene": ["mimosca", "schraivogel_method"],
-                           "frangieh/control/gene": ["mimosca", "schraivogel_method"],
-                           "frangieh/ifn_gamma/gene": ["mimosca", "schraivogel_method"],
-                           "papalexi/eccite_screen/gene": ["mimosca", "schraivogel_method"],
-                           "papalexi/eccite_screen/protein": ["mimosca", "schraivogel_method"],
-                           "schraivogel/enhancer_screen_chr11/gene": ["mimosca", "schraivogel_method"],
-                           "schraivogel/enhancer_screen_chr8/gene": ["mimosca", "schraivogel_method"],
-                           "simulated/experiment_2/gene": ["mimosca", "schraivogel_method"]
+data_method_pairs_indiv = ["frangieh/co_culture/gene": ["schraivogel_method"],
+                           "frangieh/control/gene": ["schraivogel_method"],
+                           "frangieh/ifn_gamma/gene": ["schraivogel_method"],
+                           "papalexi/eccite_screen/gene": ["schraivogel_method"],
+                           "papalexi/eccite_screen/protein": ["schraivogel_method"],
+                           "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method"],
+                           "schraivogel/enhancer_screen_chr8/gene": ["schraivogel_method"],
+                           "simulated/experiment_2/gene": ["schraivogel_method"]
 ]
 data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
                              "frangieh/control/gene": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
@@ -13,8 +13,8 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                              "papalexi/eccite_screen/gene": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
                              "papalexi/eccite_screen/protein": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
                              "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"],
-                             "simulated/experiment_2/gene": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"]
+                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"]
+                             // "simulated/experiment_2/gene": ["seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb"]
                             ]
 row_names = ["frangieh/co_culture/gene",
              "frangieh/control/gene",

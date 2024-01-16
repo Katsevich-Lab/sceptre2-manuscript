@@ -16,10 +16,9 @@ for (pack in packs) p_install(pack)
 
 # Github
 github_packs <- c("katsevich-lab/lowmoi",
-                  "timothy-barry/ondisc@5adcc53", # install commit 5adcc53 
+                  "timothy-barry/ondisc@5adcc53", # install commit 5adcc53
                   "katsevich-lab/sceptre",
                   "katsevich-lab/katlabutils",
-                  "katsevich-lab/sceptre",
                   "satijalab/seurat-data")
 
 for (pack in github_packs) p_install_gh(pack)
