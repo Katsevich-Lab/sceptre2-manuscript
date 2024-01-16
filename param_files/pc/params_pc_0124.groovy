@@ -19,6 +19,8 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                             ]
 */
 
+data_method_pairs_indiv = []
+
 data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de"],
                              "frangieh/control/gene": ["seurat_de"],
                              "frangieh/ifn_gamma/gene": ["seurat_de"],
