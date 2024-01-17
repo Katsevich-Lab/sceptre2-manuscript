@@ -1,3 +1,6 @@
+export NXF_VER=22.02.1
+nextflow -version
+
 source ~/.research_config
 
 nextflow pull Katsevich-Lab/pc-grna-pipeline
