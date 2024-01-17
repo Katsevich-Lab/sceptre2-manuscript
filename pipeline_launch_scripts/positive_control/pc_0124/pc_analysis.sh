@@ -1,4 +1,4 @@
-export NXF_VER=22.02.1
+export NXF_VER=22.02.1-edge
 nextflow -version
 
 source ~/.research_config
