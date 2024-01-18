@@ -20,8 +20,8 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                             ]
 */
 
-data_method_pairs_indiv = ["frangieh/co_culture/gene": ["schraivogel_method"],
-                           "frangieh/control/gene": ["schraivogel_method"],
+data_method_pairs_indiv = [// "frangieh/co_culture/gene": ["schraivogel_method"],
+                           // "frangieh/control/gene": ["schraivogel_method"],
                            // "frangieh/ifn_gamma/gene": ["schraivogel_method"],
                            "papalexi/eccite_screen/gene": ["schraivogel_method"],
                            "papalexi/eccite_screen/protein": ["schraivogel_method"],
