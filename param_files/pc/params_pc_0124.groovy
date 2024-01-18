@@ -27,7 +27,7 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                              "papalexi/eccite_screen/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
                              "papalexi/eccite_screen/protein": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
                              "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"s],
+                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
                              "simulated/experiment_2/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"]
                             ]
 
