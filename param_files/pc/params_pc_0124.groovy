@@ -21,14 +21,14 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
 
 data_method_pairs_indiv = []
 
-data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method"],
-                             "frangieh/control/gene": ["seurat_de", "liscovitch_method"],
-                             "frangieh/ifn_gamma/gene": ["seurat_de", "liscovitch_method"],
-                             "papalexi/eccite_screen/gene": ["seurat_de", "liscovitch_method"],
-                             "papalexi/eccite_screen/protein": ["seurat_de", "liscovitch_method"],
-                             "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method"],
-                             "simulated/experiment_2/gene": ["seurat_de", "liscovitch_method"]
+data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
+                             "frangieh/control/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
+                             "frangieh/ifn_gamma/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
+                             "papalexi/eccite_screen/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
+                             "papalexi/eccite_screen/protein": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
+                             "schraivogel/enhancer_screen_chr11/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"],
+                             "schraivogel/enhancer_screen_chr8/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"s],
+                             "simulated/experiment_2/gene": ["seurat_de", "liscovitch_method", "seurat_de_nb"]
                             ]
 
 row_names = ["frangieh/co_culture/gene",
