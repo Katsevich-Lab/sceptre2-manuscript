@@ -22,7 +22,7 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
 
 data_method_pairs_indiv = ["frangieh/co_culture/gene": ["schraivogel_method"],
                            "frangieh/control/gene": ["schraivogel_method"],
-                           "frangieh/ifn_gamma/gene": ["schraivogel_method"],
+                           // "frangieh/ifn_gamma/gene": ["schraivogel_method"],
                            "papalexi/eccite_screen/gene": ["schraivogel_method"],
                            "papalexi/eccite_screen/protein": ["schraivogel_method"],
                            "schraivogel/enhancer_screen_chr11/gene": ["schraivogel_method"],
