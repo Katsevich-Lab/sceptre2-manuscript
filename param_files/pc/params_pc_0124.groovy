@@ -20,11 +20,11 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                             ]
 */
 
-data_method_pairs_indiv = ["papalexi/eccite_screen/protein": ["schraivogel_method"],
-                           "simulated/experiment_2/gene": ["schraivogel_method"]
-                           ]
+data_method_pairs_indiv = []
 
-data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de"]]
+data_method_pairs_grouped = ["frangieh/co_culture/gene": ["weissman_method"],
+                             "papalexi/eccite_screen/gene": ["weissman_method"],
+                            ]
 
 row_names = ["frangieh/co_culture/gene",
              "frangieh/control/gene",
