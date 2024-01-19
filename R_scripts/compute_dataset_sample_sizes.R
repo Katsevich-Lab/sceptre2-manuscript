@@ -13,7 +13,7 @@ library(ondisc)
 sceptre2_data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
 sceptre2_sample_sizes_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/dataset_sample_sizes/")
 if (!dir.exists(sceptre2_sample_sizes_dir)) dir.create(sceptre2_sample_sizes_dir)
-papers <- c("frangieh", "liscovitch",  "papalexi", "schraivogel", "simulated")
+papers <- c("frangieh",  "papalexi", "schraivogel", "simulated")
 
 #######################################################
 # FIRST: compute number of nonzero cells cells per gene
@@ -87,7 +87,6 @@ df$paper <- NULL
 
 df <- df |> dplyr::rename(response_id = feature_id)
 saveRDS(object = df, file = to_save_fp)
-
 
 ###################################################################
 # Second: compute the fraction of cells that is nonzero per dataset
