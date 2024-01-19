@@ -22,8 +22,10 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
 
 data_method_pairs_indiv = []
 
-data_method_pairs_grouped = ["frangieh/co_culture/gene": ["weissman_method"],
-                             "papalexi/eccite_screen/gene": ["weissman_method"],
+data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "weissman_method"],
+                             "frangieh/control/gene": ["seurat_de", "weissman_method"],
+                             "frangieh/ifn_gamma/gene": ["seurat_de", "weissman_method"],
+                             "papalexi/eccite_screen/gene": ["seurat_de", "weissman_method"]
                             ]
 
 row_names = ["frangieh/co_culture/gene",
