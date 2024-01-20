@@ -23,7 +23,6 @@ max_false_reject <- 50  # maximum false rejections to display power
 #################################################################
 # Load results
 #################################################################
-
 # source shared figure script
 shared_fig_script <- paste0(
   .get_config_path("LOCAL_CODE_DIR"), 
