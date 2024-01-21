@@ -20,17 +20,8 @@ data_method_pairs_grouped = ["frangieh/co_culture/gene": ["seurat_de", "liscovit
                             ]
 */
 
-data_method_pairs_indiv = []
-
-data_method_pairs_grouped = ["frangieh/co_culture/gene": ["sceptre"],
-                             "frangieh/control/gene": ["sceptre"],
-                             "frangieh/ifn_gamma/gene": ["sceptre"],
-                             "papalexi/eccite_screen/gene": ["sceptre"],
-                             "papalexi/eccite_screen/protein": ["sceptre"],
-                             "schraivogel/enhancer_screen_chr11/gene": ["sceptre"],
-                             "schraivogel/enhancer_screen_chr8/gene": ["sceptre"],
-                             "simulated/experiment_2/gene": ["sceptre"]
-                            ]
+data_method_pairs_indiv = ["simulated/experiment_2/gene": ["mimosca", "schraivogel_method"]]
+data_method_pairs_grouped = ["simulated/experiment_2/gene": ["sceptre", "seurat_de", "liscovitch_method", "seurat_de_nb", "weissman_method"]]
 
 row_names = ["frangieh/co_culture/gene",
              "frangieh/control/gene",
