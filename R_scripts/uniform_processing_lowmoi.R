@@ -10,44 +10,37 @@ papers <- c("frangieh",  "papalexi", "schraivogel", "simulated")
 FRAC_EXPRESSED_TRHESH <- 0.005
 
 # 1.i) Set the MIMOSCA formula objects
-mimosca_formula_objs <- list(# frangieh = formula(~ n_nonzero + n_umis + phase + batch + 0),
-                             frangieh = formula(~ n_nonzero + n_umis + 0),
+mimosca_formula_objs <- list(frangieh = formula(~ n_nonzero + n_umis + 0),
                              schraivogel = formula(~ n_nonzero + n_umis + batch + 0),
                              papalexi = formula(~ n_nonzero + n_umis + bio_rep + p_mito + 0),
                              liscovitch = formula(~ n_nonzero + n_fragments + 0),
                              simulated = formula(~ n_nonzero + n_umis + 0))
 
-mimosca_formula_objs_protein <- list(# frangieh = formula(~ n_umis + phase + batch + 0),
-                                     frangieh = formula(~ n_umis + 0),
+mimosca_formula_objs_protein <- list(frangieh = formula(~ n_umis + 0),
                                      papalexi = formula(~ n_umis + bio_rep + p_mito + 0))
 
 # 1.ii) Set the NB regression formula objects
-nb_regression_formula_objs <- list(# frangieh = "~log(n_umis) + log(n_nonzero) + phase + batch",
-                                   frangieh = "~log(n_umis) + log(n_nonzero)",
+nb_regression_formula_objs <- list(frangieh = "~log(n_umis) + log(n_nonzero)",
                                    schraivogel = "~ log(n_umis) + log(n_nonzero) + batch",
                                    papalexi = "~ log(n_umis) + log(n_nonzero) + bio_rep + p_mito",
                                    liscovitch = "~ log(n_fragments)",
                                    simulated = "~log(n_umis) + log(n_nonzero)")
 
-nb_regression_formula_objs_protein <- list(# frangieh = "~ offset(log(n_umis)) + phase + batch",
-                                           frangieh = "~ offset(log(n_umis))",
+nb_regression_formula_objs_protein <- list(frangieh = "~ offset(log(n_umis))",
                                            papalexi = "~ offset(log(n_umis)) + bio_rep + p_mito")
 
 # 1.iii) Set the sceptre formula objects
-sceptre_formula_objs <- list(# frangieh = ~ log(response_n_umis) + log(response_n_nonzero) + phase + batch,
-                             frangieh = ~ log(response_n_umis) + log(response_n_nonzero),
+sceptre_formula_objs <- list(frangieh = ~ log(response_n_umis) + log(response_n_nonzero),
                              schraivogel = ~ log(response_n_umis) + log(response_n_nonzero) + batch,
                              papalexi = ~ log(response_n_umis) + log(response_n_nonzero) + bio_rep + p_mito,
                              liscovitch = ~ log(response_n_fragments),
                              simulated = ~ log(response_n_umis) + log(response_n_nonzero))
 
-sceptre_formula_objs_protein <- list(# frangieh = ~ log(response_n_umis) + phase + batch,
-                                     frangieh = ~ log(response_n_umis),
+sceptre_formula_objs_protein <- list(frangieh = ~ log(response_n_umis),
                                      papalexi = ~ log(response_n_umis) + bio_rep + p_mito)
 
 # 1. iv) Set the global formula object (for use in the sceptre pipeline)
-global_formula_objs <- list(# frangieh = ~ log(gene_n_umis) + log(gene_n_nonzero) + phase + batch,
-                            frangieh = ~ log(gene_n_umis) + log(gene_n_nonzero),
+global_formula_objs <- list(frangieh = ~ log(gene_n_umis) + log(gene_n_nonzero),
                             schraivogel = ~ log(gene_n_umis) + log(gene_n_nonzero) + batch,
                             papalexi = ~ log(gene_n_umis) + log(gene_n_nonzero) + bio_rep + p_mito,
                             liscovitch = ~ log(gene_n_fragments),
@@ -129,6 +122,12 @@ for (paper in papers) {
           modality_odm@misc[["mimosca_formula"]] <- mimosca_formula_objs[[paper]]
           modality_odm@misc[["nb_regression_formula"]] <- nb_regression_formula_objs[[paper]]
           modality_odm@misc[["sceptre_formula"]] <- sceptre_formula_objs[[paper]]
+          # special case: dataset == "experiment_2", include batch
+          if (dataset == "experiment_2") {
+            modality_odm@misc[["mimosca_formula"]] <- formula(~n_nonzero + n_umis + batch + 0)
+            modality_odm@misc[["nb_regression_formula"]] <- "~log(n_umis) + log(n_nonzero) + batch"
+            modality_odm@misc[["sceptre_formula"]] <- formula(~log(n_umis) + log(n_nonzero) + batch)
+          }
       }
       mm_odm_sub@modalities[[modality]] <- modality_odm
     }

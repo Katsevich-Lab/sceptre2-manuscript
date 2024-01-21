@@ -45,7 +45,7 @@ undercover_res <- readRDS(paste0(
 # results of positive control analysis
 pc_res <- readRDS(paste0(
   result_dir,
-  "positive_control_analysis/pc_results_0523_processed.rds"
+  "positive_control_analysis/pc_results_0124_processed.rds"
 )) |> 
   dplyr::filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
                 n_control >= N_NONZERO_CONTROL_CUTOFF)
