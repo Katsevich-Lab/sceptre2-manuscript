@@ -126,7 +126,7 @@ for (paper in papers) {
           if (dataset == "experiment_2") {
             modality_odm@misc[["mimosca_formula"]] <- formula(~n_nonzero + n_umis + batch + 0)
             modality_odm@misc[["nb_regression_formula"]] <- "~log(n_umis) + log(n_nonzero) + batch"
-            modality_odm@misc[["sceptre_formula"]] <- formula(~log(n_umis) + log(n_nonzero) + batch)
+            modality_odm@misc[["sceptre_formula"]] <- formula(~log(response_n_umis) + log(response_n_nonzero) + batch)
           }
       }
       mm_odm_sub@modalities[[modality]] <- modality_odm
