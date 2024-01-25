@@ -215,7 +215,7 @@ pc_table_g <- gtable_add_grob(pc_table_g,
                   x1 = unit(0,"npc"),
                   y1 = unit(1,"npc"),
                   gp = gpar(lwd = 4.0)),
-                t = 7, b = 1, l = 9, r = 9)
+                t = 8, b = 1, l = 9, r = 9)
 
 # add line separating the dataset column from the rest
 pc_table_g <- gtable_add_grob(pc_table_g,
@@ -225,7 +225,7 @@ pc_table_g <- gtable_add_grob(pc_table_g,
                                 x1 = unit(0,"npc"),
                                 y1 = unit(1,"npc"),
                                 gp = gpar(lwd = 4.0)),
-                              t = 7, b = 1, l = 2, r = 2)
+                              t = 8, b = 1, l = 2, r = 2)
 
 # add title
 title <- textGrob("Number of true positives",gp=gpar(fontsize=12))
@@ -306,7 +306,7 @@ final_plot <- ggarrange(
   as_ggplot(nt_table_g),
   as_ggplot(pc_table_g),
   labels = c("", "c", "d"), 
-  heights = c(1.2, 1, 0.8),
+  heights = c(1., 1, 0.8),
   ncol = 1
 )
 
@@ -320,6 +320,6 @@ fig_4_filename <- paste0(
 ggsave(filename = fig_4_filename, 
        plot = final_plot,
        device = "png", 
-       width = 7,
-       height = 8.5,
-       bg = "white")
+       width = 7.5,
+       height = 10,
+       bg = "white", scale = 0.9)
