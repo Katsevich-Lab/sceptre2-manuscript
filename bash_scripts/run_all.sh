@@ -50,6 +50,9 @@ qsub ../pipeline_launch_scripts/resampling_distributions/seurat_at_scale/seurat_
 # 12. Unfiltered SCEPTRE positive control analysis
 qsub ../pipeline_launch_scripts/positive_control/sceptre_unfiltered_pc_0523/pc_analysis.sh
 
+# 13. discovery analysis
+qsub ../pipeline_launch_scripts/discovery_analysis/disc_analysis_grouped_0124/disc_analysis_grouped_0124.sh
+
 # 13 Process the Nextflow pipeline results
 Rscript ../R_scripts/process_results.R
 

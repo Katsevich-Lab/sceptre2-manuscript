@@ -165,8 +165,7 @@ for (paper in papers) {
       }
       if (paper == "papalexi" && dataset == "eccite_screen" && modality == "gene") {
         tf_pairs <- trans_pairs |>
-          dplyr::filter(grna_group %in% c("ATF2", "ETV7", "IRF1", "IRF7", "MYC", "NFKBIA", "POU2F2", 
-                                          "SMAD4", "SPI1", "STAT1", "STAT2", "STAT3", "STAT5A"))
+          dplyr::filter(grna_group %in% c("IRF1", "STAT1"))
         saveRDS(object = tf_pairs, file = paste0(paper_dir, dataset, "/", modality, "/tf_pairs_grouped.rds"))
       }
     }
