@@ -34,7 +34,7 @@ alternately can automatically download and process the datasets via the
 command `bash import_all_data.sh`, but this is slow and potentially
 could hit a few snags depending on your system.) Download the following
 three directories from the [Dropbox data
-repository](www.dropbox.com/sh/jekmk1v4mr4kj3b/AAAhznGqk-TIZKhW40xiU6ORa?dl=0):
+repository](https://www.dropbox.com/sh/jekmk1v4mr4kj3b/AAAhznGqk-TIZKhW40xiU6ORa?dl=0):
 `frangieh-2021`, `papalexi-2021`, `schraivogel-2020`. The code
 originally used to download and process these datasets (alongside
 helpful documentation) is available in the following repositories:

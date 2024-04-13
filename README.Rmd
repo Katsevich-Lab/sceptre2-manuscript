@@ -26,7 +26,7 @@ First, clone the `sceptre2-manuscript` repository onto your machine.
 git clone git@github.com:Katsevich-Lab/sceptre2-manuscript.git
 ```
 
-Next, manually download the processed datasets from Dropbox. (You alternately can automatically download and process the datasets via the command `bash import_all_data.sh`, but this is slow and potentially could hit a few snags depending on your system.) Download the following three directories from the [Dropbox data repository](www.dropbox.com/sh/jekmk1v4mr4kj3b/AAAhznGqk-TIZKhW40xiU6ORa?dl=0): `frangieh-2021`, `papalexi-2021`, `schraivogel-2020`. The code originally used to download and process these datasets (alongside helpful documentation) is available in the following repositories: [Frangieh](https://github.com/Katsevich-Lab/import-frangieh-2021), [Papalexi](https://github.com/Katsevich-Lab/import-papalexi-2021), [Schraivogel](https://github.com/Katsevich-Lab/import-schraivogel-2020).
+Next, manually download the processed datasets from Dropbox. The data are stored in `ondisc` (version 1.0) format. Download the following three directories from the [Dropbox data repository](https://www.dropbox.com/sh/jekmk1v4mr4kj3b/AAAhznGqk-TIZKhW40xiU6ORa?dl=0): `frangieh-2021`, `papalexi-2021`, `schraivogel-2020`. The code originally used to download and process these datasets (alongside helpful documentation) is available in the following repositories: [Frangieh](https://github.com/Katsevich-Lab/import-frangieh-2021), [Papalexi](https://github.com/Katsevich-Lab/import-papalexi-2021), [Schraivogel](https://github.com/Katsevich-Lab/import-schraivogel-2020).
 
 We used a config file to increase the portability of our code across machines. Create a config file called `.research_config` in your home directory.
 
