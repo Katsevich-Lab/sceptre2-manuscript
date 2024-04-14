@@ -1,6 +1,7 @@
 # load packages
 library(tidyverse)
 library(ondisc)
+conflicts_prefer(dplyr::filter)
 
 # load the shared figure script
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
@@ -9,7 +10,7 @@ source(shared_fig_script)
 # set the result and data directories; load PC and undercover results
 result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/")
 data_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "data/")
-pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results_0523_processed.rds")) |>
+pc_res <- readRDS(paste0(result_dir, "positive_control_analysis/pc_results_0124_processed.rds")) |>
   filter(n_treatment >= N_NONZERO_TREATMENT_CUTOFF,
          n_control >= N_NONZERO_CONTROL_CUTOFF) 
 undercover_res <- readRDS(paste0(result_dir, "undercover_grna_analysis/undercover_result_grp_1_0523_processed.rds")) |>

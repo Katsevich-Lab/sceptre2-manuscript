@@ -108,7 +108,7 @@ p3 <- ggplot(simulation_result, aes(x = p_resid, y = p_score, col = label)) +
 p4 <- ggplot() + theme_minimal()
 p_final <- plot_grid(plot_grid(p1, p2, p3, p4, nrow = 2, labels = "auto"))
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s8_s9/fig_s8.png")
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s11/fig_s11.png")
 
 ggsave(plot = p_final, filename = to_save_fp, device = "png",
        scale = 1.0, width = 6.5, height = 5.25, dpi = 330)

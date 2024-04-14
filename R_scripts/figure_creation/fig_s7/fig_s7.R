@@ -60,5 +60,5 @@ fig <- plot_grid(p_a, p_b, p_c, p_d, nrow = 2,
                  labels = "auto")
 
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s6/fig_s6.png")
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s7/fig_s7.png")
 ggsave(filename = to_save_fp, plot = fig, device = "png", scale = 1.1, width = 6.5, height = 5.5, dpi = 330)

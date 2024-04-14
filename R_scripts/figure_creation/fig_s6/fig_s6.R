@@ -6,7 +6,6 @@ library(cowplot)
 shared_fig_script <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/shared_figure_script.R")
 source(shared_fig_script)
 extra_analyses_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/")
-
 grna_res <- readRDS(paste0(extra_analyses_dir, "papalexi_grna_confounding_tests.rds"))
 gene_res <- readRDS(paste0(extra_analyses_dir, "papalex_gene_confounding_tests.rds"))
 
@@ -35,5 +34,5 @@ p2 <- ggplot(data = data.frame(p_value = gene_res),
 p_out <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, labels = "auto")
 
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s5/fig_s5.png")
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s6/fig_s6.png")
 ggsave(filename = to_save_fp, plot = p_out, device = "png", scale = 1.2, width = 6, height = 2.5, dpi = 330)

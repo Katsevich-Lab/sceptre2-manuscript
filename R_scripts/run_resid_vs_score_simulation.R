@@ -102,36 +102,3 @@ dir_to_save <- paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/extra_analyses/resid_vs_
 if (!dir.exists(dir_to_save)) dir.create(dir_to_save, recursive = TRUE)
 saveRDS(object = m,
         file = paste0(dir_to_save, "raw_result_", proc_id, ".rds"))
-
-if (FALSE) {
-  # process result data frame and save
-  m <- m |>
-    dplyr::mutate(p_resid_trans = -log(p_resid),
-                  p_score_trans = -log(p_score),
-                  p_lrt_trans = -log(p_lrt),
-                  null_true = (null_true == 1))
-  # apply bh
-  fdr_level <- 0.1
-  n_nonnull <- sum(!m$null_true)
-  summary_df <- m |> select(p_resid, p_score, p_lrt, null_true) |>
-    pivot_longer(cols = c("p_resid", "p_score", "p_lrt"),
-                 names_to = "method", values_to = "p_val") |>
-    group_by(method) |>
-    mutate(p_adj = p.adjust(p_val, method = "BH"), signif = p_adj < fdr_level) |>
-    filter(signif) |>
-    summarize(n_total_discoveries = dplyr::n(),
-              n_false_discoveries = sum(null_true))
-
-  # assess mean running time
-  time_result_df <- m |> select(resid_time, score_time, lrt_time) |>
-    pivot_longer(cols = c("resid_time", "score_time", "lrt_time"),
-                 names_to = "method", values_to = "time") |>
-    group_by(method) |>
-    summarize(m_time = mean(time),
-              upper_ci = m_time + 1.96 * sd(time)/sqrt(n_rep),
-              lower_ci = m_time - 1.96 * sd(time)/sqrt(n_rep))
-
-  f_p <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/extra_analyses/score_vs_resid_sim.rds")
-  to_save <- list(result_df = m, summary_df = summary_df, time_result_df = time_result_df)
-  saveRDS(object = to_save, file = f_p)
-}

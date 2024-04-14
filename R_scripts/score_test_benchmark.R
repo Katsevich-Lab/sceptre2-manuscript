@@ -28,9 +28,7 @@ res <- sapply(prob_perts, function(prob_pert) {
       add_intercept = TRUE
     )
     # fit the model
-    fit <- glm(
-      y ~ z, family = family_object
-    )
+    fit <- glm(y ~ z, family = family_object)
     
     # compute the z-scores using eigen decomp
     eigen_time <- system.time({

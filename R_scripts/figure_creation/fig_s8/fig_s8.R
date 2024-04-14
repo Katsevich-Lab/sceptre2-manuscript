@@ -45,5 +45,5 @@ p_c <- make_p_val_vs_sample_size_plot(pc_res |> filter(dataset == "frangieh_ifn_
 fig_bottom <- plot_grid(p_a, p_b, p_c, nrow = 1, labels = c("a", "b", "c"))
 
 fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-             "sceptre2-manuscript/R_scripts/figure_creation/fig_s7/fig_s7.png")
+             "sceptre2-manuscript/R_scripts/figure_creation/fig_s8/fig_s8.png")
 ggsave(filename = fp, plot = fig_bottom, device = "png", scale = 1, width = 7, height = 3, dpi = 320)
