@@ -42,7 +42,7 @@ Rscript ../R_scripts/compute_dataset_sample_sizes.R
 qsub ../pipeline_launch_scripts/undercover/grp_size_1_0523/grp_size_1.sh
 
 # 10. Positive control analysis
-qsub ../pipeline_launch_scripts/positive_control/pc_0124/pc_analysis.sh
+qsub ../pipeline_launch_scripts/positive_control/pc_0523/pc_analysis.sh
 
 # 11. MW resampling statistics analysis
 qsub ../pipeline_launch_scripts/resampling_distributions/seurat_at_scale/seurat_at_scale.sh
@@ -51,7 +51,7 @@ qsub ../pipeline_launch_scripts/resampling_distributions/seurat_at_scale/seurat_
 qsub ../pipeline_launch_scripts/positive_control/sceptre_unfiltered_pc_0523/pc_analysis.sh
 
 # 13. discovery analysis
-qsub ../pipeline_launch_scripts/discovery_analysis/disc_analysis_grouped_0124/disc_analysis_grouped_0124.sh
+qsub ../pipeline_launch_scripts/discovery_analysis/disc_analysis_grouped_0523/disc_analysis_grouped_0523.sh
 
 # 13 Process the Nextflow pipeline results
 Rscript ../R_scripts/process_results.R
