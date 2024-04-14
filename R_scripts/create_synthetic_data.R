@@ -1,9 +1,9 @@
 library(ondisc)
 set.seed(4)
 
-###########
-# DATASET 1
-###########
+##############################
+# DATASET 1 (NEGATIVE CONTROL)
+##############################
 # Randomly generate data: First, randomly sample gene-specific mean and size parameters from gamma distribution.
 # Then, for each gene, randomly sample from an NB distribution.
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
@@ -73,9 +73,9 @@ convert_assign_list_to_sparse_odm(cell_barcodes = cell_barcodes,
                                   metadata_fp = paste0(sceptre2_dir, "data/simulated/experiment_1/grna_assignment/metadata_orig.rds"),
                                   features_metadata_df = grna_tbl)
 
-###########
-# DATASET 2
-###########
+###############################
+# DATASET 2 (POSITIVE CONTROL)
+##############################
 # set the number of grnas
 set.seed(4)
 N_PC_GRNAS <- 25

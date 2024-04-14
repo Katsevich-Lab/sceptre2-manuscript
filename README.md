@@ -29,15 +29,13 @@ First, clone the `sceptre2-manuscript` repository onto your machine.
 
     git clone git@github.com:Katsevich-Lab/sceptre2-manuscript.git
 
-Next, manually download the processed datasets from Dropbox. (You
-alternately can automatically download and process the datasets via the
-command `bash import_all_data.sh`, but this is slow and potentially
-could hit a few snags depending on your system.) Download the following
+Next, manually download the processed datasets from Dropbox. The data
+are stored in `ondisc` (version 1.1.0) format. Download the following
 three directories from the [Dropbox data
 repository](https://www.dropbox.com/sh/jekmk1v4mr4kj3b/AAAhznGqk-TIZKhW40xiU6ORa?dl=0):
 `frangieh-2021`, `papalexi-2021`, `schraivogel-2020`. The code
 originally used to download and process these datasets (alongside
-helpful documentation) is available in the following repositories:
+documentation) is available in the following repositories:
 [Frangieh](https://github.com/Katsevich-Lab/import-frangieh-2021),
 [Papalexi](https://github.com/Katsevich-Lab/import-papalexi-2021),
 [Schraivogel](https://github.com/Katsevich-Lab/import-schraivogel-2020).
@@ -47,7 +45,7 @@ machines. Create a config file called `.research_config` in your home
 directory.
 
     cd
-    touch .research_config
+    touch ~/.research_config
 
 Define the following variables within this file:
 
@@ -61,7 +59,7 @@ Define the following variables within this file:
   data directory
 
 - `LOCAL_CODE_DIR`: the location of the directory in which the cloned
-  `sceptre2-manuscript` is located
+  `sceptre2-manuscript` repository is located
 
 - `LOCAL_SCEPTRE2_DATA_DIR`: the location of the directory in which to
   store files (e.g., auxiliary data, results) associated with the paper.
@@ -100,7 +98,8 @@ Add the following commands to your `.Rprofile`.
 Navigate to the `bash_scripts` subdirectory of the `sceptre2-manuscript`
 directory. Execute the following command to create a Python virtual
 environment called `py/lowmoi-venv` and download the necessary Python
-packages.
+packages. This script assumes that the command `python3` can be called
+from the command line.
 
     cd bash_scripts
     bash install_python_packages.sh
@@ -108,15 +107,16 @@ packages.
 If you are having trouble initializing the Python virtual environment,
 consult the [following
 documentation](https://github.com/Katsevich-Lab/sceptre2-manuscript/blob/main/docs/setting_up_python.pdf).
-Next, install the required R packages.
+Next, install the required R packages. Note that this script installs
+version `1.1.0` of `ondisc` and version `0.3.0` of `sceptre`.
 
     Rscript ../R_scripts/install_R_packages.R
 
 Finally, complete the rest of the setup, which consists of initializing
 the directory structure of the SCEPTRE2 data directory, initializing the
-symbolic links, creating the synthetic data, performing quality control
-on the data, and computing sample sizes. The following code takes about
-20 minutes to execute.
+symbolic links, creating the synthetic data (both negative and positive
+control), performing quality control on the data, and computing sample
+sizes. The following code takes about 20 minutes to execute.
 
     # 4. set up the offsite directory structure
     bash setup.sh
@@ -148,18 +148,29 @@ All results will be placed into the correct locations.
 # Run the Nextflow pipelines
 
 The next step is to run a sequence of Nextflow pipelines to carry out
-the main analyses. These pipelines should be run one-by-one.
+the main analyses of the paper. These pipelines should be run
+one-by-one. Each of these pipelines takes as an argument a parameter
+file contained within the directory `/param_files`. The parameter file
+passed as an argument to each pipeline is indicated as a comment.
 
     # 9. Undercover analysis
+    # Figure 1: c-f
+    # Figure 2: c, e, f
+    # Figure 4: a-c
+    # Figure S1-S5
+    # parameter file: undercover/params_undercover_0523.groovy
     qsub ../pipeline_launch_scripts/undercover/grp_size_1_0523/grp_size_1.sh
 
     # 10. Positive control analysis
+    # Figure 4: d
     qsub ../pipeline_launch_scripts/positive_control/pc_0523/pc_analysis.sh
 
     # 11. MW resampling statistics analysis
+    # Figure 2: b
     qsub ../pipeline_launch_scripts/resampling_distributions/seurat_at_scale/seurat_at_scale.sh
 
     # 12. Unfiltered SCEPTRE positive control analysis
+    # Figure S9
     qsub ../pipeline_launch_scripts/positive_control/sceptre_unfiltered_pc_0523/pc_analysis.sh
 
 We carried out our analyses on an SGE cluster; thus, we submitted the
