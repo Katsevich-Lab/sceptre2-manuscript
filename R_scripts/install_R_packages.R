@@ -10,12 +10,13 @@ library(pacman)
 # CRAN/Bioc
 packs <- c("tidyverse", "readxl", "Seurat", "R.utils", "RCurl", "GenomicRanges",
            "MASS", "data.table", "rbioapi", "VGAM", "reticulate", "statmod",
-           "SummarizedExperiment", "MAST")
+           "SummarizedExperiment", "MAST", "ggpubr")
 
 for (pack in packs) p_install(pack)
 
 # Github
 github_packs <- c("katsevich-lab/lowmoi",
+                  "timothy-barry/sceptre2",
                   "timothy-barry/ondisc@5adcc53", # install commit 5adcc53 (i.e, version 1.1.0)
                   "katsevich-lab/katlabutils",
                   "satijalab/seurat-data")
