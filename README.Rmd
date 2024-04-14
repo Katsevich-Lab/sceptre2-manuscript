@@ -208,7 +208,7 @@ Rscript ../R_scripts/figure_creation/fig_s6/fig_s6.R
 Rscript ../R_scripts/figure_creation/fig_s7/fig_s7.R
 ```
 
-The script `bash/run_all.sh` runs the entire analysis from start to finish, from downloading and processing the raw data to creating the figures.
+The script `bash/run_all.sh` runs the entire analysis from start to finish.
 
 Contact the authors if you seek help with reproducing an aspect of the analysis.
 
