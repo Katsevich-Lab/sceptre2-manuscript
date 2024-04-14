@@ -95,9 +95,9 @@ p_combined_b <- cowplot::plot_grid(cowplot::plot_grid(p_frangieh_control, p_simu
                                    legend, rel_heights = c(0.93, 0.07), nrow = 2)
 # save figures 1 and 2
 to_save_fp_a <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                       "sceptre2-manuscript/R_scripts/figure_creation/fig_s4/fig_s4_a.png")
+                       "sceptre2-manuscript/R_scripts/figure_creation/fig_s4/fig_s4.png")
 to_save_fp_b <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                       "sceptre2-manuscript/R_scripts/figure_creation/fig_s4/fig_s4_b.png")
+                       "sceptre2-manuscript/R_scripts/figure_creation/fig_s4/fig_s5.png")
 
 ggsave(filename = to_save_fp_a, plot = p_combined_a, device = "png", scale = 1.1, width = 6.5, height = 7.0, dpi = 330)
 ggsave(filename = to_save_fp_b, plot = p_combined_b, device = "png", scale = 1.1, width = 6.5, height = 7.0, dpi = 330)
