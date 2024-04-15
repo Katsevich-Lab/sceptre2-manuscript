@@ -68,5 +68,5 @@ df |> dplyr::filter(sparsity_level == 0.78, fraction_pass == 0.9) # 46 cells for
 
 # save the plot
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s10/fig_s10.png")
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s13/fig_s13.png")
 ggsave(filename = to_save_fp, plot = p, device = "png", width = 6, height = 3, dpi = 330)

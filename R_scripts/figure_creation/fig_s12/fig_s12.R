@@ -11,10 +11,10 @@ source(paste0(.get_config_path("LOCAL_CODE_DIR"),
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 
 # function for analyzing discovery results
-analyze_discovery_results <- function(dataset, with_qc = TRUE) {
+analyze_discovery_results <- function(dataset) {
   # set file paths
-  full_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/", if (with_qc) "with_qc/" else "no_qc/", dataset, "_full_stat")
-  resid_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/", if (with_qc) "with_qc/" else "no_qc/", dataset, "_resid_stat")
+  full_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/fig_s12/", dataset, "_full_stat")
+  resid_base_dir <- paste0(sceptre2_dir, "results/discovery_analyses/fig_s12/", dataset, "_resid_stat")
   
   # define several functions
   join_result_dfs <- function(full_stat_df, resid_stat_df) {
@@ -129,5 +129,5 @@ analyze_discovery_results <- function(dataset, with_qc = TRUE) {
 papalexi_res <- analyze_discovery_results("papalexi")
 frangieh_res <- analyze_discovery_results("frangieh")
 to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"),
-                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s9/fig_s9.png")
+                     "sceptre2-manuscript/R_scripts/figure_creation/fig_s12/fig_s12.png")
 ggsave(filename = to_save_fp, plot = frangieh_res$plot, device = "png", scale = 1.0, width = 6.5, height = 5.25, dpi = 330)

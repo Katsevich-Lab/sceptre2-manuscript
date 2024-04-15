@@ -186,13 +186,22 @@ Rscript ../R_scripts/score_test_benchmark.R
 # 19. run the analyses for figure 5
 Rscript ../R_scripts/save_datasets_as_r_objects.R
 bash run_discovery_analyses_fig_5.sh
+
+# 20. run the analyses for figure s12
+# first, install 'resid_statistic' branch of the sceptre package
+Rscript -e "devtools::install_github('katsevich-lab/sceptre@resid_statistic')"
+# next, run the analyses
+bash run_discovery_analyses_fig_s12.sh
+
+# redownload sceptre 0.3.0 for good measure
+Rscript -e "devtools::install_github('katsevich-lab/sceptre', ref = 'v0.3.0')"
 ```
 
 # Create the figures
 
 The final step is to create the figures. To do so issue the following commands.
 
-```         
+```
 # fig 1
 Rscript ../R_scripts/figure_creation/fig_1/fig_1.R
 # fig 2

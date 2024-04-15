@@ -27,13 +27,11 @@ gc() |> invisible()
 response_matrix <- l$response_matrix
 grna_matrix <- l$grna_matrix
 grna_target_data_frame <- l$grna_group_data_frame
-covariate_data_frame <- l$covariate_data_frame # |> dplyr::mutate(grna_n_umis = 1) 
 sceptre_object <- import_data(response_matrix = l$response_matrix,
                               grna_matrix = l$grna_matrix,
-                              grna_target_data_frame = l$grna_group_data_frame,
+                              grna_target_data_frame = l$grna_group_data_frame |>
+                                dplyr::rename(grna_target = grna_group),
                               moi = "low")
-# update covariate_data_frame with the already-computed one to ensure consistency with the rest of the manuscript
-# sceptre_object@covariate_data_frame <- covariate_data_frame
 
 ##################
 # Run the analysis
@@ -46,26 +44,25 @@ sceptre_object <- set_analysis_parameters(sceptre_object,
                                           full_test_stat = full_statistic)
 # assign grnas
 sceptre_object <- sceptre_object |> assign_grnas()
-# run pairwise QC but not cellwise QC (as we have already run cellwise QC)
 sceptre_object <- sceptre_object |> run_qc(p_mito_threshold = 0.1)
 
 # run the calibration check
 calibration_check_time <- system.time(
   sceptre_object <- sceptre_object |>
-    run_calibration_check(parallel = TRUE, n_processors = 4) 
+    run_calibration_check(parallel = TRUE, n_processors = 8) 
 )[["elapsed"]]
 # run the positive control analysis
-sceptre_object <- sceptre_object |> run_power_check(parallel = TRUE, n_processors = 4)
+sceptre_object <- sceptre_object |> run_power_check(parallel = TRUE, n_processors = 8)
 # run the discovery analysis
 discovery_analysis_time <- system.time(
   sceptre_object <- sceptre_object |>
-    run_discovery_analysis(parallel = TRUE, n_processors = 4)
+    run_discovery_analysis(parallel = TRUE, n_processors = 8)
 )[["elapsed"]]
 
 # obtain the calibration check and discovery analysis results
 dir_name <- paste0(dataset, "_", (if (full_statistic) "full_stat" else "resid_stat"))
 write_outputs_to_directory(sceptre_object,
-                           directory = paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/discovery_analyses/with_qc/", dir_name))
+                           directory = paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/discovery_analyses/fig_s12/", dir_name))
 running_times <- c(calibration_check_time = calibration_check_time,
   discovery_analysis_time = discovery_analysis_time)
-saveRDS(running_times, file = paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/discovery_analyses/with_qc/", dir_name, "/running_times.rds"))
+saveRDS(running_times, file = paste0(LOCAL_SCEPTRE2_DATA_DIR, "results/discovery_analyses/fig_s12/", dir_name, "/running_times.rds"))
