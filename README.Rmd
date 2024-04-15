@@ -195,6 +195,9 @@ bash run_discovery_analyses_fig_s12.sh
 
 # redownload sceptre 0.3.0 for good measure
 Rscript -e "devtools::install_github('katsevich-lab/sceptre', ref = 'v0.3.0')"
+
+# 21. ChIP-seq
+
 ```
 
 # Create the figures

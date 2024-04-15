@@ -100,7 +100,7 @@ method_results <- readRDS(method_results_fp)
 
 # get names of genes from Frangieh results
 gene_names <- method_results |> 
-  filter(dataset_rename == "Papalexi Eccite Screen Gene") |> 
+  filter(dataset_rename == "Papalexi (Gene)") |> 
   pull(response_id) |>
   unique() |> 
   as.character()

@@ -24,7 +24,7 @@ figure_file_path = ""
 sceptre2_dir <- .get_config_path("LOCAL_SCEPTRE2_DATA_DIR")
 method_results_fp <- paste0(
   sceptre2_dir,
-  "results/discovery_analyses/discovery_results_0423_processed.rds"
+  "results/discovery_analyses/discovery_results_0124_processed.rds"
 )
 TF_targets_fp <- paste0(
   sceptre2_dir,
@@ -66,68 +66,45 @@ results <- method_results |>
   bind_rows(TF_targets |>
               group_by(TF) |>
               summarise(num_rejections = sum(target)) |>
-              mutate(Method = "Truth", odds_ratio = NA, pvalue = NA))
+              mutate(Method = "ChIP-seq", odds_ratio = NA, pvalue = NA)) |>
+  mutate(Method = forcats::fct_relevel(Method, "KS test",  "MIMOSCA", "t-test", "MAST", "Seurat-Wilcox", "SCEPTRE", "Seurat-NB"))
 
 p_rejections <- results |>
   ggplot(aes(x = num_rejections, y = TF, fill = Method)) +
   geom_col(position = "dodge", color = "black") +
-  scale_x_continuous(trans = "log10", breaks = c(1, 10, 100, 1000)) +
-  scale_fill_manual(values = my_values) +
-  theme(legend.position = "bottom",
-        legend.title = element_blank()) +
-  labs(x = "Number of rejections",
-       y = "TF")
+  scale_x_continuous(trans = "log10", breaks = c(1, 10, 100, 1000), expand = c(0, NA)) +
+  scale_y_discrete(expand = c(0, NA)) +
+  scale_fill_manual(values = c(my_values, "ChIP-seq" = "grey50")) +
+  my_theme + theme(legend.position = "bottom") +
+  labs(x = "N downstream genes",
+       y = "Transcription factor")
+l <- get_legend(p_rejections)
+p_rejections <- p_rejections + my_theme_no_legend
 
 p_odds_ratios <- results |>
   ggplot(aes(x = odds_ratio, y = TF, fill = Method)) +
   geom_col(position = "dodge", color = "black") +
   geom_vline(xintercept = 1, linetype = "dashed") +
-  scale_x_continuous(breaks = c(0, 1, 2, 3, 4)) +
+  scale_x_continuous(breaks = c(0, 1, 2, 3, 4), expand = c(0, NA)) +
+  scale_y_discrete(expand = c(0, NA)) +
   scale_fill_manual(values = my_values) +
-  theme(legend.position = "none") +
-  labs(x = "Odds ratio",
-       y = NULL)
+  my_theme_no_legend +
+  labs(x = "Odds ratio", y = NULL)
 
 p_pvalues <- results |>
+  mutate(pvalue = ifelse(pvalue > 0.2, 0.2, pvalue)) |>
   ggplot(aes(x = pvalue, y = TF, fill = Method)) +
   geom_col(position = "dodge", color = "black") +
   geom_vline(xintercept = 0.05, linetype = "dashed") +
   scale_x_continuous(trans = katlabutils::revlog_trans(),
-                     breaks = c(1e-20, 1e-40, 1e-60)) +
+                     breaks = c(1e-20, 1e-40, 1e-60), expand = c(0, NA)) +
+  scale_y_discrete(expand = c(0, NA)) +
   scale_fill_manual(values = my_values) +
-  theme(legend.position = "") +
-  labs(x = "p-value",
-       y = NULL)
+  my_theme_no_legend +
+  labs(x = "p-value", y = NULL)
 
-if (FALSE) { # no need for fdp/power
-  p_fdp <- results |>
-    ggplot(aes(x = fdp, y = TF, fill = Method)) +
-    geom_col(position = "dodge", color = "black") +
-    geom_vline(xintercept = 0.05, linetype = "dashed") +
-    scale_x_continuous(limits = c(0,1)) +
-    scale_fill_manual(values = my_values) +
-    theme(legend.position = "none") +
-    labs(x = "FDP",
-         y = NULL)
-  
-  p_power <- results |>
-    ggplot(aes(x = power, y = TF, fill = Method)) +
-    geom_col(position = "dodge", color = "black") +
-    scale_fill_manual(values = my_values) +
-    theme(legend.position = "") +
-    labs(x = "Power",
-         y = NULL)  
-}
-
-plot_grid(plot_grid(p_rejections + theme(legend.position = "none"),
-                    p_fdp,
-                    p_power,
-                    p_odds_ratios,
-                    p_pvalues,
-                    nrow = 1),
-          get_legend(p_rejections),
-          ncol = 1,
-          axis = "tlrb",
-          rel_heights = c(1, 0.2))
-
-dev.off()
+p_top <- plot_grid(p_rejections, p_odds_ratios, p_pvalues, nrow = 1)
+p <- plot_grid(p_top, l, nrow = 2, rel_heights = c(0.85, 0.15))
+to_save_fp <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_s9/fig_s9.png")
+ggsave(filename = to_save_fp, plot = p, device = "png",
+       scale = 1.2, width = 6.0, height = 2.75, dpi = 330)

@@ -34,6 +34,6 @@ saveRDS(object = resampling_res_processed, paste0(sceptre2_results_dir,
                                                   "resampling_distributions/seurat_resampling_at_scale_processed.rds"))
 
 # discovery result
-discovery_res <- readRDS(paste0(sceptre2_results_dir, "discovery_analyses/discovery_results_0124.rds"))
+discovery_res <- readRDS(paste0(sceptre2_results_dir, "discovery_analyses/discovery_results_0423.rds"))
 discovery_res_processed <- suppressWarnings(process_pc_result(discovery_res, sample_size_df))
-saveRDS(discovery_res_processed, paste0(sceptre2_results_dir, "discovery_analyses/discovery_results_0124_processed.rds"))
+saveRDS(discovery_res_processed, paste0(sceptre2_results_dir, "discovery_analyses/discovery_results_0423_processed.rds"))
