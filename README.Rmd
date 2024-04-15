@@ -197,7 +197,8 @@ bash run_discovery_analyses_fig_s12.sh
 Rscript -e "devtools::install_github('katsevich-lab/sceptre', ref = 'v0.3.0')"
 
 # 21. ChIP-seq
-
+Rscript download_additional_data.R
+Rscript get_TF_targets_papalexi_chipseq.R
 ```
 
 # Create the figures
@@ -221,8 +222,6 @@ Rscript ../R_scripts/figure_creation/fig_s11/fig_s11.R
 Rscript ../R_scripts/figure_creation/fig_s12/fig_s12.R
 Rscript ../R_scripts/figure_creation/fig_s13/fig_s13.R
 ```
-
-The script `bash/run_all.sh` runs the entire analysis from start to finish.
 
 Contact the authors if you seek help with reproducing an aspect of the analysis.
 
