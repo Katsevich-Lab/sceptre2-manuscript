@@ -202,28 +202,21 @@ Rscript -e "devtools::install_github('katsevich-lab/sceptre', ref = 'v0.3.0')"
 The final step is to create the figures. To do so issue the following commands.
 
 ```
-# fig 1
 Rscript ../R_scripts/figure_creation/fig_1/fig_1.R
-# fig 2
 Rscript ../R_scripts/figure_creation/fig_2/fig_2.R
-# fig 3
 Rscript ../R_scripts/figure_creation/fig_3/fig_3.R
-# fig 4
 Rscript ../R_scripts/figure_creation/fig_4/fig_4.R
-# fig 5
 Rscript ../R_scripts/figure_creation/fig_5/fig_5.R
-# fig s1-s3
 Rscript ../R_scripts/figure_creation/fig_s1_s3/fig_s1_s3.R
-# fig s4-s5
-Rscript ../R_scripts/figure_creation/fig_s4/fig_s4.R
-# fig s6
-Rscript ../R_scripts/figure_creation/fig_s5/fig_s6.R
-
-
-# fig s6
+Rscript ../R_scripts/figure_creation/fig_s4/fig_s4_s5.R
 Rscript ../R_scripts/figure_creation/fig_s6/fig_s6.R
-# fig s7
 Rscript ../R_scripts/figure_creation/fig_s7/fig_s7.R
+Rscript ../R_scripts/figure_creation/fig_s8/fig_s8.R
+Rscript ../R_scripts/figure_creation/fig_s9/fig_s9.R
+Rscript ../R_scripts/figure_creation/fig_s10/fig_s10.R
+Rscript ../R_scripts/figure_creation/fig_s11/fig_s11.R
+Rscript ../R_scripts/figure_creation/fig_s12/fig_s12.R
+Rscript ../R_scripts/figure_creation/fig_s13/fig_s13.R
 ```
 
 The script `bash/run_all.sh` runs the entire analysis from start to finish.

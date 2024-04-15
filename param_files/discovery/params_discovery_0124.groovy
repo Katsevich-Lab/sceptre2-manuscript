@@ -1,9 +1,8 @@
-data_method_pairs_grouped = ["frangieh/control/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb", "mimosca", "schraivogel_method"],
-                             "papalexi/eccite_screen/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb", "mimosca", "schraivogel_method"]
-                            ]
+data_method_pairs_indiv = ["papalexi/eccite_screen/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb", "mimosca", "schraivogel_method"]]
+                            
+data_method_pairs_grouped = []
 
-row_names = ["frangieh/control/gene",
-             "papalexi/eccite_screen/gene"]
+row_names = ["papalexi/eccite_screen/gene"]
              
 col_names = ["schraivogel_method",
              "seurat_de",
