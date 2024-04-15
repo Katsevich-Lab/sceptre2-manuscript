@@ -1,6 +1,6 @@
 library(sceptre)
 library(ggplot2)
-fig_5_new_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_5_new/")
+fig_5_new_dir <- paste0(.get_config_path("LOCAL_CODE_DIR"), "sceptre2-manuscript/R_scripts/figure_creation/fig_5/")
 papa_result_dir <- paste0(.get_config_path("LOCAL_SCEPTRE2_DATA_DIR"), "results/discovery_analyses/")
 calibration_result <- readRDS(paste0(papa_result_dir, "papalexi_gene_calibration_res.rds"))
 discovery_result <- readRDS(paste0(papa_result_dir, "papalexi_gene_discovery_res.rds"))

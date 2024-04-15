@@ -1,7 +1,7 @@
 #####################################################################################
 # This script saves the portions of the Papalexi and Frangieh IFN-gamma datasets
 # that are used by the run_sceptre_lowmoi function for the discovery analysis (Fig 5)
-# in standard R format (as opposed to ondisc format). This script thus facillitates
+# in standard R format (as opposed to ondisc format). This script thus facilitates
 # replication of the full discovery analyses.
 #
 # This script assumes that the branch of sceptre that is installed is "resid_statistic"
@@ -42,17 +42,22 @@ covariate_data_frame <- mm_odm |> ondisc::get_cell_covariates() |>
 
 # grna group data frame
 grna_group_data_frame <- data.frame(grna_id = rownames(grna_odm@feature_covariates),
-                                    grna_target = grna_odm@feature_covariates$target)
+                                    grna_group = grna_odm@feature_covariates$target)
 
 # set formulas, grna group target name
 formula_object <- mm_odm@global_misc$formula
+
+# set the gene-grna group pairs
+response_grna_group_pairs <- sceptre::generate_all_pairs(response_matrix = response_matrix,
+                                                         grna_group_data_frame = grna_group_data_frame)
 
 # create the list of items to write
 l <- list(response_matrix = response_matrix,
           grna_matrix = grna_matrix,
           covariate_data_frame = covariate_data_frame,
           grna_group_data_frame = grna_group_data_frame,
-          formula_object = formula_object)
+          formula_object = formula_object, 
+          response_grna_group_pairs = response_grna_group_pairs)
 
 dir_to_save <- paste0(control_dir)
 file_to_save <- paste0(dir_to_save, "r_objects.rds")
@@ -93,17 +98,22 @@ covariate_data_frame <- mm_odm |> ondisc::get_cell_covariates() |>
 
 # grna group data frame
 grna_group_data_frame <- data.frame(grna_id = rownames(grna_odm@feature_covariates),
-                                    grna_target = grna_odm@feature_covariates$target)
+                                    grna_group = grna_odm@feature_covariates$target)
 
 # set formulas, grna group target name
 formula_object <- mm_odm@global_misc$formula
+
+# set the gene-grna group pairs
+response_grna_group_pairs <- sceptre::generate_all_pairs(response_matrix = response_matrix,
+                                                         grna_group_data_frame = grna_group_data_frame)
 
 # create list
 l <- list(response_matrix = response_matrix,
           grna_matrix = grna_matrix,
           covariate_data_frame = covariate_data_frame,
           grna_group_data_frame = grna_group_data_frame,
-          formula_object = formula_object)
+          formula_object = formula_object,
+          response_grna_group_pairs = response_grna_group_pairs)
 dir_to_save <- paste0(papalexi_dir)
 file_to_save <- paste0(dir_to_save, "r_objects.rds")
 saveRDS(object = l, file = file_to_save)

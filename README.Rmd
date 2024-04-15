@@ -4,7 +4,7 @@ author: "Timothy Barry, Kaishu Mason, Kathryn Roeder, Eugene Katsevich"
 output: github_document
 ---
 
-This repository contains code to reproduce the analyses reported in the paper "Robust differential expression testing for single-cell CRISPR screens at low multiplicty of infection" (Genome Biology, 2024). While this repository serves as a useful starting point, given the complexity of the codebase, we encourage readers interested in reproducing one or more of the analyses to reach out to the authors (TB: tbarry@hsph.harvard.edu, EK: ekatsevi@wharton.upenn.edu).
+This repository contains code to reproduce the analyses reported in the paper "Robust differential expression testing for single-cell CRISPR screens at low multiplicty of infection" (Genome Biology, 2024). Given the complexity of the codebase, we encourage readers interested in reproducing one or more of the analyses to reach out to the authors (TB: tbarry@hsph.harvard.edu, EK: ekatsevi@wharton.upenn.edu).
 
 <!-- Data documentation is available [here](https://github.com/Katsevich-Lab/sceptre2-manuscript/blob/main/docs/data_doc.pdf). -->
 
@@ -183,12 +183,9 @@ bash run_simulation_study.sh
 # 18. run the analysis for supplementary table 4 (spectral vs qr score computation)
 Rscript ../R_scripts/score_test_benchmark.R
 
-###### HERE
-
-# 15. run the analyses for figure 5
+# 19. run the analyses for figure 5
 Rscript ../R_scripts/save_datasets_as_r_objects.R
-bash run_discovery_analyses.sh
-
+bash run_discovery_analyses_fig_5.sh
 ```
 
 # Create the figures

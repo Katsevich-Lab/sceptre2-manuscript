@@ -5,10 +5,9 @@ Timothy Barry, Kaishu Mason, Kathryn Roeder, Eugene Katsevich
 
 This repository contains code to reproduce the analyses reported in the
 paper “Robust differential expression testing for single-cell CRISPR
-screens at low multiplicty of infection” (Genome Biology, 2024). While
-this repository serves as a useful starting point, given the complexity
-of the codebase, we encourage readers interested in reproducing one or
-more of the analyses to reach out to the authors (TB:
+screens at low multiplicty of infection” (Genome Biology, 2024). Given
+the complexity of the codebase, we encourage readers interested in
+reproducing one or more of the analyses to reach out to the authors (TB:
 <tbarry@hsph.harvard.edu>, EK: <ekatsevi@wharton.upenn.edu>).
 
 <!-- Data documentation is available [here](https://github.com/Katsevich-Lab/sceptre2-manuscript/blob/main/docs/data_doc.pdf). -->
@@ -173,6 +172,10 @@ passed as an argument to each pipeline is indicated as a comment.
     # Figure S9
     qsub ../pipeline_launch_scripts/positive_control/sceptre_unfiltered_pc_0523/pc_analysis.sh
 
+    # 13. Discovery analysis
+    # Figure S7
+    qsub ../pipeline_launch_scripts/discovery_analysis/
+
 We carried out our analyses on an SGE cluster; thus, we submitted the
 Nextflow jobs to the scheduler via `qsub`. If you instead are running
 the analyses on a SLURM cluster, for example, then you should submit the
@@ -186,20 +189,29 @@ Once the jobs have completed, process the results.
 # Run the auxiliary analyses
 
 The next step is to run several auxiliary analyses. These analyses are
-fairly small and thus do not necessitate Nextflow pipelines.
+smaller and thus do not necessitate Nextflow pipelines.
 
-    # 14. run the analyses for figure s4
-    Rscript ../R_scripts/fig_s4_analyses.R
+    # 14. run the confounding analyses for figure 2 and figure s6
+    Rscript ../R_scripts/fig_s6_analyses.R
+
+    # 15. compute the dataset statistical details for table s2
+    Rscript ../R_scripts/get_dataset_statistical_details.R
+
+    # 16. run the analysis for supplementary figure s7 (CAMP)
+    Rscript ../R_scripts/camp_simulation.R
+
+    # 17. run the analysis for supplementary figure s11 (score vs. resid simulation)
+    # note that this step is carried out on a SGE cluster
+    bash run_simulation_study.sh
+
+    # 18. run the analysis for supplementary table 4 (spectral vs qr score computation)
+    Rscript ../R_scripts/score_test_benchmark.R
+
+    ###### HERE
 
     # 15. run the analyses for figure 5
     Rscript ../R_scripts/save_datasets_as_r_objects.R
     bash run_discovery_analyses.sh
-
-    # 16. run the analysis for supplementary figure s5
-    Rscript ../R_scripts/camp_simulation.R
-
-    # 17. compute the dataset statistical details
-    Rscript ../R_scripts/get_dataset_statistical_details.R
 
 # Create the figures
 
@@ -218,18 +230,19 @@ commands.
     Rscript ../R_scripts/figure_creation/fig_5/fig_5.R
     # fig s1-s3
     Rscript ../R_scripts/figure_creation/fig_s1_s3/fig_s1_s3.R
-    # fig s4
+    # fig s4-s5
     Rscript ../R_scripts/figure_creation/fig_s4/fig_s4.R
-    # fig s5
-    Rscript ../R_scripts/figure_creation/fig_s5/fig_s5.R
+    # fig s6
+    Rscript ../R_scripts/figure_creation/fig_s5/fig_s6.R
+
+
     # fig s6
     Rscript ../R_scripts/figure_creation/fig_s6/fig_s6.R
     # fig s7
     Rscript ../R_scripts/figure_creation/fig_s7/fig_s7.R
 
 The script `bash/run_all.sh` runs the entire analysis from start to
-finish, from downloading and processing the raw data to creating the
-figures.
+finish.
 
 Contact the authors if you seek help with reproducing an aspect of the
 analysis.
