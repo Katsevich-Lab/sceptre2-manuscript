@@ -1,8 +1,10 @@
-data_method_pairs_indiv = ["papalexi/eccite_screen/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb", "mimosca", "schraivogel_method"]]
-                            
+data_method_pairs_indiv = ["papalexi/eccite_screen/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb", "mimosca", "schraivogel_method"],
+                           "frangieh/control/gene": ["sceptre", "seurat_de", "liscovitch_method", "weissman_method", "seurat_de_nb", "mimosca", "schraivogel_method"]]
+
 data_method_pairs_grouped = []
 
-row_names = ["papalexi/eccite_screen/gene"]
+row_names = ["papalexi/eccite_screen/gene",
+             "frangieh/control/gene"]
              
 col_names = ["schraivogel_method",
              "seurat_de",
@@ -26,8 +28,8 @@ data_method_ram_matrix = [
 
 // THIRD, define a matrix indicating the queue in which to put a given dataset-method pair process
 data_method_queue_matrix = [
-["all.q", "all.q", "all.q", "all.q", "all.q", "all.q", "all.q"], // frangieh/control/gene
-["all.q", "all.q", "all.q", "all.q", "all.q", "all.q", "all.q"]  // papalexi/eccite_screen/gene
+["all.q", "all.q", "all.q", "all.q", "all.q", "all.q", "all.q"], // papalexi/eccite_screen/gene
+["all.q", "all.q", "all.q", "all.q", "all.q", "all.q", "all.q"]  // frangieh/control/gene
 ]
 // schraivogel_method, seurat_de, liscovitch_method, mimosca, weissman_method, sceptre, seurat_de_nb
 
