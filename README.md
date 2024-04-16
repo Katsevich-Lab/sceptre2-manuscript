@@ -5,10 +5,7 @@ Timothy Barry, Kaishu Mason, Kathryn Roeder, Eugene Katsevich
 
 This repository contains code to reproduce the analyses reported in the
 paper “Robust differential expression testing for single-cell CRISPR
-screens at low multiplicty of infection” (Genome Biology, 2024). Given
-the complexity of the codebase, we encourage readers interested in
-reproducing one or more of the analyses to reach out to the authors (TB:
-<tbarry@hsph.harvard.edu>, EK: <ekatsevi@wharton.upenn.edu>).
+screens at low multiplicty of infection” (Genome Biology, 2024).
 
 <!-- Data documentation is available [here](https://github.com/Katsevich-Lab/sceptre2-manuscript/blob/main/docs/data_doc.pdf). -->
 
@@ -115,7 +112,7 @@ Finally, complete the rest of the setup, which consists of initializing
 the directory structure of the SCEPTRE2 data directory, initializing the
 symbolic links, creating the synthetic data (both negative and positive
 control), performing quality control on the data, and computing sample
-sizes. The following code takes about 20 minutes to execute.
+sizes. The following code takes about 10 minutes to execute.
 
     # 4. set up the offsite directory structure
     bash setup.sh
@@ -207,45 +204,46 @@ smaller and thus do not necessitate Nextflow pipelines.
     # 18. run the analysis for supplementary table 4 (spectral vs qr score computation)
     Rscript ../R_scripts/score_test_benchmark.R
 
-    ###### HERE
-
-    # 15. run the analyses for figure 5
+    # 19. run the analyses for figure 5
     Rscript ../R_scripts/save_datasets_as_r_objects.R
-    bash run_discovery_analyses.sh
+    bash run_discovery_analyses_fig_5.sh
+
+    # 20. run the analyses for figure s12
+    # first, install 'resid_statistic' branch of the sceptre package
+    Rscript -e "devtools::install_github('katsevich-lab/sceptre@resid_statistic')"
+    # next, run the analyses
+    bash run_discovery_analyses_fig_s12.sh
+
+    # redownload sceptre 0.3.0 for good measure
+    Rscript -e "devtools::install_github('katsevich-lab/sceptre', ref = 'v0.3.0')"
+
+    # 21. ChIP-seq
+    Rscript download_additional_data.R
+    Rscript get_TF_targets_papalexi_chipseq.R
 
 # Create the figures
 
 The final step is to create the figures. To do so issue the following
 commands.
 
-    # fig 1
     Rscript ../R_scripts/figure_creation/fig_1/fig_1.R
-    # fig 2
     Rscript ../R_scripts/figure_creation/fig_2/fig_2.R
-    # fig 3
     Rscript ../R_scripts/figure_creation/fig_3/fig_3.R
-    # fig 4
     Rscript ../R_scripts/figure_creation/fig_4/fig_4.R
-    # fig 5
     Rscript ../R_scripts/figure_creation/fig_5/fig_5.R
-    # fig s1-s3
     Rscript ../R_scripts/figure_creation/fig_s1_s3/fig_s1_s3.R
-    # fig s4-s5
-    Rscript ../R_scripts/figure_creation/fig_s4/fig_s4.R
-    # fig s6
-    Rscript ../R_scripts/figure_creation/fig_s5/fig_s6.R
-
-
-    # fig s6
+    Rscript ../R_scripts/figure_creation/fig_s4/fig_s4_s5.R
     Rscript ../R_scripts/figure_creation/fig_s6/fig_s6.R
-    # fig s7
     Rscript ../R_scripts/figure_creation/fig_s7/fig_s7.R
+    Rscript ../R_scripts/figure_creation/fig_s8/fig_s8.R
+    Rscript ../R_scripts/figure_creation/fig_s9/fig_s9.R
+    Rscript ../R_scripts/figure_creation/fig_s10/fig_s10.R
+    Rscript ../R_scripts/figure_creation/fig_s11/fig_s11.R
+    Rscript ../R_scripts/figure_creation/fig_s12/fig_s12.R
+    Rscript ../R_scripts/figure_creation/fig_s13/fig_s13.R
 
-The script `bash/run_all.sh` runs the entire analysis from start to
-finish.
-
-Contact the authors if you seek help with reproducing an aspect of the
-analysis.
+This codebase is large and complex. Contact the authors if you seek help
+with reproducing an aspect of the analysis.
 
 - Timothy (Tim) Barry: tbarry2@andrew.cmu.edu
 

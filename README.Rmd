@@ -4,7 +4,7 @@ author: "Timothy Barry, Kaishu Mason, Kathryn Roeder, Eugene Katsevich"
 output: github_document
 ---
 
-This repository contains code to reproduce the analyses reported in the paper "Robust differential expression testing for single-cell CRISPR screens at low multiplicty of infection" (Genome Biology, 2024). Given the complexity of the codebase, we encourage readers interested in reproducing one or more of the analyses to reach out to the authors (TB: tbarry@hsph.harvard.edu, EK: ekatsevi@wharton.upenn.edu).
+This repository contains code to reproduce the analyses reported in the paper "Robust differential expression testing for single-cell CRISPR screens at low multiplicty of infection" (Genome Biology, 2024).
 
 <!-- Data documentation is available [here](https://github.com/Katsevich-Lab/sceptre2-manuscript/blob/main/docs/data_doc.pdf). -->
 
@@ -26,7 +26,7 @@ First, clone the `sceptre2-manuscript` repository onto your machine.
 git clone git@github.com:Katsevich-Lab/sceptre2-manuscript.git
 ```
 
-Next, manually download the processed datasets from Dropbox. The data are stored in `ondisc` (version 1.1.0) format. Download the following three directories from the [Dropbox data repository](https://www.dropbox.com/sh/jekmk1v4mr4kj3b/AAAhznGqk-TIZKhW40xiU6ORa?dl=0): `frangieh-2021`, `papalexi-2021`, `schraivogel-2020`. The code originally used to download and process these datasets (alongside documentation) is available in the following repositories: [Frangieh](https://github.com/Katsevich-Lab/import-frangieh-2021), [Papalexi](https://github.com/Katsevich-Lab/import-papalexi-2021), [Schraivogel](https://github.com/Katsevich-Lab/import-schraivogel-2020).
+Next, manually download the processed datasets from Dropbox. The data are stored in `ondisc` (version 1.1.0) format. Download the following three directories from the [Dropbox data repository](https://www.dropbox.com/sh/jekmk1v4mr4kj3b/AAAhznGqk-TIZKhW40xiU6ORa?dl=0): `frangieh-2021`, `papalexi-2021`, `schraivogel-2020`. The code originally used to download and process these datasets (alongside documentation) is available in the following repositories: [Frangieh](https://github.com/Katsevich-Lab/import-frangieh-2021), [Papalexi](https://github.com/Katsevich-Lab/import-papalexi-2021), [Schraivogel](https://github.com/Katsevich-Lab/import-schraivogel-2020). Be sure to install `ondisc` version 1.1.0 (`devtools::install_github("timothy-barry/ondisc@5adcc53")`) before running the code in these repositories.
 
 We used a config file to increase the portability of our code across machines. Create a config file called `.research_config` in your home directory.
 
@@ -94,7 +94,7 @@ If you are having trouble initializing the Python virtual environment, consult t
 Rscript ../R_scripts/install_R_packages.R
 ```
 
-Finally, complete the rest of the setup, which consists of initializing the directory structure of the SCEPTRE2 data directory, initializing the symbolic links, creating the synthetic data (both negative and positive control), performing quality control on the data, and computing sample sizes. The following code takes about 20 minutes to execute.
+Finally, complete the rest of the setup, which consists of initializing the directory structure of the SCEPTRE2 data directory, initializing the symbolic links, creating the synthetic data (both negative and positive control), performing quality control on the data, and computing sample sizes. The following code takes about 10 minutes to execute.
 
 ```         
 # 4. set up the offsite directory structure
@@ -223,7 +223,7 @@ Rscript ../R_scripts/figure_creation/fig_s12/fig_s12.R
 Rscript ../R_scripts/figure_creation/fig_s13/fig_s13.R
 ```
 
-Contact the authors if you seek help with reproducing an aspect of the analysis.
+This codebase is large and complex. Contact the authors if you seek help with reproducing an aspect of the analysis.
 
 -   Timothy (Tim) Barry: tbarry2\@andrew.cmu.edu
 
